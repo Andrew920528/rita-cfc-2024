@@ -5,7 +5,7 @@
     "scripts": {
         "gui:wake-up": "cd gui && npm install && npm start",
         "gui:dev": "cd gui && npm start",
-        "server:wake-up": "source $(conda info --base)/etc/profile.d/conda.sh && conda activate rita && conda env update --file environment.yml --prune && cd server && flask run",
+        "server:wake-up": "source $(conda info --base)/etc/profile.d/conda.sh && conda activate rita && conda env update --file server/environment.yml --prune && cd server && flask run",
         "server:dev": "source $(conda info --base)/etc/profile.d/conda.sh && conda activate rita && cd server && flask run",
         "my-test": "cd server && flask run"
     },
