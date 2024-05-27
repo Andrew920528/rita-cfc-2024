@@ -1,12 +1,11 @@
 import {useEffect} from "react";
-import "./App.css";
-import {tryTrySee} from "./service";
+import "./style/main.scss";
+import {tryTrySee} from "./utils/service";
 
 function App() {
   useEffect(() => {
     async function runRequest() {
       await tryTrySee();
-      console.log("after tts");
     }
     runRequest();
   }, []);
