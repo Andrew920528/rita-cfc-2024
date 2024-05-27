@@ -7,13 +7,11 @@ Make sure you've read this, eventually I'll move this guide somewhere else.
 ### 1. Frontend (GUI)
 
 If this is the first time you run the gui, or a new package is installed by someone else, run the following at root dir:
-
 ```
 npm run gui:wake-up
 ```
 
 Otherwise, to open the gui, run the following at root dir:
-
 ```
 npm run gui:dev
 ```
@@ -25,7 +23,6 @@ This will open a new window in your local host with the GUI. Note these are cust
 We are using conda to manage our environment. Make sure you have anaconda [installed](https://docs.anaconda.com/free/anaconda/install/index.html).
 
 If this is the first time you set up the environment, at root directory, run
-
 ```
 conda env create -f server/environment.yml
 ```
@@ -33,13 +30,11 @@ conda env create -f server/environment.yml
 This creates the environment with all the dependencies installed.
 
 Then, to start working with backend:
-
 ```
 npm server:dev
 ```
 
 If some packages are updated in `environment.yml`, run
-
 ```
 npm server:wake-up
 ```
@@ -49,13 +44,12 @@ This is going to open up port 5000 as the api endpoint. You can go to http://127
 #### Important 很重要!
 
 1. Use `conda install` instead of `pip install` whenever possible. Conda automatically resolves dependency conflict, so it is a lot safer to do so.
-2. Because conda doesn't update `environment.yml` automatically, whenever you install some new package, `cd server` then run
-
-```
-conda env export > environment.yml
-```
-
-to overwrite the current environment.yml`. This way, other people can update there environments.
+2. Because conda doesn't update `environment.yml` automatically, whenever you install some new package, run
+   ```
+   cd server
+   conda env export > environment.yml
+   ```
+   to overwrite the current environment.yml`. This way, other people can update there environments.
 
 ### 3. Best Practices
 
