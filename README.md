@@ -1,3 +1,5 @@
 # Rita - Teaching Assistant for Equitable Education
 
-## Updog
+## Guide for devs
+
+### Setup
