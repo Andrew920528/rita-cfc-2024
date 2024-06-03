@@ -1,0 +1,17 @@
+/* ====================================
+Variable
+---------------------------------------
+Sections:
+- Breakpoints
+==================================== */
+/* Breakpoints 
+|----|----|----|---->
+0   576  768  991
+breakpoints using bootstrap standards
+*/
+
+$breakpoints: (
+  "small": 576px,
+  "medium": 768px,
+  "large": 993px,
+);

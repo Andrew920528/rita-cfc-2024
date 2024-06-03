@@ -1,0 +1,34 @@
+/* ====================================
+Typography - sets default typography
+---------------------------------------
+Sections:
+- Resets Typography
+- Sets Fonts
+- Declares Common Type Classes
+==================================== */
+// Resets Typography
+@use "@carbon/type";
+@use "@carbon/colors";
+
+@include type.reset();
+@include type.default-type();
+div {
+  @include type.type-style("body-01");
+}
+
+// Sets Font
+@import "/node_modules/@ibm/plex/css/ibm-plex.css";
+$font-prefix: "./custom/path/to/font/files";
+html {
+  font-family: "ibm-plex-sans";
+}
+
+// Common typography classes
+.--heading {
+  @include type.type-style("heading-03");
+  font-weight: 600;
+}
+.--label {
+  @include type.type-style("label-01");
+  color: colors.$gray-70;
+}

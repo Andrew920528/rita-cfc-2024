@@ -1,0 +1,26 @@
+/* ====================================
+Mixin
+---------------------------------------
+Sections:
+- Breakpoints
+- Typography
+==================================== */
+
+@use "./variable" as *;
+
+/* Breakpoints
+Manages responsive breakpoints
+$breakpoints:  "small", "medium", "large" */
+@mixin with-min-width($breakpoint) {
+  // If the key exists in the map
+  @if map-has-key($breakpoints, $breakpoint) {
+    // Prints a media query based on the value
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  }
+  // If the key doesn't exist in the map
+  @else {
+    @warn "No breakpoint value could be retrieved from `#{$breakpoint}`. "+"Available breakpoints are: #{map-keys($breakpoints)}.";
+  }
+}
