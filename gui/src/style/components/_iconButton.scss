@@ -1,0 +1,26 @@
+@use "@carbon/colors";
+.icon-button {
+  &.flex {
+    width: 100%;
+  }
+
+  &.on-dark {
+    color: white;
+  }
+  &.on-dark:hover {
+    background-color: colors.$gray-80;
+  }
+
+  padding-left: 1rem;
+  padding-right: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  .icon-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}

@@ -6,12 +6,12 @@ Sections:
 ==================================== */
 /* Breakpoints 
 |----|----|----|---->
-0   576  768  991
-breakpoints using bootstrap standards
+0   320  672  1056
+breakpoints using ibm standards
 */
 
 $breakpoints: (
-  "small": 576px,
-  "medium": 768px,
-  "large": 993px,
+  "small": 320px,
+  "medium": 672px,
+  "large": 1056px,
 );

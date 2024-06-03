@@ -1,0 +1,49 @@
+.header {
+  background-color: black;
+  display: flex;
+  flex-direction: row;
+  min-height: 3rem;
+  max-height: 3rem;
+
+  color: white;
+  .header-left {
+    flex: 4;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    .title {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.2rem;
+      .title-rita {
+        font-size: 24px;
+      }
+      .title-beta {
+        font-size: 12px;
+      }
+    }
+  }
+  .header-right {
+    flex: 12;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    .subject-banner {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      height: 100%;
+      gap: 1rem;
+      margin-left: 1.25rem;
+      margin-right: 1.25rem;
+      // style banner dropdown
+      .cds--dropdown--inline {
+        background-color: white;
+      }
+    }
+  }
+}

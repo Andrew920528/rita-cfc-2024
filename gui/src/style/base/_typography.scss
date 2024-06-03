@@ -9,7 +9,6 @@ Sections:
 // Resets Typography
 @use "@carbon/type";
 @use "@carbon/colors";
-
 @include type.reset();
 @include type.default-type();
 div {
@@ -21,6 +20,7 @@ div {
 $font-prefix: "./custom/path/to/font/files";
 html {
   font-family: "ibm-plex-sans";
+  font-size: 16px;
 }
 
 // Common typography classes
