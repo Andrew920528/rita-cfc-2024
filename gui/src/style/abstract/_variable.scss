@@ -3,6 +3,7 @@ Variable
 ---------------------------------------
 Sections:
 - Breakpoints
+- Colors
 ==================================== */
 /* Breakpoints 
 |----|----|----|---->
@@ -15,3 +16,11 @@ $breakpoints: (
   "medium": 672px,
   "large": 1056px,
 );
+
+/* Colors
+For this project, we use the color from here:
+https://carbondesignsystem.com/elements/color/tokens
+Carbon design system is pretty annoying when importing,
+so to keep things simple, directly use the hex code from
+the above website.
+*/

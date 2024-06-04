@@ -1,36 +1,37 @@
-import React from "react";
-import IconButton from "./IconButton";
+import React, {useState} from "react";
+import IconButton from "./ui_components/IconButton";
 import {Close, User, Edit} from "@carbon/icons-react";
-import {Dropdown} from "@carbon/react";
+import Dropdown from "./ui_components/Dropdown";
 
-const items = [
-  {
+const dummy = {
+  0: {
     id: "option-0",
-    text: "Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
+    text: "Lorem, ipsum dolorawjenfla neawnflajwenfawjenfajwenfkawnefkajnw sit amet consectetur adipisicing elit.",
   },
-  {
+  1: {
     id: "option-1",
     text: "Option 1",
   },
-  {
+  2: {
     id: "option-2",
     text: "Option 2",
   },
-  {
+  3: {
     id: "option-3",
     text: "Option 3 - a disabled item",
     disabled: true,
   },
-  {
+  4: {
     id: "option-4",
     text: "Option 4",
   },
-  {
+  5: {
     id: "option-5",
     text: "Option 5",
   },
-];
+};
 const Header = () => {
+  const [session, setSession] = useState(-1);
   return (
     <div className="header">
       <div className="header-left">
@@ -44,8 +45,18 @@ const Header = () => {
       </div>
       <div className="header-right">
         <div className="subject-banner">
-          <p className="--heading">新科目</p>
+          <p className="subject --heading">新科目</p>
           <IconButton mode={"on-dark"} icon={<Edit size={20} />} />
+          <Dropdown
+            currId={session}
+            setCurrId={setSession}
+            idDict={dummy}
+            getName={(id) => {
+              return dummy[id].text;
+            }}
+            placeholder="none selected"
+            flex={false}
+          />
         </div>
         <IconButton mode={"on-dark"} icon={<User size={20} />} />
       </div>
