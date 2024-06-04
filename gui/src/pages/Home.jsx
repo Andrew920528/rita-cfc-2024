@@ -1,17 +1,19 @@
-import React from "react";
+import React, {useState} from "react";
 
 import Header from "../components/Header";
 import NavBar from "../components/NavBar";
 import Dashboard from "../components/Dashboard";
 
 const Home = () => {
+  const [openNav, setOpenNav] = useState(true);
   return (
     <div className="home">
-      <Header />
+      <Header openNav={openNav} setOpenNav={setOpenNav} />
       <div className="home-content">
-        <div className="navbar-wrapper">
+        <div className={`navbar-wrapper ${!openNav && "collapsed"}`}>
           <NavBar />
         </div>
+
         <div className="dashboard-wrapper">
           <Dashboard />
         </div>

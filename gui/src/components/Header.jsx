@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import IconButton from "./ui_components/IconButton";
-import {Close, User, Edit} from "@carbon/icons-react";
+import {Close, User, Edit, Menu} from "@carbon/icons-react";
 import Dropdown from "./ui_components/Dropdown";
 
 const dummy = {
@@ -30,12 +30,19 @@ const dummy = {
     text: "Option 5",
   },
 };
-const Header = () => {
+const Header = ({openNav, setOpenNav = () => {}}) => {
   const [session, setSession] = useState(-1);
   return (
     <div className="header">
       <div className="header-left">
-        <IconButton mode={"on-dark"} icon={<Close size={20} />} />
+        <IconButton
+          mode={"on-dark"}
+          icon={openNav ? <Close size={20} /> : <Menu size={20} />}
+          onClick={() => {
+            setOpenNav(!openNav);
+            console.log("fefe");
+          }}
+        />
         <div className="title">
           <p className="title-rita">Rita</p>
           <p className="title-beta">

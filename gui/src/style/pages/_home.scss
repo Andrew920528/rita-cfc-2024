@@ -10,6 +10,11 @@
     .navbar-wrapper {
       flex: 4;
       background-color: beige;
+      overflow-x: hidden;
+      transition: flex 0.2s ease-in-out;
+      &.collapsed {
+        flex: 0;
+      }
     }
     .dashboard-wrapper {
       flex: 12;

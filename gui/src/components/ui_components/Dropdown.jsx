@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {ChevronDown, ChevronUp} from "@carbon/icons-react";
 
 const UNDEFINED = "UNDEFINED";
@@ -10,14 +10,29 @@ const Dropdown = ({
   placeholder = "placeholder",
   flex = false,
 }) => {
-  const [openMenu, setOpenMenu] = useState();
-
+  const [openMenu, setOpenMenu] = useState(false);
+  const componentRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        componentRef.current &&
+        !componentRef.current.contains(event.target)
+      ) {
+        setOpenMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   return (
     <div
       className={`dropdown-wrapper ${flex ? "flex" : "fixed"}`}
       onClick={() => {
         setOpenMenu(!openMenu);
       }}
+      ref={componentRef}
     >
       <div className="dropdown">
         <p className={`value ${currId === UNDEFINED && "place-holder"}`}>
