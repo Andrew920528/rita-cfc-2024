@@ -9,16 +9,19 @@
     height: 100%;
     .navbar-wrapper {
       flex: 4;
-      background-color: beige;
-      overflow-x: hidden;
+      overflow: hidden;
       transition: flex 0.2s ease-in-out;
+      z-index: 100;
+      background-color: white;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+
       &.collapsed {
         flex: 0;
       }
     }
     .dashboard-wrapper {
       flex: 12;
-      background-color: aquamarine;
+      background-color: #f4f4f4;
     }
   }
 }

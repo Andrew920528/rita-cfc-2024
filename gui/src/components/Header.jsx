@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import IconButton from "./ui_components/IconButton";
-import {Close, User, Edit, Menu} from "@carbon/icons-react";
+import {Close, User, Edit, Menu, Add} from "@carbon/icons-react";
 import Dropdown from "./ui_components/Dropdown";
 
 const dummy = {
@@ -32,6 +32,7 @@ const dummy = {
 };
 const Header = ({openNav, setOpenNav = () => {}}) => {
   const [session, setSession] = useState(-1);
+
   return (
     <div className="header">
       <div className="header-left">
@@ -63,6 +64,14 @@ const Header = ({openNav, setOpenNav = () => {}}) => {
             }}
             placeholder="none selected"
             flex={false}
+            extra={
+              <IconButton
+                flex={true}
+                mode={"primary"}
+                text={"新增課程"}
+                icon={<Add />}
+              />
+            }
           />
         </div>
         <IconButton mode={"on-dark"} icon={<User size={20} />} />

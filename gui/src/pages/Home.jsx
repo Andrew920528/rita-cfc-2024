@@ -10,7 +10,7 @@ const Home = () => {
     <div className="home">
       <Header openNav={openNav} setOpenNav={setOpenNav} />
       <div className="home-content">
-        <div className={`navbar-wrapper ${!openNav && "collapsed"}`}>
+        <div className={`navbar-wrapper ${openNav ? "opened" : "collapsed"}`}>
           <NavBar />
         </div>
 

@@ -18,9 +18,11 @@ $breakpoints: (
 );
 
 /* Colors
-For this project, we use the color from here:
+For gray scale and system colors, we use the color from here:
 https://carbondesignsystem.com/elements/color/tokens
 Carbon design system is pretty annoying when importing,
 so to keep things simple, directly use the hex code from
 the above website.
 */
+$primary-color: #a56eff;
+$primary-color-hover: #be95ff;

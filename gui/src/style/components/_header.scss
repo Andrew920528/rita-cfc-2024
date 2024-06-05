@@ -38,11 +38,11 @@
       flex-direction: row;
       align-items: center;
       height: 100%;
-      gap: 1rem;
       margin-left: 1.25rem;
       margin-right: 1.25rem;
       .subject {
         text-wrap: nowrap;
+        margin-right: 1rem;
       }
     }
   }

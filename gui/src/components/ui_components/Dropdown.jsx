@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ChevronDown, ChevronUp} from "@carbon/icons-react";
+import {ChevronDown, ChevronUp, Close} from "@carbon/icons-react";
 
 const UNDEFINED = "UNDEFINED";
 const Dropdown = ({
@@ -9,6 +9,7 @@ const Dropdown = ({
   getName = () => "name",
   placeholder = "placeholder",
   flex = false,
+  extra = null,
 }) => {
   const [openMenu, setOpenMenu] = useState(false);
   const componentRef = useRef(null);
@@ -48,30 +49,51 @@ const Dropdown = ({
       </div>
       {openMenu && (
         <div className={`dropdown-menu ${flex ? "flex" : "fixed"}`}>
-          {Object.keys(idDict).map((k) => (
-            <DropdownOption
-              key={k}
-              id={k}
-              name={getName(k)}
-              currId={currId}
-              onClick={() => {
-                setCurrId(k);
-              }}
-            />
-          ))}
+          <div className="dropdown-menu-main">
+            {Object.keys(idDict).map((k) => (
+              <DropdownOption
+                key={k}
+                id={k}
+                name={getName(k)}
+                currId={currId}
+                onClick={() => {
+                  setCurrId(k);
+                }}
+              />
+            ))}
+          </div>
+          {extra}
         </div>
       )}
     </div>
   );
 };
 
-const DropdownOption = ({id, name, currId, onClick = () => {}}) => {
+const DropdownOption = ({
+  id,
+  name,
+  currId,
+  onClick = () => {},
+  icon = <Close />,
+  iconAction = (e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    console.log("action icon clicked");
+  },
+}) => {
   return (
     <div
       className={`dropdown-option ${id === currId && "selected"}`}
       onClick={onClick}
     >
       <p>{name}</p>
+      <div
+        className={`dropdown-button ${id === currId && "selected"}`}
+        onClick={(e) => {
+          iconAction(e);
+        }}
+      >
+        {icon}
+      </div>
     </div>
   );
 };

@@ -1,0 +1,36 @@
+.navbar {
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+  .nav-subject,
+  .nav-widget {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nav-subject {
+    flex: 6;
+  }
+  .nav-widget {
+    flex: 4;
+  }
+
+  .nav-heading {
+    border-bottom: 1px solid #8d8d8d;
+    height: 3rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-self: space-around;
+  }
+  .nav-stack {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .subject-card {
+  }
+}
