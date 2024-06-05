@@ -11,7 +11,8 @@ Sections:
 @use "@carbon/colors";
 @include type.reset();
 @include type.default-type();
-div {
+div,
+p {
   @include type.type-style("body-01");
 }
 
