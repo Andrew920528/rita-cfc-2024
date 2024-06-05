@@ -1,13 +1,18 @@
 # Read me
 
-Please put your own API_KEY for Watsonx in watson_key.json!
+Please put your own API_KEY for Watsonx in watson_key.json!\
+
+After inserting it, you can do ```git update-index --skip-worktree .\server\watson_key.json``` to "ignore" the file
 
 # Local Website
 
-localhost:5000
+http://localhost:5000
 
 # Endpoints
 
-GET /hello - Tests if everything is setup correctly.
+- GET /hello
+  - Purpose : Tests if everything is setup correctly.
 
-POST /generate-proposal - Receives AI Response from Watsonx
+- POST /generate-proposal
+  - Input : { "input_text" : "your prompt" }
+  - Purpose : Receives AI Response from Watsonx
