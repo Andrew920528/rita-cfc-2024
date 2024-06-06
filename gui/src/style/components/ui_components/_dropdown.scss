@@ -1,5 +1,6 @@
 $width: 18rem;
 .dropdown-wrapper {
+  height: 100%;
   &.fixed {
     width: $width;
   }
@@ -18,7 +19,7 @@ $width: 18rem;
     background-color: #393939;
     text-align: start;
     gap: 1rem;
-
+    height: 100%;
     &:hover {
       background-color: #4c4c4c;
     }
@@ -42,6 +43,7 @@ $width: 18rem;
   display: flex;
   flex-direction: column;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
   &.fixed {
     width: $width;
   }

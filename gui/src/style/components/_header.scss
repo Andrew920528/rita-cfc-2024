@@ -2,9 +2,8 @@
   background-color: black;
   display: flex;
   flex-direction: row;
-  min-height: 3rem;
-  max-height: 3rem;
-
+  height: 3rem;
+  position: relative;
   color: white;
   .header-left {
     flex: 4;

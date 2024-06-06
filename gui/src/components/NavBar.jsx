@@ -1,7 +1,23 @@
 import React from "react";
 
-const SubjectCard = () => {
-  return <div className="subject-card">card</div>;
+const SubjectCard = ({
+  title = "新科目",
+  subject = "未設定",
+  grade = "未設定",
+  content = "未設定",
+  schedule = "未完成",
+}) => {
+  return (
+    <div className="subject-card">
+      <p>
+        <strong>{title}</strong>
+      </p>
+      <p className="--label">
+        科目：{subject} ｜年級：{grade}｜教材：{content}
+        <br /> 學期規劃：{schedule}
+      </p>
+    </div>
+  );
 };
 
 const WidgetCard = () => {
@@ -18,6 +34,29 @@ const NavBar = () => {
           <SubjectCard />
           <SubjectCard />
           <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          {/* <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard /> */}
         </div>
       </div>
 
@@ -26,8 +65,6 @@ const NavBar = () => {
           <p className="--heading">工具</p>
         </div>
         <div className="nav-stack">
-          <WidgetCard />
-          <WidgetCard />
           <WidgetCard />
         </div>
       </div>
