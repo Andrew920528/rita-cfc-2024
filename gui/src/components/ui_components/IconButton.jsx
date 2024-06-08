@@ -1,6 +1,6 @@
 import React from "react";
 
-const IconButton = ({flex, mode, text, icon, onClick = () => {}}) => {
+const IconButton = ({flex, mode = "", text, icon, onClick = () => {}}) => {
   return (
     <div
       className={`icon-button ${flex ? "flex" : "fixed"} ${mode}`}

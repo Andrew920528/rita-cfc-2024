@@ -38,10 +38,46 @@
     padding: 1rem;
     border-bottom: 1px solid #e0e0e0;
     gap: 0.5rem;
+    background-color: white;
+    &:hover {
+      background-color: #e8e8e8;
+    }
 
+    &.selected {
+      background-color: #e0e0e0;
+      &:hover {
+        background-color: #cacaca;
+      }
+    }
     p {
       margin: 0;
       text-wrap: nowrap;
+      user-select: none;
+    }
+  }
+
+  .widget-card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+    .widget-card-left {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      height: 100%;
+      align-items: center;
+      margin-left: 1rem;
+      p {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+    .widget-card-right {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
     }
   }
 }
