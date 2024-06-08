@@ -13,7 +13,7 @@ const Chatroom = ({context}) => {
       <div className="chatroom-header">
         <div className="header-group">
           <p className="rita">Rita</p>
-          <p>context</p>
+          <p>{context}</p>
         </div>
         <IconButton
           mode={"ghost"}

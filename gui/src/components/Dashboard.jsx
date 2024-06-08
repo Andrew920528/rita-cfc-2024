@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useState} from "react";
 import {Cafe} from "@carbon/icons-react";
 import Chatroom from "./Chatroom";
+import WidgetFrame from "./widgets/WidgetFrame";
 const DashboardPlaceHolder = () => {
   return (
     <div className="dp-wrapper">
@@ -19,10 +20,24 @@ const DashboardPlaceHolder = () => {
   );
 };
 
-const Dashboard = () => {
+const Dashboard = ({}) => {
+  const [content, setContent] = useState(["a"]);
+
   return (
     <div className="dashboard">
-      <DashboardPlaceHolder />
+      {content.length > 0 ? (
+        <div className="widgets">
+          <WidgetFrame selected={true} />
+          <WidgetFrame />
+          <WidgetFrame />
+          <WidgetFrame />
+          <WidgetFrame selected={true} />
+          <WidgetFrame />
+        </div>
+      ) : (
+        <DashboardPlaceHolder />
+      )}
+
       <Chatroom />
     </div>
   );

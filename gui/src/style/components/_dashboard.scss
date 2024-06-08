@@ -1,6 +1,14 @@
 .dashboard {
   height: 100%;
   overflow-y: auto;
+  padding: 0.5rem;
+  .widgets {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
 }
 
 .dp-wrapper {
