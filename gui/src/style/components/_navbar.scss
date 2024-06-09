@@ -16,9 +16,9 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-self: space-around;
-    padding-left: 1rem;
+    justify-content: space-between;
 
+    padding-left: 1rem;
     text-wrap: nowrap;
     height: 3rem;
     min-height: 3rem;

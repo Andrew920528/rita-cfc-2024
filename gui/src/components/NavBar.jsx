@@ -103,6 +103,7 @@ const NavBar = () => {
       <div className="nav-subject">
         <div className="nav-heading">
           <p className="--heading">科目</p>
+          <IconButton mode={"primary"} icon={<Add />} text={"新增"} />
         </div>
         <div className="nav-stack">
           {subjectList.map((_, ind) => (

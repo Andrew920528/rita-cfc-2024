@@ -1,6 +1,15 @@
 import React, {useState} from "react";
 import IconButton from "./ui_components/IconButton";
-import {Close, User, Edit, Menu, Add} from "@carbon/icons-react";
+import FloatingMenu from "./ui_components/FloatingMenu";
+import {
+  Close,
+  User,
+  Edit,
+  Add,
+  Settings,
+  Logout,
+  Menu,
+} from "@carbon/icons-react";
 import Dropdown from "./ui_components/Dropdown";
 
 const dummy = {
@@ -30,9 +39,49 @@ const dummy = {
     text: "Option 5",
   },
 };
+
+const AccountMenu = () => {
+  const AccountContent = ({
+    name = "廖偉良",
+    occupation = "級任老師",
+    school = "松山高中",
+  }) => {
+    return (
+      <div className="account-content">
+        <div className="user-info">
+          <p> {name} </p>
+          <p>
+            {" "}
+            {occupation} @ {school}
+          </p>
+        </div>
+        <IconButton
+          flex={true}
+          text={"管理帳號"}
+          icon={<Settings />}
+          mode={"ghost"}
+          onClick={() => {
+            console.log("Manage Account");
+          }}
+        />
+        <IconButton
+          flex={true}
+          text={"登出"}
+          icon={<Logout />}
+          mode={"ghost"}
+          onClick={() => {
+            console.log("Log out");
+          }}
+        />
+      </div>
+    );
+  };
+  return <FloatingMenu content={<AccountContent />} />;
+};
+
 const Header = ({openNav, setOpenNav = () => {}}) => {
   const [session, setSession] = useState(-1);
-
+  const [openAccountMenu, setOpenAccountMenu] = useState(false);
   return (
     <div className="header">
       <div className="header-left">
@@ -74,7 +123,16 @@ const Header = ({openNav, setOpenNav = () => {}}) => {
             }
           />
         </div>
-        <IconButton mode={"on-dark"} icon={<User size={20} />} />
+        <div className="account-button">
+          <IconButton
+            mode={"on-dark"}
+            icon={<User size={20} />}
+            onClick={() => {
+              setOpenAccountMenu(!openAccountMenu);
+            }}
+          />
+          {openAccountMenu && <AccountMenu />}
+        </div>
       </div>
     </div>
   );
