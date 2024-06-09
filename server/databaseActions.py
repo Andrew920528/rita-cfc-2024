@@ -1,14 +1,25 @@
 import pymysql
+import json
 from flask import jsonify, request
 
 host = ''
 databaseuser = ''
 databasepassword = ''
 database = ''
-port = 0
+port=0
+
+def getDatabaseDetails():
+    with open('database_key.json') as f:
+        global host, databaseuser, databasepassword, database, port
+        js = json.load(f)
+        host = js['host']
+        databaseuser = js['databaseuser']
+        databasepassword = js['databasepassword']
+        database = js['database']
+        port=3306
 
 def createUser(username, password):
-
+    getDatabaseDetails()
     try:
         connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
@@ -20,6 +31,7 @@ def createUser(username, password):
             cursor.execute(query, values)
 
             if len(cursor.fetchall()) != 0:
+                connection.close()
                 return {'Response' : "Username exists!"}
             
             # if not exist, then create user
@@ -29,16 +41,16 @@ def createUser(username, password):
 
             cursor.execute(query, values)
             connection.commit() 
+            connection.close()
             return {'Response' : "Successfully created account!"}
     
     except Exception as e:
         print("Error: {}".format(e))
+        connection.close()
         return {'Response' : "Failed to create account!"}
 
-    finally:
-        connection.close()
-
 def getUser(username, password):
+    getDatabaseDetails()
     try:
         connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
@@ -50,20 +62,21 @@ def getUser(username, password):
             results = cursor.fetchall()
 
             if len(results) == 0:
+                connection.close()
                 return {'Response' : "No account found!"}
 
+            connection.close()
             return {'Response' : results}
     
     except Exception as e:
         print("Error: {}".format(e))
-        return {'Response' : "Failed to get account!"}
-    
-    finally:
         connection.close()
+        return {'Response' : "Failed to get account!"}
         
 
 
 def modifyUser(username, password, updatedUsername, updatedPassword):
+    getDatabaseDetails()
     try:
         connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
@@ -75,6 +88,7 @@ def modifyUser(username, password, updatedUsername, updatedPassword):
             cursor.execute(query, values)
 
             if len(cursor.fetchall()) == 0:
+                connection.close()
                 return {'Response' : "Account does not exist or Incorrect password!"}
 
             # see if updatedUsername already exists
@@ -84,24 +98,25 @@ def modifyUser(username, password, updatedUsername, updatedPassword):
             cursor.execute(query, values)
 
             if len(cursor.fetchall()) != 0:
+                connection.close()
                 return {'Response' : "Updated Username exists!"}
 
             query = 'UPDATE User_Table SET Username=%s, Pass=%s WHERE Username=%s AND Pass=%s'
             values = (updatedUsername, updatedPassword, username, password)
 
             cursor.execute(query, values)
-            connection.commit()             
+            connection.commit()          
+            connection.close()   
             return {'Response' : "Successfully modified account!"}
     
     except Exception as e:
         print("Error: {}".format(e))
-        return {'Response' : "Failed to modify account!"}
-    
-    finally:
         connection.close()
+        return {'Response' : "Failed to modify account!"}
 
 
 def deleteUser(username, password):
+    getDatabaseDetails()
     try:
         connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
@@ -113,6 +128,7 @@ def deleteUser(username, password):
             cursor.execute(query, values)
 
             if len(cursor.fetchall()) == 0:
+                connection.close()
                 return {'Response' : "Account does not exist or Incorrect password!"}
 
             query = 'DELETE FROM User_Table WHERE Username=%s AND Pass=%s'
@@ -120,11 +136,10 @@ def deleteUser(username, password):
 
             cursor.execute(query, values)
             connection.commit()
+            connection.close()
             return {'Response' : "Successfully deleted account!"}
     
     except Exception as e:
         print("Error: {}".format(e))
-        return {'Response' : "Failed to delete account!"}
-
-    finally:
         connection.close()
+        return {'Response' : "Failed to delete account!"}
