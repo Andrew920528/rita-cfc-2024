@@ -1,0 +1,21 @@
+.textbox {
+  &.flex {
+    width: 100%;
+  }
+  .placeholder {
+    color: #a8a8a8; // placeholder text color
+  }
+  input {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    border-radius: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    &::placeholder {
+      color: #a8a8a8; // placeholder text color
+    }
+  }
+}

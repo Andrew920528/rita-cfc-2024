@@ -8,12 +8,14 @@ Sections:
 ==================================== */
 // Resets Typography
 @use "@carbon/type";
-@use "@carbon/colors";
 @include type.reset();
 @include type.default-type();
 div,
 p {
   @include type.type-style("body-01");
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 // Sets Font
@@ -31,5 +33,5 @@ html {
 }
 .--label {
   @include type.type-style("label-01");
-  color: colors.$gray-70;
+  color: #525252;
 }

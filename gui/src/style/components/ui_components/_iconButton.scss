@@ -11,11 +11,25 @@
     }
   }
 
+  &.on-dark-2 {
+    color: white;
+    &:hover {
+      background-color: #4c4c4c;
+    }
+  }
+
   &.primary {
     color: white;
     background-color: $primary-color;
     &:hover {
       background-color: $primary-color-hover;
+    }
+  }
+
+  &.ghost {
+    color: black;
+    &:hover {
+      background-color: #e8e8e8;
     }
   }
 
@@ -29,6 +43,7 @@
   height: 100%;
   min-height: 3rem;
   user-select: none;
+  gap: 1rem;
   .icon-wrapper {
     display: flex;
     flex-direction: column;

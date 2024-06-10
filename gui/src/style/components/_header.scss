@@ -1,10 +1,9 @@
 .header {
-  background-color: black;
+  background-color: #161616;
   display: flex;
   flex-direction: row;
-  min-height: 3rem;
-  max-height: 3rem;
-
+  height: 3rem;
+  position: relative;
   color: white;
   .header-left {
     flex: 4;
@@ -43,6 +42,30 @@
       .subject {
         text-wrap: nowrap;
         margin-right: 1rem;
+      }
+    }
+  }
+}
+
+.account-content {
+  display: flex;
+  flex-direction: column;
+
+  .user-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem;
+    gap: 2rem;
+    .user-info-col {
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      p {
+        text-wrap: nowrap;
+        &.user-detail {
+          font-size: 12px;
+        }
       }
     }
   }
