@@ -11,6 +11,13 @@
     }
   }
 
+  &.on-dark-2 {
+    color: white;
+    &:hover {
+      background-color: #4c4c4c;
+    }
+  }
+
   &.primary {
     color: white;
     background-color: $primary-color;
