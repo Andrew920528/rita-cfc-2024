@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {Dispatch, SetStateAction, useState} from "react";
 import {
   Add,
   Information,
@@ -8,17 +8,28 @@ import {
   Alarm,
 } from "@carbon/icons-react";
 import IconButton from "./ui_components/IconButton";
+import PopUp from "./ui_components/PopUp";
 
+type SubjectCard = {
+  title?: string;
+  subject?: string;
+  grade?: string;
+  content?: string;
+  schedule?: string;
+  selected?: string;
+  setSelected?: Dispatch<SetStateAction<string>>;
+  id?: string;
+};
 const SubjectCard = ({
   title = "新科目",
   subject = "未設定",
   grade = "未設定",
   content = "未設定",
   schedule = "未完成",
-  selected = -1,
+  selected = "-1",
   setSelected = () => {},
-  id,
-}) => {
+  id = "",
+}: SubjectCard) => {
   return (
     <div
       className={`subject-card ${selected === id ? "selected" : ""}`}
@@ -94,16 +105,34 @@ const widgetList = [
   {title: "課表", hint: "瀏覽每週課表", icon: <Alarm />},
 ];
 
+const SubjectCreation = () => {
+  return <div className="subject-creation"></div>;
+};
+
 const NavBar = () => {
   const [subject, setSubject] = useState(
     subjectList.length > 0 ? subjectList[0].id : ""
   );
+  const [openSubjectCreation, setOpenSubjectCreation] = useState(true);
   return (
     <div className="navbar">
       <div className="nav-subject">
         <div className="nav-heading">
           <p className="--heading">科目</p>
-          <IconButton mode={"primary"} icon={<Add />} text={"新增"} />
+          <IconButton
+            mode={"primary"}
+            icon={<Add />}
+            text={"新增"}
+            onClick={() => {
+              setOpenSubjectCreation(true);
+            }}
+          />
+          <PopUp
+            trigger={openSubjectCreation}
+            setTrigger={setOpenSubjectCreation}
+          >
+            fefef
+          </PopUp>
         </div>
         <div className="nav-stack">
           {subjectList.map((_, ind) => (

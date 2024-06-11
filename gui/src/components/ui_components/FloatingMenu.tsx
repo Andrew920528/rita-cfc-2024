@@ -1,9 +1,25 @@
-import React, {useRef, useState, useEffect} from "react";
+import React, {useRef, useState, useEffect, ReactElement} from "react";
 
-export const FloatingMenu = ({content, mode}) => {
+type FloatingMenuProps = {
+  content: import("react").ReactElement;
+  mode?: string;
+};
+export const FloatingMenu = ({content, mode}: FloatingMenuProps) => {
   return <div className={`floating-menu ${mode}`}>{content}</div>;
 };
 
+type FloatingMenuButtonProps = {
+  button: ReactElement;
+  menuProps: FloatingMenuProps;
+  anchorOrigin?: {
+    vertical: "top" | "bottom";
+    horizontal: "left" | "right";
+  };
+  transformOrigin?: {
+    vertical: "top" | "bottom";
+    horizontal: "left" | "right";
+  };
+};
 export const FloatingMenuButton = ({
   button,
   menuProps,
@@ -15,12 +31,12 @@ export const FloatingMenuButton = ({
     vertical: "bottom",
     horizontal: "right",
   },
-}) => {
+}: FloatingMenuButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const menuRef = useRef(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
-  const handleClickOutside = (event) => {
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
+  const handleClickOutside = (event: MouseEvent): void => {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
       setIsOpen(false);
     }
   };

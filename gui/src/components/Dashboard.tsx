@@ -20,7 +20,7 @@ const DashboardPlaceHolder = () => {
   );
 };
 
-const Dashboard = ({}) => {
+const Dashboard = () => {
   const [content, setContent] = useState(["a"]);
 
   return (

@@ -13,8 +13,12 @@ import {
 } from "@carbon/icons-react";
 import Dropdown from "./ui_components/Dropdown";
 
-const Header = ({openNav, setOpenNav = () => {}}) => {
-  const [session, setSession] = useState(-1);
+type HeaderProps = {
+  openNav: boolean;
+  setOpenNav: (set: boolean) => void;
+};
+const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
+  const [session, setSession] = useState<number | string>(-1);
   return (
     <div className="header">
       <div className="header-left">
@@ -23,7 +27,6 @@ const Header = ({openNav, setOpenNav = () => {}}) => {
           icon={openNav ? <Close size={20} /> : <Menu size={20} />}
           onClick={() => {
             setOpenNav(!openNav);
-            console.log("fefe");
           }}
         />
         <div className="title">
@@ -42,7 +45,7 @@ const Header = ({openNav, setOpenNav = () => {}}) => {
             setCurrId={setSession}
             idDict={dummy}
             getName={(id) => {
-              return dummy[id].text;
+              return dummy[id as keyof DropdownDict].text;
             }}
             placeholder="none selected"
             flex={false}
@@ -62,7 +65,10 @@ const Header = ({openNav, setOpenNav = () => {}}) => {
   );
 };
 
-const dummy = {
+type DropdownDict = {
+  [key: number]: any;
+};
+const dummy: DropdownDict = {
   0: {
     id: "option-0",
     text: "Lorem, ipsum dolorawjenfla neawnflajwenfawjenfajwenfkawnefkajnw sit amet consectetur adipisicing elit.",
