@@ -1,3 +1,4 @@
+import {Chatroom} from "./chatroom";
 import {Widget} from "./widget";
 
 export class Session {
@@ -5,12 +6,20 @@ export class Session {
   private _name: string;
   private _type: number;
   private _widgets: Widget[];
+  private _chatroom: Chatroom;
 
-  constructor(id: number, name: string, type: number, widgets: Widget[]) {
+  constructor(
+    id: number,
+    name: string,
+    type: number,
+    widgets: Widget[],
+    chatroom: Chatroom
+  ) {
     this._id = id;
     this._name = name;
     this._type = type;
     this._widgets = widgets;
+    this._chatroom = chatroom;
   }
 
   /**
@@ -39,10 +48,18 @@ export class Session {
 
   /**
    * Getter widgets
-   * @return {Widget}
+   * @return {Widget[]}
    */
   public get widgets(): Widget[] {
     return this._widgets;
+  }
+
+  /**
+   * Getter chatroom
+   * @return {Chatroom}
+   */
+  public get chatroom(): Chatroom {
+    return this._chatroom;
   }
 
   /**
@@ -71,9 +88,17 @@ export class Session {
 
   /**
    * Setter widgets
-   * @param {Widget} value
+   * @param {Widget[]} value
    */
   public set widgets(value: Widget[]) {
     this._widgets = value;
+  }
+
+  /**
+   * Setter chatroom
+   * @param {Chatroom} value
+   */
+  public set chatroom(value: Chatroom) {
+    this._chatroom = value;
   }
 }
