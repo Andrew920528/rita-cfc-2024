@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {Dispatch, SetStateAction, useState} from "react";
 import {
   Add,
   Information,
@@ -10,16 +10,26 @@ import {
 import IconButton from "./ui_components/IconButton";
 import PopUp from "./ui_components/PopUp";
 
+type SubjectCard = {
+  title?: string;
+  subject?: string;
+  grade?: string;
+  content?: string;
+  schedule?: string;
+  selected?: string;
+  setSelected?: Dispatch<SetStateAction<string>>;
+  id?: string;
+};
 const SubjectCard = ({
   title = "新科目",
   subject = "未設定",
   grade = "未設定",
   content = "未設定",
   schedule = "未完成",
-  selected = -1,
+  selected = "-1",
   setSelected = () => {},
-  id,
-}) => {
+  id = "",
+}: SubjectCard) => {
   return (
     <div
       className={`subject-card ${selected === id ? "selected" : ""}`}
@@ -117,7 +127,12 @@ const NavBar = () => {
               setOpenSubjectCreation(true);
             }}
           />
-          <PopUp> </PopUp>
+          <PopUp
+            trigger={openSubjectCreation}
+            setTrigger={setOpenSubjectCreation}
+          >
+            fefef
+          </PopUp>
         </div>
         <div className="nav-stack">
           {subjectList.map((_, ind) => (
