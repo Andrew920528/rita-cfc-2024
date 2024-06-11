@@ -1,4 +1,4 @@
-import React, {Dispatch, SetStateAction, useState} from "react";
+import React, {Dispatch, ReactElement, SetStateAction, useState} from "react";
 import {
   Add,
   Information,
@@ -10,7 +10,7 @@ import {
 import IconButton from "./ui_components/IconButton";
 import PopUp from "./ui_components/PopUp";
 
-type SubjectCard = {
+type SubjectCardProps = {
   title?: string;
   subject?: string;
   grade?: string;
@@ -29,7 +29,7 @@ const SubjectCard = ({
   selected = "-1",
   setSelected = () => {},
   id = "",
-}: SubjectCard) => {
+}: SubjectCardProps) => {
   return (
     <div
       className={`subject-card ${selected === id ? "selected" : ""}`}
@@ -48,12 +48,18 @@ const SubjectCard = ({
   );
 };
 
+type WidgetCardProps = {
+  icon?: ReactElement;
+  title?: string;
+  hint?: string;
+  widget?: ReactElement;
+};
 const WidgetCard = ({
   icon = <Catalog />,
   title = "新工具",
   hint = "新工具的提示",
   widget = <div className="empty-widget"></div>,
-}) => {
+}: WidgetCardProps) => {
   return (
     <div className="widget-card">
       <div className="widget-card-left">
