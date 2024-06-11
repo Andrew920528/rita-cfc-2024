@@ -8,6 +8,7 @@ import {
   Alarm,
 } from "@carbon/icons-react";
 import IconButton from "./ui_components/IconButton";
+import PopUp from "./ui_components/PopUp";
 
 const SubjectCard = ({
   title = "新科目",
@@ -94,16 +95,29 @@ const widgetList = [
   {title: "課表", hint: "瀏覽每週課表", icon: <Alarm />},
 ];
 
+const SubjectCreation = () => {
+  return <div className="subject-creation"></div>;
+};
+
 const NavBar = () => {
   const [subject, setSubject] = useState(
     subjectList.length > 0 ? subjectList[0].id : ""
   );
+  const [openSubjectCreation, setOpenSubjectCreation] = useState(true);
   return (
     <div className="navbar">
       <div className="nav-subject">
         <div className="nav-heading">
           <p className="--heading">科目</p>
-          <IconButton mode={"primary"} icon={<Add />} text={"新增"} />
+          <IconButton
+            mode={"primary"}
+            icon={<Add />}
+            text={"新增"}
+            onClick={() => {
+              setOpenSubjectCreation(true);
+            }}
+          />
+          <PopUp> </PopUp>
         </div>
         <div className="nav-stack">
           {subjectList.map((_, ind) => (
