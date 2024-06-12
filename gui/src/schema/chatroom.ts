@@ -1,1 +1,1 @@
-export class Chatroom {}
+export type Chatroom = {};

@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import "./style/main.scss";
 // import {tryTrySee} from "./utils/service";
 import Home from "./pages/Home";
@@ -10,6 +10,7 @@ const App: React.FC = () => {
   //   }
   //   runRequest();
   // }, []);
+
   return (
     <div className="App">
       <Home />

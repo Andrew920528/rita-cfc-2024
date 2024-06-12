@@ -12,6 +12,8 @@ import {
   UserAvatar,
 } from "@carbon/icons-react";
 import Dropdown from "./ui_components/Dropdown";
+import {useAppDispatch, useTypedSelector} from "../store/store";
+import {UserServices} from "../features/UserSlice";
 
 type HeaderProps = {
   openNav: boolean;
@@ -19,6 +21,8 @@ type HeaderProps = {
 };
 const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const [session, setSession] = useState<number | string>(-1);
+  const dispatch = useAppDispatch();
+  const user = useTypedSelector((state) => state.User);
   return (
     <div className="header">
       <div className="header-left">
@@ -39,7 +43,13 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
       <div className="header-right">
         <div className="subject-banner">
           <p className="subject --heading">新科目</p>
-          <IconButton mode={"on-dark"} icon={<Edit size={20} />} />
+          <IconButton
+            mode={"on-dark"}
+            icon={<Edit size={20} />}
+            onClick={() => {
+              dispatch(UserServices.actions.setAlias("使用者2"));
+            }}
+          />
           <Dropdown
             currId={session}
             setCurrId={setSession}
@@ -97,6 +107,7 @@ const dummy: DropdownDict = {
 };
 
 const AccountButton = () => {
+  const user = useTypedSelector((state) => state.User);
   const AccountContent = ({
     name = "廖偉良",
     occupation = "級任老師",
@@ -139,7 +150,13 @@ const AccountButton = () => {
 
   const menuProps = {
     mode: "dark",
-    content: <AccountContent />,
+    content: (
+      <AccountContent
+        name={user.alias}
+        occupation={user.occupation}
+        school={user.school}
+      />
+    ),
   };
   return (
     <FloatingMenuButton
