@@ -1,0 +1,68 @@
+@use "../../abstract/index" as *;
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.pop-up-wrapper {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  background-color: rgba(254, 254, 254, 50%);
+  backdrop-filter: blur(5px);
+  animation: 0.2s ease-in-out fade-in;
+  .pop-up {
+    z-index: 1002;
+    background-color: rgb(255, 255, 255);
+    color: black;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+    .pop-up-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      // border-bottom: 1px solid #8d8d8d;
+      gap: 1rem;
+
+      p {
+        padding-left: 1rem;
+      }
+    }
+    .pu-content {
+      padding: 1rem;
+    }
+    .pu-footer {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      height: 4rem;
+      .cancel {
+        color: $primary-color;
+        text-decoration: underline;
+        text-align: start;
+        margin-left: 1rem;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      .pu-footer-children {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+  }
+}

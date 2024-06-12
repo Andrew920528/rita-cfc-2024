@@ -8,7 +8,7 @@ import {
   Alarm,
 } from "@carbon/icons-react";
 import IconButton from "./ui_components/IconButton";
-import PopUp from "./ui_components/PopUp";
+import PopUp from "./PopUps/PopUp";
 
 type SubjectCardProps = {
   title?: string;
@@ -133,12 +133,14 @@ const NavBar = () => {
               setOpenSubjectCreation(true);
             }}
           />
-          {/* <PopUp
+          {/* TODO Add subject */}
+          <PopUp
             trigger={openSubjectCreation}
             setTrigger={setOpenSubjectCreation}
+            title={"Pp"}
           >
-            fefef
-          </PopUp> */}
+            cdc
+          </PopUp>
         </div>
         <div className="nav-stack">
           {subjectList.map((_, ind) => (

@@ -1,10 +1,10 @@
 import React, {ReactElement} from "react";
 
-type IconButtonProps = {
+export type IconButtonProps = {
   flex?: boolean;
   mode?: string;
   text?: string;
-  icon?: ReactElement;
+  icon: ReactElement;
   onClick?: (args?: any) => void;
 };
 const IconButton = ({
