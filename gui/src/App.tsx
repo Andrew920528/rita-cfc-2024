@@ -1,19 +1,21 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import "./style/main.scss";
-import {tryTrySee} from "./utils/service";
+// import {tryTrySee} from "./utils/service";
 import Home from "./pages/Home";
-function App() {
+
+const App: React.FC = () => {
   // useEffect(() => {
   //   async function runRequest() {
   //     await tryTrySee();
   //   }
   //   runRequest();
   // }, []);
+
   return (
     <div className="App">
-      <Home></Home>
+      <Home />
     </div>
   );
-}
+};
 
 export default App;
