@@ -4,15 +4,30 @@ type TextboxProps = {
   flex?: boolean;
   mode?: string;
   placeholder?: string;
+  label?: string;
+  errorMsg?: string;
+  value?: string;
+  onChange?: (e: React.FormEvent<HTMLInputElement>) => void;
 };
 const Textbox = ({
   flex,
-  mode = "",
+  mode,
   placeholder = "enter text",
+  errorMsg,
+  label,
+  value,
+  onChange = () => {},
 }: TextboxProps) => {
   return (
     <div className={`textbox ${flex ? "flex" : "fixed"} ${mode}`}>
-      <input placeholder={placeholder} />
+      {label && <p className="tb-label --label">{label}</p>}
+      <input
+        className={`${errorMsg ? "error" : ""}`}
+        placeholder={placeholder}
+        onChange={onChange}
+        value={value}
+      />
+      {errorMsg && <p className="error-msg --label">{errorMsg}</p>}
     </div>
   );
 };

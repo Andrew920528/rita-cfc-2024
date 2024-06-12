@@ -8,7 +8,7 @@ import {
   Alarm,
 } from "@carbon/icons-react";
 import IconButton from "./ui_components/IconButton";
-import PopUp from "./ui_components/PopUp";
+import PopUp from "./PopUps/PopUp";
 
 type SubjectCardProps = {
   title?: string;

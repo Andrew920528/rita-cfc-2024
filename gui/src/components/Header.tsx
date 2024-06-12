@@ -14,15 +14,20 @@ import {
 import Dropdown from "./ui_components/Dropdown";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {UserServices} from "../features/UserSlice";
+import PopUp from "./PopUps/PopUp";
+import ManageAccountPU from "./PopUps/ManageAccountPU";
 
 type HeaderProps = {
   openNav: boolean;
   setOpenNav: (set: boolean) => void;
 };
 const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
-  const [session, setSession] = useState<number | string>(-1);
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
+
+  // ui controllers
+  const [session, setSession] = useState<number | string>(-1);
+
   return (
     <div className="header">
       <div className="header-left">
@@ -113,6 +118,7 @@ const AccountButton = () => {
     occupation = "級任老師",
     school = "松山高中",
   }) => {
+    const [openManageAccountPU, setOpenManageAccountPU] = useState(false);
     return (
       <div className="account-content">
         <div className="user-info">
@@ -132,9 +138,16 @@ const AccountButton = () => {
           icon={<Settings />}
           mode={"on-dark-2"}
           onClick={() => {
-            console.log("Manage Account");
+            setOpenManageAccountPU(!openManageAccountPU);
           }}
         />
+
+        <ManageAccountPU
+          trigger={openManageAccountPU}
+          setTrigger={setOpenManageAccountPU}
+          title="管理帳號"
+        />
+
         <IconButton
           flex={true}
           text={"登出"}
