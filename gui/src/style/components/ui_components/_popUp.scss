@@ -1,0 +1,26 @@
+.pop-up-background {
+  background-color: rgba(254, 254, 254, 50%);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+  .pop-up {
+    background-color: rgb(255, 255, 255);
+
+    .pop-up-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #8d8d8d;
+      p {
+        padding-left: 1rem;
+      }
+    }
+  }
+}

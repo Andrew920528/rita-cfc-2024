@@ -133,12 +133,13 @@ const NavBar = () => {
               setOpenSubjectCreation(true);
             }}
           />
-          {/* <PopUp
+          <PopUp
             trigger={openSubjectCreation}
             setTrigger={setOpenSubjectCreation}
+            title={"Pp"}
           >
-            fefef
-          </PopUp> */}
+            cdc
+          </PopUp>
         </div>
         <div className="nav-stack">
           {subjectList.map((_, ind) => (
