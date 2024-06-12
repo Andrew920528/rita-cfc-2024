@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import "./style/main.scss";
 // import {tryTrySee} from "./utils/service";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
 
 const App: React.FC = () => {
   // useEffect(() => {
@@ -13,7 +14,8 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <Home />
+      {/* <Home /> */}
+      <Login />
     </div>
   );
 };
