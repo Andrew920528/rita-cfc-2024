@@ -133,6 +133,7 @@ const NavBar = () => {
               setOpenSubjectCreation(true);
             }}
           />
+          {/* TODO Add subject */}
           <PopUp
             trigger={openSubjectCreation}
             setTrigger={setOpenSubjectCreation}

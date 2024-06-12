@@ -52,7 +52,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
             mode={"on-dark"}
             icon={<Edit size={20} />}
             onClick={() => {
-              dispatch(UserServices.actions.setAlias("使用者2"));
+              // TODO Manage Classroom
             }}
           />
           <Dropdown

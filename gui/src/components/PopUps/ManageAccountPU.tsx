@@ -1,12 +1,19 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Textbox from "../ui_components/Textbox";
 import IconButton from "../ui_components/IconButton";
 import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "./PopUp";
+import {useAppDispatch, useTypedSelector} from "../../store/store";
+import {UserServices} from "../../features/UserSlice";
 
 type ManageAccountPUProps = {};
 
 const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
+  // global states
+  const dispatch = useAppDispatch();
+  const user = useTypedSelector((state) => state.User);
+
+  // local states
   const [aliasError, setAliasError] = useState("");
   const [schoolError, setSchoolError] = useState("");
   const [occupationError, setOccupationError] = useState("");
@@ -14,6 +21,12 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
   const [alias, setAlias] = useState("");
   const [school, setSchool] = useState("");
   const [occupation, setOccupation] = useState("");
+
+  useEffect(() => {
+    setAlias(user.alias);
+    setSchool(user.school);
+    setOccupation(user.occupation);
+  }, []);
 
   function resetForm() {
     setAlias("");
@@ -23,25 +36,37 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
     setSchoolError("");
     setOccupationError("");
   }
-  function validateAccount() {
-    if (alias === "") {
+  function validateAccount(): boolean {
+    let validate = true;
+    if (alias.trim() === "") {
       setAliasError("請輸入暱稱");
-    } else {
-      setAliasError("");
+      validate = false;
     }
-    if (school === "") {
+    if (school.trim() === "") {
       setSchoolError("請輸入學校");
-    } else {
-      setSchoolError("");
+      validate = false;
     }
-    if (occupation === "") {
+    if (occupation.trim() === "") {
       setOccupationError("請輸入職稱");
-    } else {
-      setOccupationError("");
+      validate = false;
+    }
+    return validate;
+  }
+
+  function submitForm() {
+    if (!validateAccount()) {
+      return;
     }
 
-    // calls api
+    // update global states
+    dispatch(UserServices.actions.setAlias(alias.trim()));
+    dispatch(UserServices.actions.setSchool(school.trim()));
+    dispatch(UserServices.actions.setOccupation(occupation.trim()));
+    // reset form
+    resetForm();
     // close panel
+    props.setTrigger(false);
+    return true;
   }
 
   return (
@@ -51,7 +76,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
         icon: <Save size={20} />,
         text: "儲存變更",
         onClick: () => {
-          validateAccount();
+          submitForm();
         },
       }}
       reset={resetForm}
@@ -66,6 +91,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
           onChange={(e) => {
             setAlias(e.currentTarget.value);
           }}
+          autoFocus={true}
         />
         <Textbox
           label="學校"

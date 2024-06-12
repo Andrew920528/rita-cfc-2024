@@ -5,7 +5,7 @@ import IconButton, {IconButtonProps} from "../ui_components/IconButton";
 export type PopUpProps = {
   trigger: boolean;
   setTrigger: (trigger: boolean) => void;
-  reset: () => void;
+  reset?: () => void;
   title: string;
   children?: ReactNode;
   cancel?: boolean;

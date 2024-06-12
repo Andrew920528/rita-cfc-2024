@@ -18,6 +18,12 @@ const UserSlice = createSlice({
     setAlias: (state, action: PayloadAction<string>) => {
       state.alias = action.payload;
     },
+    setSchool: (state, action: PayloadAction<string>) => {
+      state.school = action.payload;
+    },
+    setOccupation: (state, action: PayloadAction<string>) => {
+      state.occupation = action.payload;
+    },
   },
 });
 

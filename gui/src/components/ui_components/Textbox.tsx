@@ -8,6 +8,7 @@ type TextboxProps = {
   errorMsg?: string;
   value?: string;
   onChange?: (e: React.FormEvent<HTMLInputElement>) => void;
+  autoFocus?: boolean;
 };
 const Textbox = ({
   flex,
@@ -17,6 +18,7 @@ const Textbox = ({
   label,
   value,
   onChange = () => {},
+  autoFocus = false,
 }: TextboxProps) => {
   return (
     <div className={`textbox ${flex ? "flex" : "fixed"} ${mode}`}>
@@ -26,6 +28,7 @@ const Textbox = ({
         placeholder={placeholder}
         onChange={onChange}
         value={value}
+        autoFocus={autoFocus}
       />
       {errorMsg && <p className="error-msg --label">{errorMsg}</p>}
     </div>
