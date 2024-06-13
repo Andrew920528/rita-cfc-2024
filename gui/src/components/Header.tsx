@@ -154,6 +154,7 @@ const AccountButton = () => {
           icon={<Logout />}
           mode={"on-dark-2"}
           onClick={() => {
+            // TODO: logout
             console.log("Log out");
           }}
         />

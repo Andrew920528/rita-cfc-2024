@@ -6,5 +6,10 @@ export type Classroom = {
   subject: string;
   grade: string;
   publisher: string;
-  sessions: Session[];
+  sessions: number[];
+};
+
+export type Classrooms = {
+  dict: {[key: number]: Classroom};
+  current: number;
 };
