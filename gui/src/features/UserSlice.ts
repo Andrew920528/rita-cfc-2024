@@ -24,6 +24,9 @@ const UserSlice = createSlice({
     setOccupation: (state, action: PayloadAction<string>) => {
       state.occupation = action.payload;
     },
+    addClassroom: (state, action: PayloadAction<string>) => {
+      state.classrooms.push(action.payload);
+    },
   },
 });
 

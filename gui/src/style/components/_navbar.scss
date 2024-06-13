@@ -31,7 +31,7 @@
     margin: 0;
   }
 
-  .subject-card {
+  .class-card {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -52,6 +52,9 @@
     p {
       margin: 0;
       text-wrap: nowrap;
+      width: 100%;
+      text-overflow: ellipsis;
+      overflow: hidden;
       user-select: none;
     }
   }

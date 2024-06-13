@@ -1,8 +1,8 @@
 export type Chatroom = {
-  id: number;
+  id: string;
 };
 
 export type Chatrooms = {
-  dict: {[key: number]: Chatroom};
-  current: number;
+  dict: {[key: string]: Chatroom};
+  current: string;
 };

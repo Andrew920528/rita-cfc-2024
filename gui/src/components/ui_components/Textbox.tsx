@@ -30,7 +30,7 @@ const Textbox = ({
         value={value}
         autoFocus={autoFocus}
       />
-      {errorMsg && <p className="error-msg --label">{errorMsg}</p>}
+      {errorMsg && <p className="--error --label">{errorMsg}</p>}
     </div>
   );
 };

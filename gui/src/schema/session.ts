@@ -2,7 +2,7 @@ import {Chatroom} from "./chatroom";
 import {Widget} from "./widget";
 
 export type Session = {
-  id: number;
+  id: string;
   name: string;
   type: number;
   widgets: number[]; // in order
@@ -10,6 +10,6 @@ export type Session = {
 };
 
 export type Sessions = {
-  dict: {[key: number]: Sessions};
-  current: number;
+  dict: {[key: string]: Sessions};
+  current: string;
 };

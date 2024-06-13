@@ -1,12 +1,17 @@
+@use "../../abstract/index" as *;
 $width: 18rem;
 .dropdown-wrapper {
   height: 100%;
+  display: inline-block;
+  position: relative;
+
   &.fixed {
     width: $width;
   }
   &.flex {
     width: 100%;
   }
+
   .dropdown {
     width: 100%;
     padding-left: 1rem;
@@ -20,21 +25,53 @@ $width: 18rem;
     text-align: start;
     gap: 1rem;
     height: 100%;
-    &:hover {
-      background-color: #4c4c4c;
-    }
-
     p {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       user-select: none;
     }
+    // .value {
+    //   flex: 1;
+    // }
+
+    .placeholder {
+      color: #a8a8a8;
+    }
 
     .chevron {
       display: flex;
       flex-direction: column;
+      align-items: center;
     }
+
+    &:hover {
+      background-color: #4c4c4c;
+    }
+
+    &.form {
+      min-height: 3rem;
+      background-color: #f4f4f4;
+      border-bottom: 1px solid #8d8d8d;
+      &.error {
+        border: none;
+        outline: 2px solid #da1e28;
+      }
+      &:hover {
+        background-color: #e8e8e8;
+      }
+      &:focus {
+        border: none;
+        outline: $primary-color solid 2px;
+      }
+    }
+  }
+
+  .dd-label {
+    padding-bottom: 0.5rem;
+  }
+  .dd-error {
+    padding-top: 0.5rem;
   }
 }
 
@@ -44,15 +81,14 @@ $width: 18rem;
   flex-direction: column;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
   z-index: 1000;
-  &.fixed {
-    width: $width;
-  }
-  &.flex {
-    width: 100%;
-  }
+  width: 100%;
   .dropdown-menu-main {
     max-height: 70vh;
     overflow-y: auto;
+    width: 100%;
+  }
+  &.form .dropdown-menu-main {
+    max-height: 11rem;
   }
 }
 

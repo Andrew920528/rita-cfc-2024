@@ -26,7 +26,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const user = useTypedSelector((state) => state.User);
 
   // ui controllers
-  const [session, setSession] = useState<number | string>(-1);
+  const [session, setSession] = useState<string>("-1");
 
   return (
     <div className="header">
@@ -64,6 +64,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
             }}
             placeholder="none selected"
             flex={false}
+            action={true}
             extra={
               <IconButton
                 flex={true}
@@ -81,31 +82,31 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
 };
 
 type DropdownDict = {
-  [key: number]: any;
+  [key: string]: any;
 };
 const dummy: DropdownDict = {
-  0: {
+  "0": {
     id: "option-0",
     text: "Lorem, ipsum dolorawjenfla neawnflajwenfawjenfajwenfkawnefkajnw sit amet consectetur adipisicing elit.",
   },
-  1: {
+  "1": {
     id: "option-1",
     text: "Option 1",
   },
-  2: {
+  "2": {
     id: "option-2",
     text: "Option 2",
   },
-  3: {
+  "3": {
     id: "option-3",
     text: "Option 3 - a disabled item",
     disabled: true,
   },
-  4: {
+  "4": {
     id: "option-4",
     text: "Option 4",
   },
-  5: {
+  "5": {
     id: "option-5",
     text: "Option 5",
   },

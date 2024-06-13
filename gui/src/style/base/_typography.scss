@@ -35,3 +35,6 @@ html {
   @include type.type-style("label-01");
   color: #525252;
 }
+.--error {
+  color: #da1e28;
+}

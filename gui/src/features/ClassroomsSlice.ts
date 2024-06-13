@@ -5,7 +5,7 @@ import {Classroom, Classrooms} from "../schema/classroom";
 
 const initialState: Classrooms = {
   dict: {},
-  current: -1,
+  current: "NONE",
 };
 
 const ClassroomsSlice = createSlice({
@@ -14,6 +14,9 @@ const ClassroomsSlice = createSlice({
   reducers: {
     addClassroom: (state, action: PayloadAction<Classroom>) => {
       state.dict[action.payload.id] = action.payload;
+    },
+    setCurrent: (state, action: PayloadAction<string>) => {
+      state.current = action.payload;
     },
   },
 });

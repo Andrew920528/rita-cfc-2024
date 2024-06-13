@@ -2,9 +2,11 @@ import {configureStore} from "@reduxjs/toolkit";
 import {useDispatch, useSelector, TypedUseSelectorHook} from "react-redux";
 import {useReducer} from "react";
 import UserReducer from "../features/UserSlice";
+import ClassroomsReducer from "../features/ClassroomsSlice";
 const store = configureStore({
   reducer: {
     User: UserReducer, //convention is to to write the text preceding the word "Reducer"
+    Classrooms: ClassroomsReducer,
   },
 });
 
