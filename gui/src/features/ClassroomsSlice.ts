@@ -15,6 +15,9 @@ const ClassroomsSlice = createSlice({
     addClassroom: (state, action: PayloadAction<Classroom>) => {
       state.dict[action.payload.id] = action.payload;
     },
+    editClassroom: (state, action: PayloadAction<Classroom>) => {
+      state.dict[action.payload.id] = action.payload;
+    },
     setCurrent: (state, action: PayloadAction<string>) => {
       state.current = action.payload;
     },

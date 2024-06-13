@@ -8,7 +8,7 @@ import {
   Alarm,
 } from "@carbon/icons-react";
 import IconButton from "./ui_components/IconButton";
-import CreateClassroomPU from "./PopUps/CreateClassroomPU";
+import ManageClassroomPU from "./PopUps/ManageClassroomPU";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 
@@ -104,14 +104,15 @@ const NavBar = () => {
               setOpenSubjectCreation(true);
             }}
           />
-          <CreateClassroomPU
+          <ManageClassroomPU
             trigger={openSubjectCreation}
             setTrigger={setOpenSubjectCreation}
             title={"創建教室"}
+            action="create"
           />
         </div>
         <div className="nav-stack">
-          {user.classrooms.map((id) => (
+          {user.classrooms.toReversed().map((id) => (
             <ClassCard
               key={id}
               id={id}

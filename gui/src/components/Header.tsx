@@ -16,6 +16,7 @@ import {useAppDispatch, useTypedSelector} from "../store/store";
 import {UserServices} from "../features/UserSlice";
 import PopUp from "./PopUps/PopUp";
 import ManageAccountPU from "./PopUps/ManageAccountPU";
+import ManageClassroomPU from "./PopUps/ManageClassroomPU";
 
 type HeaderProps = {
   openNav: boolean;
@@ -24,7 +25,8 @@ type HeaderProps = {
 const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
-
+  const classrooms = useTypedSelector((state) => state.Classrooms);
+  const [openSubjectEdit, setOpenSubjectEdit] = useState(false);
   // ui controllers
   const [session, setSession] = useState<string>("-1");
 
@@ -46,35 +48,51 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
         </div>
       </div>
       <div className="header-right">
-        <div className="subject-banner">
-          <p className="subject --heading">新科目</p>
-          <IconButton
-            mode={"on-dark"}
-            icon={<Edit size={20} />}
-            onClick={() => {
-              // TODO Manage Classroom
-            }}
-          />
-          <Dropdown
-            currId={session}
-            setCurrId={setSession}
-            idDict={dummy}
-            getName={(id) => {
-              return dummy[id as keyof DropdownDict].text;
-            }}
-            placeholder="none selected"
-            flex={false}
-            action={true}
-            extra={
-              <IconButton
-                flex={true}
-                mode={"primary"}
-                text={"新增課程"}
-                icon={<Add />}
-              />
-            }
-          />
-        </div>
+        {classrooms.current === "NONE" ||
+        Object.keys(classrooms.dict).length === 0 ? (
+          <div className="no-subject-hint">
+            <i>新增課程以開始備課</i>
+          </div>
+        ) : (
+          <div className="subject-banner">
+            <p className="subject --heading">
+              {classrooms.dict[classrooms.current].name}
+            </p>
+            <IconButton
+              mode={"on-dark"}
+              icon={<Edit size={20} />}
+              onClick={() => {
+                setOpenSubjectEdit(true);
+              }}
+            />
+            <ManageClassroomPU
+              trigger={openSubjectEdit}
+              setTrigger={setOpenSubjectEdit}
+              title={"編輯教室"}
+              action="edit"
+              editClassroomId={classrooms.current}
+            />
+            <Dropdown
+              currId={session}
+              setCurrId={setSession}
+              idDict={dummy}
+              getName={(id) => {
+                return dummy[id as keyof DropdownDict].text;
+              }}
+              placeholder="none selected"
+              flex={false}
+              action={true}
+              extra={
+                <IconButton
+                  flex={true}
+                  mode={"primary"}
+                  text={"新增課程"}
+                  icon={<Add />}
+                />
+              }
+            />
+          </div>
+        )}
         <AccountButton />
       </div>
     </div>

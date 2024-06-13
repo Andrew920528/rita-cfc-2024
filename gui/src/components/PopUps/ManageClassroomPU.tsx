@@ -10,7 +10,10 @@ import {Classroom} from "../../schema/classroom";
 import {formatDate} from "../../utils/util";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
 
-type CreateClassroomPUProps = {};
+type ManageClassroomPUProps = {
+  action: "create" | "edit";
+  editClassroomId?: string;
+};
 
 export const subjectDict = {
   國文: "",
@@ -28,11 +31,11 @@ export const gradeDict = {
 export const publisherDict = {
   康軒: "",
 };
-const CreateClassroomPU = (props: CreateClassroomPUProps & PopUpProps) => {
+const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   // global states
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
-  const classroom = useTypedSelector((state) => state.Classrooms);
+  const classrooms = useTypedSelector((state) => state.Classrooms);
   // local states
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
@@ -45,6 +48,23 @@ const CreateClassroomPU = (props: CreateClassroomPUProps & PopUpProps) => {
   const [otherSubjectError, setOtherSubjectError] = useState("");
   const [gradeError, setGradeError] = useState("");
   const [publisherError, setPublisherError] = useState("");
+
+  useEffect(() => {
+    if (props.action === "edit") {
+      let editClassroomId = props.editClassroomId ? props.editClassroomId : "";
+      if (editClassroomId === "" || !(editClassroomId in classrooms.dict))
+        return;
+      setName(classrooms.dict[editClassroomId!].name);
+      if (classrooms.dict[editClassroomId!].subject in subjectDict) {
+        setSubject(classrooms.dict[editClassroomId!].subject);
+      } else {
+        setSubject("其他");
+        setOtherSubject(classrooms.dict[editClassroomId!].subject);
+      }
+      setGrade(classrooms.dict[editClassroomId!].grade);
+      setPublisher(classrooms.dict[editClassroomId!].publisher);
+    }
+  }, [props.trigger, classrooms.current]);
 
   function resetForm() {
     setName("");
@@ -59,7 +79,7 @@ const CreateClassroomPU = (props: CreateClassroomPUProps & PopUpProps) => {
     setGradeError("");
     setPublisherError("");
   }
-  function validateAccount(): boolean {
+  function validateForm(): boolean {
     let validate = true;
     if (name.trim() === "") {
       setNameError("請輸入課堂名稱");
@@ -84,18 +104,14 @@ const CreateClassroomPU = (props: CreateClassroomPUProps & PopUpProps) => {
     return validate;
   }
 
-  function submitForm() {
-    if (!validateAccount()) {
-      return;
-    }
-
+  function createClassroom() {
     // update global states
     const newClassroomId: string =
       user.username + "-classroom-" + formatDate(new Date());
     let newClassroom: Classroom = {
       id: newClassroomId,
       name: name,
-      subject: subject === "其他" ? "其他 - " + otherSubject : subject,
+      subject: subject === "其他" ? otherSubject : subject,
       grade: grade,
       publisher: subject === "其他" ? "綜合" : publisher,
       sessions: [],
@@ -108,6 +124,38 @@ const CreateClassroomPU = (props: CreateClassroomPUProps & PopUpProps) => {
     dispatch(ClassroomsServices.actions.addClassroom(newClassroom));
     // set current classroom to the new classroom
     dispatch(ClassroomsServices.actions.setCurrent(newClassroomId));
+  }
+
+  function editClassroom() {
+    // update global states
+    if (props.editClassroomId === undefined) {
+      throw new Error("editClassroomId is undefined");
+    }
+    const classroomId = props.editClassroomId ? props.editClassroomId : "";
+    let newClassroom: Classroom = {
+      id: classroomId,
+      name: name,
+      subject: subject === "其他" ? otherSubject : subject,
+      grade: grade,
+      publisher: subject === "其他" ? "綜合" : publisher,
+      sessions: [],
+      plan: false,
+    };
+
+    // update classroom to classrooms dict
+    dispatch(ClassroomsServices.actions.editClassroom(newClassroom));
+  }
+
+  function submitForm() {
+    if (!validateForm()) {
+      return;
+    }
+
+    if (props.action === "create") {
+      createClassroom();
+    } else if (props.action === "edit") {
+      editClassroom();
+    }
 
     // reset form
     resetForm();
@@ -205,4 +253,4 @@ const CreateClassroomPU = (props: CreateClassroomPUProps & PopUpProps) => {
   );
 };
 
-export default CreateClassroomPU;
+export default ManageClassroomPU;
