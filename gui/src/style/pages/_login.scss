@@ -1,1 +1,38 @@
-@forward "./home";
+//@forward "./home";
+$background-color: #f3f4f6;
+
+.login-root{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    .login-material{
+        .Forming {
+            display: flex;
+            flex-direction: column; 
+            align-items: center;
+            gap: 2px; 
+            .usrn{
+                display: flex;
+                flex-direction: column; 
+                align-items: start;
+            }
+            .chldn{
+                display: flex;
+                flex-direction: column; 
+                align-items: start;
+            }
+            .input_box{
+                width:100%;
+                max-width: 400px;
+                height: 200%;
+            }
+            IconButton {
+                width: 400px;
+                align-items: center;
+            }
+        }
+        
+    }
+    
+}
