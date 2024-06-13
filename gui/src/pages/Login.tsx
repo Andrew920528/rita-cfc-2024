@@ -1,21 +1,22 @@
 import React, {useEffect, useState} from "react";
 import IconButton from "../components/ui_components/IconButton";
-import { Exit } from "@carbon/icons-react";
+import {Exit} from "@carbon/icons-react";
 
 /**
  * Notes for Ellen:
- * 1. To keep style consistent, use <Textbox> component
+ * 1. To keep style consistent, use <Textbox> component, which is a wrapper around <input>
  * 2. Before we proceed with the data flow, let's look at the ui components
- * 3. Let's add a button with <InputButton>, which is a wrapper around <button>
+ * 3. Let's learn how to use (and read) custom components that I have not documented yet
  * 4. Now, let's change the css to make it look better
- * 5. Finally, we will look at how to store input as states
  */
 const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   return (
     <div className="login-root">
-      <h2><strong>登入</strong></h2>
+      <h2>
+        <strong>登入</strong>
+      </h2>
       <div className="login-material">
         <div className="Forming">
           <label className="usrn">
@@ -41,7 +42,6 @@ const Login = () => {
           <div className="login-button">
             <IconButton mode={"ghost"} icon={<Exit />} />
           </div>
-          
         </div>
       </div>
     </div>
