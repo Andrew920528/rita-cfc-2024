@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import IconButton from "../components/ui_components/IconButton";
-import {Exit} from "@carbon/icons-react";
+import {Login as LoginIcon} from "@carbon/icons-react";
+import Textbox from "../components/ui_components/Textbox";
 
 /**
  * Notes for Ellen:
@@ -12,37 +13,79 @@ import {Exit} from "@carbon/icons-react";
 const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const [usernameError, setUsernameError] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<string>("");
+
+  function reset(): void {
+    setUsername("");
+    setPassword("");
+    setUsernameError("");
+    setPasswordError("");
+  }
+
+  function validateLogin(): boolean {
+    let validate = true;
+    if (username.trim() === "") {
+      setUsernameError("請輸入使用者名稱");
+      validate = false;
+    }
+    if (password.trim() === "") {
+      setPasswordError("請輸入密碼");
+      validate = false;
+    }
+    return validate;
+  }
   return (
     <div className="login-root">
-      <h2>
-        <strong>登入</strong>
-      </h2>
-      <div className="login-material">
-        <div className="Forming">
-          <label className="usrn">
-            <h5>使用者名稱:</h5>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              className="input_box"
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </label>
-          <label className="chldn">
-            <h5>密碼:</h5>
-            <input
-              type="password" // Changed type to password for privacy
-              id="password"
-              value={password}
-              className="input_box"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
-          <div className="login-button">
-            <IconButton mode={"ghost"} icon={<Exit />} />
-          </div>
-        </div>
+      <div className="login-forming">
+        <p className="--heading">登入</p>
+        <Textbox
+          label="使用者名稱:"
+          mode="form"
+          flex={true}
+          placeholder="輸入使用者名稱"
+          value={username}
+          onChange={(e) => {
+            setUsername(e.currentTarget.value);
+          }}
+          errorMsg={usernameError}
+        />
+        <Textbox
+          mode="form"
+          flex={true}
+          type="password"
+          label="密碼"
+          placeholder="輸入密碼"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.currentTarget.value);
+          }}
+          errorMsg={passwordError}
+        />
+        <IconButton
+          mode={"primary"}
+          flex={true}
+          text="登入"
+          icon={<LoginIcon />}
+          onClick={() => {
+            if (validateLogin()) {
+              console.log("login Successful!");
+              reset();
+            }
+          }}
+        />
+      </div>
+      <div className="login-register">
+        <p>尚未註冊？</p>
+        <p
+          className="login-create"
+          onClick={() => {
+            console.log("click");
+          }}
+        >
+          建立帳號
+        </p>
       </div>
     </div>
   );
