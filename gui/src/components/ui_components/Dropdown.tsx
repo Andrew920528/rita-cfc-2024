@@ -1,7 +1,25 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import {ChevronDown, ChevronUp, Close} from "@carbon/icons-react";
 
 const UNDEFINED = "UNDEFINED";
+
+type DropdownProps = {
+  currId: string | number;
+  setCurrId: Dispatch<SetStateAction<string | number>>;
+  idDict: {[key: string | number]: object} | {};
+  getName: (id: string | number) => string;
+  placeholder: string;
+  flex: boolean;
+  extra: ReactNode;
+};
+
 const Dropdown = ({
   currId = UNDEFINED,
   setCurrId = () => {},
@@ -10,14 +28,14 @@ const Dropdown = ({
   placeholder = "placeholder",
   flex = false,
   extra = null,
-}) => {
+}: DropdownProps) => {
   const [openMenu, setOpenMenu] = useState(false);
-  const componentRef = useRef(null);
+  const componentRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: MouseEvent): void => {
       if (
         componentRef.current &&
-        !componentRef.current.contains(event.target)
+        !componentRef.current.contains(event.target as Node)
       ) {
         setOpenMenu(false);
       }
@@ -69,6 +87,14 @@ const Dropdown = ({
   );
 };
 
+type DropdownOptionProps = {
+  id: string | number;
+  name: string;
+  currId: string | number;
+  onClick?: (args: any) => void;
+  icon?: ReactNode;
+  iconAction?: (e: React.MouseEvent<HTMLDivElement>) => void;
+};
 const DropdownOption = ({
   id,
   name,
@@ -79,7 +105,7 @@ const DropdownOption = ({
     if (e && e.stopPropagation) e.stopPropagation();
     console.log("action icon clicked");
   },
-}) => {
+}: DropdownOptionProps) => {
   return (
     <div
       className={`dropdown-option ${id === currId && "selected"}`}

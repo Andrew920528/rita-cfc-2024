@@ -12,9 +12,22 @@ import {
   UserAvatar,
 } from "@carbon/icons-react";
 import Dropdown from "./ui_components/Dropdown";
+import {useAppDispatch, useTypedSelector} from "../store/store";
+import {UserServices} from "../features/UserSlice";
+import PopUp from "./PopUps/PopUp";
+import ManageAccountPU from "./PopUps/ManageAccountPU";
 
-const Header = ({openNav, setOpenNav = () => {}}) => {
-  const [session, setSession] = useState(-1);
+type HeaderProps = {
+  openNav: boolean;
+  setOpenNav: (set: boolean) => void;
+};
+const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
+  const dispatch = useAppDispatch();
+  const user = useTypedSelector((state) => state.User);
+
+  // ui controllers
+  const [session, setSession] = useState<number | string>(-1);
+
   return (
     <div className="header">
       <div className="header-left">
@@ -23,7 +36,6 @@ const Header = ({openNav, setOpenNav = () => {}}) => {
           icon={openNav ? <Close size={20} /> : <Menu size={20} />}
           onClick={() => {
             setOpenNav(!openNav);
-            console.log("fefe");
           }}
         />
         <div className="title">
@@ -36,13 +48,19 @@ const Header = ({openNav, setOpenNav = () => {}}) => {
       <div className="header-right">
         <div className="subject-banner">
           <p className="subject --heading">新科目</p>
-          <IconButton mode={"on-dark"} icon={<Edit size={20} />} />
+          <IconButton
+            mode={"on-dark"}
+            icon={<Edit size={20} />}
+            onClick={() => {
+              // TODO Manage Classroom
+            }}
+          />
           <Dropdown
             currId={session}
             setCurrId={setSession}
             idDict={dummy}
             getName={(id) => {
-              return dummy[id].text;
+              return dummy[id as keyof DropdownDict].text;
             }}
             placeholder="none selected"
             flex={false}
@@ -62,7 +80,10 @@ const Header = ({openNav, setOpenNav = () => {}}) => {
   );
 };
 
-const dummy = {
+type DropdownDict = {
+  [key: number]: any;
+};
+const dummy: DropdownDict = {
   0: {
     id: "option-0",
     text: "Lorem, ipsum dolorawjenfla neawnflajwenfawjenfajwenfkawnefkajnw sit amet consectetur adipisicing elit.",
@@ -91,11 +112,13 @@ const dummy = {
 };
 
 const AccountButton = () => {
+  const user = useTypedSelector((state) => state.User);
   const AccountContent = ({
     name = "廖偉良",
     occupation = "級任老師",
     school = "松山高中",
   }) => {
+    const [openManageAccountPU, setOpenManageAccountPU] = useState(false);
     return (
       <div className="account-content">
         <div className="user-info">
@@ -115,9 +138,16 @@ const AccountButton = () => {
           icon={<Settings />}
           mode={"on-dark-2"}
           onClick={() => {
-            console.log("Manage Account");
+            setOpenManageAccountPU(!openManageAccountPU);
           }}
         />
+
+        <ManageAccountPU
+          trigger={openManageAccountPU}
+          setTrigger={setOpenManageAccountPU}
+          title="管理帳號"
+        />
+
         <IconButton
           flex={true}
           text={"登出"}
@@ -133,7 +163,13 @@ const AccountButton = () => {
 
   const menuProps = {
     mode: "dark",
-    content: <AccountContent />,
+    content: (
+      <AccountContent
+        name={user.alias}
+        occupation={user.occupation}
+        school={user.school}
+      />
+    ),
   };
   return (
     <FloatingMenuButton

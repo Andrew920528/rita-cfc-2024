@@ -6,7 +6,7 @@
   position: relative;
   color: white;
   .header-left {
-    flex: 4;
+    width: 20rem;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -26,7 +26,7 @@
     }
   }
   .header-right {
-    flex: 12;
+    flex: 1;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -50,6 +50,8 @@
 .account-content {
   display: flex;
   flex-direction: column;
+  min-width: 12rem;
+  max-width: 18rem;
 
   .user-info {
     display: flex;
@@ -57,12 +59,19 @@
     align-items: center;
     padding: 1rem;
     gap: 2rem;
+    justify-content: space-between;
+
     .user-info-col {
       display: flex;
       flex-direction: column;
       align-items: start;
+      overflow: hidden;
       p {
         text-wrap: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        text-align: start;
         &.user-detail {
           font-size: 12px;
         }

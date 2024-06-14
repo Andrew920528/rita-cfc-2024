@@ -2,11 +2,15 @@ import React, {useState} from "react";
 import Textbox from "./ui_components/Textbox";
 import IconButton from "./ui_components/IconButton";
 import {ArrowRight, ChevronDown, ChevronUp} from "@carbon/icons-react";
+
 const ChatroomBody = () => {
   return <div className="chatroom-body">Chatroom-body</div>;
 };
 
-const Chatroom = ({context}) => {
+type ChatroomProps = {
+  context?: string;
+};
+const Chatroom = ({context}: ChatroomProps) => {
   const [collapsed, setCollapsed] = useState(false);
   return (
     <div className={`chatroom ${collapsed ? "collapsed" : "opened"}`}>
