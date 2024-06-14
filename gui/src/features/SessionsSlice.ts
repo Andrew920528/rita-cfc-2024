@@ -14,8 +14,8 @@ const SessionsSlice = createSlice({
     addSession: (state, action: PayloadAction<Session>) => {
       state.dict[action.payload.id] = action.payload;
     },
-    deleteSession: (state, action: PayloadAction<Session>) => {
-      delete state.dict[action.payload.id];
+    deleteSession: (state, action: PayloadAction<string>) => {
+      delete state.dict[action.payload];
     },
 
     setCurrent: (state, action: PayloadAction<string>) => {

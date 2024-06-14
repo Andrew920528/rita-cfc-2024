@@ -19,7 +19,8 @@ type DropdownProps = {
   getName: (id: string) => string;
   placeholder: string;
   flex: boolean;
-  action?: boolean;
+  action?: (id: string) => boolean;
+  actionFunction?: (id: string) => void;
   mode?: "on-dark" | "form";
   extra?: ReactNode;
   label?: string;
@@ -32,7 +33,8 @@ const Dropdown = ({
   idDict = {},
   getName = () => "name",
   placeholder = "placeholder",
-  action = false,
+  action = () => false,
+  actionFunction = () => {},
   flex = false,
   extra = null,
   mode,
@@ -91,7 +93,8 @@ const Dropdown = ({
                   setCurrId(k);
                   setOpenMenu(false);
                 }}
-                action={action}
+                action={action(k)}
+                actionFunction={actionFunction}
               />
             ))}
           </div>
@@ -104,13 +107,13 @@ const Dropdown = ({
 };
 
 type DropdownOptionProps = {
-  id: string | number;
+  id: string;
   name: string;
-  currId: string | number;
+  currId: string;
   onClick?: (args: any) => void;
   action: boolean;
   icon?: ReactNode;
-  iconAction?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  actionFunction?: (id: string) => void;
 };
 const DropdownOption = ({
   id,
@@ -119,10 +122,7 @@ const DropdownOption = ({
   onClick = () => {},
   action,
   icon = <Close />,
-  iconAction = (e) => {
-    if (e && e.stopPropagation) e.stopPropagation();
-    console.log("action icon clicked");
-  },
+  actionFunction = () => {},
 }: DropdownOptionProps) => {
   return (
     <div
@@ -134,7 +134,10 @@ const DropdownOption = ({
         <div
           className={`dropdown-button ${id === currId && "selected"}`}
           onClick={(e) => {
-            iconAction(e);
+            if (e && e.stopPropagation) e.stopPropagation();
+            console.log("action icon clicked");
+
+            actionFunction(id);
           }}
         >
           {icon}

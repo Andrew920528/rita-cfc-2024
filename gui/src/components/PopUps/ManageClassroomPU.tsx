@@ -128,11 +128,12 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       lastOpenedSession: newSessionId,
       plan: false,
     };
+    // create session
     dispatch(SessionsServices.actions.addSession(newSession));
-    // add id to user's classrooms list
-    dispatch(UserServices.actions.addClassroom(newClassroomId));
-    // add new classroom to classrooms dict
+    // create classroom
     dispatch(ClassroomsServices.actions.addClassroom(newClassroom));
+    // allow user to reference to the new classroom
+    dispatch(UserServices.actions.addClassroom(newClassroomId));
     // set current classroom to the new classroom
     dispatch(ClassroomsServices.actions.setCurrent(newClassroomId));
     // set current session to the new session

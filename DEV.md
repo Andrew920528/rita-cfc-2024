@@ -7,3 +7,8 @@
 - 6/11 4:30 | Dang typescript is fancy.
 - 6/11 23:40| So it all started when I decided to use typescript for better dev-x, then problems starts emerging. Turns out create-react-app is super outdated, and there are version conflicts with the newest version of typescript. There are workarounds, but I think our project is still in an early enough stage to chagne a build tool. I decided to go for Vite. The migration surprisingly does not take too long. However, setting up test seems to be non-trivial, and I installed a bunch of packages while failing to get testing to work. Its unlikly that we will need testing (for now), so I removed the test related artifacts from CRA and the packages I installed along the way, and I hope we'll have a clean start if we really get to the testing phase. Overall, tons of learning, a bit of frustration, but do have a working environment that I'm comfortable with.
 - 6/12 23:46 | Wow, I really did wrote a lot yesterday. Thank god no one is reading this (or are you?). Anyways, not having testing properly set up, even when we're not doing testing, feels int. So today I re-did the testing set up, and it was faster than I expected. Other than that, more UI stuff, connected with Redux, tried out AI autocompletion tool, went through internal debate on how a component should be structured... and that's all for today.
+- 6/13 16:37 |
+
+Code organization stuff for next iteration
+
+- combine slices and allow actions to handle more logic (thunks?)

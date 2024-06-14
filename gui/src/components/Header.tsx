@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import IconButton from "./ui_components/IconButton";
 import {FloatingMenuButton} from "./ui_components/FloatingMenu";
 import {
@@ -12,7 +12,7 @@ import {
   UserAvatar,
 } from "@carbon/icons-react";
 import Dropdown from "./ui_components/Dropdown";
-import {useAppDispatch, useTypedSelector} from "../store/store";
+import store, {useAppDispatch, useTypedSelector} from "../store/store";
 import {UserServices} from "../features/UserSlice";
 import PopUp from "./PopUps/PopUp";
 import ManageAccountPU from "./PopUps/ManageAccountPU";
@@ -32,8 +32,31 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const sessions = useTypedSelector((state) => state.Sessions);
   const [openSubjectEdit, setOpenSubjectEdit] = useState(false);
   // ui controllers
-  const [session, setSession] = useState<string>("-1");
   const [openSessionCreation, setopenSessionCreation] = useState(false);
+
+  function deleteSession(sessionId: string) {
+    // remove reference from classroom
+    dispatch(
+      ClassroomsServices.actions.deleteSession({
+        classroomId: classrooms.current,
+        sessionId: sessionId,
+      })
+    );
+    // remove actual session object
+    dispatch(SessionsServices.actions.deleteSession(sessionId));
+
+    // reset current session if current session is deleted
+    const defaultSession = classrooms.dict[classrooms.current].sessions[0];
+    if (sessions.current === sessionId) {
+      dispatch(SessionsServices.actions.setCurrent(defaultSession));
+      dispatch(
+        ClassroomsServices.actions.setLastOpenedSession({
+          classroomId: classrooms.current,
+          sessionId: defaultSession,
+        })
+      );
+    }
+  }
   return (
     <div className="header">
       <div className="header-left">
@@ -99,7 +122,10 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
               }}
               placeholder="新增課程以開始備課"
               flex={false}
-              action={true}
+              action={(id: string) => sessions.dict[id].type === 1}
+              actionFunction={(id: string) => {
+                deleteSession(id);
+              }}
               extra={
                 <IconButton
                   flex={true}

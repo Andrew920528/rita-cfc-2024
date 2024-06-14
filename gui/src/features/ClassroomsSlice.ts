@@ -39,6 +39,17 @@ const ClassroomsSlice = createSlice({
       state.dict[action.payload.classroomId].lastOpenedSession =
         action.payload.sessionId;
     },
+    deleteSession: (
+      state,
+      action: PayloadAction<{classroomId: string; sessionId: string}>
+    ) => {
+      const index = state.dict[action.payload.classroomId].sessions.indexOf(
+        action.payload.sessionId
+      );
+      if (index > -1) {
+        state.dict[action.payload.classroomId].sessions.splice(index, 1);
+      }
+    },
     setCurrent: (state, action: PayloadAction<string>) => {
       state.current = action.payload;
     },
