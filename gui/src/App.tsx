@@ -3,6 +3,7 @@ import "./style/main.scss";
 // import {tryTrySee} from "./utils/service";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 
 const App: React.FC = () => {
   // useEffect(() => {
@@ -15,7 +16,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       {/* <Home /> */}
-      <Login />
+      <SignUp/>
     </div>
   );
 };
