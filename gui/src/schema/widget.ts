@@ -4,6 +4,6 @@ export type Widget = {
 };
 
 export type Widgets = {
-  dict: {[key: number]: Widget};
-  current: number;
+  dict: {[key: string]: Widget};
+  current: string;
 };

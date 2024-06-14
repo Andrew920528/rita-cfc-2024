@@ -26,10 +26,11 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
+  const sessions = useTypedSelector((state) => state.Sessions);
   const [openSubjectEdit, setOpenSubjectEdit] = useState(false);
   // ui controllers
   const [session, setSession] = useState<string>("-1");
-
+  const [openSessionCreation, setopenSessionCreation] = useState(false);
   return (
     <div className="header">
       <div className="header-left">
@@ -51,7 +52,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
         {classrooms.current === "NONE" ||
         Object.keys(classrooms.dict).length === 0 ? (
           <div className="no-subject-hint">
-            <i>新增課程以開始備課</i>
+            <i>新增教室以開始備課</i>
           </div>
         ) : (
           <div className="subject-banner">
@@ -75,11 +76,17 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
             <Dropdown
               currId={session}
               setCurrId={setSession}
-              idDict={dummy}
+              idDict={classrooms.dict[classrooms.current].sessions.reduce(
+                (dict, sessionId: string) => {
+                  dict[sessionId] = "";
+                  return dict;
+                },
+                {} as {[key: string]: string}
+              )}
               getName={(id) => {
-                return dummy[id as keyof DropdownDict].text;
+                return sessions.dict[id].name;
               }}
-              placeholder="none selected"
+              placeholder="新增課程以開始備課"
               flex={false}
               action={true}
               extra={
@@ -88,6 +95,9 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
                   mode={"primary"}
                   text={"新增課程"}
                   icon={<Add />}
+                  onClick={() => {
+                    setopenSessionCreation(true);
+                  }}
                 />
               }
             />
@@ -97,37 +107,6 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
       </div>
     </div>
   );
-};
-
-type DropdownDict = {
-  [key: string]: any;
-};
-const dummy: DropdownDict = {
-  "0": {
-    id: "option-0",
-    text: "Lorem, ipsum dolorawjenfla neawnflajwenfawjenfajwenfkawnefkajnw sit amet consectetur adipisicing elit.",
-  },
-  "1": {
-    id: "option-1",
-    text: "Option 1",
-  },
-  "2": {
-    id: "option-2",
-    text: "Option 2",
-  },
-  "3": {
-    id: "option-3",
-    text: "Option 3 - a disabled item",
-    disabled: true,
-  },
-  "4": {
-    id: "option-4",
-    text: "Option 4",
-  },
-  "5": {
-    id: "option-5",
-    text: "Option 5",
-  },
 };
 
 const AccountButton = () => {

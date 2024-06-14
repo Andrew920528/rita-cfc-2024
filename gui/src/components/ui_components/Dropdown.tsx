@@ -9,11 +9,13 @@ import React, {
 import {ChevronDown, ChevronUp, Close} from "@carbon/icons-react";
 
 const UNDEFINED = "UNDEFINED";
-
+type DropdownDict = {
+  [key: string]: any;
+};
 type DropdownProps = {
   currId: string;
   setCurrId: Dispatch<SetStateAction<string>>;
-  idDict: {[key: string]: object} | {};
+  idDict: DropdownDict;
   getName: (id: string) => string;
   placeholder: string;
   flex: boolean;

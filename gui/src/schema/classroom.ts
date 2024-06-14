@@ -7,7 +7,7 @@ export type Classroom = {
   subject: string;
   grade: string;
   publisher: string;
-  sessions: number[];
+  sessions: string[];
   plan: boolean;
 };
 

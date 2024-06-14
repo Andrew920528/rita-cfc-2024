@@ -90,10 +90,10 @@ const NavBar = () => {
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
 
-  const [openSubjectCreation, setOpenSubjectCreation] = useState(false);
+  const [openClassroomCreation, setOpenClassroomCreation] = useState(false);
   return (
     <div className="navbar">
-      <div className="nav-subject">
+      <div className="nav-classroom">
         <div className="nav-heading">
           <p className="--heading">教室</p>
           <IconButton
@@ -101,12 +101,12 @@ const NavBar = () => {
             icon={<Add />}
             text={"新增"}
             onClick={() => {
-              setOpenSubjectCreation(true);
+              setOpenClassroomCreation(true);
             }}
           />
           <ManageClassroomPU
-            trigger={openSubjectCreation}
-            setTrigger={setOpenSubjectCreation}
+            trigger={openClassroomCreation}
+            setTrigger={setOpenClassroomCreation}
             title={"創建教室"}
             action="create"
           />

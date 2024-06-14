@@ -5,11 +5,11 @@ export type Session = {
   id: string;
   name: string;
   type: number;
-  widgets: number[]; // in order
-  chatroom: number; // chatroom id
+  widgets: string[]; // in order
+  chatroom: string; // chatroom id
 };
 
 export type Sessions = {
-  dict: {[key: string]: Sessions};
+  dict: {[key: string]: Session};
   current: string;
 };
