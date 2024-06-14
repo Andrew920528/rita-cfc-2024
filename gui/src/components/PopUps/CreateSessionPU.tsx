@@ -10,7 +10,7 @@ import {SessionsServices} from "../../features/SessionsSlice";
 
 type CreateSessionPUProps = {};
 
-const ManageSessionPU = (props: CreateSessionPUProps & PopUpProps) => {
+const CreateSessionPU = (props: CreateSessionPUProps & PopUpProps) => {
   // global states
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
@@ -53,6 +53,7 @@ const ManageSessionPU = (props: CreateSessionPUProps & PopUpProps) => {
         sessionId: newSessionId,
       })
     );
+
     // add new session to sessions dict
     dispatch(SessionsServices.actions.addSession(newSession));
     // set current session to the new session
@@ -104,4 +105,4 @@ const ManageSessionPU = (props: CreateSessionPUProps & PopUpProps) => {
   );
 };
 
-export default ManageSessionPU;
+export default CreateSessionPU;

@@ -11,6 +11,7 @@ import IconButton from "./ui_components/IconButton";
 import ManageClassroomPU from "./PopUps/ManageClassroomPU";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
+import {SessionsServices} from "../features/SessionsSlice";
 
 type ClassCardProps = {
   id: string;
@@ -31,11 +32,17 @@ const ClassCard = ({
   selected = "NONE",
 }: ClassCardProps) => {
   const dispatch = useAppDispatch();
+  const classrooms = useTypedSelector((state) => state.Classrooms);
   return (
     <div
       className={`class-card ${selected === id ? "selected" : ""}`}
       onClick={() => {
         dispatch(ClassroomsServices.actions.setCurrent(id));
+        dispatch(
+          SessionsServices.actions.setCurrent(
+            classrooms.dict[id].lastOpenedSession
+          )
+        );
       }}
     >
       <p>
@@ -89,7 +96,7 @@ const NavBar = () => {
   // global states
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
-
+  const sessions = useTypedSelector((state) => state.Sessions);
   const [openClassroomCreation, setOpenClassroomCreation] = useState(false);
   return (
     <div className="navbar">
@@ -130,16 +137,18 @@ const NavBar = () => {
         <div className="nav-heading">
           <p className="--heading">工具</p>
         </div>
-        <div className="nav-stack">
-          {widgetList.map((_, ind) => (
-            <WidgetCard
-              key={widgetList[ind].title}
-              title={widgetList[ind].title}
-              hint={widgetList[ind].hint}
-              icon={widgetList[ind].icon}
-            />
-          ))}
-        </div>
+        {sessions.current !== "NONE" && (
+          <div className="nav-stack">
+            {widgetList.map((_, ind) => (
+              <WidgetCard
+                key={widgetList[ind].title}
+                title={widgetList[ind].title}
+                hint={widgetList[ind].hint}
+                icon={widgetList[ind].icon}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

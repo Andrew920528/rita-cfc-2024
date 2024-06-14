@@ -16,7 +16,11 @@ const ClassroomsSlice = createSlice({
       state.dict[action.payload.id] = action.payload;
     },
     editClassroom: (state, action: PayloadAction<Classroom>) => {
-      state.dict[action.payload.id] = action.payload;
+      // editable fields: name, subject, grade, publisher
+      state.dict[action.payload.id].name = action.payload.name;
+      state.dict[action.payload.id].subject = action.payload.subject;
+      state.dict[action.payload.id].grade = action.payload.grade;
+      state.dict[action.payload.id].publisher = action.payload.publisher;
     },
     addSession: (
       state,
@@ -25,6 +29,15 @@ const ClassroomsSlice = createSlice({
       state.dict[action.payload.classroomId].sessions.push(
         action.payload.sessionId
       );
+      state.dict[action.payload.classroomId].lastOpenedSession =
+        action.payload.sessionId;
+    },
+    setLastOpenedSession: (
+      state,
+      action: PayloadAction<{classroomId: string; sessionId: string}>
+    ) => {
+      state.dict[action.payload.classroomId].lastOpenedSession =
+        action.payload.sessionId;
     },
     setCurrent: (state, action: PayloadAction<string>) => {
       state.current = action.payload;

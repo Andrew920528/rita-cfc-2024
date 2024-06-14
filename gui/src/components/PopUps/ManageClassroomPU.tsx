@@ -9,6 +9,8 @@ import Dropdown from "../ui_components/Dropdown";
 import {Classroom} from "../../schema/classroom";
 import {formatDate} from "../../utils/util";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
+import {Session} from "../../schema/session";
+import {SessionsServices} from "../../features/SessionsSlice";
 
 type ManageClassroomPUProps = {
   action: "create" | "edit";
@@ -105,7 +107,15 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   }
 
   function createClassroom() {
-    // update global states
+    const newSessionId = user.username + "-session-0-" + formatDate(new Date());
+    let newSession: Session = {
+      id: newSessionId,
+      name: "學期規劃",
+      type: 0,
+      widgets: [],
+      chatroom: "-1",
+    };
+
     const newClassroomId: string =
       user.username + "-classroom-" + formatDate(new Date());
     let newClassroom: Classroom = {
@@ -114,16 +124,19 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       subject: subject === "其他" ? otherSubject : subject,
       grade: grade,
       publisher: subject === "其他" ? "綜合" : publisher,
-      sessions: [],
+      sessions: [newSessionId],
+      lastOpenedSession: newSessionId,
       plan: false,
     };
-
+    dispatch(SessionsServices.actions.addSession(newSession));
     // add id to user's classrooms list
     dispatch(UserServices.actions.addClassroom(newClassroomId));
     // add new classroom to classrooms dict
     dispatch(ClassroomsServices.actions.addClassroom(newClassroom));
     // set current classroom to the new classroom
     dispatch(ClassroomsServices.actions.setCurrent(newClassroomId));
+    // set current session to the new session
+    dispatch(SessionsServices.actions.setCurrent(newSessionId));
   }
 
   function editClassroom() {
@@ -138,7 +151,9 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       subject: subject === "其他" ? otherSubject : subject,
       grade: grade,
       publisher: subject === "其他" ? "綜合" : publisher,
+      // these are not editable
       sessions: [],
+      lastOpenedSession: "",
       plan: false,
     };
 

@@ -14,7 +14,7 @@ type DropdownDict = {
 };
 type DropdownProps = {
   currId: string;
-  setCurrId: Dispatch<SetStateAction<string>>;
+  setCurrId: (id: string) => void;
   idDict: DropdownDict;
   getName: (id: string) => string;
   placeholder: string;

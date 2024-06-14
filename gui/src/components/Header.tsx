@@ -17,6 +17,9 @@ import {UserServices} from "../features/UserSlice";
 import PopUp from "./PopUps/PopUp";
 import ManageAccountPU from "./PopUps/ManageAccountPU";
 import ManageClassroomPU from "./PopUps/ManageClassroomPU";
+import CreateSessionPU from "./PopUps/CreateSessionPU";
+import {SessionsServices} from "../features/SessionsSlice";
+import {ClassroomsServices} from "../features/ClassroomsSlice";
 
 type HeaderProps = {
   openNav: boolean;
@@ -74,8 +77,16 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
               editClassroomId={classrooms.current}
             />
             <Dropdown
-              currId={session}
-              setCurrId={setSession}
+              currId={sessions.current}
+              setCurrId={(id: string) => {
+                dispatch(SessionsServices.actions.setCurrent(id));
+                dispatch(
+                  ClassroomsServices.actions.setLastOpenedSession({
+                    classroomId: classrooms.current,
+                    sessionId: id,
+                  })
+                );
+              }}
               idDict={classrooms.dict[classrooms.current].sessions.reduce(
                 (dict, sessionId: string) => {
                   dict[sessionId] = "";
@@ -100,6 +111,11 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
                   }}
                 />
               }
+            />
+            <CreateSessionPU
+              title={"新增課程"}
+              trigger={openSessionCreation}
+              setTrigger={setopenSessionCreation}
             />
           </div>
         )}

@@ -8,6 +8,7 @@ export type Classroom = {
   grade: string;
   publisher: string;
   sessions: string[];
+  lastOpenedSession: string;
   plan: boolean;
 };
 
