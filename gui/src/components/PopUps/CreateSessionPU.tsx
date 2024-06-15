@@ -3,7 +3,7 @@ import Textbox from "../ui_components/Textbox";
 import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "./PopUp";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {formatDate} from "../../utils/util";
+import {generateId} from "../../utils/util";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {Session} from "../../schema/session";
 import {SessionsServices} from "../../features/SessionsSlice";
@@ -36,8 +36,7 @@ const CreateSessionPU = (props: CreateSessionPUProps & PopUpProps) => {
 
   function createSession() {
     // create Session and associative chatroom
-    const newSessionId: string =
-      user.username + "-session-" + formatDate(new Date());
+    const newSessionId: string = user.username + "-session-" + generateId();
     let newSession: Session = {
       id: newSessionId,
       name: name,

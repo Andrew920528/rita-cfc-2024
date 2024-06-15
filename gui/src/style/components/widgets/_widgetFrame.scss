@@ -1,11 +1,11 @@
 @use "../../abstract/index" as *;
+
 .widget-frame {
   background-color: white;
   height: 20%;
-  //   width: 280px;
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+
   &.selected {
     outline: 2px solid $primary-color;
   }
@@ -14,5 +14,9 @@
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
+    padding-left: 1rem;
+  }
+  .wf-content {
+    padding: 1rem;
   }
 }

@@ -7,7 +7,7 @@ import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {UserServices} from "../../features/UserSlice";
 import Dropdown from "../ui_components/Dropdown";
 import {Classroom} from "../../schema/classroom";
-import {formatDate} from "../../utils/util";
+import {generateId} from "../../utils/util";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {Session} from "../../schema/session";
 import {SessionsServices} from "../../features/SessionsSlice";
@@ -107,7 +107,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   }
 
   function createClassroom() {
-    const newSessionId = user.username + "-session-0-" + formatDate(new Date());
+    const newSessionId = user.username + "-session-0-" + generateId();
     let newSession: Session = {
       id: newSessionId,
       name: "學期規劃",
@@ -116,8 +116,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       chatroom: "-1",
     };
 
-    const newClassroomId: string =
-      user.username + "-classroom-" + formatDate(new Date());
+    const newClassroomId: string = user.username + "-classroom-" + generateId();
     let newClassroom: Classroom = {
       id: newClassroomId,
       name: name,

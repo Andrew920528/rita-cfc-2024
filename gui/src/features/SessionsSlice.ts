@@ -21,6 +21,24 @@ const SessionsSlice = createSlice({
     setCurrent: (state, action: PayloadAction<string>) => {
       state.current = action.payload;
     },
+
+    addWidget: (
+      state,
+      action: PayloadAction<{sessionId: string; widgetId: string}>
+    ) => {
+      state.dict[action.payload.sessionId].widgets.push(
+        action.payload.widgetId
+      );
+    },
+
+    deleteWidget: (
+      state,
+      action: PayloadAction<{sessionId: string; widgetId: string}>
+    ) => {
+      state.dict[action.payload.sessionId].widgets = state.dict[
+        action.payload.sessionId
+      ].widgets.filter((w) => w !== action.payload.widgetId);
+    },
   },
 });
 

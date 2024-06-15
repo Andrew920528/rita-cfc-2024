@@ -12,6 +12,9 @@ import ManageClassroomPU from "./PopUps/ManageClassroomPU";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {SessionsServices} from "../features/SessionsSlice";
+import {WidgetsServices} from "../features/WidgetsSlice";
+import {generateId} from "../utils/util";
+import {WidgetType, initWidget, widgetBook} from "../schema/widget";
 
 type ClassCardProps = {
   id: string;
@@ -60,14 +63,34 @@ type WidgetCardProps = {
   icon?: ReactElement;
   title?: string;
   hint?: string;
-  widget?: ReactElement;
+  widgetType: WidgetType;
 };
 const WidgetCard = ({
   icon = <Catalog />,
   title = "新工具",
   hint = "新工具的提示",
-  widget = <div className="empty-widget"></div>,
+  widgetType = 0,
 }: WidgetCardProps) => {
+  const dispatch = useAppDispatch();
+  const user = useTypedSelector((state) => state.User);
+  const widgets = useTypedSelector((state) => state.Widgets);
+  const sessions = useTypedSelector((state) => state.Sessions);
+  function addWidget(widgetType: number) {
+    // create widget
+    const newWidgetId = user.username + "-wid-" + generateId();
+    const newWidget = initWidget(newWidgetId, widgetType);
+    dispatch(WidgetsServices.actions.addWidget(newWidget));
+    // add new widget to session
+    dispatch(
+      SessionsServices.actions.addWidget({
+        sessionId: sessions.current,
+        widgetId: newWidgetId,
+      })
+    );
+    // set current widget
+    dispatch(WidgetsServices.actions.setCurrent(newWidgetId));
+  }
+
   return (
     <div className="widget-card">
       <div className="widget-card-left">
@@ -79,18 +102,17 @@ const WidgetCard = ({
       </div>
       <div className="widget-card-right">
         <IconButton mode={"ghost"} icon={<Information />} />
-        <IconButton mode={"primary"} icon={<Add />} />
+        <IconButton
+          mode={"primary"}
+          icon={<Add />}
+          onClick={() => {
+            addWidget(widgetType);
+          }}
+        />
       </div>
     </div>
   );
 };
-
-const widgetList = [
-  {title: "學習目標", hint: "列出學習重點", icon: <CertificateCheck />},
-  {title: "進度表", hint: "製作學期進度", icon: <Plan />},
-  {title: "筆記", hint: "快速整理想法", icon: <Catalog />},
-  {title: "課表", hint: "瀏覽每週課表", icon: <Alarm />},
-];
 
 const NavBar = () => {
   // global states
@@ -139,12 +161,13 @@ const NavBar = () => {
         </div>
         {sessions.current !== "NONE" && (
           <div className="nav-stack">
-            {widgetList.map((_, ind) => (
+            {Object.values(widgetBook).map((w) => (
               <WidgetCard
-                key={widgetList[ind].title}
-                title={widgetList[ind].title}
-                hint={widgetList[ind].hint}
-                icon={widgetList[ind].icon}
+                key={w.title}
+                title={w.title}
+                hint={w.hint}
+                icon={w.icon}
+                widgetType={w.type}
               />
             ))}
           </div>

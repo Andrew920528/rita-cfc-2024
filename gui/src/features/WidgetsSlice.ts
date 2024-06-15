@@ -1,5 +1,5 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
-import {Widget, Widgets} from "../schema/widget";
+import {Widget, WidgetType, Widgets} from "../schema/widget";
 
 const initialState: Widgets = {
   dict: {},
@@ -19,8 +19,32 @@ const WidgetsSlice = createSlice({
     setCurrent: (state, action: PayloadAction<string>) => {
       state.current = action.payload;
     },
-    updateWidget: (state, action: PayloadAction<Widget>) => {
-      state.dict[action.payload.id] = action.payload;
+    updateWidget: (
+      state,
+      action: PayloadAction<{wid: string; newWidget: Widget}>
+    ) => {
+      if (
+        state.dict[action.payload.wid].type !== action.payload.newWidget.type
+      ) {
+        console.error(
+          "Attempts to update widget, but given wrong payload type"
+        );
+        return;
+      }
+      switch (action.payload.newWidget.type) {
+        case WidgetType.SemesterGoal:
+          console.log("update goal");
+          break;
+        case WidgetType.SemesterPlan:
+          console.log("update plan");
+          break;
+        case WidgetType.Note:
+          console.log("update note");
+          break;
+        case WidgetType.Schedule:
+          console.log("update schedule");
+          break;
+      }
     },
   },
 });
@@ -31,5 +55,5 @@ export const WidgetsServices = {
 };
 
 //This is stored in the main store
-const SessionsReducer = WidgetsSlice.reducer;
-export default SessionsReducer;
+const WidgetsReducer = WidgetsSlice.reducer;
+export default WidgetsReducer;

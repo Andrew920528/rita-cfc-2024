@@ -1,4 +1,4 @@
-export function formatDate(date: Date): string {
+export function formatTime(date: Date): string {
   const padZero = (num: number): string => (num < 10 ? "0" : "") + num;
 
   const year = date.getFullYear().toString().slice(-2);
@@ -9,4 +9,10 @@ export function formatDate(date: Date): string {
   const seconds = padZero(date.getSeconds());
 
   return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+}
+
+export function generateId(): string {
+  return (
+    new Date().valueOf().toString(36) + Math.random().toString(36).substring(2)
+  );
 }
