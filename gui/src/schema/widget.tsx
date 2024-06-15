@@ -10,19 +10,19 @@ export type Widgets = {
   current: string;
 };
 
-export type SemesterGoalWidget = Widget & {
+export type SemesterGoalWidgetT = Widget & {
   content: string;
 };
-export type SemesterPlanWidget = Widget & {
+export type SemesterPlanWidgetT = Widget & {
   headings: string[];
   content: {
     [key: string]: string[];
   };
 };
-export type NoteWidget = Widget & {
+export type NoteWidgetT = Widget & {
   content: string;
 };
-export type ScheduleWidget = Widget & {
+export type ScheduleWidgetT = Widget & {
   headings: ["mon", "tue", "wed", "thu", "fri"];
   content: {
     [key: string]: string[];
@@ -43,27 +43,27 @@ export function initWidget(id: string, type: WidgetType): Widget {
         id: id,
         type: type,
         content: "",
-      } as SemesterGoalWidget;
+      } as SemesterGoalWidgetT;
     case WidgetType.SemesterPlan: // semester plan
       return {
         id: id,
         type: type,
         headings: ["週目", "目標", "教材"],
         content: {},
-      } as SemesterPlanWidget;
+      } as SemesterPlanWidgetT;
     case WidgetType.Note: // note
       return {
         id: id,
         type: type,
         content: "",
-      } as NoteWidget;
+      } as NoteWidgetT;
     case WidgetType.Schedule: // schedule
       return {
         id: id,
         type: type,
         headings: ["mon", "tue", "wed", "thu", "fri"],
         content: {},
-      } as ScheduleWidget;
+      } as ScheduleWidgetT;
     default:
       return {
         id,

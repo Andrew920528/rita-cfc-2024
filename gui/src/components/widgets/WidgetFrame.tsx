@@ -4,19 +4,22 @@ import IconButton from "../ui_components/IconButton";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {SessionsServices} from "../../features/SessionsSlice";
+import {WidgetType} from "../../schema/widget";
+import SemesterGoalWidget from "./SemesterGoalWidget";
+import SemesterPlanWidget from "./SemesterPlanWidget";
+import NoteWidget from "./NoteWidget";
+import ScheduleWidget from "./ScheduleWidget";
 
 type WidgetFrameProps = {
   selected?: boolean;
   icon?: ReactElement;
   title?: string;
-  children?: ReactElement | null;
   widgetId: string;
 };
 const WidgetFrame = ({
   selected,
   icon = <Catalog size={20} />,
   title = "Widget",
-  children,
   widgetId,
 }: WidgetFrameProps) => {
   const dispatch = useAppDispatch();
@@ -32,15 +35,17 @@ const WidgetFrame = ({
       })
     );
   }
+  const widgetComponent = {
+    [WidgetType.SemesterGoal]: <SemesterGoalWidget wid={widgetId} />,
+    [WidgetType.SemesterPlan]: <SemesterPlanWidget wid={widgetId} />,
+    [WidgetType.Note]: <NoteWidget wid={widgetId} />,
+    [WidgetType.Schedule]: <ScheduleWidget wid={widgetId} />,
+  };
   return (
     <div
       className={`widget-frame ${selected ? "selected" : "idle"}`}
       onClick={() => {
-        if (widgets.current === widgetId) {
-          dispatch(WidgetsServices.actions.setCurrent("NONE"));
-        } else {
-          dispatch(WidgetsServices.actions.setCurrent(widgetId));
-        }
+        dispatch(WidgetsServices.actions.setCurrent(widgetId));
       }}
     >
       <div className="wf-heading">
@@ -54,7 +59,9 @@ const WidgetFrame = ({
           }}
         />
       </div>
-      <div className="wf-content">{children}</div>
+      <div className="wf-content">
+        {widgetComponent[widgets.dict[widgetId].type]}
+      </div>
     </div>
   );
 };

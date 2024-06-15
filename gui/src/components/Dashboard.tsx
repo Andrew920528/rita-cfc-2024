@@ -2,8 +2,9 @@ import React, {useState} from "react";
 import {Cafe} from "@carbon/icons-react";
 import Chatroom from "./Chatroom";
 import WidgetFrame from "./widgets/WidgetFrame";
-import {useTypedSelector} from "../store/store";
+import {useAppDispatch, useTypedSelector} from "../store/store";
 import {widgetBook} from "../schema/widget";
+import {WidgetsServices} from "../features/WidgetsSlice";
 const DashboardPlaceHolder = () => {
   return (
     <div className="dp-wrapper">
@@ -23,13 +24,21 @@ const DashboardPlaceHolder = () => {
 };
 
 const Dashboard = () => {
+  const dispatch = useAppDispatch();
   const sessions = useTypedSelector((state) => state.Sessions);
   const widgets = useTypedSelector((state) => state.Widgets);
+  const deselectWidget = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    if (e.target === e.currentTarget) {
+      // handle
+      dispatch(WidgetsServices.actions.setCurrent("NONE"));
+    }
+  };
   return (
-    <div className="dashboard">
+    <div className="dashboard" onClick={deselectWidget}>
       {sessions.dict[sessions.current] &&
       sessions.dict[sessions.current].widgets.length > 0 ? (
-        <div className="widgets">
+        <div className="widgets" onClick={deselectWidget}>
           {sessions.dict[sessions.current].widgets.toReversed().map((wid) => {
             const w = widgets.dict[wid];
             return (
