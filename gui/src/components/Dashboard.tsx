@@ -2,6 +2,9 @@ import React, {useState} from "react";
 import {Cafe} from "@carbon/icons-react";
 import Chatroom from "./Chatroom";
 import WidgetFrame from "./widgets/WidgetFrame";
+import {useAppDispatch, useTypedSelector} from "../store/store";
+import {widgetBook} from "../schema/widget";
+import {WidgetsServices} from "../features/WidgetsSlice";
 const DashboardPlaceHolder = () => {
   return (
     <div className="dp-wrapper">
@@ -21,24 +24,45 @@ const DashboardPlaceHolder = () => {
 };
 
 const Dashboard = () => {
-  const [content, setContent] = useState(["a"]);
-
+  const dispatch = useAppDispatch();
+  const sessions = useTypedSelector((state) => state.Sessions);
+  const widgets = useTypedSelector((state) => state.Widgets);
+  const deselectWidget = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    if (e.target === e.currentTarget) {
+      // handle
+      dispatch(WidgetsServices.actions.setCurrent("NONE"));
+    }
+  };
   return (
-    <div className="dashboard">
-      {content.length > 0 ? (
-        <div className="widgets">
-          <WidgetFrame selected={true} />
-          <WidgetFrame />
-          <WidgetFrame />
-          <WidgetFrame />
-          <WidgetFrame selected={true} />
-          <WidgetFrame />
+    <div className="dashboard" onClick={deselectWidget}>
+      {sessions.dict[sessions.current] &&
+      sessions.dict[sessions.current].widgets.length > 0 ? (
+        <div className="widgets" onClick={deselectWidget}>
+          {sessions.dict[sessions.current].widgets.toReversed().map((wid) => {
+            const w = widgets.dict[wid];
+            return (
+              <WidgetFrame
+                key={wid}
+                title={widgetBook[w.type].title}
+                icon={widgetBook[w.type].icon}
+                selected={wid === widgets.current}
+                widgetId={wid}
+              />
+            );
+          })}
         </div>
       ) : (
         <DashboardPlaceHolder />
       )}
 
-      <Chatroom />
+      <Chatroom
+        context={
+          widgets.dict[widgets.current]
+            ? widgetBook[widgets.dict[widgets.current].type].title
+            : ""
+        }
+      />
     </div>
   );
 };

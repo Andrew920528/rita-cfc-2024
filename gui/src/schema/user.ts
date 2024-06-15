@@ -7,5 +7,5 @@ export type User = {
   school: string;
   occupation: string;
   schedule: Schedule;
-  classrooms: Classroom[];
+  classrooms: string[]; // in order
 };
