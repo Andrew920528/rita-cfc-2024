@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
 from watsonx import getWatsonxResponse
-from databaseActions import getUser, createUser, modifyUser, deleteUser
+from databaseUserActions import getUser, createUser, modifyUser, deleteUser, loginUser
 
 app = Flask(__name__)
 CORS(app)
@@ -16,7 +16,7 @@ def get_output():
 def generate_proposal():
     return getWatsonxResponse()
 
-######################################################################################################## aws rds
+######################################################################################################## users
 @app.route('/get-user', methods=['GET'])
 def get_user():
     username = request.args['username']
@@ -27,7 +27,11 @@ def get_user():
 def create_user():
     username = request.form['username']
     password = request.form['password']
-    return createUser(username, password)
+    school = request.form.get('school', None)
+    alias = request.form.get('alias', None)
+    occupation = request.form.get('occupation', None)
+    schedule_content = request.form.get('schedule_content', None)
+    return createUser(username, password, school, alias, occupation, schedule_content)
 
 @app.route('/modify-user', methods=['POST'])
 def modify_user():
@@ -42,6 +46,12 @@ def delete_user():
     username = request.form['username']
     password = request.form['password']
     return deleteUser(username, password)
+
+@app.route('/login', methods=['GET'])
+def login():
+    username = request.args['username']
+    password = request.args['password']
+    return loginUser(username, password)
 
 
 if __name__ == '__main__':

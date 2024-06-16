@@ -18,7 +18,7 @@ def getDatabaseDetails():
         database = js['database']
         port=3306
 
-def createUser(username, password):
+def createUser(username, password, school, alias, occupation, schedule_content):
     getDatabaseDetails()
     try:
         connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
@@ -36,8 +36,27 @@ def createUser(username, password):
             
             # if not exist, then create user
 
-            query = 'INSERT INTO User_Table (Username, Pass) VALUES (%s, %s)'
-            values = (username, password)
+            query = 'INSERT INTO User_Table (Username, Pass'
+            values = [username, password]
+
+            if school != None:
+                query += ', School'
+                values.append(school)
+            
+            if alias != None:
+                query += ', Alias'
+                values.append(alias)
+            
+            if occupation != None:
+                query += ', Occupation'
+                values.append(occupation)
+
+            if schedule_content != None:
+                query += ', Schedule_Content'
+                values.append(schedule_content)
+
+            query += ') VALUES (' + ('%s,' * len(values))[:-1] + ')'
+            values = tuple(values)
 
             cursor.execute(query, values)
             connection.commit() 
@@ -66,7 +85,7 @@ def getUser(username, password):
                 return {'Response' : "No account found!"}
 
             connection.close()
-            return {'Response' : results}
+            return {'Response' : results[0][0]}
     
     except Exception as e:
         print("Error: {}".format(e))
@@ -105,7 +124,7 @@ def modifyUser(username, password, updatedUsername, updatedPassword):
             values = (updatedUsername, updatedPassword, username, password)
 
             cursor.execute(query, values)
-            connection.commit()          
+            connection.commit()
             connection.close()   
             return {'Response' : "Successfully modified account!"}
     
@@ -143,3 +162,47 @@ def deleteUser(username, password):
         print("Error: {}".format(e))
         connection.close()
         return {'Response' : "Failed to delete account!"}
+
+def loginUser(username, password):
+
+    response = getUser(username, password)
+    userid = None
+
+    # valid user id?
+    if not isinstance(response['Response'], int):
+        return response
+    else:
+        userid = response['Response']
+    
+    getDatabaseDetails()
+    try:
+        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        with connection.cursor() as cursor:
+
+            # insert into log table
+
+            query = 'INSERT INTO Log_Table (User_ID) VALUES(%s)'
+            values = (userid)
+
+            cursor.execute(query, values)
+            connection.commit()
+
+            # get most recent, which is the one we just created for this user
+
+            query = 'SELECT Session_ID FROM Log_Table WHERE `Created_Time` = (SELECT MAX(Created_Time) FROM Log_Table WHERE User_ID = %s)'
+            values = (userid)
+
+            cursor.execute(query, values)
+            results = cursor.fetchall()
+
+            connection.close()
+            return { 'Response' : 
+                {
+                    'Session_ID' : results[0][0]
+                }
+            }
+    
+    except Exception as e:
+        print("Error: {}".format(e))
+        connection.close()
+        return {'Response' : "Failed to get account!"}
