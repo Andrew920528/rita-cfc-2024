@@ -2,8 +2,8 @@ import React, {useEffect, useState} from "react";
 import IconButton from "../components/ui_components/IconButton";
 import {Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../components/ui_components/Textbox";
-import { Link } from 'react-router-dom';
 import SignUp from "./SignUp";
+import {Link} from "react-router-dom";
 /**
  * Notes for Ellen:
  * 1. To keep style consistent, use <Textbox> component, which is a wrapper around <input>
@@ -79,9 +79,7 @@ const Login = () => {
       </div>
       <div className="login-register">
         <p>尚未註冊？</p>
-        <Link to="/signup"
-          className="login-create"
-        >
+        <Link to="/signup" className="login-create">
           建立帳號
         </Link>
       </div>

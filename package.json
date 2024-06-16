@@ -11,8 +11,5 @@
     },
     "keywords": [],
     "author": "",
-    "license": "",
-    "dependencies": {
-        "react-router-dom": "^6.23.1"
-    }
+    "license": ""
 }
