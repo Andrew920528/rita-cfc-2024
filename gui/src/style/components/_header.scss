@@ -31,7 +31,9 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-
+    .no-subject-hint {
+      color: #c6c6c6;
+    }
     .subject-banner {
       display: flex;
       flex-direction: row;

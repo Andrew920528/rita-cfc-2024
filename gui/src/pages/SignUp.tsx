@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from 'react'
 import IconButton from "../components/ui_components/IconButton";
-import { Checkmark } from "@carbon/icons-react";
+import { Checkmark, Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../components/ui_components/Textbox";
+import Login from './Login';
+import { Link } from 'react-router-dom';
 
 const SignUp = () => {
+    //let navigate = useNavigate();
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,7 +23,9 @@ const SignUp = () => {
       setConfirmPassword("");
       setConfirmPasswordError("");
     }
-  
+    const handleNavigate = (path:string) => {
+      //navigate(path); 
+    };
     function validateLogin(): boolean {
       let validate = true;
       if (username.trim() === "") {
@@ -96,14 +101,12 @@ const SignUp = () => {
         </div>
         <div className="signup-login">
           <p>已註冊？</p>
-          <p
-            className="signup-log"
-            onClick={() => {
-              console.log("click");
-            }}
+          
+          <Link to="/login"
+            className="signup-log"  
           >
             登入
-          </p>
+          </Link>
         </div>
       </div>
     );

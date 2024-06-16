@@ -8,41 +8,52 @@ import {
   Alarm,
 } from "@carbon/icons-react";
 import IconButton from "./ui_components/IconButton";
-import PopUp from "./PopUps/PopUp";
+import ManageClassroomPU from "./PopUps/ManageClassroomPU";
+import {useAppDispatch, useTypedSelector} from "../store/store";
+import {ClassroomsServices} from "../features/ClassroomsSlice";
+import {SessionsServices} from "../features/SessionsSlice";
+import {WidgetsServices} from "../features/WidgetsSlice";
+import {generateId} from "../utils/util";
+import {WidgetType, initWidget, widgetBook} from "../schema/widget";
 
-type SubjectCardProps = {
-  title?: string;
-  subject?: string;
-  grade?: string;
-  content?: string;
-  schedule?: string;
+type ClassCardProps = {
+  id: string;
+  name: string;
+  subject: string;
+  grade: string;
+  publisher?: string;
+  plan?: boolean;
   selected?: string;
-  setSelected?: Dispatch<SetStateAction<string>>;
-  id?: string;
 };
-const SubjectCard = ({
-  title = "新科目",
+const ClassCard = ({
+  id = "",
+  name = "新科目",
   subject = "未設定",
   grade = "未設定",
-  content = "未設定",
-  schedule = "未完成",
-  selected = "-1",
-  setSelected = () => {},
-  id = "",
-}: SubjectCardProps) => {
+  publisher = "未設定",
+  plan = false,
+  selected = "NONE",
+}: ClassCardProps) => {
+  const dispatch = useAppDispatch();
+  const classrooms = useTypedSelector((state) => state.Classrooms);
   return (
     <div
-      className={`subject-card ${selected === id ? "selected" : ""}`}
+      className={`class-card ${selected === id ? "selected" : ""}`}
       onClick={() => {
-        setSelected(id);
+        dispatch(ClassroomsServices.actions.setCurrent(id));
+        dispatch(
+          SessionsServices.actions.setCurrent(
+            classrooms.dict[id].lastOpenedSession
+          )
+        );
       }}
     >
       <p>
-        <strong>{title}</strong>
+        <strong>{name}</strong>
       </p>
       <p className="--label">
-        科目：{subject} ｜年級：{grade}｜教材：{content}
-        <br /> 學期規劃：{schedule}
+        科目：{subject} ｜年級：{grade}｜教材：{publisher}
+        <br /> 學期規劃：{plan ? "已完成" : "未完成"}
       </p>
     </div>
   );
@@ -52,14 +63,34 @@ type WidgetCardProps = {
   icon?: ReactElement;
   title?: string;
   hint?: string;
-  widget?: ReactElement;
+  widgetType: WidgetType;
 };
 const WidgetCard = ({
   icon = <Catalog />,
   title = "新工具",
   hint = "新工具的提示",
-  widget = <div className="empty-widget"></div>,
+  widgetType = 0,
 }: WidgetCardProps) => {
+  const dispatch = useAppDispatch();
+  const user = useTypedSelector((state) => state.User);
+  const widgets = useTypedSelector((state) => state.Widgets);
+  const sessions = useTypedSelector((state) => state.Sessions);
+  function addWidget(widgetType: number) {
+    // create widget
+    const newWidgetId = user.username + "-wid-" + generateId();
+    const newWidget = initWidget(newWidgetId, widgetType);
+    dispatch(WidgetsServices.actions.addWidget(newWidget));
+    // add new widget to session
+    dispatch(
+      SessionsServices.actions.addWidget({
+        sessionId: sessions.current,
+        widgetId: newWidgetId,
+      })
+    );
+    // set current widget
+    dispatch(WidgetsServices.actions.setCurrent(newWidgetId));
+  }
+
   return (
     <div className="widget-card">
       <div className="widget-card-left">
@@ -71,85 +102,54 @@ const WidgetCard = ({
       </div>
       <div className="widget-card-right">
         <IconButton mode={"ghost"} icon={<Information />} />
-        <IconButton mode={"primary"} icon={<Add />} />
+        <IconButton
+          mode={"primary"}
+          icon={<Add />}
+          onClick={() => {
+            addWidget(widgetType);
+          }}
+        />
       </div>
     </div>
   );
 };
 
-const subjectList = [
-  {
-    id: "001-001",
-    title: "502 國文",
-    subject: "國文",
-    grade: "五上",
-    content: "康軒",
-    schedule: "已完成",
-  },
-  {
-    id: "001-002",
-    title: "502 校本秋季",
-    subject: "綜合",
-    grade: "五上",
-    content: "彈性",
-    schedule: "已完成",
-  },
-  {
-    id: "001-003",
-    title: "601 數學",
-    subject: "數學",
-    grade: "六上",
-    content: "翰林",
-    schedule: "未完成",
-  },
-];
-
-const widgetList = [
-  {title: "學習目標", hint: "列出學習重點", icon: <CertificateCheck />},
-  {title: "進度表", hint: "製作學期進度", icon: <Plan />},
-  {title: "筆記", hint: "快速整理想法", icon: <Catalog />},
-  {title: "課表", hint: "瀏覽每週課表", icon: <Alarm />},
-];
-
-const SubjectCreation = () => {
-  return <div className="subject-creation"></div>;
-};
-
 const NavBar = () => {
-  const [subject, setSubject] = useState(
-    subjectList.length > 0 ? subjectList[0].id : ""
-  );
-  const [openSubjectCreation, setOpenSubjectCreation] = useState(true);
+  // global states
+  const user = useTypedSelector((state) => state.User);
+  const classrooms = useTypedSelector((state) => state.Classrooms);
+  const sessions = useTypedSelector((state) => state.Sessions);
+  const [openClassroomCreation, setOpenClassroomCreation] = useState(false);
   return (
     <div className="navbar">
-      <div className="nav-subject">
+      <div className="nav-classroom">
         <div className="nav-heading">
-          <p className="--heading">科目</p>
+          <p className="--heading">教室</p>
           <IconButton
             mode={"primary"}
             icon={<Add />}
             text={"新增"}
             onClick={() => {
-              setOpenSubjectCreation(true);
+              setOpenClassroomCreation(true);
             }}
           />
-          {/* TODO Add subject */}
-          <PopUp
-            trigger={openSubjectCreation}
-            setTrigger={setOpenSubjectCreation}
-            title={"Pp"}
-          >
-            cdc
-          </PopUp>
+          <ManageClassroomPU
+            trigger={openClassroomCreation}
+            setTrigger={setOpenClassroomCreation}
+            title={"創建教室"}
+            action="create"
+          />
         </div>
         <div className="nav-stack">
-          {subjectList.map((_, ind) => (
-            <SubjectCard
-              key={subjectList[ind].id}
-              id={subjectList[ind].id}
-              title={subjectList[ind].title}
-              selected={subject}
-              setSelected={setSubject}
+          {user.classrooms.toReversed().map((id) => (
+            <ClassCard
+              key={id}
+              id={id}
+              name={classrooms.dict[id].name}
+              publisher={classrooms.dict[id].publisher}
+              subject={classrooms.dict[id].subject}
+              grade={classrooms.dict[id].grade}
+              selected={classrooms.current}
             />
           ))}
         </div>
@@ -159,16 +159,19 @@ const NavBar = () => {
         <div className="nav-heading">
           <p className="--heading">工具</p>
         </div>
-        <div className="nav-stack">
-          {widgetList.map((_, ind) => (
-            <WidgetCard
-              key={widgetList[ind].title}
-              title={widgetList[ind].title}
-              hint={widgetList[ind].hint}
-              icon={widgetList[ind].icon}
-            />
-          ))}
-        </div>
+        {sessions.current !== "NONE" && (
+          <div className="nav-stack">
+            {Object.values(widgetBook).map((w) => (
+              <WidgetCard
+                key={w.title}
+                title={w.title}
+                hint={w.hint}
+                icon={w.icon}
+                widgetType={w.type}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

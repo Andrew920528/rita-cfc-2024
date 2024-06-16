@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import IconButton from "./ui_components/IconButton";
 import {FloatingMenuButton} from "./ui_components/FloatingMenu";
 import {
@@ -12,10 +12,14 @@ import {
   UserAvatar,
 } from "@carbon/icons-react";
 import Dropdown from "./ui_components/Dropdown";
-import {useAppDispatch, useTypedSelector} from "../store/store";
+import store, {useAppDispatch, useTypedSelector} from "../store/store";
 import {UserServices} from "../features/UserSlice";
 import PopUp from "./PopUps/PopUp";
 import ManageAccountPU from "./PopUps/ManageAccountPU";
+import ManageClassroomPU from "./PopUps/ManageClassroomPU";
+import CreateSessionPU from "./PopUps/CreateSessionPU";
+import {SessionsServices} from "../features/SessionsSlice";
+import {ClassroomsServices} from "../features/ClassroomsSlice";
 
 type HeaderProps = {
   openNav: boolean;
@@ -24,10 +28,35 @@ type HeaderProps = {
 const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
-
+  const classrooms = useTypedSelector((state) => state.Classrooms);
+  const sessions = useTypedSelector((state) => state.Sessions);
+  const [openSubjectEdit, setOpenSubjectEdit] = useState(false);
   // ui controllers
-  const [session, setSession] = useState<number | string>(-1);
+  const [openSessionCreation, setopenSessionCreation] = useState(false);
 
+  function deleteSession(sessionId: string) {
+    // remove reference from classroom
+    dispatch(
+      ClassroomsServices.actions.deleteSession({
+        classroomId: classrooms.current,
+        sessionId: sessionId,
+      })
+    );
+    // remove actual session object
+    dispatch(SessionsServices.actions.deleteSession(sessionId));
+
+    // reset current session if current session is deleted
+    const defaultSession = classrooms.dict[classrooms.current].sessions[0];
+    if (sessions.current === sessionId) {
+      dispatch(SessionsServices.actions.setCurrent(defaultSession));
+      dispatch(
+        ClassroomsServices.actions.setLastOpenedSession({
+          classroomId: classrooms.current,
+          sessionId: defaultSession,
+        })
+      );
+    }
+  }
   return (
     <div className="header">
       <div className="header-left">
@@ -46,69 +75,80 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
         </div>
       </div>
       <div className="header-right">
-        <div className="subject-banner">
-          <p className="subject --heading">新科目</p>
-          <IconButton
-            mode={"on-dark"}
-            icon={<Edit size={20} />}
-            onClick={() => {
-              // TODO Manage Classroom
-            }}
-          />
-          <Dropdown
-            currId={session}
-            setCurrId={setSession}
-            idDict={dummy}
-            getName={(id) => {
-              return dummy[id as keyof DropdownDict].text;
-            }}
-            placeholder="none selected"
-            flex={false}
-            extra={
-              <IconButton
-                flex={true}
-                mode={"primary"}
-                text={"新增課程"}
-                icon={<Add />}
-              />
-            }
-          />
-        </div>
+        {classrooms.current === "NONE" ||
+        Object.keys(classrooms.dict).length === 0 ? (
+          <div className="no-subject-hint">
+            <i>新增教室以開始備課</i>
+          </div>
+        ) : (
+          <div className="subject-banner">
+            <p className="subject --heading">
+              {classrooms.dict[classrooms.current].name}
+            </p>
+            <IconButton
+              mode={"on-dark"}
+              icon={<Edit size={20} />}
+              onClick={() => {
+                setOpenSubjectEdit(true);
+              }}
+            />
+            <ManageClassroomPU
+              trigger={openSubjectEdit}
+              setTrigger={setOpenSubjectEdit}
+              title={"編輯教室"}
+              action="edit"
+              editClassroomId={classrooms.current}
+            />
+            <Dropdown
+              currId={sessions.current}
+              setCurrId={(id: string) => {
+                dispatch(SessionsServices.actions.setCurrent(id));
+                dispatch(
+                  ClassroomsServices.actions.setLastOpenedSession({
+                    classroomId: classrooms.current,
+                    sessionId: id,
+                  })
+                );
+              }}
+              idDict={classrooms.dict[classrooms.current].sessions.reduce(
+                (dict, sessionId: string) => {
+                  dict[sessionId] = "";
+                  return dict;
+                },
+                {} as {[key: string]: string}
+              )}
+              getName={(id) => {
+                return sessions.dict[id].name;
+              }}
+              placeholder="新增課程以開始備課"
+              flex={false}
+              action={(id: string) => sessions.dict[id].type === 1}
+              actionFunction={(id: string) => {
+                deleteSession(id);
+              }}
+              extra={
+                <IconButton
+                  flex={true}
+                  mode={"primary"}
+                  text={"新增課程"}
+                  icon={<Add />}
+                  onClick={() => {
+                    setopenSessionCreation(true);
+                  }}
+                />
+              }
+            />
+            <CreateSessionPU
+              title={"新增課程"}
+              trigger={openSessionCreation}
+              setTrigger={setopenSessionCreation}
+            />
+          </div>
+        )}
         <AccountButton />
       </div>
     </div>
   );
-};
-
-type DropdownDict = {
-  [key: number]: any;
-};
-const dummy: DropdownDict = {
-  0: {
-    id: "option-0",
-    text: "Lorem, ipsum dolorawjenfla neawnflajwenfawjenfajwenfkawnefkajnw sit amet consectetur adipisicing elit.",
-  },
-  1: {
-    id: "option-1",
-    text: "Option 1",
-  },
-  2: {
-    id: "option-2",
-    text: "Option 2",
-  },
-  3: {
-    id: "option-3",
-    text: "Option 3 - a disabled item",
-    disabled: true,
-  },
-  4: {
-    id: "option-4",
-    text: "Option 4",
-  },
-  5: {
-    id: "option-5",
-    text: "Option 5",
-  },
 };
 
 const AccountButton = () => {
@@ -154,6 +194,7 @@ const AccountButton = () => {
           icon={<Logout />}
           mode={"on-dark-2"}
           onClick={() => {
+            // TODO: logout
             console.log("Log out");
           }}
         />

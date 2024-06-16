@@ -4,8 +4,10 @@ import "./style/main.scss";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ReactDOM from "react-dom/client";
 
-const App: React.FC = () => {
+
   // useEffect(() => {
   //   async function runRequest() {
   //     await tryTrySee();
@@ -13,12 +15,17 @@ const App: React.FC = () => {
   //   runRequest();
   // }, []);
 
+
+function App() {
   return (
-    <div className="App">
-      {/* <Home /> */}
-      <SignUp/>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
+    </BrowserRouter>
   );
-};
+}
 
 export default App;

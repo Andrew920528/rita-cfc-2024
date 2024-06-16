@@ -9,15 +9,22 @@ import React, {
 import {ChevronDown, ChevronUp, Close} from "@carbon/icons-react";
 
 const UNDEFINED = "UNDEFINED";
-
+type DropdownDict = {
+  [key: string]: any;
+};
 type DropdownProps = {
-  currId: string | number;
-  setCurrId: Dispatch<SetStateAction<string | number>>;
-  idDict: {[key: string | number]: object} | {};
-  getName: (id: string | number) => string;
+  currId: string;
+  setCurrId: (id: string) => void;
+  idDict: DropdownDict;
+  getName: (id: string) => string;
   placeholder: string;
   flex: boolean;
-  extra: ReactNode;
+  action?: (id: string) => boolean;
+  actionFunction?: (id: string) => void;
+  mode?: "on-dark" | "form";
+  extra?: ReactNode;
+  label?: string;
+  errorMsg?: string;
 };
 
 const Dropdown = ({
@@ -26,8 +33,13 @@ const Dropdown = ({
   idDict = {},
   getName = () => "name",
   placeholder = "placeholder",
+  action = () => false,
+  actionFunction = () => {},
   flex = false,
   extra = null,
+  mode,
+  errorMsg,
+  label,
 }: DropdownProps) => {
   const [openMenu, setOpenMenu] = useState(false);
   const componentRef = useRef<HTMLDivElement | null>(null);
@@ -47,14 +59,17 @@ const Dropdown = ({
   }, []);
   return (
     <div
-      className={`dropdown-wrapper ${flex ? "flex" : "fixed"}`}
-      onClick={() => {
-        setOpenMenu(!openMenu);
-      }}
+      className={`dropdown-wrapper ${flex ? "flex" : "fixed"} ${mode}`}
       ref={componentRef}
     >
-      <div className="dropdown">
-        <p className={`value ${currId === UNDEFINED && "place-holder"}`}>
+      {label && <p className="dd-label --label">{label}</p>}
+      <div
+        className={`dropdown ${mode} ${errorMsg ? "error" : ""}`}
+        onClick={() => {
+          setOpenMenu(!openMenu);
+        }}
+      >
+        <p className={`value ${!(currId in idDict) ? "placeholder" : ""}`}>
           {!(currId in idDict) ? placeholder : getName(currId)}
         </p>
         <div className="chevron">
@@ -66,7 +81,7 @@ const Dropdown = ({
         </div>
       </div>
       {openMenu && (
-        <div className={`dropdown-menu ${flex ? "flex" : "fixed"}`}>
+        <div className={`dropdown-menu ${flex ? "flex" : "fixed"} ${mode}`}>
           <div className="dropdown-menu-main">
             {Object.keys(idDict).map((k) => (
               <DropdownOption
@@ -76,35 +91,38 @@ const Dropdown = ({
                 currId={currId}
                 onClick={() => {
                   setCurrId(k);
+                  setOpenMenu(false);
                 }}
+                action={action(k)}
+                actionFunction={actionFunction}
               />
             ))}
           </div>
           {extra}
         </div>
       )}
+      {errorMsg && <p className="dd-error --error --label">{errorMsg}</p>}
     </div>
   );
 };
 
 type DropdownOptionProps = {
-  id: string | number;
+  id: string;
   name: string;
-  currId: string | number;
+  currId: string;
   onClick?: (args: any) => void;
+  action: boolean;
   icon?: ReactNode;
-  iconAction?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  actionFunction?: (id: string) => void;
 };
 const DropdownOption = ({
   id,
   name,
   currId,
   onClick = () => {},
+  action,
   icon = <Close />,
-  iconAction = (e) => {
-    if (e && e.stopPropagation) e.stopPropagation();
-    console.log("action icon clicked");
-  },
+  actionFunction = () => {},
 }: DropdownOptionProps) => {
   return (
     <div
@@ -112,14 +130,19 @@ const DropdownOption = ({
       onClick={onClick}
     >
       <p>{name}</p>
-      <div
-        className={`dropdown-button ${id === currId && "selected"}`}
-        onClick={(e) => {
-          iconAction(e);
-        }}
-      >
-        {icon}
-      </div>
+      {action && (
+        <div
+          className={`dropdown-button ${id === currId && "selected"}`}
+          onClick={(e) => {
+            if (e && e.stopPropagation) e.stopPropagation();
+            console.log("action icon clicked");
+
+            actionFunction(id);
+          }}
+        >
+          {icon}
+        </div>
+      )}
     </div>
   );
 };
