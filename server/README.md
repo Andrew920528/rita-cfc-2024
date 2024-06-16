@@ -10,24 +10,20 @@ Database details not put in!
 
 http://localhost:5000
 
-# Endpoints
+# Accessible Endpoints
 
 - GET /hello
   - Purpose : Tests if everything is setup correctly.
 
 - POST /generate-proposal
-  - Body : { "input_text" : "your prompt" }
   - Purpose : Receives AI Response from Watsonx
+  - Body : { "input_text" : "your prompt" }
 
-- GET /get-user
-  - Query : { "username" : "account username", "password" : "account password" }
-  - Purpose : Get User_ID if found
 - POST /create-user
-  - Body : { "username" : "account username", "password" : "account password" }
   - Purpose : Create an account if username not taken
-- POST /modify-user
-  - Body : { "username" : "account username", "password" : "account password", "updatedUsername" : "account updated username", "updatedPassword : "account updated password" }
-  - Purpose : Modify an account if account found and updated username not taken
-- DELETE /delete-user
   - Body : { "username" : "account username", "password" : "account password" }
-  - Purpose : Delete an account if account found
+  - Optional Body : { "school" : "user school name", "alias" : "account alias", "occupation" : "user occupation", "schedule_content" : "content used in schedule" }
+
+- GET / login
+  - Purpose : Login into an account. Receives a Session_ID for this user if logged in.
+  - Body : { "username" : "account username", "password" : "account password" }
