@@ -25,7 +25,7 @@ const DashboardPlaceHolder = () => {
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
-  const sessions = useTypedSelector((state) => state.Sessions);
+  const lectures = useTypedSelector((state) => state.Lectures);
   const widgets = useTypedSelector((state) => state.Widgets);
   const deselectWidget = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -36,10 +36,10 @@ const Dashboard = () => {
   };
   return (
     <div className="dashboard" onClick={deselectWidget}>
-      {sessions.dict[sessions.current] &&
-      sessions.dict[sessions.current].widgets.length > 0 ? (
+      {lectures.dict[lectures.current] &&
+      lectures.dict[lectures.current].widgets.length > 0 ? (
         <div className="widgets" onClick={deselectWidget}>
-          {sessions.dict[sessions.current].widgets.toReversed().map((wid) => {
+          {lectures.dict[lectures.current].widgets.toReversed().map((wid) => {
             const w = widgets.dict[wid];
             return (
               <WidgetFrame

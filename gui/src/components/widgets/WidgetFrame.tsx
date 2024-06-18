@@ -3,7 +3,7 @@ import {Catalog, Close} from "@carbon/icons-react";
 import IconButton from "../ui_components/IconButton";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {WidgetsServices} from "../../features/WidgetsSlice";
-import {SessionsServices} from "../../features/SessionsSlice";
+import {LecturesServices} from "../../features/LectureSlice";
 import {WidgetType} from "../../schema/widget";
 import SemesterGoalWidget from "./SemesterGoalWidget";
 import SemesterPlanWidget from "./SemesterPlanWidget";
@@ -23,14 +23,14 @@ const WidgetFrame = ({
   widgetId,
 }: WidgetFrameProps) => {
   const dispatch = useAppDispatch();
-  const sessions = useTypedSelector((state) => state.Sessions);
+  const lectures = useTypedSelector((state) => state.Lectures);
   const widgets = useTypedSelector((state) => state.Widgets);
   function deleteWidget() {
     dispatch(WidgetsServices.actions.deleteWidget(widgetId));
     dispatch(WidgetsServices.actions.setCurrent("NONE"));
     dispatch(
-      SessionsServices.actions.deleteWidget({
-        sessionId: sessions.current,
+      LecturesServices.actions.deleteWidget({
+        lectureId: lectures.current,
         widgetId: widgetId,
       })
     );

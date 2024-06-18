@@ -11,7 +11,7 @@ import IconButton from "./ui_components/IconButton";
 import ManageClassroomPU from "./PopUps/ManageClassroomPU";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
-import {SessionsServices} from "../features/SessionsSlice";
+import {LecturesServices} from "../features/LectureSlice";
 import {WidgetsServices} from "../features/WidgetsSlice";
 import {generateId} from "../utils/util";
 import {WidgetType, initWidget, widgetBook} from "../schema/widget";
@@ -42,8 +42,8 @@ const ClassCard = ({
       onClick={() => {
         dispatch(ClassroomsServices.actions.setCurrent(id));
         dispatch(
-          SessionsServices.actions.setCurrent(
-            classrooms.dict[id].lastOpenedSession
+          LecturesServices.actions.setCurrent(
+            classrooms.dict[id].lastOpenedLecture
           )
         );
       }}
@@ -74,16 +74,16 @@ const WidgetCard = ({
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
   const widgets = useTypedSelector((state) => state.Widgets);
-  const sessions = useTypedSelector((state) => state.Sessions);
+  const lectures = useTypedSelector((state) => state.Lectures);
   function addWidget(widgetType: number) {
     // create widget
     const newWidgetId = user.username + "-wid-" + generateId();
     const newWidget = initWidget(newWidgetId, widgetType);
     dispatch(WidgetsServices.actions.addWidget(newWidget));
-    // add new widget to session
+    // add new widget to lecture
     dispatch(
-      SessionsServices.actions.addWidget({
-        sessionId: sessions.current,
+      LecturesServices.actions.addWidget({
+        lectureId: lectures.current,
         widgetId: newWidgetId,
       })
     );
@@ -118,7 +118,7 @@ const NavBar = () => {
   // global states
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
-  const sessions = useTypedSelector((state) => state.Sessions);
+  const lectures = useTypedSelector((state) => state.Lectures);
   const [openClassroomCreation, setOpenClassroomCreation] = useState(false);
   return (
     <div className="navbar">
@@ -159,7 +159,7 @@ const NavBar = () => {
         <div className="nav-heading">
           <p className="--heading">工具</p>
         </div>
-        {sessions.current !== "NONE" && (
+        {lectures.current !== "NONE" && (
           <div className="nav-stack">
             {Object.values(widgetBook).map((w) => (
               <WidgetCard

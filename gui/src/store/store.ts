@@ -3,13 +3,13 @@ import {useDispatch, useSelector, TypedUseSelectorHook} from "react-redux";
 import {useReducer} from "react";
 import UserReducer from "../features/UserSlice";
 import ClassroomsReducer from "../features/ClassroomsSlice";
-import SessionsReducer from "../features/SessionsSlice";
+import LecturesReducer from "../features/LectureSlice";
 import WidgetsReducer from "../features/WidgetsSlice";
 const store = configureStore({
   reducer: {
     User: UserReducer, //convention is to to write the text preceding the word "Reducer"
     Classrooms: ClassroomsReducer,
-    Sessions: SessionsReducer,
+    Lectures: LecturesReducer,
     Widgets: WidgetsReducer,
   },
 });

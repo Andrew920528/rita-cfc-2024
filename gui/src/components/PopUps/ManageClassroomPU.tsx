@@ -9,8 +9,8 @@ import Dropdown from "../ui_components/Dropdown";
 import {Classroom} from "../../schema/classroom";
 import {generateId} from "../../utils/util";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
-import {Session} from "../../schema/session";
-import {SessionsServices} from "../../features/SessionsSlice";
+import {LecturesServices} from "../../features/LectureSlice";
+import {Lecture} from "../../schema/lecture";
 
 type ManageClassroomPUProps = {
   action: "create" | "edit";
@@ -107,9 +107,9 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   }
 
   function createClassroom() {
-    const newSessionId = user.username + "-session-0-" + generateId();
-    let newSession: Session = {
-      id: newSessionId,
+    const newLectureId = user.username + "-lecture-0-" + generateId();
+    let newLecture: Lecture = {
+      id: newLectureId,
       name: "學期規劃",
       type: 0,
       widgets: [],
@@ -123,20 +123,20 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       subject: subject === "其他" ? otherSubject : subject,
       grade: grade,
       publisher: subject === "其他" ? "綜合" : publisher,
-      sessions: [newSessionId],
-      lastOpenedSession: newSessionId,
+      lectures: [newLectureId],
+      lastOpenedLecture: newLectureId,
       plan: false,
     };
-    // create session
-    dispatch(SessionsServices.actions.addSession(newSession));
+    // create lecture
+    dispatch(LecturesServices.actions.addLecture(newLecture));
     // create classroom
     dispatch(ClassroomsServices.actions.addClassroom(newClassroom));
     // allow user to reference to the new classroom
     dispatch(UserServices.actions.addClassroom(newClassroomId));
     // set current classroom to the new classroom
     dispatch(ClassroomsServices.actions.setCurrent(newClassroomId));
-    // set current session to the new session
-    dispatch(SessionsServices.actions.setCurrent(newSessionId));
+    // set current lecture to the new lecture
+    dispatch(LecturesServices.actions.setCurrent(newLectureId));
   }
 
   function editClassroom() {
@@ -152,8 +152,8 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       grade: grade,
       publisher: subject === "其他" ? "綜合" : publisher,
       // these are not editable
-      sessions: [],
-      lastOpenedSession: "",
+      lectures: [],
+      lastOpenedLecture: "",
       plan: false,
     };
 

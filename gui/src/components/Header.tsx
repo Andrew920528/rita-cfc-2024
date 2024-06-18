@@ -12,13 +12,12 @@ import {
   UserAvatar,
 } from "@carbon/icons-react";
 import Dropdown from "./ui_components/Dropdown";
-import store, {useAppDispatch, useTypedSelector} from "../store/store";
-import {UserServices} from "../features/UserSlice";
-import PopUp from "./PopUps/PopUp";
+import {useAppDispatch, useTypedSelector} from "../store/store";
+
 import ManageAccountPU from "./PopUps/ManageAccountPU";
 import ManageClassroomPU from "./PopUps/ManageClassroomPU";
-import CreateSessionPU from "./PopUps/CreateSessionPU";
-import {SessionsServices} from "../features/SessionsSlice";
+import CreateLecturePU from "./PopUps/CreateLecturePU";
+import {LecturesServices} from "../features/LectureSlice";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 
 type HeaderProps = {
@@ -29,30 +28,30 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
-  const sessions = useTypedSelector((state) => state.Sessions);
+  const lectures = useTypedSelector((state) => state.Lectures);
   const [openSubjectEdit, setOpenSubjectEdit] = useState(false);
   // ui controllers
-  const [openSessionCreation, setopenSessionCreation] = useState(false);
+  const [openLectureCreation, setopenLectureCreation] = useState(false);
 
-  function deleteSession(sessionId: string) {
+  function deleteLecture(lectureId: string) {
     // remove reference from classroom
     dispatch(
-      ClassroomsServices.actions.deleteSession({
+      ClassroomsServices.actions.deleteLecture({
         classroomId: classrooms.current,
-        sessionId: sessionId,
+        lectureId: lectureId,
       })
     );
-    // remove actual session object
-    dispatch(SessionsServices.actions.deleteSession(sessionId));
+    // remove actual lecture object
+    dispatch(LecturesServices.actions.deleteLecture(lectureId));
 
-    // reset current session if current session is deleted
-    const defaultSession = classrooms.dict[classrooms.current].sessions[0];
-    if (sessions.current === sessionId) {
-      dispatch(SessionsServices.actions.setCurrent(defaultSession));
+    // reset current lecture if current lecture is deleted
+    const defaultLecture = classrooms.dict[classrooms.current].lectures[0];
+    if (lectures.current === lectureId) {
+      dispatch(LecturesServices.actions.setCurrent(defaultLecture));
       dispatch(
-        ClassroomsServices.actions.setLastOpenedSession({
+        ClassroomsServices.actions.setLastOpenedLecture({
           classroomId: classrooms.current,
-          sessionId: defaultSession,
+          lectureId: defaultLecture,
         })
       );
     }
@@ -100,31 +99,31 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
               editClassroomId={classrooms.current}
             />
             <Dropdown
-              currId={sessions.current}
+              currId={lectures.current}
               setCurrId={(id: string) => {
-                dispatch(SessionsServices.actions.setCurrent(id));
+                dispatch(LecturesServices.actions.setCurrent(id));
                 dispatch(
-                  ClassroomsServices.actions.setLastOpenedSession({
+                  ClassroomsServices.actions.setLastOpenedLecture({
                     classroomId: classrooms.current,
-                    sessionId: id,
+                    lectureId: id,
                   })
                 );
               }}
-              idDict={classrooms.dict[classrooms.current].sessions.reduce(
-                (dict, sessionId: string) => {
-                  dict[sessionId] = "";
+              idDict={classrooms.dict[classrooms.current].lectures.reduce(
+                (dict, lectureId: string) => {
+                  dict[lectureId] = "";
                   return dict;
                 },
                 {} as {[key: string]: string}
               )}
               getName={(id) => {
-                return sessions.dict[id].name;
+                return lectures.dict[id].name;
               }}
               placeholder="新增課程以開始備課"
               flex={false}
-              action={(id: string) => sessions.dict[id].type === 1}
+              action={(id: string) => lectures.dict[id].type === 1}
               actionFunction={(id: string) => {
-                deleteSession(id);
+                deleteLecture(id);
               }}
               extra={
                 <IconButton
@@ -133,15 +132,15 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
                   text={"新增課程"}
                   icon={<Add />}
                   onClick={() => {
-                    setopenSessionCreation(true);
+                    setopenLectureCreation(true);
                   }}
                 />
               }
             />
-            <CreateSessionPU
+            <CreateLecturePU
               title={"新增課程"}
-              trigger={openSessionCreation}
-              setTrigger={setopenSessionCreation}
+              trigger={openLectureCreation}
+              setTrigger={setopenLectureCreation}
             />
           </div>
         )}

@@ -1,5 +1,3 @@
-import {Session} from "./session";
-
 // ID convention: classroom-YYMMDD-HHMMSS
 export type Classroom = {
   id: string;
@@ -7,8 +5,8 @@ export type Classroom = {
   subject: string;
   grade: string;
   publisher: string;
-  sessions: string[];
-  lastOpenedSession: string;
+  lectures: string[];
+  lastOpenedLecture: string;
   plan: boolean;
 };
 

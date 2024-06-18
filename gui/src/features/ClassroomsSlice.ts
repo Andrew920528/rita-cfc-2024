@@ -22,32 +22,32 @@ const ClassroomsSlice = createSlice({
       state.dict[action.payload.id].grade = action.payload.grade;
       state.dict[action.payload.id].publisher = action.payload.publisher;
     },
-    addSession: (
+    addLecture: (
       state,
-      action: PayloadAction<{classroomId: string; sessionId: string}>
+      action: PayloadAction<{classroomId: string; lectureId: string}>
     ) => {
-      state.dict[action.payload.classroomId].sessions.push(
-        action.payload.sessionId
+      state.dict[action.payload.classroomId].lectures.push(
+        action.payload.lectureId
       );
-      state.dict[action.payload.classroomId].lastOpenedSession =
-        action.payload.sessionId;
+      state.dict[action.payload.classroomId].lastOpenedLecture =
+        action.payload.lectureId;
     },
-    setLastOpenedSession: (
+    setLastOpenedLecture: (
       state,
-      action: PayloadAction<{classroomId: string; sessionId: string}>
+      action: PayloadAction<{classroomId: string; lectureId: string}>
     ) => {
-      state.dict[action.payload.classroomId].lastOpenedSession =
-        action.payload.sessionId;
+      state.dict[action.payload.classroomId].lastOpenedLecture =
+        action.payload.lectureId;
     },
-    deleteSession: (
+    deleteLecture: (
       state,
-      action: PayloadAction<{classroomId: string; sessionId: string}>
+      action: PayloadAction<{classroomId: string; lectureId: string}>
     ) => {
-      const index = state.dict[action.payload.classroomId].sessions.indexOf(
-        action.payload.sessionId
+      const index = state.dict[action.payload.classroomId].lectures.indexOf(
+        action.payload.lectureId
       );
       if (index > -1) {
-        state.dict[action.payload.classroomId].sessions.splice(index, 1);
+        state.dict[action.payload.classroomId].lectures.splice(index, 1);
       }
     },
     setCurrent: (state, action: PayloadAction<string>) => {

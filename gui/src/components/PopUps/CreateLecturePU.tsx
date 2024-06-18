@@ -5,17 +5,18 @@ import PopUp, {PopUpProps} from "./PopUp";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {generateId} from "../../utils/util";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
-import {Session} from "../../schema/session";
-import {SessionsServices} from "../../features/SessionsSlice";
 
-type CreateSessionPUProps = {};
+import {LecturesServices} from "../../features/LectureSlice";
+import {Lecture} from "../../schema/lecture";
 
-const CreateSessionPU = (props: CreateSessionPUProps & PopUpProps) => {
+type CreateLecturePUProps = {};
+
+const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
   // global states
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
-  const sessions = useTypedSelector((state) => state.Sessions);
+  const lectures = useTypedSelector((state) => state.Lectures);
   // local states
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState("");
@@ -34,29 +35,29 @@ const CreateSessionPU = (props: CreateSessionPUProps & PopUpProps) => {
     return validate;
   }
 
-  function createSession() {
-    // create Session and associative chatroom
-    const newSessionId: string = user.username + "-session-" + generateId();
-    let newSession: Session = {
-      id: newSessionId,
+  function createLecture() {
+    // create lecture and associative chatroom
+    const newLectureId: string = user.username + "-lecture-" + generateId();
+    let newLecture: Lecture = {
+      id: newLectureId,
       name: name,
       type: 1,
       widgets: [],
       chatroom: "-1",
     };
 
-    // add id to classroom's session list
+    // add id to classroom's lecture list
     dispatch(
-      ClassroomsServices.actions.addSession({
+      ClassroomsServices.actions.addLecture({
         classroomId: classrooms.current,
-        sessionId: newSessionId,
+        lectureId: newLectureId,
       })
     );
 
-    // add new session to sessions dict
-    dispatch(SessionsServices.actions.addSession(newSession));
-    // set current session to the new session
-    dispatch(SessionsServices.actions.setCurrent(newSessionId));
+    // add new lecture to lectures dict
+    dispatch(LecturesServices.actions.addLecture(newLecture));
+    // set current lecture to the new lecture
+    dispatch(LecturesServices.actions.setCurrent(newLectureId));
   }
 
   function submitForm() {
@@ -64,7 +65,7 @@ const CreateSessionPU = (props: CreateSessionPUProps & PopUpProps) => {
       return;
     }
 
-    createSession();
+    createLecture();
 
     // reset form
     resetForm();
@@ -85,7 +86,7 @@ const CreateSessionPU = (props: CreateSessionPUProps & PopUpProps) => {
       }}
       reset={resetForm}
     >
-      <div className="create-session-form">
+      <div className="create-lecture-form">
         <div>
           <Textbox
             label="課堂名稱"
@@ -104,4 +105,4 @@ const CreateSessionPU = (props: CreateSessionPUProps & PopUpProps) => {
   );
 };
 
-export default CreateSessionPU;
+export default CreateLecturePU;
