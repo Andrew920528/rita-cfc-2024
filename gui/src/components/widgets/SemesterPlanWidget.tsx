@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {SemesterPlanWidgetT} from "../../schema/widget";
+import {SemesterPlanWidgetT, Widget} from "../../schema/widget";
 import Table from "../ui_components/Table";
 import Textbox from "../ui_components/Textbox";
 import IconButton from "../ui_components/IconButton";
@@ -13,19 +13,9 @@ type Props = {
 
 const SemesterPlanWidget = (props: Props) => {
   const dispatch = useAppDispatch();
-  const widgets = useTypedSelector((state) => state.Widgets);
-  const [widget, setWidget] = useState<SemesterPlanWidgetT>(
-    widgets.dict[props.wid] as SemesterPlanWidgetT
-  );
-
-  useEffect(() => {
-    dispatch(
-      WidgetsServices.actions.updateWidget({
-        wid: props.wid,
-        newWidget: widget,
-      })
-    );
-  }, [widget]);
+  const widget = useTypedSelector(
+    (state) => state.Widgets.dict[props.wid]
+  ) as SemesterPlanWidgetT;
 
   function addColumn(table: any, newHeading: string) {
     const originalTable = structuredClone(table);
@@ -42,7 +32,12 @@ const SemesterPlanWidget = (props: Props) => {
     originalTable.content.forEach((row: any) => {
       row[newHeading] = "";
     });
-    setWidget(originalTable);
+    dispatch(
+      WidgetsServices.actions.updateWidget({
+        wid: props.wid,
+        newWidget: originalTable,
+      })
+    );
   }
 
   function deleteColumn(table: any, heading: string) {
@@ -54,13 +49,23 @@ const SemesterPlanWidget = (props: Props) => {
     originalTable.content.forEach((row: any) => {
       delete row[heading];
     });
-    setWidget(originalTable);
+    dispatch(
+      WidgetsServices.actions.updateWidget({
+        wid: props.wid,
+        newWidget: originalTable,
+      })
+    );
   }
 
   function setCell(table: any, heading: string, row: number, value: string) {
     const originalTable = structuredClone(table);
     originalTable.content[row][heading] = value;
-    setWidget(originalTable);
+    dispatch(
+      WidgetsServices.actions.updateWidget({
+        wid: props.wid,
+        newWidget: originalTable,
+      })
+    );
   }
   const widgetTableContent = widget.content.map((row, rowIndex) =>
     Object.keys(row).reduce((acc: any, key: string) => {

@@ -49,6 +49,7 @@ const Dashboard = () => {
                 icon={widgetBook[w.type].icon}
                 selected={wid === widgets.current}
                 widgetId={wid}
+                widgetType={widgets.dict[wid].type}
               />
             );
           })}

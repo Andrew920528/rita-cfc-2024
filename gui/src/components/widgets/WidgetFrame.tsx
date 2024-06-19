@@ -1,4 +1,4 @@
-import React, {ReactElement} from "react";
+import React, {ReactElement, useState} from "react";
 import {Catalog, Close} from "@carbon/icons-react";
 import IconButton from "../ui_components/IconButton";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
@@ -9,22 +9,36 @@ import SemesterGoalWidget from "./SemesterGoalWidget";
 import SemesterPlanWidget from "./SemesterPlanWidget";
 import NoteWidget from "./NoteWidget";
 import ScheduleWidget from "./ScheduleWidget";
-
+const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
+  switch (widgetType) {
+    case WidgetType.SemesterGoal:
+      return <SemesterGoalWidget wid={widgetId} />;
+    case WidgetType.SemesterPlan:
+      return <SemesterPlanWidget wid={widgetId} />;
+    case WidgetType.Schedule:
+      return <ScheduleWidget wid={widgetId} />;
+    case WidgetType.Note:
+      return <NoteWidget wid={widgetId} />;
+    default:
+      return null;
+  }
+};
 type WidgetFrameProps = {
   selected?: boolean;
   icon?: ReactElement;
   title?: string;
   widgetId: string;
+  widgetType: WidgetType;
 };
 const WidgetFrame = ({
   selected,
   icon = <Catalog size={20} />,
   title = "Widget",
   widgetId,
+  widgetType,
 }: WidgetFrameProps) => {
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
-  const widgets = useTypedSelector((state) => state.Widgets);
   function deleteWidget() {
     dispatch(WidgetsServices.actions.deleteWidget(widgetId));
     dispatch(WidgetsServices.actions.setCurrent("NONE"));
@@ -35,12 +49,7 @@ const WidgetFrame = ({
       })
     );
   }
-  const widgetComponent = {
-    [WidgetType.SemesterGoal]: <SemesterGoalWidget wid={widgetId} />,
-    [WidgetType.SemesterPlan]: <SemesterPlanWidget wid={widgetId} />,
-    [WidgetType.Note]: <NoteWidget wid={widgetId} />,
-    [WidgetType.Schedule]: <ScheduleWidget wid={widgetId} />,
-  };
+
   return (
     <div
       className={`widget-frame ${selected ? "selected" : "idle"}`}
@@ -61,11 +70,9 @@ const WidgetFrame = ({
           }}
         />
       </div>
-      <div className="wf-content">
-        {widgetComponent[widgets.dict[widgetId].type]}
-      </div>
+      <div className="wf-content">{widgetComponent(widgetId, widgetType)}</div>
     </div>
   );
 };
 
-export default WidgetFrame;
+export default React.memo(WidgetFrame);
