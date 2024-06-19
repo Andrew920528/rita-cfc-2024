@@ -1,22 +1,21 @@
 @use "../../abstract/index" as *;
 
 .textarea-wrapper {
-  display: flex;
-  flex-direction: column;
   gap: 0.6rem;
-  width: 38rem;
-  height: 16rem;
-
+  width: 36rem;
+  height: auto;
   label {
     font-weight: bold;
-    margin-bottom: 0.5rem;
+    align-items: start;
   }
 
   .textarea-input {
-    width: 38rem;
-    height: 16rem;
+    width: 100%;
+    height: 11.6rem;
     padding: 10px;
     border: none;
+    border-bottom: 1px solid #000000; 
+    background-color: #F4F4F4;
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 16px;
@@ -29,6 +28,12 @@
 
   .textarea-input::placeholder {
     color: #a8a8a8;
+    size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    letter-spacing: 0.16px;
+    height:20px;
+    width:479px;
   }
 }
 

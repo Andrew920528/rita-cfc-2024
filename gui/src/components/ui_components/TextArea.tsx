@@ -6,8 +6,7 @@ type TextAreaProps = {
     label?: string;
     value?: string;
     onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-    rows?: number;
-    cols?: number;
+
   };
   
   const TextArea: React.FC<TextAreaProps> = ({
@@ -16,8 +15,7 @@ type TextAreaProps = {
     label,
     value,
     onChange = () => {},
-    rows = 10,
-    cols = 60,
+
   }) => {
     return (
       <div className={`textarea-wrapper ${flex ? "flex" : "fixed"}`}>
@@ -27,8 +25,7 @@ type TextAreaProps = {
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          rows={rows}
-          cols={cols}
+
         />
       </div>
     );
