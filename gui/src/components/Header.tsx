@@ -21,6 +21,7 @@ import CreateLecturePU from "./PopUps/CreateLecturePU";
 import {LecturesServices} from "../features/LectureSlice";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {WidgetsServices} from "../features/WidgetsSlice";
+import {UserServices} from "../features/UserSlice";
 
 type HeaderProps = {
   openNav: boolean;
@@ -28,7 +29,6 @@ type HeaderProps = {
 };
 const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const dispatch = useAppDispatch();
-  const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
   const lectures = useTypedSelector((state) => state.Lectures);
   const [openSubjectEdit, setOpenSubjectEdit] = useState(false);
@@ -159,8 +159,13 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
 const SaveGroup = () => {
   const dispatch = useAppDispatch();
   const unsavedWidgets = useTypedSelector((state) => state.Widgets.unsaved);
-
+  const scheduleChanged = useTypedSelector(
+    (state) => state.User.scheduleChanged
+  );
   const saveAll = () => {
+    if (scheduleChanged) {
+      dispatch(UserServices.actions.saveSchedule());
+    }
     dispatch(WidgetsServices.actions.saveAll());
   };
   return (
@@ -176,7 +181,7 @@ const SaveGroup = () => {
         onClick={() => {
           saveAll();
         }}
-        disabled={Object.keys(unsavedWidgets).length === 0}
+        disabled={Object.keys(unsavedWidgets).length === 0 && !scheduleChanged}
       />
     </div>
   );

@@ -1,6 +1,7 @@
 .table-container {
   display: grid;
-  width: 500px;
+  min-width: 200px;
+  width: 100%;
 }
 
 .table-header,

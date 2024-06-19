@@ -1,4 +1,5 @@
 import {Alarm, Catalog, CertificateCheck, Plan} from "@carbon/icons-react";
+import {Schedule} from "./schedule";
 
 export type Widget = {
   id: string;
@@ -21,10 +22,7 @@ export type SemesterPlanWidgetT = Widget & {
 export type NoteWidgetT = Widget & {
   content: string;
 };
-export type ScheduleWidgetT = Widget & {
-  headings: ["mon", "tue", "wed", "thu", "fri"];
-  content: {mon: string; tue: string; wed: string; thu: string; fri: string}[];
-};
+export type ScheduleWidgetT = Widget;
 
 export enum WidgetType {
   SemesterGoal,
@@ -60,8 +58,6 @@ export function initWidget(id: string, type: WidgetType): Widget {
       return {
         id: id,
         type: type,
-        headings: ["mon", "tue", "wed", "thu", "fri"],
-        content: [],
       } as ScheduleWidgetT;
     default:
       return {

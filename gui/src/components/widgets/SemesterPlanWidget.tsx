@@ -4,7 +4,13 @@ import {SemesterPlanWidgetT, Widget} from "../../schema/widget";
 import Table from "../ui_components/Table";
 import Textbox from "../ui_components/Textbox";
 import IconButton from "../ui_components/IconButton";
-import {Settings} from "@carbon/icons-react";
+import {
+  ColumnDelete,
+  ColumnInsert,
+  RowDelete,
+  RowInsert,
+  Settings,
+} from "@carbon/icons-react";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 
 type Props = {
@@ -69,6 +75,39 @@ const SemesterPlanWidget = (props: Props) => {
       })
     );
   }
+
+  function insertRow(table: any, row: number) {
+    const originalTable = structuredClone(table);
+    const initObj = originalTable.headings.reduce((acc: any, key: string) => {
+      acc[key] = "";
+      return acc;
+    }, {});
+
+    originalTable.content = [
+      ...originalTable.content.slice(0, row),
+      initObj,
+      ...originalTable.content.slice(row),
+    ];
+    dispatch(
+      WidgetsServices.actions.updateWidget({
+        wid: props.wid,
+        newWidget: originalTable,
+      })
+    );
+  }
+
+  function deleteRow(table: any, row: number) {
+    const originalTable = structuredClone(table);
+
+    originalTable.content.pop();
+    dispatch(
+      WidgetsServices.actions.updateWidget({
+        wid: props.wid,
+        newWidget: originalTable,
+      })
+    );
+  }
+
   const widgetTableContent = widget.content.map((row, rowIndex) =>
     Object.keys(row).reduce((acc: any, key: string) => {
       acc[key] = (
@@ -89,24 +128,44 @@ const SemesterPlanWidget = (props: Props) => {
   return (
     <div className="semester-plan-widget">
       <Table headings={widget.headings} content={widgetTableContent} />
-      <IconButton
-        flex={true}
-        text={"Add"}
-        icon={<Settings />}
-        mode={"primary"}
-        onClick={() => {
-          addColumn(widget, "新しいカラム");
-        }}
-      />
-      <IconButton
-        flex={true}
-        text={"Delete"}
-        icon={<Settings />}
-        mode={"primary"}
-        onClick={() => {
-          deleteColumn(widget, widget.headings[widget.headings.length - 1]);
-        }}
-      />
+      <div className="widget-button-row">
+        <IconButton
+          flex={true}
+          text={"Add Column"}
+          icon={<ColumnInsert />}
+          mode={"primary"}
+          onClick={() => {
+            addColumn(widget, "新しいカラム");
+          }}
+        />
+        <IconButton
+          flex={true}
+          text={"Delete Column"}
+          icon={<ColumnDelete />}
+          mode={"primary"}
+          onClick={() => {
+            deleteColumn(widget, widget.headings[widget.headings.length - 1]);
+          }}
+        />
+        <IconButton
+          flex={true}
+          text={"Add row"}
+          icon={<RowInsert />}
+          mode={"primary"}
+          onClick={() => {
+            insertRow(widget, widget.content.length - 1);
+          }}
+        />
+        <IconButton
+          flex={true}
+          text={"Delete row"}
+          icon={<RowDelete />}
+          mode={"primary"}
+          onClick={() => {
+            deleteRow(widget, widget.content.length - 1);
+          }}
+        />
+      </div>
     </div>
   );
 };
