@@ -10,6 +10,7 @@ import {
   Logout,
   Menu,
   UserAvatar,
+  Save,
 } from "@carbon/icons-react";
 import Dropdown from "./ui_components/Dropdown";
 import {useAppDispatch, useTypedSelector} from "../store/store";
@@ -19,6 +20,7 @@ import ManageClassroomPU from "./PopUps/ManageClassroomPU";
 import CreateLecturePU from "./PopUps/CreateLecturePU";
 import {LecturesServices} from "../features/LectureSlice";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
+import {WidgetsServices} from "../features/WidgetsSlice";
 
 type HeaderProps = {
   openNav: boolean;
@@ -144,8 +146,38 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
             />
           </div>
         )}
-        <AccountButton />
+
+        <div className="header-right-end">
+          <SaveGroup />
+          <AccountButton />
+        </div>
       </div>
+    </div>
+  );
+};
+
+const SaveGroup = () => {
+  const dispatch = useAppDispatch();
+  const unsavedWidgets = useTypedSelector((state) => state.Widgets.unsaved);
+
+  const saveAll = () => {
+    dispatch(WidgetsServices.actions.saveAll());
+  };
+  return (
+    <div className="save-group">
+      <i className={Object.keys(unsavedWidgets).length === 0 ? "saved" : ""}>
+        {Object.keys(unsavedWidgets).length === 0
+          ? "All changes saved"
+          : "New changes unsaved"}
+      </i>
+      <IconButton
+        mode={"on-dark"}
+        icon={<Save size={20} />}
+        onClick={() => {
+          saveAll();
+        }}
+        disabled={Object.keys(unsavedWidgets).length === 0}
+      />
     </div>
   );
 };

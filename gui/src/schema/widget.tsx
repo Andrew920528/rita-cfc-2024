@@ -8,6 +8,7 @@ export type Widget = {
 export type Widgets = {
   dict: {[key: string]: Widget};
   current: string;
+  unsaved: {[key: string]: true};
 };
 
 export type SemesterGoalWidgetT = Widget & {

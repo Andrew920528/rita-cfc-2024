@@ -58,13 +58,7 @@ const Dashboard = () => {
         <DashboardPlaceHolder />
       )}
 
-      <Chatroom
-        context={
-          widgets.dict[widgets.current]
-            ? widgetBook[widgets.dict[widgets.current].type].title
-            : ""
-        }
-      />
+      <Chatroom />
     </div>
   );
 };

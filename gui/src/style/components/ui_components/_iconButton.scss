@@ -50,4 +50,9 @@
     flex-direction: column;
     align-items: center;
   }
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
 }

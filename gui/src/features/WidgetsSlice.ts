@@ -1,9 +1,10 @@
-import {PayloadAction, createSlice} from "@reduxjs/toolkit";
+import {PayloadAction, createSlice, current} from "@reduxjs/toolkit";
 import {Widget, WidgetType, Widgets} from "../schema/widget";
 
 const initialState: Widgets = {
   dict: {},
   current: "NONE",
+  unsaved: {},
 };
 
 const WidgetsSlice = createSlice({
@@ -45,6 +46,13 @@ const WidgetsSlice = createSlice({
           console.log("update schedule");
           break;
       }
+      if (!(action.payload.wid in state.unsaved)) {
+        state.unsaved[action.payload.wid] = true;
+      }
+    },
+    saveAll: (state) => {
+      console.log("Saving...", current(state.unsaved));
+      state.unsaved = {};
     },
   },
 });

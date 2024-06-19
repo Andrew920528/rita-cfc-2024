@@ -20,13 +20,15 @@ const SemesterPlanWidget = (props: Props) => {
   function addColumn(table: any, newHeading: string) {
     const originalTable = structuredClone(table);
     // inspect the original table and add new column with unique name
-    let counter = 1;
+    let counter = 0;
     for (let heading of originalTable.headings) {
       if (heading.split("(")[0] === newHeading) {
         counter++;
       }
     }
-    newHeading = newHeading + "(" + counter + ")";
+    if (counter > 0) {
+      newHeading = newHeading + "(" + counter + ")";
+    }
 
     originalTable.headings.push(newHeading);
     originalTable.content.forEach((row: any) => {
