@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Cafe} from "@carbon/icons-react";
 import Chatroom from "./Chatroom";
 import WidgetFrame from "./widgets/WidgetFrame";
@@ -27,6 +27,7 @@ const Dashboard = () => {
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
   const widgets = useTypedSelector((state) => state.Widgets);
+
   const deselectWidget = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     if (e.target === e.currentTarget) {

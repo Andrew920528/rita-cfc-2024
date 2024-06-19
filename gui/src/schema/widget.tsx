@@ -15,18 +15,14 @@ export type SemesterGoalWidgetT = Widget & {
 };
 export type SemesterPlanWidgetT = Widget & {
   headings: string[];
-  content: {
-    [key: string]: string[];
-  };
+  content: {[key: string]: string}[];
 };
 export type NoteWidgetT = Widget & {
   content: string;
 };
 export type ScheduleWidgetT = Widget & {
   headings: ["mon", "tue", "wed", "thu", "fri"];
-  content: {
-    [key: string]: string[];
-  };
+  content: {mon: string; tue: string; wed: string; thu: string; fri: string}[];
 };
 
 export enum WidgetType {
@@ -49,7 +45,9 @@ export function initWidget(id: string, type: WidgetType): Widget {
         id: id,
         type: type,
         headings: ["週目", "目標", "教材"],
-        content: {},
+        content: [
+          {週目: "1", 目標: "基本的な漢字の習得", 教材: "漢字ドリル第1章"}, // FIXME: testing purposes
+        ],
       } as SemesterPlanWidgetT;
     case WidgetType.Note: // note
       return {
@@ -62,7 +60,7 @@ export function initWidget(id: string, type: WidgetType): Widget {
         id: id,
         type: type,
         headings: ["mon", "tue", "wed", "thu", "fri"],
-        content: {},
+        content: [],
       } as ScheduleWidgetT;
     default:
       return {

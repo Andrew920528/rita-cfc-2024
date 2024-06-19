@@ -49,8 +49,10 @@ const WidgetFrame = ({
       }}
     >
       <div className="wf-heading">
-        {icon}
-        <p className="--heading">{title}</p>
+        <div className="wf-heading-left">
+          {icon}
+          <p className="--heading">{title}</p>
+        </div>
         <IconButton
           icon={<Close />}
           mode="ghost"

@@ -36,7 +36,7 @@ const WidgetsSlice = createSlice({
           console.log("update goal");
           break;
         case WidgetType.SemesterPlan:
-          console.log("update plan");
+          state.dict[action.payload.wid] = action.payload.newWidget;
           break;
         case WidgetType.Note:
           console.log("update note");
