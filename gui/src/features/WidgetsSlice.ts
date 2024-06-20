@@ -1,5 +1,5 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
-import {Widget, WidgetType, Widgets} from "../schema/widget";
+import {NoteWidgetT, Widget, WidgetType, Widgets} from "../schema/widget";
 
 const initialState: Widgets = {
   dict: {},
@@ -40,7 +40,7 @@ const WidgetsSlice = createSlice({
           break;
         case WidgetType.Note:
           console.log("update note");
-          break;
+          updateNoteWidget(state, action as PayloadAction<{ wid: string; newWidget: NoteWidgetT }>);
         case WidgetType.Schedule:
           console.log("update schedule");
           break;
@@ -57,3 +57,14 @@ export const WidgetsServices = {
 //This is stored in the main store
 const WidgetsReducer = WidgetsSlice.reducer;
 export default WidgetsReducer;
+
+function updateNoteWidget(state: Widgets, action: PayloadAction<{ wid: string; newWidget: NoteWidgetT }>) {
+  const { wid, newWidget } = action.payload;
+  const oldWidget = state.dict[wid] as NoteWidgetT;
+
+  if (!oldWidget) {
+    console.error(`Widget with id ${wid} not found`);
+    return;
+  }
+  oldWidget.content = newWidget.content;
+}
