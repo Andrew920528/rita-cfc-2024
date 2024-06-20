@@ -1,6 +1,6 @@
 import React from "react";
 import TextArea from "../ui_components/TextArea";
-import {useAppDispatch} from "../../store/store";
+import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {NoteWidgetT, WidgetType} from "../../schema/widget";
 type Props = {
@@ -9,8 +9,8 @@ type Props = {
 
 const NoteWidget = (props: Props) => {
   const dispatch = useAppDispatch();
-  function editNote() {
-    const newNote = "newNote";
+  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
+  function editNote(newNote: string) {
     const SnewWidget: NoteWidgetT = {
       id: "",
       type: WidgetType.Note,
@@ -19,13 +19,16 @@ const NoteWidget = (props: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         wid: props.wid,
-        newWidget: SnewWidget
-
+        newWidget: SnewWidget,
       })
-    )
+    );
   }
   return (
-    <TextArea/>
+    <TextArea
+      onChange={(e) => {
+        editNote(e.currentTarget.value);
+      }}
+    />
   );
 };
 

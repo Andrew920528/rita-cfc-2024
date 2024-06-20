@@ -40,7 +40,11 @@ const WidgetsSlice = createSlice({
           break;
         case WidgetType.Note:
           console.log("update note");
-          updateNoteWidget(state, action as PayloadAction<{ wid: string; newWidget: NoteWidgetT }>);
+          updateNoteWidget(
+            state,
+            action as PayloadAction<{wid: string; newWidget: NoteWidgetT}>
+          );
+          break;
         case WidgetType.Schedule:
           console.log("update schedule");
           break;
@@ -58,8 +62,11 @@ export const WidgetsServices = {
 const WidgetsReducer = WidgetsSlice.reducer;
 export default WidgetsReducer;
 
-function updateNoteWidget(state: Widgets, action: PayloadAction<{ wid: string; newWidget: NoteWidgetT }>) {
-  const { wid, newWidget } = action.payload;
+function updateNoteWidget(
+  state: Widgets,
+  action: PayloadAction<{wid: string; newWidget: NoteWidgetT}>
+) {
+  const {wid, newWidget} = action.payload;
   const oldWidget = state.dict[wid] as NoteWidgetT;
 
   if (!oldWidget) {
