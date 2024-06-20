@@ -9,7 +9,7 @@ type TextboxProps = {
   value?: string;
   onChange?: (e: React.FormEvent<HTMLInputElement>) => void;
   autoFocus?: boolean;
-  type?: string;
+  type?: string; // password, etc.
 };
 const Textbox = ({
   flex,

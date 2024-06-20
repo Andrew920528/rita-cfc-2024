@@ -73,7 +73,6 @@ const WidgetCard = ({
 }: WidgetCardProps) => {
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
-  const widgets = useTypedSelector((state) => state.Widgets);
   const lectures = useTypedSelector((state) => state.Lectures);
   function addWidget(widgetType: number) {
     // create widget

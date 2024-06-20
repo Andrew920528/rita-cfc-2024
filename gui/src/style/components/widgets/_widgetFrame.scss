@@ -16,6 +16,12 @@
     gap: 0.5rem;
     padding-left: 1rem;
     justify-content: space-between;
+    .wf-heading-left {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+    }
   }
   .wf-content {
     padding: 1rem;

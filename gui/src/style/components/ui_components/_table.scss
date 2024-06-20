@@ -1,0 +1,30 @@
+.table-container {
+  display: grid;
+  min-width: 200px;
+  width: 100%;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(20px, 1fr)
+  ); /* Adjust minmax values as needed */
+}
+
+.table-header-item,
+.table-row-item {
+  padding: 8px;
+  outline: 1px solid #ccc;
+  text-align: left;
+}
+
+.table-header-item {
+  font-weight: bold;
+  background-color: #f4f4f4;
+}
+
+.table-row-item {
+  background-color: #fff;
+}

@@ -6,6 +6,7 @@ export type IconButtonProps = {
   text?: string;
   icon: ReactElement;
   onClick?: (args?: any) => void;
+  disabled?: boolean;
 };
 const IconButton = ({
   flex,
@@ -13,10 +14,13 @@ const IconButton = ({
   text,
   icon,
   onClick = () => {},
+  disabled = false,
 }: IconButtonProps) => {
   return (
     <div
-      className={`icon-button ${flex ? "flex" : "fixed"} ${mode}`}
+      className={`icon-button ${flex ? "flex" : "fixed"} ${mode} ${
+        disabled ? "disabled" : ""
+      }`}
       onClick={() => {
         onClick();
       }}

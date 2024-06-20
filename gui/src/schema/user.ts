@@ -8,4 +8,5 @@ export type User = {
   occupation: string;
   schedule: Schedule;
   classrooms: string[]; // in order
+  scheduleChanged: boolean;
 };

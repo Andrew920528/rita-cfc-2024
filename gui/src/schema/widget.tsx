@@ -1,4 +1,5 @@
 import {Alarm, Catalog, CertificateCheck, Plan} from "@carbon/icons-react";
+import {Schedule} from "./schedule";
 
 export type Widget = {
   id: string;
@@ -8,26 +9,20 @@ export type Widget = {
 export type Widgets = {
   dict: {[key: string]: Widget};
   current: string;
+  unsaved: {[key: string]: true};
 };
 
 export type SemesterGoalWidgetT = Widget & {
-  content: string;
+  content: string[];
 };
 export type SemesterPlanWidgetT = Widget & {
   headings: string[];
-  content: {
-    [key: string]: string[];
-  };
+  content: {[key: string]: string}[];
 };
 export type NoteWidgetT = Widget & {
   content: string;
 };
-export type ScheduleWidgetT = Widget & {
-  headings: ["mon", "tue", "wed", "thu", "fri"];
-  content: {
-    [key: string]: string[];
-  };
-};
+export type ScheduleWidgetT = Widget;
 
 export enum WidgetType {
   SemesterGoal,
@@ -42,14 +37,16 @@ export function initWidget(id: string, type: WidgetType): Widget {
       return {
         id: id,
         type: type,
-        content: "",
+        content: [],
       } as SemesterGoalWidgetT;
     case WidgetType.SemesterPlan: // semester plan
       return {
         id: id,
         type: type,
         headings: ["週目", "目標", "教材"],
-        content: {},
+        content: [
+          {週目: "1", 目標: "基本的な漢字の習得", 教材: "漢字ドリル第1章"}, // FIXME: testing purposes
+        ],
       } as SemesterPlanWidgetT;
     case WidgetType.Note: // note
       return {
@@ -61,8 +58,6 @@ export function initWidget(id: string, type: WidgetType): Widget {
       return {
         id: id,
         type: type,
-        headings: ["mon", "tue", "wed", "thu", "fri"],
-        content: {},
       } as ScheduleWidgetT;
     default:
       return {
