@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import TextArea from "../ui_components/TextArea";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {WidgetsServices} from "../../features/WidgetsSlice";
@@ -9,7 +9,9 @@ type Props = {
 
 const NoteWidget = (props: Props) => {
   const dispatch = useAppDispatch();
-  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
+  const widget = useTypedSelector(
+    (state) => state.Widgets.dict[props.wid]
+  ) as NoteWidgetT;
   function editNote(newNote: string) {
     const SnewWidget: NoteWidgetT = {
       id: "",
@@ -25,6 +27,7 @@ const NoteWidget = (props: Props) => {
   }
   return (
     <TextArea
+      value={widget.content}
       onChange={(e) => {
         editNote(e.currentTarget.value);
       }}

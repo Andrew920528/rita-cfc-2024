@@ -43,4 +43,4 @@ const Chatroom = ({}: ChatroomProps) => {
   );
 };
 
-export default Chatroom;
+export default React.memo(Chatroom);

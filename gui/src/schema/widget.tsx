@@ -13,7 +13,7 @@ export type Widgets = {
 };
 
 export type SemesterGoalWidgetT = Widget & {
-  content: string;
+  content: string[];
 };
 export type SemesterPlanWidgetT = Widget & {
   headings: string[];
@@ -37,7 +37,7 @@ export function initWidget(id: string, type: WidgetType): Widget {
       return {
         id: id,
         type: type,
-        content: "",
+        content: [],
       } as SemesterGoalWidgetT;
     case WidgetType.SemesterPlan: // semester plan
       return {

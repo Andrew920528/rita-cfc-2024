@@ -1,5 +1,11 @@
 import {PayloadAction, createSlice, current} from "@reduxjs/toolkit";
-import {NoteWidgetT, Widget, WidgetType, Widgets} from "../schema/widget";
+import {
+  NoteWidgetT,
+  SemesterPlanWidgetT,
+  Widget,
+  WidgetType,
+  Widgets,
+} from "../schema/widget";
 
 const initialState: Widgets = {
   dict: {},
@@ -37,17 +43,18 @@ const WidgetsSlice = createSlice({
           console.log("update goal");
           break;
         case WidgetType.SemesterPlan:
-          state.dict[action.payload.wid] = action.payload.newWidget;
+          const newWidget = action.payload.newWidget as SemesterPlanWidgetT;
+          (state.dict[action.payload.wid] as SemesterPlanWidgetT).headings =
+            newWidget.headings;
           break;
         case WidgetType.Note:
-          console.log("update note");
           updateNoteWidget(
             state,
             action as PayloadAction<{wid: string; newWidget: NoteWidgetT}>
           );
           break;
         case WidgetType.Schedule:
-          console.log("update schedule");
+          // schedule is updated at user level
           break;
       }
       if (!(action.payload.wid in state.unsaved)) {
