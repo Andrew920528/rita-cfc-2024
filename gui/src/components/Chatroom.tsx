@@ -1,63 +1,80 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Textbox from "./ui_components/Textbox";
 import IconButton from "./ui_components/IconButton";
-import {ArrowRight, ChevronDown, ChevronUp} from "@carbon/icons-react";
-import {useTypedSelector} from "../store/store";
+import {ArrowRight, ChevronDown, ChevronUp, Stop} from "@carbon/icons-react";
+import {useAppDispatch, useTypedSelector} from "../store/store";
 import {widgetBook} from "../schema/widget";
 import {ChatMessage as ChatMessageT} from "../schema/chatroom";
-
-const ChatMessage = ({text, sender}: ChatMessageT) => {
-  return (
-    <div className="chatroom-message">
-      <p className="chatroom-message-text">{text}</p>
-      <p className="chatroom-message-sender">{sender}</p>
-    </div>
-  );
-};
-
-type ChatroomBodyProps = {
-  messages: ChatMessageT[];
-};
-const ChatroomBody = ({messages}: ChatroomBodyProps) => {
-  const [previousSender, setPreviousSender] = useState<string>("");
-  return (
-    <div className="chatroom-body">
-      {messages.map((message, index) => {
-        if (message.sender === previousSender) {
-          console.error("Sender cannot send more than 1 message at a time.");
-          return;
-        }
-        return <ChatMessage {...message} key={index} />;
-      })}
-    </div>
-  );
-};
+import {ChatroomsServices} from "../features/ChatroomsSlice";
+import {mimicApi} from "../utils/util";
 
 type ChatroomProps = {};
 const Chatroom = ({}: ChatroomProps) => {
-  // ui handlers
-  const [collapsed, setCollapsed] = useState(false);
-
   // global states
-  // NOTE: API is going to take ids and internally parse the actual data
-  const classroomId = useTypedSelector((state) => state.Classrooms.current);
-  const lectureId = useTypedSelector((state) => state.Lectures.current);
-  // NOTE: chatroom.current is set by other ui components and reflected here
+  const dispatch = useAppDispatch();
   const chatroom = useTypedSelector(
     (state) => state.Chatrooms.dict[state.Chatrooms.current]
   );
-  // NOTE: Since widgets might not be updated instantly, we
-  // need to get its data at the frontend
-  const accessibleWidgets = useTypedSelector(
-    (state) => state.Lectures.dict[lectureId].widgets
+
+  const classroomId = useTypedSelector((state) => state.Classrooms.current);
+  const lecture = useTypedSelector(
+    (state) => state.Lectures.dict[state.Lectures.current]
   );
   const widgets = useTypedSelector((state) => state.Widgets);
-  const dummyChatMessages: ChatMessageT[] = [
-    {text: "Hi", sender: "Rita"},
-    {text: "Hi", sender: "User"},
-    {text: "Hi", sender: "Rita"},
-    {text: "Hi", sender: "User"},
-  ];
+  // ui handlers
+  const [collapsed, setCollapsed] = useState(false);
+  const [readyToSend, setReadyToSend] = useState(true);
+  const [text, setText] = useState("");
+
+  const abortControllerRef = useRef<AbortController | null>(null);
+  useEffect(() => {
+    // Clean up the controller when the component unmounts
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+  async function sendMessage(text: string) {
+    setReadyToSend(false);
+    let newMessage = {
+      text: text,
+      sender: "User",
+    };
+    dispatch(
+      ChatroomsServices.actions.addMessage({
+        chatroomId: chatroom.id,
+        message: newMessage,
+      })
+    );
+    setText("");
+
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+    try {
+      await mimicApi(2000, signal);
+      // send api request with text.trim()
+      console.log("after 5 seconds");
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        console.log("Fetch aborted");
+      } else if (err instanceof Error) {
+        console.error(err.message);
+      } else {
+        console.error("unknow error occured");
+      }
+    } finally {
+      setReadyToSend(true);
+    }
+  }
+
+  function terminateResponse() {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    setReadyToSend(true);
+  }
+  if (!chatroom) return <></>;
   return (
     <div className={`chatroom ${collapsed ? "collapsed" : "opened"}`}>
       <div className="chatroom-header">
@@ -78,10 +95,27 @@ const Chatroom = ({}: ChatroomProps) => {
         />
       </div>
       <div className={`chatroom-content ${collapsed ? "collapsed" : "opened"}`}>
-        <ChatroomBody messages={dummyChatMessages} />
+        <ChatroomBody messages={chatroom.messages} loading={!readyToSend} />
         <div className="chatroom-footer">
-          <Textbox flex={true} />
-          <IconButton mode={"primary"} icon={<ArrowRight />} />
+          <Textbox
+            flex={true}
+            value={text}
+            onChange={(e) => {
+              setText(e.currentTarget.value);
+            }}
+          />
+          <IconButton
+            mode={"primary"}
+            icon={readyToSend ? <ArrowRight /> : <Stop />}
+            onClick={() => {
+              if (readyToSend) {
+                sendMessage(text);
+              } else {
+                terminateResponse();
+              }
+            }}
+            disabled={text === ""}
+          />
         </div>
       </div>
     </div>
@@ -89,3 +123,36 @@ const Chatroom = ({}: ChatroomProps) => {
 };
 
 export default React.memo(Chatroom);
+
+const ChatMessage = ({text, sender}: ChatMessageT) => {
+  return (
+    <div className={`chatroom-message ${sender}`}>
+      <div className="chat-msg-decor"></div>
+      <p className="chatroom-message-text">{text}</p>
+    </div>
+  );
+};
+
+type ChatroomBodyProps = {
+  messages: ChatMessageT[];
+  loading: boolean;
+};
+const ChatroomBody = ({messages, loading}: ChatroomBodyProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const scrollToBottom = () => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
+    };
+    scrollToBottom();
+  }, [messages, loading]);
+  return (
+    <div className="chatroom-body" ref={scrollRef}>
+      {messages.map((message, index) => {
+        return <ChatMessage {...message} key={index} />;
+      })}
+      {loading && <p>Waiting for response</p>}
+    </div>
+  );
+};
