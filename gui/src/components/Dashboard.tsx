@@ -58,7 +58,7 @@ const Dashboard = () => {
         <DashboardPlaceHolder />
       )}
 
-      <Chatroom />
+      {/* <Chatroom /> */}
     </div>
   );
 };

@@ -22,6 +22,7 @@ import {LecturesServices} from "../features/LectureSlice";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {WidgetsServices} from "../features/WidgetsSlice";
 import {UserServices} from "../features/UserSlice";
+import {useDeleteLecture} from "../store/globalActions";
 
 type HeaderProps = {
   openNav: boolean;
@@ -32,32 +33,9 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const classrooms = useTypedSelector((state) => state.Classrooms);
   const lectures = useTypedSelector((state) => state.Lectures);
   const [openSubjectEdit, setOpenSubjectEdit] = useState(false);
+  const deleteLecture = useDeleteLecture();
   // ui controllers
   const [openLectureCreation, setopenLectureCreation] = useState(false);
-
-  function deleteLecture(lectureId: string) {
-    // remove reference from classroom
-    dispatch(
-      ClassroomsServices.actions.deleteLecture({
-        classroomId: classrooms.current,
-        lectureId: lectureId,
-      })
-    );
-    // remove actual lecture object
-    dispatch(LecturesServices.actions.deleteLecture(lectureId));
-
-    // reset current lecture if current lecture is deleted
-    const defaultLecture = classrooms.dict[classrooms.current].lectures[0];
-    if (lectures.current === lectureId) {
-      dispatch(LecturesServices.actions.setCurrent(defaultLecture));
-      dispatch(
-        ClassroomsServices.actions.setLastOpenedLecture({
-          classroomId: classrooms.current,
-          lectureId: defaultLecture,
-        })
-      );
-    }
-  }
   return (
     <div className="header">
       <div className="header-left">
@@ -125,7 +103,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
               flex={false}
               action={(id: string) => lectures.dict[id].type === 1}
               actionFunction={(id: string) => {
-                deleteLecture(id);
+                deleteLecture({lectureId: id, classroomId: classrooms.current});
               }}
               extra={
                 <IconButton

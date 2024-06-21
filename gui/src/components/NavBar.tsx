@@ -1,20 +1,12 @@
 import React, {Dispatch, ReactElement, SetStateAction, useState} from "react";
-import {
-  Add,
-  Information,
-  Catalog,
-  CertificateCheck,
-  Plan,
-  Alarm,
-} from "@carbon/icons-react";
+import {Add, Information} from "@carbon/icons-react";
 import IconButton from "./ui_components/IconButton";
 import ManageClassroomPU from "./PopUps/ManageClassroomPU";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {LecturesServices} from "../features/LectureSlice";
-import {WidgetsServices} from "../features/WidgetsSlice";
-import {generateId} from "../utils/util";
 import {WidgetType, initWidget, widgetBook} from "../schema/widget";
+import {useCreateWidget} from "../store/globalActions";
 
 type ClassCardProps = {
   id: string;
@@ -60,35 +52,14 @@ const ClassCard = ({
 };
 
 type WidgetCardProps = {
-  icon?: ReactElement;
-  title?: string;
-  hint?: string;
+  icon: ReactElement;
+  title: string;
+  hint: string;
   widgetType: WidgetType;
 };
-const WidgetCard = ({
-  icon = <Catalog />,
-  title = "新工具",
-  hint = "新工具的提示",
-  widgetType = 0,
-}: WidgetCardProps) => {
-  const dispatch = useAppDispatch();
-  const user = useTypedSelector((state) => state.User);
+const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
   const lectures = useTypedSelector((state) => state.Lectures);
-  function addWidget(widgetType: number) {
-    // create widget
-    const newWidgetId = user.username + "-wid-" + generateId();
-    const newWidget = initWidget(newWidgetId, widgetType);
-    dispatch(WidgetsServices.actions.addWidget(newWidget));
-    // add new widget to lecture
-    dispatch(
-      LecturesServices.actions.addWidget({
-        lectureId: lectures.current,
-        widgetId: newWidgetId,
-      })
-    );
-    // set current widget
-    dispatch(WidgetsServices.actions.setCurrent(newWidgetId));
-  }
+  const addWidget = useCreateWidget();
 
   return (
     <div className="widget-card">
@@ -105,7 +76,7 @@ const WidgetCard = ({
           mode={"primary"}
           icon={<Add />}
           onClick={() => {
-            addWidget(widgetType);
+            addWidget({widgetType: widgetType, lectureId: lectures.current});
           }}
         />
       </div>

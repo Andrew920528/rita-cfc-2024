@@ -36,10 +36,11 @@
       height: 0rem;
     }
     .chatroom-body {
-      height: 20rem;
       flex: 1;
       overflow-y: auto;
       background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
     }
     .chatroom-footer {
       display: flex;

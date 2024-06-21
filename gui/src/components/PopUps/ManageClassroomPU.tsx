@@ -1,16 +1,12 @@
 import React, {useEffect, useState} from "react";
 import Textbox from "../ui_components/Textbox";
-import IconButton from "../ui_components/IconButton";
 import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "./PopUp";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {UserServices} from "../../features/UserSlice";
 import Dropdown from "../ui_components/Dropdown";
 import {Classroom} from "../../schema/classroom";
-import {generateId} from "../../utils/util";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
-import {LecturesServices} from "../../features/LectureSlice";
-import {Lecture} from "../../schema/lecture";
+import {useCreateClassroom} from "../../store/globalActions";
 
 type ManageClassroomPUProps = {
   action: "create" | "edit";
@@ -38,6 +34,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
+  const createClassroom = useCreateClassroom();
   // local states
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
@@ -106,39 +103,6 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     return validate;
   }
 
-  function createClassroom() {
-    const newLectureId = user.username + "-lecture-0-" + generateId();
-    let newLecture: Lecture = {
-      id: newLectureId,
-      name: "學期規劃",
-      type: 0,
-      widgets: [],
-      chatroom: "-1",
-    };
-
-    const newClassroomId: string = user.username + "-classroom-" + generateId();
-    let newClassroom: Classroom = {
-      id: newClassroomId,
-      name: name,
-      subject: subject === "其他" ? otherSubject : subject,
-      grade: grade,
-      publisher: subject === "其他" ? "綜合" : publisher,
-      lectures: [newLectureId],
-      lastOpenedLecture: newLectureId,
-      plan: false,
-    };
-    // create lecture
-    dispatch(LecturesServices.actions.addLecture(newLecture));
-    // create classroom
-    dispatch(ClassroomsServices.actions.addClassroom(newClassroom));
-    // allow user to reference to the new classroom
-    dispatch(UserServices.actions.addClassroom(newClassroomId));
-    // set current classroom to the new classroom
-    dispatch(ClassroomsServices.actions.setCurrent(newClassroomId));
-    // set current lecture to the new lecture
-    dispatch(LecturesServices.actions.setCurrent(newLectureId));
-  }
-
   function editClassroom() {
     // update global states
     if (props.editClassroomId === undefined) {
@@ -167,7 +131,13 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     }
 
     if (props.action === "create") {
-      createClassroom();
+      createClassroom({
+        classroomName: name,
+        subject: subject,
+        otherSubject: otherSubject,
+        grade: grade,
+        publisher: publisher,
+      });
     } else if (props.action === "edit") {
       editClassroom();
     }

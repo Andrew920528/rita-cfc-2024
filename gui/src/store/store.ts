@@ -5,12 +5,14 @@ import UserReducer from "../features/UserSlice";
 import ClassroomsReducer from "../features/ClassroomsSlice";
 import LecturesReducer from "../features/LectureSlice";
 import WidgetsReducer from "../features/WidgetsSlice";
+import ChatroomsReducer from "../features/ChatroomsSlice";
 const store = configureStore({
   reducer: {
     User: UserReducer, //convention is to to write the text preceding the word "Reducer"
     Classrooms: ClassroomsReducer,
     Lectures: LecturesReducer,
     Widgets: WidgetsReducer,
+    Chatrooms: ChatroomsReducer,
   },
 });
 

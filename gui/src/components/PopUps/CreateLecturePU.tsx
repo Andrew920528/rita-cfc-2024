@@ -3,20 +3,14 @@ import Textbox from "../ui_components/Textbox";
 import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "./PopUp";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {generateId} from "../../utils/util";
-import {ClassroomsServices} from "../../features/ClassroomsSlice";
-
-import {LecturesServices} from "../../features/LectureSlice";
-import {Lecture} from "../../schema/lecture";
+import {useCreateLecture} from "../../store/globalActions";
 
 type CreateLecturePUProps = {};
 
 const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
   // global states
-  const dispatch = useAppDispatch();
-  const user = useTypedSelector((state) => state.User);
-  const classrooms = useTypedSelector((state) => state.Classrooms);
-  const lectures = useTypedSelector((state) => state.Lectures);
+  const currClassroom = useTypedSelector((state) => state.Classrooms.current);
+  const createLecture = useCreateLecture();
   // local states
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState("");
@@ -35,37 +29,16 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
     return validate;
   }
 
-  function createLecture() {
-    // create lecture and associative chatroom
-    const newLectureId: string = user.username + "-lecture-" + generateId();
-    let newLecture: Lecture = {
-      id: newLectureId,
-      name: name,
-      type: 1,
-      widgets: [],
-      chatroom: "-1",
-    };
-
-    // add id to classroom's lecture list
-    dispatch(
-      ClassroomsServices.actions.addLecture({
-        classroomId: classrooms.current,
-        lectureId: newLectureId,
-      })
-    );
-
-    // add new lecture to lectures dict
-    dispatch(LecturesServices.actions.addLecture(newLecture));
-    // set current lecture to the new lecture
-    dispatch(LecturesServices.actions.setCurrent(newLectureId));
-  }
-
   function submitForm() {
     if (!validateForm()) {
       return;
     }
 
-    createLecture();
+    createLecture({
+      lectureName: name,
+      classroomId: currClassroom,
+      type: 1,
+    });
 
     // reset form
     resetForm();

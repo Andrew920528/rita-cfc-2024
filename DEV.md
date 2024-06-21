@@ -14,10 +14,6 @@
 
 ## Backlog
 
-- Combine slices into a single WorkspaceSlice to handle more complex actions.
-  - Reason: have a centralize space for major action. Reduce repeated slice boilerplate, makes debugging and maintainence easier, more robust because the current slices are highly intertwined, removes unnecessary abstractions
-  - Hindrance: not sure if this is premature optimization/ scales well, unsure about best practices, low return for current iteration
-  - Urgency: 3
 - Forms should be submitted when enter is pressed
   - Urgency: 1
 - Header layout should be somewhat consistent even when classroom name changes
