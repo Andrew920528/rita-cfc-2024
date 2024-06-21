@@ -54,10 +54,19 @@ const Chatroom = ({}: ChatroomProps) => {
     try {
       await mimicApi(2000, signal);
       // send api request with text.trim()
-      console.log("after 5 seconds");
+      const response = {
+        text: "Hello, I'm Rita",
+        sender: "Rita",
+      };
+      dispatch(
+        ChatroomsServices.actions.addMessage({
+          chatroomId: chatroom.id,
+          message: response,
+        })
+      );
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
-        console.log("Fetch aborted");
+        // console.log("Fetch aborted");
       } else if (err instanceof Error) {
         console.error(err.message);
       } else {
@@ -114,7 +123,7 @@ const Chatroom = ({}: ChatroomProps) => {
                 terminateResponse();
               }
             }}
-            disabled={text === ""}
+            disabled={text === "" && readyToSend}
           />
         </div>
       </div>
@@ -152,7 +161,7 @@ const ChatroomBody = ({messages, loading}: ChatroomBodyProps) => {
       {messages.map((message, index) => {
         return <ChatMessage {...message} key={index} />;
       })}
-      {loading && <p>Waiting for response</p>}
+      {loading && <p className="--label">Waiting for response</p>}
     </div>
   );
 };
