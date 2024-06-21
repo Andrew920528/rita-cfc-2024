@@ -149,7 +149,7 @@ const SaveGroup = () => {
   return (
     <div className="save-group">
       <i className={Object.keys(unsavedWidgets).length === 0 ? "saved" : ""}>
-        {Object.keys(unsavedWidgets).length === 0
+        {Object.keys(unsavedWidgets).length === 0 && !scheduleChanged
           ? "All changes saved"
           : "New changes unsaved"}
       </i>

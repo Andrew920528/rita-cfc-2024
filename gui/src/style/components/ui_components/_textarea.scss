@@ -1,13 +1,6 @@
 @use "../../abstract/index" as *;
 
 .textarea-wrapper {
-  gap: 0.6rem;
-  width: 20rem;
-  label {
-    font-weight: bold;
-    align-items: start;
-  }
-
   .textarea-input {
     width: 100%;
     min-height: 8rem;

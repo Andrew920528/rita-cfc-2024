@@ -23,6 +23,13 @@ const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
       return null;
   }
 };
+
+const widgetWidths = {
+  [WidgetType.SemesterGoal]: "25",
+  [WidgetType.SemesterPlan]: "75",
+  [WidgetType.Schedule]: "50",
+  [WidgetType.Note]: "25",
+};
 type WidgetFrameProps = {
   selected?: boolean;
   icon?: ReactElement;
@@ -42,7 +49,9 @@ const WidgetFrame = ({
   const deleteWidget = useDeleteWidget();
   return (
     <div
-      className={`widget-frame ${selected ? "selected" : "idle"}`}
+      className={`widget-frame ${selected ? "selected" : "idle"} w-${
+        widgetWidths[widgetType]
+      }`}
       onClick={() => {
         dispatch(WidgetsServices.actions.setCurrent(widgetId));
       }}

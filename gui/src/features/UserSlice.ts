@@ -46,6 +46,7 @@ const UserSlice = createSlice({
       } else if (action.payload === "delete") {
         state.schedule.pop();
       }
+      state.scheduleChanged = true;
     },
     updateScheduleCell: (
       state,
@@ -61,6 +62,7 @@ const UserSlice = createSlice({
       }
       state.schedule[action.payload.period][action.payload.day] =
         action.payload.value;
+      state.scheduleChanged = true;
     },
     saveSchedule: (state) => {
       state.scheduleChanged = false;
