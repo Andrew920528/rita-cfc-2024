@@ -27,6 +27,7 @@ export const useCreateClassroom = () => {
       otherSubject: string;
       grade: string;
       publisher: string;
+      credits: number;
     }) => {
       const newClassroomId: string = username + "-classroom-" + generateId();
       let newClassroom: Classroom = {
@@ -38,6 +39,7 @@ export const useCreateClassroom = () => {
         lectures: [],
         lastOpenedLecture: "NONE",
         plan: false,
+        credits: args.credits,
       };
 
       // create classroom

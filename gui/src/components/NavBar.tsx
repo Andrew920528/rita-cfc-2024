@@ -16,6 +16,7 @@ type ClassCardProps = {
   publisher?: string;
   plan?: boolean;
   selected?: string;
+  credits: number;
 };
 const ClassCard = ({
   id = "",
@@ -25,6 +26,7 @@ const ClassCard = ({
   publisher = "未設定",
   plan = false,
   selected = "NONE",
+  credits,
 }: ClassCardProps) => {
   const dispatch = useAppDispatch();
   const classrooms = useTypedSelector((state) => state.Classrooms);
@@ -45,7 +47,7 @@ const ClassCard = ({
       </p>
       <p className="--label">
         科目：{subject} ｜年級：{grade}｜教材：{publisher}
-        <br /> 學期規劃：{plan ? "已完成" : "未完成"}
+        <br /> 週堂數：{credits} | 學期規劃：{plan ? "已完成" : "未完成"}
       </p>
     </div>
   );
@@ -120,6 +122,7 @@ const NavBar = () => {
               subject={classrooms.dict[id].subject}
               grade={classrooms.dict[id].grade}
               selected={classrooms.current}
+              credits={classrooms.dict[id].credits}
             />
           ))}
         </div>

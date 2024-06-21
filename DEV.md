@@ -22,3 +22,4 @@
 - Widget enter and exit animation
   - Urgency: 4
 - ctrl+z and other key board shortcut (to reduce the need to confirm delete)
+- Header layout is off when squashed

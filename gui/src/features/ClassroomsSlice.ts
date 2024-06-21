@@ -21,6 +21,7 @@ const ClassroomsSlice = createSlice({
       state.dict[action.payload.id].subject = action.payload.subject;
       state.dict[action.payload.id].grade = action.payload.grade;
       state.dict[action.payload.id].publisher = action.payload.publisher;
+      state.dict[action.payload.id].credits = action.payload.credits;
     },
     addLecture: (
       state,

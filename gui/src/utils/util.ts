@@ -33,3 +33,7 @@ export const mimicApi = (ms: number, signal: AbortSignal): Promise<void> =>
       reject(new DOMException("Aborted", "AbortError"));
     });
   });
+
+export function isNumeric(str: string) {
+  return /^\d+$/.test(str);
+}
