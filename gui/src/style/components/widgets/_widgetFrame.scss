@@ -1,5 +1,6 @@
 @use "../../abstract/index" as *;
 
+$dashboard-gap: 0.5rem;
 .widget-frame {
   background-color: white;
   height: 20%;
@@ -9,21 +10,17 @@
   &.selected {
     outline: 2px solid $primary-color;
   }
-  // TODO Make mixin
-  &.w-100 {
-    width: 100%;
+
+  &.w-33 {
+    width: calc((100% / 3 - #{$dashboard-gap}));
   }
 
-  &.w-75 {
-    width: 75%;
+  &.w-66 {
+    width: calc((100% * 2 / 3 - #{$dashboard-gap}));
   }
 
-  &.w-50 {
-    width: 50%;
-  }
-
-  &.w-25 {
-    width: 25%;
+  &.w-99 {
+    width: calc(100% - #{$dashboard-gap});
   }
 
   .wf-heading {

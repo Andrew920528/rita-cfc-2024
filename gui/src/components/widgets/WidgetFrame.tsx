@@ -25,10 +25,10 @@ const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
 };
 
 const widgetWidths = {
-  [WidgetType.SemesterGoal]: "25",
-  [WidgetType.SemesterPlan]: "75",
-  [WidgetType.Schedule]: "50",
-  [WidgetType.Note]: "25",
+  [WidgetType.SemesterGoal]: "33",
+  [WidgetType.SemesterPlan]: "66",
+  [WidgetType.Schedule]: "33",
+  [WidgetType.Note]: "33",
 };
 type WidgetFrameProps = {
   selected?: boolean;
