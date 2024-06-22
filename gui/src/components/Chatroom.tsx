@@ -34,7 +34,7 @@ const Chatroom = ({}: ChatroomProps) => {
         abortControllerRef.current.abort();
       }
     };
-  }, []);
+  }, [classroomId]);
   async function sendMessage(text: string) {
     setReadyToSend(false);
     let newMessage = {

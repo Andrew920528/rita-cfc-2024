@@ -9,6 +9,7 @@ export type Classroom = {
   lastOpenedLecture: string;
   plan: boolean;
   credits: number;
+  chatroom: string; // chatroom id
 };
 
 export type Classrooms = {

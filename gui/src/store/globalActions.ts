@@ -29,6 +29,13 @@ export const useCreateClassroom = () => {
       publisher: string;
       credits: number;
     }) => {
+      // create associative classroom
+      const newChatroomId: string = username + "-chatroom-" + generateId();
+      let newChatroom: Chatroom = {
+        id: newChatroomId,
+        messages: [],
+      };
+
       const newClassroomId: string = username + "-classroom-" + generateId();
       let newClassroom: Classroom = {
         id: newClassroomId,
@@ -40,7 +47,13 @@ export const useCreateClassroom = () => {
         lastOpenedLecture: "NONE",
         plan: false,
         credits: args.credits,
+        chatroom: newChatroomId,
       };
+
+      // add new chatroom to chatrooms dict
+      dispatch(ChatroomsServices.actions.addChatroom(newChatroom));
+      // set current chatroom to the new chatroom
+      dispatch(ChatroomsServices.actions.setCurrent(newChatroomId));
 
       // create classroom
       dispatch(ClassroomsServices.actions.addClassroom(newClassroom));
@@ -66,12 +79,6 @@ export const useCreateLecture = () => {
   const username = useTypedSelector((state) => state.User.username);
   return useCallback(
     (args: {lectureName: string; classroomId: string; type: number}) => {
-      // create associative classroom
-      const newChatroomId: string = username + "-chatroom-" + generateId();
-      let newChatroom: Chatroom = {
-        id: newChatroomId,
-        messages: [],
-      };
       const newLectureId: string =
         username + "-lecture-" + args.type + generateId();
 
@@ -81,7 +88,6 @@ export const useCreateLecture = () => {
         name: args.lectureName,
         type: args.type,
         widgets: [],
-        chatroom: newChatroomId,
       };
 
       // add reference to classroom's lecture list
@@ -98,14 +104,11 @@ export const useCreateLecture = () => {
           lectureId: newLectureId,
         })
       );
-      // add new chatroom to chatrooms dict
-      dispatch(ChatroomsServices.actions.addChatroom(newChatroom));
+
       // add new lecture to lectures dict
       dispatch(LecturesServices.actions.addLecture(newLecture));
       // set current lecture to the new lecture
       dispatch(LecturesServices.actions.setCurrent(newLectureId));
-      // set current chatroom to the new chatroom
-      dispatch(ChatroomsServices.actions.setCurrent(newChatroomId));
     },
     [dispatch, username]
   );
@@ -146,10 +149,7 @@ export const useDeleteLecture = () => {
       for (let i = 0; i < widgets.length; i++) {
         deleteWidget({lectureId: args.lectureId, widgetId: widgets[i]});
       }
-      // delete chatroom
-      const chatroomId = lectures.dict[args.lectureId].chatroom;
-      dispatch(ChatroomsServices.actions.deleteChatroom(chatroomId));
-      // remove lecture reference from classroom
+
       dispatch(
         ClassroomsServices.actions.deleteLecture({
           classroomId: args.classroomId,

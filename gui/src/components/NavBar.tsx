@@ -7,6 +7,7 @@ import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {LecturesServices} from "../features/LectureSlice";
 import {WidgetType, initWidget, widgetBook} from "../schema/widget";
 import {useCreateWidget} from "../store/globalActions";
+import {ChatroomsServices} from "../features/ChatroomsSlice";
 
 type ClassCardProps = {
   id: string;
@@ -40,6 +41,8 @@ const ClassCard = ({
             classrooms.dict[id].lastOpenedLecture
           )
         );
+        const chatId = classrooms.dict[id].chatroom;
+        dispatch(ChatroomsServices.actions.setCurrent(chatId));
       }}
     >
       <p>
