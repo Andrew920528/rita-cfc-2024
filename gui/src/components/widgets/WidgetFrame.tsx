@@ -3,12 +3,12 @@ import {Catalog, Close} from "@carbon/icons-react";
 import IconButton from "../ui_components/IconButton";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {WidgetsServices} from "../../features/WidgetsSlice";
-import {LecturesServices} from "../../features/LectureSlice";
 import {WidgetType} from "../../schema/widget";
 import SemesterGoalWidget from "./SemesterGoalWidget";
 import SemesterPlanWidget from "./SemesterPlanWidget";
 import NoteWidget from "./NoteWidget";
 import ScheduleWidget from "./ScheduleWidget";
+import {useDeleteWidget} from "../../store/globalActions";
 const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
   switch (widgetType) {
     case WidgetType.SemesterGoal:
@@ -22,6 +22,13 @@ const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
     default:
       return null;
   }
+};
+
+const widgetWidths = {
+  [WidgetType.SemesterGoal]: "33",
+  [WidgetType.SemesterPlan]: "66",
+  [WidgetType.Schedule]: "33",
+  [WidgetType.Note]: "33",
 };
 type WidgetFrameProps = {
   selected?: boolean;
@@ -39,20 +46,12 @@ const WidgetFrame = ({
 }: WidgetFrameProps) => {
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
-  function deleteWidget() {
-    dispatch(WidgetsServices.actions.deleteWidget(widgetId));
-    dispatch(WidgetsServices.actions.setCurrent("NONE"));
-    dispatch(
-      LecturesServices.actions.deleteWidget({
-        lectureId: lectures.current,
-        widgetId: widgetId,
-      })
-    );
-  }
-
+  const deleteWidget = useDeleteWidget();
   return (
     <div
-      className={`widget-frame ${selected ? "selected" : "idle"}`}
+      className={`widget-frame ${selected ? "selected" : "idle"} w-${
+        widgetWidths[widgetType]
+      }`}
       onClick={() => {
         dispatch(WidgetsServices.actions.setCurrent(widgetId));
       }}
@@ -66,7 +65,7 @@ const WidgetFrame = ({
           icon={<Close />}
           mode="ghost"
           onClick={() => {
-            deleteWidget();
+            deleteWidget({lectureId: lectures.current, widgetId: widgetId});
           }}
         />
       </div>

@@ -1,20 +1,13 @@
 import React, {Dispatch, ReactElement, SetStateAction, useState} from "react";
-import {
-  Add,
-  Information,
-  Catalog,
-  CertificateCheck,
-  Plan,
-  Alarm,
-} from "@carbon/icons-react";
+import {Add, Information} from "@carbon/icons-react";
 import IconButton from "./ui_components/IconButton";
 import ManageClassroomPU from "./PopUps/ManageClassroomPU";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {LecturesServices} from "../features/LectureSlice";
-import {WidgetsServices} from "../features/WidgetsSlice";
-import {generateId} from "../utils/util";
 import {WidgetType, initWidget, widgetBook} from "../schema/widget";
+import {useCreateWidget} from "../store/globalActions";
+import {ChatroomsServices} from "../features/ChatroomsSlice";
 
 type ClassCardProps = {
   id: string;
@@ -24,6 +17,7 @@ type ClassCardProps = {
   publisher?: string;
   plan?: boolean;
   selected?: string;
+  credits: number;
 };
 const ClassCard = ({
   id = "",
@@ -33,6 +27,7 @@ const ClassCard = ({
   publisher = "未設定",
   plan = false,
   selected = "NONE",
+  credits,
 }: ClassCardProps) => {
   const dispatch = useAppDispatch();
   const classrooms = useTypedSelector((state) => state.Classrooms);
@@ -46,6 +41,8 @@ const ClassCard = ({
             classrooms.dict[id].lastOpenedLecture
           )
         );
+        const chatId = classrooms.dict[id].chatroom;
+        dispatch(ChatroomsServices.actions.setCurrent(chatId));
       }}
     >
       <p>
@@ -53,42 +50,21 @@ const ClassCard = ({
       </p>
       <p className="--label">
         科目：{subject} ｜年級：{grade}｜教材：{publisher}
-        <br /> 學期規劃：{plan ? "已完成" : "未完成"}
+        <br /> 週堂數：{credits} | 學期規劃：{plan ? "已完成" : "未完成"}
       </p>
     </div>
   );
 };
 
 type WidgetCardProps = {
-  icon?: ReactElement;
-  title?: string;
-  hint?: string;
+  icon: ReactElement;
+  title: string;
+  hint: string;
   widgetType: WidgetType;
 };
-const WidgetCard = ({
-  icon = <Catalog />,
-  title = "新工具",
-  hint = "新工具的提示",
-  widgetType = 0,
-}: WidgetCardProps) => {
-  const dispatch = useAppDispatch();
-  const user = useTypedSelector((state) => state.User);
+const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
   const lectures = useTypedSelector((state) => state.Lectures);
-  function addWidget(widgetType: number) {
-    // create widget
-    const newWidgetId = user.username + "-wid-" + generateId();
-    const newWidget = initWidget(newWidgetId, widgetType);
-    dispatch(WidgetsServices.actions.addWidget(newWidget));
-    // add new widget to lecture
-    dispatch(
-      LecturesServices.actions.addWidget({
-        lectureId: lectures.current,
-        widgetId: newWidgetId,
-      })
-    );
-    // set current widget
-    dispatch(WidgetsServices.actions.setCurrent(newWidgetId));
-  }
+  const addWidget = useCreateWidget();
 
   return (
     <div className="widget-card">
@@ -105,7 +81,7 @@ const WidgetCard = ({
           mode={"primary"}
           icon={<Add />}
           onClick={() => {
-            addWidget(widgetType);
+            addWidget({widgetType: widgetType, lectureId: lectures.current});
           }}
         />
       </div>
@@ -149,6 +125,7 @@ const NavBar = () => {
               subject={classrooms.dict[id].subject}
               grade={classrooms.dict[id].grade}
               selected={classrooms.current}
+              credits={classrooms.dict[id].credits}
             />
           ))}
         </div>

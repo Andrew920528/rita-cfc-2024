@@ -11,13 +11,10 @@
 - 6/12 23:46 | Wow, I really did wrote a lot yesterday. Thank god no one is reading this (or are you?). Anyways, not having testing properly set up, even when we're not doing testing, feels int. So today I re-did the testing set up, and it was faster than I expected. Other than that, more UI stuff, connected with Redux, tried out AI autocompletion tool, went through internal debate on how a component should be structured... and that's all for today.
 - 6/13 20:30 | Learned more about redux and its terminologies due to me debating whether the current design pattern "can be better". I guess the question I should be asking is "is it good enough". Still, taking the time understanding redux basics is beneficial so I guess that's a "healthy enough" delay in work.
 - 6/19 23:10 | Almost done with the base implementation of the two widgets... However, AI implementation still seems far from completed. At this pace, we probably have to push iteration 1 back by 1 week.
+- 6/21 17:23 | I'm glad that stuff that I thought that needs to be refactored is actually better the original way. Learned how to write custom hooks today and solve the issue I wanted to solve without compromising scalability. For the most part (most) gui is completed for iteration 1. Besides certain widgets that needs to be thought out a bit more in terms of UX, the gui's data flow is implemented (without api), components are organized with reasonable scalability and performance. Still need a day or two to be fully done with the widgets, but Ellen and I can quickly be switching focus to the backend & ai.
 
 ## Backlog
 
-- Combine slices into a single WorkspaceSlice to handle more complex actions.
-  - Reason: have a centralize space for major action. Reduce repeated slice boilerplate, makes debugging and maintainence easier, more robust because the current slices are highly intertwined, removes unnecessary abstractions
-  - Hindrance: not sure if this is premature optimization/ scales well, unsure about best practices, low return for current iteration
-  - Urgency: 3
 - Forms should be submitted when enter is pressed
   - Urgency: 1
 - Header layout should be somewhat consistent even when classroom name changes
@@ -25,3 +22,4 @@
 - Widget enter and exit animation
   - Urgency: 4
 - ctrl+z and other key board shortcut (to reduce the need to confirm delete)
+- Header layout is off when squashed

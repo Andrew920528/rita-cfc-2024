@@ -1,16 +1,13 @@
 import React, {useEffect, useState} from "react";
 import Textbox from "../ui_components/Textbox";
-import IconButton from "../ui_components/IconButton";
 import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "./PopUp";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {UserServices} from "../../features/UserSlice";
 import Dropdown from "../ui_components/Dropdown";
 import {Classroom} from "../../schema/classroom";
-import {generateId} from "../../utils/util";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
-import {LecturesServices} from "../../features/LectureSlice";
-import {Lecture} from "../../schema/lecture";
+import {useCreateClassroom} from "../../store/globalActions";
+import {isNumeric} from "../../utils/util";
 
 type ManageClassroomPUProps = {
   action: "create" | "edit";
@@ -38,20 +35,24 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
+  const createClassroom = useCreateClassroom();
   // local states
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
   const [otherSubject, setOtherSubject] = useState("");
   const [grade, setGrade] = useState("");
   const [publisher, setPublisher] = useState("");
+  const [credit, setCredit] = useState("3");
 
   const [nameError, setNameError] = useState("");
   const [subjectError, setSubjectError] = useState("");
   const [otherSubjectError, setOtherSubjectError] = useState("");
   const [gradeError, setGradeError] = useState("");
   const [publisherError, setPublisherError] = useState("");
+  const [creditError, setCreditError] = useState("");
 
   useEffect(() => {
+    // ensures the classroom to be edited exists, then populates the form
     if (props.action === "edit") {
       let editClassroomId = props.editClassroomId ? props.editClassroomId : "";
       if (editClassroomId === "" || !(editClassroomId in classrooms.dict))
@@ -65,6 +66,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       }
       setGrade(classrooms.dict[editClassroomId!].grade);
       setPublisher(classrooms.dict[editClassroomId!].publisher);
+      setCredit(classrooms.dict[editClassroomId!].credits.toString());
     }
   }, [props.trigger, classrooms.current]);
 
@@ -74,12 +76,14 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     setOtherSubject("");
     setGrade("");
     setPublisher("");
+    setCredit("3");
 
     setNameError("");
     setSubjectError("");
     setOtherSubjectError("");
     setGradeError("");
     setPublisherError("");
+    setCreditError("");
   }
   function validateForm(): boolean {
     let validate = true;
@@ -103,40 +107,11 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       setPublisherError("請選擇教材");
       validate = false;
     }
+    if (isNumeric(credit) === false || parseInt(credit) <= 0) {
+      setCreditError("請輸入正整數");
+      validate = false;
+    }
     return validate;
-  }
-
-  function createClassroom() {
-    const newLectureId = user.username + "-lecture-0-" + generateId();
-    let newLecture: Lecture = {
-      id: newLectureId,
-      name: "學期規劃",
-      type: 0,
-      widgets: [],
-      chatroom: "-1",
-    };
-
-    const newClassroomId: string = user.username + "-classroom-" + generateId();
-    let newClassroom: Classroom = {
-      id: newClassroomId,
-      name: name,
-      subject: subject === "其他" ? otherSubject : subject,
-      grade: grade,
-      publisher: subject === "其他" ? "綜合" : publisher,
-      lectures: [newLectureId],
-      lastOpenedLecture: newLectureId,
-      plan: false,
-    };
-    // create lecture
-    dispatch(LecturesServices.actions.addLecture(newLecture));
-    // create classroom
-    dispatch(ClassroomsServices.actions.addClassroom(newClassroom));
-    // allow user to reference to the new classroom
-    dispatch(UserServices.actions.addClassroom(newClassroomId));
-    // set current classroom to the new classroom
-    dispatch(ClassroomsServices.actions.setCurrent(newClassroomId));
-    // set current lecture to the new lecture
-    dispatch(LecturesServices.actions.setCurrent(newLectureId));
   }
 
   function editClassroom() {
@@ -155,6 +130,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       lectures: [],
       lastOpenedLecture: "",
       plan: false,
+      credits: parseInt(credit),
     };
 
     // update classroom to classrooms dict
@@ -167,7 +143,14 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     }
 
     if (props.action === "create") {
-      createClassroom();
+      createClassroom({
+        classroomName: name,
+        subject: subject,
+        otherSubject: otherSubject,
+        grade: grade,
+        publisher: publisher,
+        credits: parseInt(credit),
+      });
     } else if (props.action === "edit") {
       editClassroom();
     }
@@ -192,7 +175,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       reset={resetForm}
     >
       <div className="create-classroom-form">
-        <div className="ccf-layout-first-row">
+        <div className="ccf-layout-row">
           <div>
             <Textbox
               label="課堂名稱"
@@ -222,21 +205,37 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
             />
           </div>
         </div>
+        <div className="ccf-layout-row">
+          <Dropdown
+            currId={subject}
+            setCurrId={setSubject}
+            idDict={subjectDict}
+            getName={(id) => {
+              return id;
+            }}
+            placeholder="請選擇科目"
+            flex={true}
+            mode="form"
+            errorMsg={subjectError}
+            label="科目"
+          />
 
-        <Dropdown
-          currId={subject}
-          setCurrId={setSubject}
-          idDict={subjectDict}
-          getName={(id) => {
-            return id;
-          }}
-          placeholder="請選擇科目"
-          flex={true}
-          mode="form"
-          errorMsg={subjectError}
-          label="科目"
-        />
-
+          <Textbox
+            label="週堂數"
+            errorMsg={creditError}
+            mode="form"
+            placeholder="請輸入教材名稱"
+            value={credit}
+            onChange={(e) => {
+              if (
+                /^\d+$/.test(e.currentTarget.value) ||
+                e.currentTarget.value === ""
+              ) {
+                setCredit(e.currentTarget.value);
+              }
+            }}
+          />
+        </div>
         {subject !== "其他" ? (
           <Dropdown
             currId={publisher}

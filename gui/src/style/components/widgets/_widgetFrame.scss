@@ -1,5 +1,6 @@
 @use "../../abstract/index" as *;
 
+$dashboard-gap: 0.5rem;
 .widget-frame {
   background-color: white;
   height: 20%;
@@ -9,6 +10,19 @@
   &.selected {
     outline: 2px solid $primary-color;
   }
+
+  &.w-33 {
+    width: calc((100% / 3 - #{$dashboard-gap}));
+  }
+
+  &.w-66 {
+    width: calc((100% * 2 / 3 - #{$dashboard-gap}));
+  }
+
+  &.w-99 {
+    width: calc(100% - #{$dashboard-gap});
+  }
+
   .wf-heading {
     display: flex;
     flex-direction: row;
@@ -25,5 +39,6 @@
   }
   .wf-content {
     padding: 1rem;
+    overflow: auto;
   }
 }

@@ -46,6 +46,8 @@ const WidgetsSlice = createSlice({
           const newWidget = action.payload.newWidget as SemesterPlanWidgetT;
           (state.dict[action.payload.wid] as SemesterPlanWidgetT).headings =
             newWidget.headings;
+          (state.dict[action.payload.wid] as SemesterPlanWidgetT).content =
+            newWidget.content;
           break;
         case WidgetType.Note:
           updateNoteWidget(

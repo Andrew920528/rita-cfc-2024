@@ -3,7 +3,6 @@ export type Lecture = {
   name: string;
   type: number;
   widgets: string[]; // in order
-  chatroom: string; // chatroom id
 };
 
 export type Lectures = {

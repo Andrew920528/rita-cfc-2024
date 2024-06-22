@@ -153,7 +153,7 @@ const SemesterPlanWidget = (props: Props) => {
           icon={<RowInsert />}
           mode={"primary"}
           onClick={() => {
-            insertRow(widget, widget.content.length - 1);
+            insertRow(widget, widget.content.length);
           }}
         />
         <IconButton

@@ -8,6 +8,8 @@ export type Classroom = {
   lectures: string[];
   lastOpenedLecture: string;
   plan: boolean;
+  credits: number;
+  chatroom: string; // chatroom id
 };
 
 export type Classrooms = {
