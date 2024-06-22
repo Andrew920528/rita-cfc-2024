@@ -13,17 +13,20 @@ http://localhost:5000
 # Accessible Endpoints
 
 - GET /hello
-  - Purpose : Tests if everything is setup correctly.
 
-- POST /generate-proposal
-  - Purpose : Receives AI Response from Watsonx
-  - Body : { "input_text" : "your prompt" }
+- PUT /message-rita
+  - Currently returns the request only!
 
-- POST /create-user
-  - Purpose : Create an account if username not taken
-  - Body : { "username" : "account username", "password" : "account password" }
-  - Optional Body : { "school" : "user school name", "alias" : "account alias", "occupation" : "user occupation", "schedule_content" : "content used in schedule" }
+- PUT /login
 
-- GET / login
-  - Purpose : Login into an account. Receives a Session_ID for this user if logged in.
-  - Body : { "username" : "account username", "password" : "account password" }
+- PUT /create-user
+
+- PUT /update-user
+  
+- PUT /create-classroom
+
+- PUT /create-lecture
+
+- PUT /create-widget
+
+- PUT /update-weight
