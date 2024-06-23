@@ -7,9 +7,17 @@ import {widgetBook} from "../schema/widget";
 import {ChatMessage as ChatMessageT} from "../schema/chatroom";
 import {ChatroomsServices} from "../features/ChatroomsSlice";
 import {mimicApi} from "../utils/util";
+import {useApiHandler} from "../utils/service";
 
 type ChatroomProps = {};
 const Chatroom = ({}: ChatroomProps) => {
+  // api handlers
+  const {
+    apiHandler,
+    loading: waitingForReply,
+    abortControllerRef,
+    terminateResponse,
+  } = useApiHandler();
   // global states
   const dispatch = useAppDispatch();
   const chatroom = useTypedSelector(
@@ -23,10 +31,10 @@ const Chatroom = ({}: ChatroomProps) => {
   const widgets = useTypedSelector((state) => state.Widgets);
   // ui handlers
   const [collapsed, setCollapsed] = useState(false);
-  const [readyToSend, setReadyToSend] = useState(true);
+  // const [readyToSend, setReadyToSend] = useState(true);
   const [text, setText] = useState("");
 
-  const abortControllerRef = useRef<AbortController | null>(null);
+  // const abortControllerRef = useRef<AbortController | null>(null);
   useEffect(() => {
     // Clean up the controller when the component unmounts
     return () => {
@@ -36,7 +44,6 @@ const Chatroom = ({}: ChatroomProps) => {
     };
   }, [classroomId]);
   async function sendMessage(text: string) {
-    setReadyToSend(false);
     let newMessage = {
       text: text,
       sender: "User",
@@ -48,41 +55,25 @@ const Chatroom = ({}: ChatroomProps) => {
       })
     );
     setText("");
-
-    abortControllerRef.current = new AbortController();
-    const signal = abortControllerRef.current.signal;
-    try {
-      await mimicApi(2000, signal);
-      // send api request with text.trim()
-      const response = {
-        text: "Hello, I'm Rita",
-        sender: "Rita",
-      };
-      dispatch(
-        ChatroomsServices.actions.addMessage({
-          chatroomId: chatroom.id,
-          message: response,
-        })
-      );
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        // console.log("Fetch aborted");
-      } else if (err instanceof Error) {
-        console.error(err.message);
-      } else {
-        console.error("unknow error occured");
-      }
-    } finally {
-      setReadyToSend(true);
-    }
+    let r = await apiHandler({
+      apiFunction: async (c: AbortSignal): Promise<ChatMessageT> => {
+        // TODO This should be messageRita()
+        await mimicApi(2000, c);
+        const response = {
+          text: "Hello, I'm Rita",
+          sender: "Rita",
+        };
+        return response;
+      },
+    });
+    dispatch(
+      ChatroomsServices.actions.addMessage({
+        chatroomId: chatroom.id,
+        message: r,
+      })
+    );
   }
 
-  function terminateResponse() {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    setReadyToSend(true);
-  }
   if (!chatroom) return <></>;
   return (
     <div className={`chatroom ${collapsed ? "collapsed" : "opened"}`}>
@@ -104,7 +95,7 @@ const Chatroom = ({}: ChatroomProps) => {
         />
       </div>
       <div className={`chatroom-content ${collapsed ? "collapsed" : "opened"}`}>
-        <ChatroomBody messages={chatroom.messages} loading={!readyToSend} />
+        <ChatroomBody messages={chatroom.messages} loading={waitingForReply} />
         <div className="chatroom-footer">
           <Textbox
             flex={true}
@@ -115,15 +106,15 @@ const Chatroom = ({}: ChatroomProps) => {
           />
           <IconButton
             mode={"primary"}
-            icon={readyToSend ? <ArrowRight /> : <Stop />}
-            onClick={() => {
-              if (readyToSend) {
-                sendMessage(text);
-              } else {
+            icon={waitingForReply ? <Stop /> : <ArrowRight />}
+            onClick={async () => {
+              if (waitingForReply) {
                 terminateResponse();
+              } else {
+                await sendMessage(text);
               }
             }}
-            disabled={text === "" && readyToSend}
+            disabled={text.trim() === "" && !waitingForReply}
           />
         </div>
       </div>

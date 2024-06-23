@@ -1,10 +1,10 @@
-import {useCallback} from "react";
+import {useCallback, useRef, useState} from "react";
 import {ChatroomsServices} from "../features/ChatroomsSlice";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {LecturesServices} from "../features/LectureSlice";
 import {WidgetsServices} from "../features/WidgetsSlice";
 import {useAppDispatch, useTypedSelector} from "./store";
-import {generateId} from "../utils/util";
+import {generateId, mimicApi} from "../utils/util";
 import {WidgetType, initWidget} from "../schema/widget";
 import {Chatroom} from "../schema/chatroom";
 import {Lecture} from "../schema/lecture";
@@ -21,7 +21,7 @@ export const useCreateClassroom = () => {
   const username = useTypedSelector((state) => state.User.username);
   const createLecture = useCreateLecture();
   return useCallback(
-    (args: {
+    async (args: {
       classroomName: string;
       subject: string;
       otherSubject: string;

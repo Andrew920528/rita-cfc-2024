@@ -21,14 +21,14 @@ export const delay = (milliseconds: number): Promise<void> => {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 };
 
-export const mimicApi = (ms: number, signal: AbortSignal): Promise<void> =>
+export const mimicApi = (ms: number, signal?: AbortSignal): Promise<void> =>
   new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       resolve();
     }, ms);
 
     // Listen for the abort event to clear the timeout and reject the promise
-    signal.addEventListener("abort", () => {
+    signal!.addEventListener("abort", () => {
       clearTimeout(timeoutId);
       reject(new DOMException("Aborted", "AbortError"));
     });
