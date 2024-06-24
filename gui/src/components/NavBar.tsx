@@ -8,6 +8,7 @@ import {LecturesServices} from "../features/LectureSlice";
 import {WidgetType, initWidget, widgetBook} from "../schema/widget";
 import {useCreateWidget} from "../store/globalActions";
 import {ChatroomsServices} from "../features/ChatroomsSlice";
+import {EMPTY_ID} from "../utils/constants";
 
 type ClassCardProps = {
   id: string;
@@ -26,7 +27,7 @@ const ClassCard = ({
   grade = "未設定",
   publisher = "未設定",
   plan = false,
-  selected = "NONE",
+  selected = EMPTY_ID,
   credits,
 }: ClassCardProps) => {
   const dispatch = useAppDispatch();
@@ -135,7 +136,7 @@ const NavBar = () => {
         <div className="nav-heading">
           <p className="--heading">工具</p>
         </div>
-        {lectures.current !== "NONE" && (
+        {lectures.current !== EMPTY_ID && (
           <div className="nav-stack">
             {Object.values(widgetBook).map((w) => (
               <WidgetCard

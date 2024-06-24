@@ -2,10 +2,11 @@ import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import {User} from "../schema/user";
 import {Schedule} from "../schema/schedule";
 import {Classroom, Classrooms} from "../schema/classroom";
+import {EMPTY_ID} from "../utils/constants";
 
 const initialState: Classrooms = {
   dict: {},
-  current: "NONE",
+  current: EMPTY_ID,
 };
 
 const ClassroomsSlice = createSlice({

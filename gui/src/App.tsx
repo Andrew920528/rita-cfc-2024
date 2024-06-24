@@ -12,9 +12,10 @@ function App() {
   const {apiHandler} = useApiHandler();
   useEffect(() => {
     async function runRequest() {
-      let body = await apiHandler({apiFunction: (c) => tryTrySee(c)});
-      console.log(body);
-
+      let body = await apiHandler({
+        apiFunction: (c) => tryTrySee(c),
+        debug: true,
+      });
       return body;
     }
     runRequest();

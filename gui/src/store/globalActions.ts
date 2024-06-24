@@ -10,6 +10,7 @@ import {Chatroom} from "../schema/chatroom";
 import {Lecture} from "../schema/lecture";
 import {Classroom} from "../schema/classroom";
 import {UserServices} from "../features/UserSlice";
+import {EMPTY_ID} from "../utils/constants";
 
 /* 
  Functions that requires the use of multiple slices to perform
@@ -44,7 +45,7 @@ export const useCreateClassroom = () => {
         grade: args.grade,
         publisher: args.subject === "其他" ? "綜合" : args.publisher,
         lectures: [],
-        lastOpenedLecture: "NONE",
+        lastOpenedLecture: EMPTY_ID,
         plan: false,
         credits: args.credits,
         chatroom: newChatroomId,
@@ -182,7 +183,7 @@ export const useDeleteWidget = () => {
     (args: {lectureId: string; widgetId: string}) => {
       dispatch(WidgetsServices.actions.deleteWidget(args.widgetId));
       if (args.widgetId === currentWidget) {
-        dispatch(WidgetsServices.actions.setCurrent("NONE"));
+        dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
       }
       dispatch(
         LecturesServices.actions.deleteWidget({

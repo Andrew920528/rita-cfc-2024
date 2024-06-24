@@ -1,6 +1,11 @@
 import {useCallback, useEffect, useRef, useState} from "react";
-import {formatTime} from "./util";
-import {RawAxiosResponseHeaders} from "axios";
+import {formatTime, mimicApi} from "./util";
+import {API_SUCCESS, API_ERROR} from "./constants";
+
+type ResponseData = {
+  status: typeof API_ERROR | typeof API_SUCCESS;
+  response: any;
+};
 
 /** API Handler
  * A hook that does error handling and other utilities for an API call.
@@ -15,17 +20,18 @@ import {RawAxiosResponseHeaders} from "axios";
  * terminateResponse - A function that can be called to terminate the API call. Loading is set to false if called
  *
  * These are params that can be pased to apiHandler.
- * @param apiFunction - The async function that is called
+ * @param apiFunction - The async function that is called. The abort signal is used to cancel the call.
+ * Returns the Response object (which is returned by the Fetch API).
  * @param sideEffect (optional) - The function that is called if the API call succeeds.
  * It performs calculation and modification to the response, such as parsing,
  * and returns an object that is suitable for the context.
- * Returns the response of the API call by default.
+ * Returns (and converts) the response data for typescript.
  * @param debug (optional) - Whether to log the API call
  * @param identifier (optional) - The identifier of the API call (for debugging)
  */
 interface ApiHandlerArgs {
   apiFunction: (c: AbortSignal) => Promise<Response>;
-  sideEffect?: (r: JSON) => JSON;
+  sideEffect?: (r: ResponseData) => ResponseData;
   debug?: boolean;
   identifier?: string;
 }
@@ -35,7 +41,7 @@ interface ApiHandlerResult {
     sideEffect,
     debug,
     identifier,
-  }: ApiHandlerArgs) => Promise<JSON>;
+  }: ApiHandlerArgs) => Promise<ResponseData>;
   loading: boolean;
   abortControllerRef: React.MutableRefObject<AbortController | null>;
   terminateResponse: () => void;
@@ -63,7 +69,7 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
   const apiHandler = useCallback(
     async ({
       apiFunction,
-      sideEffect = (r: JSON) => r,
+      sideEffect = (r: ResponseData): ResponseData => r,
       debug = false,
       identifier = "",
     }: ApiHandlerArgs) => {
@@ -77,22 +83,16 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
         if (debug) {
           console.log(`Request | ${identifier} | ${formatTime(new Date())}`);
         }
-
-        // FIXME: This section depends on response obj shape
         let r = await apiFunction(signal);
-        if (!r.ok) {
-          throw new Error("Network response was not ok" + r.statusText);
-        }
+        if (!r.ok) throw new Error("Server error" + r.statusText);
 
-        let body = await r.json();
-        if (body.status === "Error") {
-          throw new Error(body.response);
-        }
+        let body: ResponseData = await r.json();
+        if (body.status === API_ERROR) throw new Error(body.response);
 
         if (debug) {
           console.log(
             `Response | ${identifier} | ${formatTime(new Date())}`,
-            r
+            body
           );
         }
         return sideEffect(body);
@@ -105,9 +105,9 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
         } else {
           msg = "Unknown error";
         }
-        console.warn(msg);
-        const errorResponse = {status: "error", response: msg};
-        return JSON.parse(JSON.stringify(errorResponse));
+        if (debug) console.warn(msg);
+        const errorResponse: ResponseData = {status: "error", response: msg};
+        return errorResponse;
       } finally {
         setLoading(false);
       }
@@ -136,15 +136,168 @@ export function tryTrySee(abortSignal: AbortSignal) {
   });
 }
 
-export function login(username: string, password: string) {
-  const formData = new FormData();
-  formData.append("username", username);
-  formData.append("password", password);
-  return fetch(BASE_URL_DEV + "/login", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: formData,
-  });
+export async function loginService(
+  abortSignal: AbortSignal,
+  payload: {username: string; password: string}
+) {
+  // FIXME: now uses raw Json instead of form data
+  // const formData = new FormData();
+  // formData.append("username", payload.username);
+  // formData.append("password", payload.password);
+  // return fetch(BASE_URL_DEV + "/login", {
+  //   method: "PUT",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: formData,
+  //   signal: abortSignal,
+  // });
+  const response = {
+    status: "success",
+    response: {},
+  };
+  await mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
+  const dummyResponse = new Response(
+    new Blob([JSON.stringify(response, null, 2)], {
+      type: "application/json",
+    })
+  );
+  return dummyResponse;
+}
+
+export function createUserService(
+  abortSignal: AbortSignal,
+  payload: {
+    username: string;
+    password: string;
+    school?: string;
+    alias?: string;
+    occupation?: string;
+    schedule?: string;
+  }
+) {
+  const response = {
+    status: "success",
+    response: "account created",
+  };
+  mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
+  const dummyResponse = new Response(
+    new Blob([JSON.stringify(response, null, 2)], {
+      type: "application/json",
+    })
+  );
+  return dummyResponse;
+}
+
+export function updateUserService(
+  abortSignal: AbortSignal,
+  payload: {
+    username: string;
+    alias?: string;
+    school?: string;
+    occupation?: string;
+    schedule?: string;
+  }
+) {}
+
+export function createClassroomService(
+  abortSignal: AbortSignal,
+  payload: {
+    username: string;
+    classroomId: string;
+    classroomName: string;
+    subject: string;
+    publisher: string;
+    grade: string;
+    plan: boolean;
+    chatroomId: string;
+  }
+) {}
+
+export function updateClassroomService(
+  abortSignal: AbortSignal,
+  payload: {
+    classroomId: string;
+    classroomName?: string;
+    subject?: string;
+    publisher?: string;
+    grade?: string;
+    plan?: boolean;
+  }
+) {}
+
+export function createLectureService(
+  abortSignal: AbortSignal,
+  payload: {
+    lectureId: string;
+    classroomId: string;
+    name: string;
+    type: number;
+  }
+) {}
+
+export function deleteLectureService(
+  abortSignal: AbortSignal,
+  payload: {
+    lectureId: string;
+    classroomId: string;
+  }
+) {}
+
+export function createWidgetService(
+  abortSignal: AbortSignal,
+  payload: {
+    widgetId: string;
+    type: string;
+    content: string; // stringify json
+    lectureId: string;
+  }
+) {}
+
+export function deleteWidgetService(
+  abortSignal: AbortSignal,
+  payload: {
+    widgetId: string;
+    lectureId: string;
+  }
+) {}
+
+export function updateWidgetService(
+  abortSignal: AbortSignal,
+  payload: {
+    widgetId: string;
+    content: string; // stringify json
+  }
+) {}
+
+export function updateWidgetBulkService(
+  abortSignal: AbortSignal,
+  payload: {
+    widgetId: string[];
+    content: string[]; // stringify json
+  }
+) {}
+
+export function messageRitaService(
+  abortSignal: AbortSignal,
+  payload: {
+    prompt: string;
+    widget?: {
+      id: string;
+      type: number;
+      content: string;
+    };
+    lectureId: string;
+    classroomId: string;
+  }
+) {
+  const response = {
+    text: "Hello, I'm Rita. I do not understand what you are saying. Ask Edison.",
+    sender: "Rita",
+  };
+  const dummyResponse = {
+    status: API_SUCCESS,
+    response: response,
+  };
+  return mimicApi(2000, JSON.parse(JSON.stringify(dummyResponse)), abortSignal);
 }

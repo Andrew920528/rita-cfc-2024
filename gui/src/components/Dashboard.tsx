@@ -5,6 +5,7 @@ import WidgetFrame from "./widgets/WidgetFrame";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {widgetBook} from "../schema/widget";
 import {WidgetsServices} from "../features/WidgetsSlice";
+import {EMPTY_ID} from "../utils/constants";
 const DashboardPlaceHolder = () => {
   return (
     <div className="dp-wrapper">
@@ -32,7 +33,7 @@ const Dashboard = () => {
     e.preventDefault();
     if (e.target === e.currentTarget) {
       // handle
-      dispatch(WidgetsServices.actions.setCurrent("NONE"));
+      dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
     }
   };
   return (

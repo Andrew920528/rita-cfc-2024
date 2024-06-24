@@ -1,10 +1,11 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 
 import {Lecture, Lectures} from "../schema/lecture";
+import {EMPTY_ID} from "../utils/constants";
 
 const initialState: Lectures = {
   dict: {},
-  current: "NONE",
+  current: EMPTY_ID,
 };
 
 const LecturesSlice = createSlice({

@@ -6,10 +6,11 @@ import {
   WidgetType,
   Widgets,
 } from "../schema/widget";
+import {EMPTY_ID} from "../utils/constants";
 
 const initialState: Widgets = {
   dict: {},
-  current: "NONE",
+  current: EMPTY_ID,
   unsaved: {},
 };
 

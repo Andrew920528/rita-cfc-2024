@@ -7,7 +7,9 @@ import {widgetBook} from "../schema/widget";
 import {ChatMessage as ChatMessageT} from "../schema/chatroom";
 import {ChatroomsServices} from "../features/ChatroomsSlice";
 import {mimicApi} from "../utils/util";
-import {useApiHandler} from "../utils/service";
+import {messageRitaService, useApiHandler} from "../utils/service";
+import {debug} from "console";
+import {EMPTY_ID, API_ERROR} from "../utils/constants";
 
 type ChatroomProps = {};
 const Chatroom = ({}: ChatroomProps) => {
@@ -46,26 +48,32 @@ const Chatroom = ({}: ChatroomProps) => {
     );
     setText("");
     let r = await apiHandler({
-      apiFunction: async (c: AbortSignal): Promise<Response> => {
-        // TODO This should be messageRita()
-        await mimicApi(2000, c);
-        const response = {
-          text: "Hello, I'm Rita",
-          sender: "Rita",
-        };
-        const r = new Response(
-          new Blob([JSON.stringify(response, null, 2)], {
-            type: "application/json",
-          })
-        );
-        return r;
-      },
+      apiFunction: (c: AbortSignal) =>
+        messageRitaService(c, {
+          prompt: text,
+          widget:
+            widgets.current === EMPTY_ID
+              ? undefined
+              : {
+                  id: widgets.current,
+                  type: widgets.dict[widgets.current].type,
+                  content: JSON.stringify(widgets.dict[widgets.current]),
+                },
+          lectureId: lecture.id,
+          classroomId: classroomId,
+        }),
+      debug: true,
+      identifier: "messageRita",
     });
-    const parsedObj: ChatMessageT = JSON.parse(JSON.stringify(r));
+
+    let status = r.status;
+    let responseMessage = r.response;
+
+    if (status === API_ERROR) return;
     dispatch(
       ChatroomsServices.actions.addMessage({
         chatroomId: chatroom.id,
-        message: parsedObj,
+        message: responseMessage,
       })
     );
   }

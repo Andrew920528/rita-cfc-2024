@@ -23,6 +23,7 @@ import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {WidgetsServices} from "../features/WidgetsSlice";
 import {UserServices} from "../features/UserSlice";
 import {useDeleteLecture} from "../store/globalActions";
+import {EMPTY_ID} from "../utils/constants";
 
 type HeaderProps = {
   openNav: boolean;
@@ -54,7 +55,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
         </div>
       </div>
       <div className="header-right">
-        {classrooms.current === "NONE" ||
+        {classrooms.current === EMPTY_ID ||
         Object.keys(classrooms.dict).length === 0 ? (
           <div className="no-subject-hint">
             <i>新增教室以開始備課</i>
