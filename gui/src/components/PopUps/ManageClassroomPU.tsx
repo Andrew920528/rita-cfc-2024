@@ -6,8 +6,15 @@ import {useAppDispatch, useTypedSelector} from "../../store/store";
 import Dropdown from "../ui_components/Dropdown";
 import {Classroom} from "../../schema/classroom";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
-import {useCreateClassroom} from "../../store/globalActions";
-import {isNumeric} from "../../utils/util";
+import {useCreateClassroom, useCreateLecture} from "../../store/globalActions";
+import {generateId, isNumeric} from "../../utils/util";
+import {API_ERROR, EMPTY_ID} from "../../utils/constants";
+import {
+  createClassroomService,
+  createLectureService,
+  updateClassroomService,
+  useApiHandler,
+} from "../../utils/service";
 
 type ManageClassroomPUProps = {
   action: "create" | "edit";
@@ -35,7 +42,9 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
-  const createClassroom = useCreateClassroom();
+  const createClassroomState = useCreateClassroom();
+  const createLecture = useCreateLecture();
+
   // local states
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
@@ -50,6 +59,8 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   const [gradeError, setGradeError] = useState("");
   const [publisherError, setPublisherError] = useState("");
   const [creditError, setCreditError] = useState("");
+  // api handler
+  const {apiHandler, loading, terminateResponse} = useApiHandler();
 
   useEffect(() => {
     // ensures the classroom to be edited exists, then populates the form
@@ -68,7 +79,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       setPublisher(classrooms.dict[editClassroomId!].publisher);
       setCredit(classrooms.dict[editClassroomId!].credits.toString());
     }
-  }, [props.trigger, classrooms.current]);
+  }, [props.trigger]);
 
   function resetForm() {
     setName("");
@@ -114,7 +125,53 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     return validate;
   }
 
-  function editClassroom() {
+  async function createClassroom() {
+    const newChatroomId: string = user.username + "-chatroom-" + generateId();
+    const newClassroomId: string = user.username + "-classroom-" + generateId();
+    const newLectureId: string = user.username + "-lecture-0" + generateId();
+    let classroomData = {
+      classroomId: newClassroomId,
+      classroomName: name,
+      subject: subject === "其他" ? otherSubject : subject,
+      publisher: subject === "其他" ? "綜合" : publisher,
+      grade: grade,
+      plan: false,
+      credits: parseInt(credit),
+      chatroomId: newChatroomId,
+    };
+
+    let r = await apiHandler({
+      apiFunction: (s) =>
+        createClassroomService(s, {
+          username: user.username,
+          ...classroomData,
+        }),
+      debug: true,
+      identifier: "createClassroom",
+    });
+    if (r.status === API_ERROR) {
+      return;
+    }
+    let lectureData = {
+      lectureId: newLectureId,
+      name: "學期規劃",
+      classroomId: newClassroomId,
+      type: 0,
+    };
+    r = await apiHandler({
+      apiFunction: (s) => createLectureService(s, lectureData),
+      debug: true,
+      identifier: "createLecture",
+    });
+    if (r.status === API_ERROR) {
+      return;
+    }
+    createClassroomState(classroomData);
+    // create initial lecture & corresponding chatroom
+    createLecture(lectureData);
+  }
+
+  async function editClassroom() {
     // update global states
     if (props.editClassroomId === undefined) {
       throw new Error("editClassroomId is undefined");
@@ -131,30 +188,37 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       lastOpenedLecture: "",
       plan: false,
       credits: parseInt(credit),
+      chatroom: EMPTY_ID,
     };
-
+    let r = await apiHandler({
+      apiFunction: (s) =>
+        updateClassroomService(s, {
+          classroomId: classroomId,
+          classroomName: name,
+          subject: subject === "其他" ? otherSubject : subject,
+          publisher: subject === "其他" ? "綜合" : publisher,
+          grade: grade,
+          credits: parseInt(credit),
+        }),
+      debug: true,
+      identifier: "editClassroom",
+    });
+    if (r.status === API_ERROR) {
+      return;
+    }
     // update classroom to classrooms dict
     dispatch(ClassroomsServices.actions.editClassroom(newClassroom));
   }
 
-  function submitForm() {
+  async function submitForm() {
     if (!validateForm()) {
       return;
     }
-
     if (props.action === "create") {
-      createClassroom({
-        classroomName: name,
-        subject: subject,
-        otherSubject: otherSubject,
-        grade: grade,
-        publisher: publisher,
-        credits: parseInt(credit),
-      });
+      await createClassroom();
     } else if (props.action === "edit") {
-      editClassroom();
+      await editClassroom();
     }
-
     // reset form
     resetForm();
     // close panel
@@ -171,8 +235,12 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
         onClick: () => {
           submitForm();
         },
+        disabled: loading,
       }}
-      reset={resetForm}
+      reset={() => {
+        resetForm();
+        terminateResponse();
+      }}
     >
       <div className="create-classroom-form">
         <div className="ccf-layout-row">

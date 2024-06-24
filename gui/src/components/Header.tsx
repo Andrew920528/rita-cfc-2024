@@ -23,7 +23,8 @@ import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {WidgetsServices} from "../features/WidgetsSlice";
 import {UserServices} from "../features/UserSlice";
 import {useDeleteLecture} from "../store/globalActions";
-import {EMPTY_ID} from "../utils/constants";
+import {API_ERROR, EMPTY_ID} from "../utils/constants";
+import {deleteLectureService, useApiHandler} from "../utils/service";
 
 type HeaderProps = {
   openNav: boolean;
@@ -34,7 +35,21 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const classrooms = useTypedSelector((state) => state.Classrooms);
   const lectures = useTypedSelector((state) => state.Lectures);
   const [openSubjectEdit, setOpenSubjectEdit] = useState(false);
-  const deleteLecture = useDeleteLecture();
+  const deleteLectureState = useDeleteLecture();
+  const {apiHandler, loading, terminateResponse} = useApiHandler();
+  async function deleteLecture(lectureId: string) {
+    let r = await apiHandler({
+      apiFunction: (s) =>
+        deleteLectureService(s, {
+          lectureId: lectureId,
+          classroomId: classrooms.current,
+        }),
+    });
+    if (r.status === API_ERROR) {
+      return;
+    }
+    deleteLectureState({lectureId: lectureId, classroomId: classrooms.current});
+  }
   // ui controllers
   const [openLectureCreation, setopenLectureCreation] = useState(false);
   return (
@@ -104,7 +119,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
               flex={false}
               action={(id: string) => lectures.dict[id].type === 1}
               actionFunction={(id: string) => {
-                deleteLecture({lectureId: id, classroomId: classrooms.current});
+                deleteLecture(id);
               }}
               extra={
                 <IconButton

@@ -10,16 +10,15 @@ import {tryTrySee, useApiHandler} from "./utils/service";
 
 function App() {
   const {apiHandler} = useApiHandler();
-  useEffect(() => {
-    async function runRequest() {
-      let body = await apiHandler({
-        apiFunction: (c) => tryTrySee(c),
-        debug: true,
-      });
-      return body;
-    }
-    runRequest();
-  }, []);
+  // useEffect(() => {
+  //   async function runRequest() {
+  //     let body = await apiHandler({
+  //       apiFunction: (c) => tryTrySee(c),
+  //     });
+  //     return body;
+  //   }
+  //   runRequest();
+  // }, []);
   return (
     <div className="App">
       <BrowserRouter>

@@ -4,7 +4,7 @@ import {API_SUCCESS, API_ERROR} from "./constants";
 
 type ResponseData = {
   status: typeof API_ERROR | typeof API_SUCCESS;
-  response: any;
+  data: any;
 };
 
 /** API Handler
@@ -30,7 +30,7 @@ type ResponseData = {
  * @param identifier (optional) - The identifier of the API call (for debugging)
  */
 interface ApiHandlerArgs {
-  apiFunction: (c: AbortSignal) => Promise<Response>;
+  apiFunction: (s: AbortSignal) => Promise<Response>;
   sideEffect?: (r: ResponseData) => ResponseData;
   debug?: boolean;
   identifier?: string;
@@ -87,7 +87,7 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
         if (!r.ok) throw new Error("Server error" + r.statusText);
 
         let body: ResponseData = await r.json();
-        if (body.status === API_ERROR) throw new Error(body.response);
+        if (body.status === API_ERROR) throw new Error(body.data);
 
         if (debug) {
           console.log(
@@ -106,7 +106,7 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
           msg = "Unknown error";
         }
         if (debug) console.warn(msg);
-        const errorResponse: ResponseData = {status: "error", response: msg};
+        const errorResponse: ResponseData = {status: "error", data: msg};
         return errorResponse;
       } finally {
         setLoading(false);
@@ -136,35 +136,23 @@ export function tryTrySee(abortSignal: AbortSignal) {
   });
 }
 
-export async function loginService(
+// 🤡
+export function loginService(
   abortSignal: AbortSignal,
   payload: {username: string; password: string}
 ) {
-  // FIXME: now uses raw Json instead of form data
-  // const formData = new FormData();
-  // formData.append("username", payload.username);
-  // formData.append("password", payload.password);
-  // return fetch(BASE_URL_DEV + "/login", {
-  //   method: "PUT",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: formData,
-  //   signal: abortSignal,
-  // });
   const response = {
     status: "success",
     response: {},
   };
-  await mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
-  const dummyResponse = new Response(
-    new Blob([JSON.stringify(response, null, 2)], {
-      type: "application/json",
-    })
-  );
-  return dummyResponse;
+  return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
+// 😍 = actually calls api
+// 🤖 = api called in component
+// 🤡 = function implemented with dymmy data
+
+// 🤡
 export function createUserService(
   abortSignal: AbortSignal,
   payload: {
@@ -180,15 +168,10 @@ export function createUserService(
     status: "success",
     response: "account created",
   };
-  mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
-  const dummyResponse = new Response(
-    new Blob([JSON.stringify(response, null, 2)], {
-      type: "application/json",
-    })
-  );
-  return dummyResponse;
+  return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
+// 🤖
 export function updateUserService(
   abortSignal: AbortSignal,
   payload: {
@@ -198,8 +181,15 @@ export function updateUserService(
     occupation?: string;
     schedule?: string;
   }
-) {}
+) {
+  const response = {
+    status: API_SUCCESS,
+    data: "user updated",
+  };
+  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+}
 
+// 🤖
 export function createClassroomService(
   abortSignal: AbortSignal,
   payload: {
@@ -211,9 +201,17 @@ export function createClassroomService(
     grade: string;
     plan: boolean;
     chatroomId: string;
+    credits: number;
   }
-) {}
+) {
+  const response = {
+    status: API_SUCCESS,
+    data: "classroom created",
+  };
+  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+}
 
+// 🤖
 export function updateClassroomService(
   abortSignal: AbortSignal,
   payload: {
@@ -223,9 +221,17 @@ export function updateClassroomService(
     publisher?: string;
     grade?: string;
     plan?: boolean;
+    credits?: number;
   }
-) {}
+) {
+  const response = {
+    status: API_SUCCESS,
+    data: "classroom updated",
+  };
+  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+}
 
+// 🤖
 export function createLectureService(
   abortSignal: AbortSignal,
   payload: {
@@ -234,50 +240,92 @@ export function createLectureService(
     name: string;
     type: number;
   }
-) {}
+) {
+  const response = {
+    status: API_SUCCESS,
+    data: "lecture created",
+  };
+  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+}
 
+// 🤡
 export function deleteLectureService(
   abortSignal: AbortSignal,
   payload: {
     lectureId: string;
     classroomId: string;
   }
-) {}
+) {
+  const response = {
+    status: API_SUCCESS,
+    data: "lecture deleted",
+  };
+  return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
+}
 
+// 🤖
 export function createWidgetService(
   abortSignal: AbortSignal,
   payload: {
     widgetId: string;
-    type: string;
+    type: number;
     content: string; // stringify json
     lectureId: string;
   }
-) {}
+) {
+  const response = {
+    status: API_SUCCESS,
+    data: "widget created",
+  };
+  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+}
 
+// 🤡
 export function deleteWidgetService(
   abortSignal: AbortSignal,
   payload: {
     widgetId: string;
     lectureId: string;
   }
-) {}
+) {
+  const response = {
+    status: API_SUCCESS,
+    data: "widget deleted",
+  };
+  return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
+}
 
+// 🤡 * don't think will use this
 export function updateWidgetService(
   abortSignal: AbortSignal,
   payload: {
     widgetId: string;
     content: string; // stringify json
   }
-) {}
+) {
+  const response = {
+    status: API_SUCCESS,
+    data: "widget updated",
+  };
+  return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
+}
 
+// 🤡
 export function updateWidgetBulkService(
   abortSignal: AbortSignal,
   payload: {
     widgetId: string[];
     content: string[]; // stringify json
   }
-) {}
+) {
+  const response = {
+    status: API_SUCCESS,
+    data: "all widgets updated",
+  };
+  return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
+}
 
+// 🤖
 export function messageRitaService(
   abortSignal: AbortSignal,
   payload: {
@@ -297,7 +345,7 @@ export function messageRitaService(
   };
   const dummyResponse = {
     status: API_SUCCESS,
-    response: response,
+    data: response,
   };
   return mimicApi(2000, JSON.parse(JSON.stringify(dummyResponse)), abortSignal);
 }

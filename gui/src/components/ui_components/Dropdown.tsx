@@ -25,6 +25,7 @@ type DropdownProps = {
   extra?: ReactNode;
   label?: string;
   errorMsg?: string;
+  actionIcon?: ReactNode;
 };
 
 const Dropdown = ({
@@ -35,6 +36,7 @@ const Dropdown = ({
   placeholder = "placeholder",
   action = () => false,
   actionFunction = () => {},
+  actionIcon = <Close />,
   flex = false,
   extra = null,
   mode,
@@ -95,6 +97,7 @@ const Dropdown = ({
                 }}
                 action={action(k)}
                 actionFunction={actionFunction}
+                icon={actionIcon}
               />
             ))}
           </div>
@@ -121,7 +124,7 @@ const DropdownOption = ({
   currId,
   onClick = () => {},
   action,
-  icon = <Close />,
+  icon,
   actionFunction = () => {},
 }: DropdownOptionProps) => {
   return (
@@ -136,7 +139,7 @@ const DropdownOption = ({
           onClick={(e) => {
             if (e && e.stopPropagation) e.stopPropagation();
             console.log("action icon clicked");
-
+            // TODO: allow this to be disabled
             actionFunction(id);
           }}
         >

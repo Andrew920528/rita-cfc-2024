@@ -4,6 +4,8 @@ import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "./PopUp";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {UserServices} from "../../features/UserSlice";
+import {updateUserService, useApiHandler} from "../../utils/service";
+import {API_ERROR} from "../../utils/constants";
 
 type ManageAccountPUProps = {};
 
@@ -11,6 +13,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
   // global states
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
+  const {apiHandler, loading, terminateResponse} = useApiHandler();
 
   // local states
   const [aliasError, setAliasError] = useState("");
@@ -25,16 +28,8 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
     setAlias(user.alias);
     setSchool(user.school);
     setOccupation(user.occupation);
-  }, []);
+  }, [props.trigger]);
 
-  function resetForm() {
-    setAlias("");
-    setSchool("");
-    setOccupation("");
-    setAliasError("");
-    setSchoolError("");
-    setOccupationError("");
-  }
   function validateAccount(): boolean {
     let validate = true;
     if (alias.trim() === "") {
@@ -52,8 +47,22 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
     return validate;
   }
 
-  function submitForm() {
+  async function submitForm() {
     if (!validateAccount()) {
+      return;
+    }
+    let r = await apiHandler({
+      apiFunction: (c) =>
+        updateUserService(c, {
+          username: user.username,
+          alias: alias.trim(),
+          school: school.trim(),
+          occupation: occupation.trim(),
+        }),
+    });
+
+    if (r.status === API_ERROR) {
+      // TODO: toast error: not saved
       return;
     }
 
@@ -61,11 +70,8 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
     dispatch(UserServices.actions.setAlias(alias.trim()));
     dispatch(UserServices.actions.setSchool(school.trim()));
     dispatch(UserServices.actions.setOccupation(occupation.trim()));
-    // reset form
-    resetForm();
-    // close panel
+
     props.setTrigger(false);
-    return true;
   }
 
   return (
@@ -77,8 +83,11 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
         onClick: () => {
           submitForm();
         },
+        disabled: loading,
       }}
-      reset={resetForm}
+      reset={() => {
+        terminateResponse();
+      }}
     >
       <div className="manage-account-form">
         <Textbox

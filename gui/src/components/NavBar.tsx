@@ -8,7 +8,9 @@ import {LecturesServices} from "../features/LectureSlice";
 import {WidgetType, initWidget, widgetBook} from "../schema/widget";
 import {useCreateWidget} from "../store/globalActions";
 import {ChatroomsServices} from "../features/ChatroomsSlice";
-import {EMPTY_ID} from "../utils/constants";
+import {API_ERROR, EMPTY_ID} from "../utils/constants";
+import {generateId} from "../utils/util";
+import {createWidgetService, useApiHandler} from "../utils/service";
 
 type ClassCardProps = {
   id: string;
@@ -65,8 +67,32 @@ type WidgetCardProps = {
 };
 const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
   const lectures = useTypedSelector((state) => state.Lectures);
+  const username = useTypedSelector((state) => state.User.username);
   const addWidget = useCreateWidget();
+  const {apiHandler, loading} = useApiHandler();
 
+  async function createWidget() {
+    const newWidgetId = username + "-wid-" + generateId();
+    let r = await apiHandler({
+      apiFunction: (s) =>
+        createWidgetService(s, {
+          widgetId: newWidgetId,
+          type: widgetType,
+          lectureId: lectures.current,
+          content: "",
+        }),
+      debug: true,
+      identifier: "createWidget",
+    });
+    if (r.status === API_ERROR) {
+      return;
+    }
+    addWidget({
+      widgetType: widgetType,
+      lectureId: lectures.current,
+      widgetId: newWidgetId,
+    });
+  }
   return (
     <div className="widget-card">
       <div className="widget-card-left">
@@ -81,9 +107,10 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
         <IconButton
           mode={"primary"}
           icon={<Add />}
-          onClick={() => {
-            addWidget({widgetType: widgetType, lectureId: lectures.current});
+          onClick={async () => {
+            await createWidget();
           }}
+          disabled={loading}
         />
       </div>
     </div>

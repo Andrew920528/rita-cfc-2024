@@ -4,13 +4,18 @@ import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "./PopUp";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {useCreateLecture} from "../../store/globalActions";
+import {generateId} from "../../utils/util";
+import {createLectureService, useApiHandler} from "../../utils/service";
+import {API_ERROR} from "../../utils/constants";
 
 type CreateLecturePUProps = {};
 
 const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
   // global states
+  const user = useTypedSelector((state) => state.User);
   const currClassroom = useTypedSelector((state) => state.Classrooms.current);
   const createLecture = useCreateLecture();
+  const {apiHandler, loading, terminateResponse} = useApiHandler();
   // local states
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState("");
@@ -29,16 +34,25 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
     return validate;
   }
 
-  function submitForm() {
+  async function submitForm() {
     if (!validateForm()) {
       return;
     }
-
-    createLecture({
-      lectureName: name,
+    const newLectureId = user.username + "-lecture-1" + generateId();
+    const lectureData = {
+      lectureId: newLectureId,
       classroomId: currClassroom,
+      name: name,
       type: 1,
+    };
+    let r = await apiHandler({
+      apiFunction: (s) => createLectureService(s, lectureData),
     });
+
+    if (r.status === API_ERROR) {
+      return;
+    }
+    createLecture(lectureData);
 
     // reset form
     resetForm();
@@ -53,11 +67,15 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
       footerBtnProps={{
         icon: <Save size={20} />,
         text: "儲存變更",
-        onClick: () => {
-          submitForm();
+        onClick: async () => {
+          await submitForm();
         },
+        disabled: loading,
       }}
-      reset={resetForm}
+      reset={() => {
+        resetForm();
+        terminateResponse();
+      }}
     >
       <div className="create-lecture-form">
         <div>

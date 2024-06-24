@@ -19,74 +19,66 @@ import {EMPTY_ID} from "../utils/constants";
 
 export const useCreateClassroom = () => {
   const dispatch = useAppDispatch();
-  const username = useTypedSelector((state) => state.User.username);
   const createLecture = useCreateLecture();
   return useCallback(
     async (args: {
+      classroomId: string;
       classroomName: string;
       subject: string;
-      otherSubject: string;
       grade: string;
       publisher: string;
       credits: number;
+      plan: boolean;
+      chatroomId: string;
     }) => {
       // create associative classroom
-      const newChatroomId: string = username + "-chatroom-" + generateId();
       let newChatroom: Chatroom = {
-        id: newChatroomId,
+        id: args.chatroomId,
         messages: [],
       };
-
-      const newClassroomId: string = username + "-classroom-" + generateId();
       let newClassroom: Classroom = {
-        id: newClassroomId,
+        id: args.classroomId,
         name: args.classroomName,
-        subject: args.subject === "其他" ? args.otherSubject : args.subject,
+        subject: args.subject,
         grade: args.grade,
-        publisher: args.subject === "其他" ? "綜合" : args.publisher,
+        publisher: args.publisher,
         lectures: [],
         lastOpenedLecture: EMPTY_ID,
-        plan: false,
+        plan: args.plan,
         credits: args.credits,
-        chatroom: newChatroomId,
+        chatroom: args.chatroomId,
       };
 
       // add new chatroom to chatrooms dict
       dispatch(ChatroomsServices.actions.addChatroom(newChatroom));
       // set current chatroom to the new chatroom
-      dispatch(ChatroomsServices.actions.setCurrent(newChatroomId));
+      dispatch(ChatroomsServices.actions.setCurrent(args.chatroomId));
 
       // create classroom
       dispatch(ClassroomsServices.actions.addClassroom(newClassroom));
 
-      // create initial lecture & corresponding chatroom
-      createLecture({
-        lectureName: "學期規劃",
-        classroomId: newClassroomId,
-        type: 0,
-      });
-
       // allow user to reference to the new classroom
-      dispatch(UserServices.actions.addClassroom(newClassroomId));
+      dispatch(UserServices.actions.addClassroom(args.classroomId));
       // set current classroom to the new classroom
-      dispatch(ClassroomsServices.actions.setCurrent(newClassroomId));
+      dispatch(ClassroomsServices.actions.setCurrent(args.classroomId));
     },
-    [dispatch, username, createLecture]
+    [dispatch, createLecture]
   );
 };
 
 export const useCreateLecture = () => {
   const dispatch = useAppDispatch();
-  const username = useTypedSelector((state) => state.User.username);
   return useCallback(
-    (args: {lectureName: string; classroomId: string; type: number}) => {
-      const newLectureId: string =
-        username + "-lecture-" + args.type + generateId();
-
+    (args: {
+      lectureId: string;
+      name: string;
+      classroomId: string;
+      type: number;
+    }) => {
       // create lecture
       let newLecture: Lecture = {
-        id: newLectureId,
-        name: args.lectureName,
+        id: args.lectureId,
+        name: args.name,
         type: args.type,
         widgets: [],
       };
@@ -95,23 +87,23 @@ export const useCreateLecture = () => {
       dispatch(
         ClassroomsServices.actions.addLecture({
           classroomId: args.classroomId,
-          lectureId: newLectureId,
+          lectureId: args.lectureId,
         })
       );
       // set last opened lecture as the newly created lecture
       dispatch(
         ClassroomsServices.actions.setLastOpenedLecture({
           classroomId: args.classroomId,
-          lectureId: newLectureId,
+          lectureId: args.lectureId,
         })
       );
 
       // add new lecture to lectures dict
       dispatch(LecturesServices.actions.addLecture(newLecture));
       // set current lecture to the new lecture
-      dispatch(LecturesServices.actions.setCurrent(newLectureId));
+      dispatch(LecturesServices.actions.setCurrent(args.lectureId));
     },
-    [dispatch, username]
+    [dispatch]
   );
 };
 
@@ -119,20 +111,20 @@ export const useCreateWidget = () => {
   const dispatch = useAppDispatch();
   const username = useTypedSelector((state) => state.User.username);
   return useCallback(
-    (args: {widgetType: WidgetType; lectureId: string}) => {
+    (args: {widgetType: WidgetType; lectureId: string; widgetId: string}) => {
       // create widget
-      const newWidgetId = username + "-wid-" + generateId();
-      const newWidget = initWidget(newWidgetId, args.widgetType);
+
+      const newWidget = initWidget(args.widgetId, args.widgetType);
       dispatch(WidgetsServices.actions.addWidget(newWidget));
       // add new widget to lecture
       dispatch(
         LecturesServices.actions.addWidget({
           lectureId: args.lectureId,
-          widgetId: newWidgetId,
+          widgetId: args.widgetId,
         })
       );
       // set current widget
-      dispatch(WidgetsServices.actions.setCurrent(newWidgetId));
+      dispatch(WidgetsServices.actions.setCurrent(args.widgetId));
     },
     [dispatch, username]
   );
