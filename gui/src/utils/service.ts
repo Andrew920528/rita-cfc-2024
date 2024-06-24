@@ -1,8 +1,14 @@
-import {useCallback, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {formatTime} from "./util";
+import {RawAxiosResponseHeaders} from "axios";
 
 /** API Handler
  * A hook that does error handling and other utilities for an API call.
+ * One "thread of process" can share the same handler. This means the
+ * processes has shares terminating logic and has to run in syncrounoous order.
+ * @param dependencies - If items in this array change, the hook will
+ * terminate the current process.
+ *
  * @returns {apiHandler, loading, terminateResponse}
  * apiHandler - The async function that can be called by the component with error handling
  * loading - Whether the API call is in progress
@@ -18,26 +24,36 @@ import {formatTime} from "./util";
  * @param identifier (optional) - The identifier of the API call (for debugging)
  */
 interface ApiHandlerArgs {
-  apiFunction: (c: AbortSignal) => Promise<any>;
-  sideEffect?: (r: any) => any;
+  apiFunction: (c: AbortSignal) => Promise<Response>;
+  sideEffect?: (r: JSON) => JSON;
   debug?: boolean;
   identifier?: string;
 }
-// FIXME: define response type
 interface ApiHandlerResult {
   apiHandler: ({
     apiFunction,
     sideEffect,
     debug,
     identifier,
-  }: ApiHandlerArgs) => Promise<any>;
+  }: ApiHandlerArgs) => Promise<JSON>;
   loading: boolean;
   abortControllerRef: React.MutableRefObject<AbortController | null>;
   terminateResponse: () => void;
 }
-export const useApiHandler = (): ApiHandlerResult => {
+export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
   const [loading, setLoading] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+  useEffect(
+    () => {
+      // Clean up the controller when the component unmounts
+      return () => {
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+      };
+    },
+    dependencies ? dependencies : []
+  );
   function terminateResponse() {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -47,11 +63,14 @@ export const useApiHandler = (): ApiHandlerResult => {
   const apiHandler = useCallback(
     async ({
       apiFunction,
-      sideEffect = (r: any) => r,
+      sideEffect = (r: JSON) => r,
       debug = false,
       identifier = "",
     }: ApiHandlerArgs) => {
       setLoading(true);
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
       abortControllerRef.current = new AbortController();
       const signal = abortControllerRef.current.signal;
       try {
@@ -61,11 +80,13 @@ export const useApiHandler = (): ApiHandlerResult => {
 
         // FIXME: This section depends on response obj shape
         let r = await apiFunction(signal);
-        // if (!r.ok) {
-        //   throw new Error("Network response was not ok " + r.statusText);
-        // }
-        if (r.status === "Error") {
-          throw new Error(r.response);
+        if (!r.ok) {
+          throw new Error("Network response was not ok" + r.statusText);
+        }
+
+        let body = await r.json();
+        if (body.status === "Error") {
+          throw new Error(body.response);
         }
 
         if (debug) {
@@ -74,22 +95,24 @@ export const useApiHandler = (): ApiHandlerResult => {
             r
           );
         }
-
-        return sideEffect(r);
+        return sideEffect(body);
       } catch (err) {
+        let msg;
         if (err instanceof DOMException && err.name === "AbortError") {
-          // console.log("Fetch aborted");
+          msg = "Request aborted";
         } else if (err instanceof Error) {
-          console.error(err.message);
+          msg = err.message;
         } else {
-          console.error("unknow error occured");
+          msg = "Unknown error";
         }
-        return "ERROR";
+        console.warn(msg);
+        const errorResponse = {status: "error", response: msg};
+        return JSON.parse(JSON.stringify(errorResponse));
       } finally {
         setLoading(false);
       }
     },
-    [setLoading]
+    [setLoading, abortControllerRef]
   );
   return {
     apiHandler,
@@ -110,5 +133,18 @@ export function tryTrySee(abortSignal: AbortSignal) {
       "Content-Type": "application/json",
     },
     signal: abortSignal,
+  });
+}
+
+export function login(username: string, password: string) {
+  const formData = new FormData();
+  formData.append("username", username);
+  formData.append("password", password);
+  return fetch(BASE_URL_DEV + "/login", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: formData,
   });
 }

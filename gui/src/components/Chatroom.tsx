@@ -11,13 +11,6 @@ import {useApiHandler} from "../utils/service";
 
 type ChatroomProps = {};
 const Chatroom = ({}: ChatroomProps) => {
-  // api handlers
-  const {
-    apiHandler,
-    loading: waitingForReply,
-    abortControllerRef,
-    terminateResponse,
-  } = useApiHandler();
   // global states
   const dispatch = useAppDispatch();
   const chatroom = useTypedSelector(
@@ -29,20 +22,17 @@ const Chatroom = ({}: ChatroomProps) => {
     (state) => state.Lectures.dict[state.Lectures.current]
   );
   const widgets = useTypedSelector((state) => state.Widgets);
+  // api handlers
+  const {
+    apiHandler,
+    loading: waitingForReply,
+    terminateResponse,
+  } = useApiHandler([classroomId]);
+
   // ui handlers
   const [collapsed, setCollapsed] = useState(false);
   // const [readyToSend, setReadyToSend] = useState(true);
   const [text, setText] = useState("");
-
-  // const abortControllerRef = useRef<AbortController | null>(null);
-  useEffect(() => {
-    // Clean up the controller when the component unmounts
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
-  }, [classroomId]);
   async function sendMessage(text: string) {
     let newMessage = {
       text: text,
@@ -56,20 +46,26 @@ const Chatroom = ({}: ChatroomProps) => {
     );
     setText("");
     let r = await apiHandler({
-      apiFunction: async (c: AbortSignal): Promise<ChatMessageT> => {
+      apiFunction: async (c: AbortSignal): Promise<Response> => {
         // TODO This should be messageRita()
         await mimicApi(2000, c);
         const response = {
           text: "Hello, I'm Rita",
           sender: "Rita",
         };
-        return response;
+        const r = new Response(
+          new Blob([JSON.stringify(response, null, 2)], {
+            type: "application/json",
+          })
+        );
+        return r;
       },
     });
+    const parsedObj: ChatMessageT = JSON.parse(JSON.stringify(r));
     dispatch(
       ChatroomsServices.actions.addMessage({
         chatroomId: chatroom.id,
-        message: r,
+        message: parsedObj,
       })
     );
   }

@@ -6,15 +6,19 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import ReactDOM from "react-dom/client";
-
-// useEffect(() => {
-//   async function runRequest() {
-//     await tryTrySee();
-//   }
-//   runRequest();
-// }, []);
+import {tryTrySee, useApiHandler} from "./utils/service";
 
 function App() {
+  const {apiHandler} = useApiHandler();
+  useEffect(() => {
+    async function runRequest() {
+      let body = await apiHandler({apiFunction: (c) => tryTrySee(c)});
+      console.log(body);
+
+      return body;
+    }
+    runRequest();
+  }, []);
   return (
     <div className="App">
       <BrowserRouter>
