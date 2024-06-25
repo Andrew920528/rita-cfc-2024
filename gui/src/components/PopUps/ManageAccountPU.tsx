@@ -67,9 +67,13 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
     }
 
     // update global states
-    dispatch(UserServices.actions.setAlias(alias.trim()));
-    dispatch(UserServices.actions.setSchool(school.trim()));
-    dispatch(UserServices.actions.setOccupation(occupation.trim()));
+    dispatch(
+      UserServices.actions.setProfile({
+        alias: alias.trim(),
+        school: school.trim(),
+        occupation: occupation.trim(),
+      })
+    );
 
     props.setTrigger(false);
   }

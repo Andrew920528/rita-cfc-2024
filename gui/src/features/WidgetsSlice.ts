@@ -12,6 +12,14 @@ const WidgetsSlice = createSlice({
   name: "WidgetsSlice",
   initialState,
   reducers: {
+    parseLogin: (
+      state,
+      action: PayloadAction<{dict: {[key: string]: Widget}; current: string}>
+    ) => {
+      state.dict = action.payload.dict;
+      state.current = action.payload.current;
+      state.unsaved = {};
+    },
     addWidget: (state, action: PayloadAction<Widget>) => {
       state.dict[action.payload.id] = action.payload;
     },

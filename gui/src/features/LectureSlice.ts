@@ -12,6 +12,13 @@ const LecturesSlice = createSlice({
   name: "lecturesSlice",
   initialState,
   reducers: {
+    parseLogin: (
+      state,
+      action: PayloadAction<{dict: {[key: string]: Lecture}; current: string}>
+    ) => {
+      state.dict = action.payload.dict;
+      state.current = action.payload.current;
+    },
     addLecture: (state, action: PayloadAction<Lecture>) => {
       state.dict[action.payload.id] = action.payload;
     },

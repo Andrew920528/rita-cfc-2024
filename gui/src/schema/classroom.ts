@@ -6,7 +6,7 @@ export type Classroom = {
   grade: string;
   publisher: string;
   lectures: string[];
-  lastOpenedLecture: string;
+  lastOpenedLecture?: string; // not saved in db
   plan: boolean;
   credits: number;
   chatroom: string; // chatroom id

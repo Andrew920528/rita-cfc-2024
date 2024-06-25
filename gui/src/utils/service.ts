@@ -1,6 +1,10 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 import {formatTime, mimicApi} from "./util";
-import {API_SUCCESS, API_ERROR} from "./constants";
+import {API_SUCCESS, API_ERROR, dummyLoginData} from "./constants";
+import {User} from "../schema/user";
+import {Classroom} from "../schema/classroom";
+import {Widget} from "../schema/widget";
+import {Lecture} from "../schema/lecture";
 
 type ResponseData = {
   status: typeof API_ERROR | typeof API_SUCCESS;
@@ -136,21 +140,28 @@ export function tryTrySee(abortSignal: AbortSignal) {
   });
 }
 
-// 🤡
+// 😍 = actually calls api
+// 🤖 = api called in component
+// 🤡 = function implemented with dymmy data
+
+// 🤖
+export type LoginResponseObject = {
+  token?: string; // TODO should be required
+  user: User;
+  classroomsDict: {[cid: string]: Classroom};
+  lecturesDict: {[lid: string]: Lecture};
+  widgetDict: {[wid: string]: Widget};
+};
 export function loginService(
   abortSignal: AbortSignal,
   payload: {username: string; password: string}
 ) {
   const response = {
-    status: "success",
-    response: {},
+    status: API_SUCCESS,
+    data: dummyLoginData,
   };
   return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
 }
-
-// 😍 = actually calls api
-// 🤖 = api called in component
-// 🤡 = function implemented with dymmy data
 
 // 🤡
 export function createUserService(
@@ -165,8 +176,8 @@ export function createUserService(
   }
 ) {
   const response = {
-    status: "success",
-    response: "account created",
+    status: API_SUCCESS,
+    data: "account created",
   };
   return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
 }
@@ -260,7 +271,7 @@ export function deleteLectureService(
     status: API_SUCCESS,
     data: "lecture deleted",
   };
-  return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -292,7 +303,7 @@ export function deleteWidgetService(
     status: API_SUCCESS,
     data: "widget deleted",
   };
-  return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖 * Currently unused
@@ -307,7 +318,7 @@ export function updateWidgetService(
     status: API_SUCCESS,
     data: "widget updated",
   };
-  return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -322,7 +333,7 @@ export function updateWidgetBulkService(
     status: API_SUCCESS,
     data: "all widgets updated",
   };
-  return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -347,5 +358,5 @@ export function messageRitaService(
     status: API_SUCCESS,
     data: response,
   };
-  return mimicApi(2000, JSON.parse(JSON.stringify(dummyResponse)), abortSignal);
+  return mimicApi(500, JSON.parse(JSON.stringify(dummyResponse)), abortSignal);
 }
