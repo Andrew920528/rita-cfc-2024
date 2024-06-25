@@ -3,7 +3,9 @@ import IconButton from "../components/ui_components/IconButton";
 import {Checkmark, Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../components/ui_components/Textbox";
 import Login from "./Login";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {createUserService, useApiHandler} from "../utils/service";
+import {API_ERROR} from "../utils/constants";
 const SignUp = () => {
   //let navigate = useNavigate();
   const [username, setUsername] = useState<string>("");
@@ -14,6 +16,8 @@ const SignUp = () => {
   const [passwordError, setPasswordError] = useState<string>("");
   const [confirmPasswordError, setConfirmPasswordError] = useState<string>("");
 
+  const navigate = useNavigate();
+  const {apiHandler, loading} = useApiHandler();
   function reset(): void {
     setUsername("");
     setPassword("");
@@ -22,9 +26,7 @@ const SignUp = () => {
     setConfirmPassword("");
     setConfirmPasswordError("");
   }
-  const handleNavigate = (path: string) => {
-    //navigate(path);
-  };
+
   function validateLogin(): boolean {
     let validate = true;
     if (username.trim() === "") {
@@ -45,6 +47,24 @@ const SignUp = () => {
       validate = false;
     }
     return validate;
+  }
+
+  async function signup() {
+    if (!validateLogin()) return;
+
+    let r = await apiHandler({
+      apiFunction: (s) => createUserService(s, {username, password}),
+      debug: true,
+      identifier: "signup",
+    });
+
+    if (r.status === API_ERROR) {
+      // failed to create user
+      return;
+    }
+
+    reset();
+    navigate("/login");
   }
   return (
     <div className="signup-root">
@@ -90,12 +110,10 @@ const SignUp = () => {
           flex={true}
           text="建立帳號"
           icon={<Checkmark />}
-          onClick={() => {
-            if (validateLogin()) {
-              console.log("Create Successful!");
-              reset();
-            }
+          onClick={async () => {
+            await signup();
           }}
+          disabled={loading}
         />
       </div>
       <div className="signup-login">

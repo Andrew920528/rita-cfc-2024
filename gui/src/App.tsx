@@ -4,21 +4,12 @@ import "./style/main.scss";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import {BrowserRouter, Routes, Route} from "react-router-dom";
+import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import {tryTrySee, useApiHandler} from "./utils/service";
+import {useTypedSelector} from "./store/store";
 
 function App() {
-  const {apiHandler} = useApiHandler();
-  // useEffect(() => {
-  //   async function runRequest() {
-  //     let body = await apiHandler({
-  //       apiFunction: (c) => tryTrySee(c),
-  //     });
-  //     return body;
-  //   }
-  //   runRequest();
-  // }, []);
   return (
     <div className="App">
       <BrowserRouter>
@@ -26,6 +17,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </div>

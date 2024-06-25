@@ -3,9 +3,18 @@ import React, {useEffect, useState} from "react";
 import Header from "../components/Header";
 import NavBar from "../components/NavBar";
 import Dashboard from "../components/Dashboard";
+import {useNavigate} from "react-router-dom";
+import {useTypedSelector} from "../store/store";
 
 const Home = () => {
   const [openNav, setOpenNav] = useState<boolean>(true);
+  const user = useTypedSelector((state) => state.User);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!user.username) {
+      navigate("/login");
+    }
+  }, []);
   return (
     <div className="home">
       <Header openNav={openNav} setOpenNav={setOpenNav} />

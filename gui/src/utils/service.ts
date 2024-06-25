@@ -163,7 +163,7 @@ export function loginService(
   return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
-// 🤡
+// 🤖
 export function createUserService(
   abortSignal: AbortSignal,
   payload: {
