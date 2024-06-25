@@ -3,7 +3,7 @@ import IconButton from "../ui_components/IconButton";
 import {Alarm} from "@carbon/icons-react";
 import {useAppDispatch} from "../../store/store";
 import {WidgetsServices} from "../../features/WidgetsSlice";
-import {SemesterGoalWidgetT, WidgetType} from "../../schema/widget";
+import {WidgetType} from "../../schema/widget";
 
 type Props = {
   wid: string;

@@ -9,6 +9,8 @@ import SemesterPlanWidget from "./SemesterPlanWidget";
 import NoteWidget from "./NoteWidget";
 import ScheduleWidget from "./ScheduleWidget";
 import {useDeleteWidget} from "../../store/globalActions";
+import {deleteWidgetService, useApiHandler} from "../../utils/service";
+import {API_ERROR} from "../../utils/constants";
 const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
   switch (widgetType) {
     case WidgetType.SemesterGoal:
@@ -47,6 +49,20 @@ const WidgetFrame = ({
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
   const deleteWidget = useDeleteWidget();
+  const {apiHandler, loading} = useApiHandler();
+  async function deleteWidgetAction() {
+    let r = await apiHandler({
+      apiFunction: (s) =>
+        deleteWidgetService(s, {
+          widgetId: widgetId,
+          lectureId: lectures.current,
+        }),
+    });
+    if (r.status === API_ERROR) {
+      return;
+    }
+    deleteWidget({lectureId: lectures.current, widgetId: widgetId});
+  }
   return (
     <div
       className={`widget-frame ${selected ? "selected" : "idle"} w-${
@@ -64,9 +80,10 @@ const WidgetFrame = ({
         <IconButton
           icon={<Close />}
           mode="ghost"
-          onClick={() => {
-            deleteWidget({lectureId: lectures.current, widgetId: widgetId});
+          onClick={async () => {
+            await deleteWidgetAction();
           }}
+          disabled={loading}
         />
       </div>
       <div className="wf-content">{widgetComponent(widgetId, widgetType)}</div>

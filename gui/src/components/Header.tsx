@@ -24,7 +24,13 @@ import {WidgetsServices} from "../features/WidgetsSlice";
 import {UserServices} from "../features/UserSlice";
 import {useDeleteLecture} from "../store/globalActions";
 import {API_ERROR, EMPTY_ID} from "../utils/constants";
-import {deleteLectureService, useApiHandler} from "../utils/service";
+import {
+  deleteLectureService,
+  updateClassroomService,
+  updateUserService,
+  updateWidgetBulkService,
+  useApiHandler,
+} from "../utils/service";
 
 type HeaderProps = {
   openNav: boolean;
@@ -132,6 +138,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
                   }}
                 />
               }
+              actionDisabled={() => loading}
             />
             <CreateLecturePU
               title={"新增課程"}
@@ -152,13 +159,40 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
 
 const SaveGroup = () => {
   const dispatch = useAppDispatch();
+  const user = useTypedSelector((state) => state.User);
   const unsavedWidgets = useTypedSelector((state) => state.Widgets.unsaved);
   const scheduleChanged = useTypedSelector(
     (state) => state.User.scheduleChanged
   );
-  const saveAll = () => {
+  const {apiHandler, loading} = useApiHandler();
+  const saveAll = async () => {
+    let r;
     if (scheduleChanged) {
+      // update user here
+      r = await apiHandler({
+        apiFunction: (s) =>
+          updateUserService(s, {
+            username: user.username,
+            schedule: JSON.stringify(user.schedule),
+          }),
+      });
+      if (r.status === API_ERROR) {
+        // TODO Failed to save toast
+        return;
+      }
       dispatch(UserServices.actions.saveSchedule());
+    }
+    // save all widgets here
+    r = await apiHandler({
+      apiFunction: (s) =>
+        updateWidgetBulkService(s, {
+          widgetId: Object.keys(unsavedWidgets),
+          content: Object.keys(unsavedWidgets), //FIXME
+        }),
+    });
+    if (r.status === API_ERROR) {
+      // TODO Failed to save toast
+      return;
     }
     dispatch(WidgetsServices.actions.saveAll());
   };
@@ -175,7 +209,10 @@ const SaveGroup = () => {
         onClick={() => {
           saveAll();
         }}
-        disabled={Object.keys(unsavedWidgets).length === 0 && !scheduleChanged}
+        disabled={
+          (Object.keys(unsavedWidgets).length === 0 && !scheduleChanged) ||
+          loading
+        }
       />
     </div>
   );

@@ -1,6 +1,5 @@
 import React from "react";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {ScheduleWidgetT, SemesterPlanWidgetT} from "../../schema/widget";
 import Table from "../ui_components/Table";
 import {
   Schedule,

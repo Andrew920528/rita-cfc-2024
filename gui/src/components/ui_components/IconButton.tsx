@@ -1,10 +1,10 @@
-import React, {ReactElement} from "react";
+import React, {ReactElement, ReactNode} from "react";
 
 export type IconButtonProps = {
   flex?: boolean;
   mode?: string;
   text?: string;
-  icon: ReactElement;
+  icon: ReactNode;
   onClick?: (args?: any) => void;
   disabled?: boolean;
 };

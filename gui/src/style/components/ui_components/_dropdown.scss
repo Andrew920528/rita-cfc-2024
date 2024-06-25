@@ -113,22 +113,19 @@ $width: 18rem;
     }
   }
 
+  .dropdown-option-left {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
   p {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     padding-left: 1rem;
     user-select: none;
-  }
-  .dropdown-button {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    justify-content: center;
-    &:hover {
-      background-color: #8d8d8d32;
-    }
   }
 }

@@ -248,7 +248,7 @@ export function createLectureService(
   return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
-// 🤡
+// 🤖
 export function deleteLectureService(
   abortSignal: AbortSignal,
   payload: {
@@ -280,7 +280,7 @@ export function createWidgetService(
   return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
-// 🤡
+// 🤖
 export function deleteWidgetService(
   abortSignal: AbortSignal,
   payload: {
@@ -295,7 +295,7 @@ export function deleteWidgetService(
   return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
-// 🤡 * don't think will use this
+// 🤖 * Currently unused
 export function updateWidgetService(
   abortSignal: AbortSignal,
   payload: {
@@ -310,7 +310,7 @@ export function updateWidgetService(
   return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
-// 🤡
+// 🤖
 export function updateWidgetBulkService(
   abortSignal: AbortSignal,
   payload: {

@@ -7,6 +7,7 @@ import React, {
   SetStateAction,
 } from "react";
 import {ChevronDown, ChevronUp, Close} from "@carbon/icons-react";
+import IconButton from "./IconButton";
 
 const UNDEFINED = "UNDEFINED";
 type DropdownDict = {
@@ -21,6 +22,7 @@ type DropdownProps = {
   flex: boolean;
   action?: (id: string) => boolean;
   actionFunction?: (id: string) => void;
+  actionDisabled?: (id: string) => boolean;
   mode?: "on-dark" | "form";
   extra?: ReactNode;
   label?: string;
@@ -36,6 +38,7 @@ const Dropdown = ({
   placeholder = "placeholder",
   action = () => false,
   actionFunction = () => {},
+  actionDisabled = () => false,
   actionIcon = <Close />,
   flex = false,
   extra = null,
@@ -98,6 +101,7 @@ const Dropdown = ({
                 action={action(k)}
                 actionFunction={actionFunction}
                 icon={actionIcon}
+                actionDisabled={actionDisabled(k)}
               />
             ))}
           </div>
@@ -117,6 +121,7 @@ type DropdownOptionProps = {
   action: boolean;
   icon?: ReactNode;
   actionFunction?: (id: string) => void;
+  actionDisabled?: boolean;
 };
 const DropdownOption = ({
   id,
@@ -124,27 +129,26 @@ const DropdownOption = ({
   currId,
   onClick = () => {},
   action,
-  icon,
+  icon = <Close />,
   actionFunction = () => {},
+  actionDisabled = false,
 }: DropdownOptionProps) => {
+  const handleIconClick = (e: React.MouseEvent<HTMLElement>) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    actionFunction(id);
+  };
   return (
-    <div
-      className={`dropdown-option ${id === currId && "selected"}`}
-      onClick={onClick}
-    >
-      <p>{name}</p>
+    <div className={`dropdown-option ${id === currId && "selected"}`}>
+      <div className="dropdown-option-left" onClick={onClick}>
+        <p>{name}</p>
+      </div>
       {action && (
-        <div
-          className={`dropdown-button ${id === currId && "selected"}`}
-          onClick={(e) => {
-            if (e && e.stopPropagation) e.stopPropagation();
-            console.log("action icon clicked");
-            // TODO: allow this to be disabled
-            actionFunction(id);
-          }}
-        >
-          {icon}
-        </div>
+        <IconButton
+          mode={`dropdownBtn ${id === currId ? "selected" : ""}`}
+          onClick={handleIconClick}
+          icon={icon}
+          disabled={actionDisabled}
+        />
       )}
     </div>
   );

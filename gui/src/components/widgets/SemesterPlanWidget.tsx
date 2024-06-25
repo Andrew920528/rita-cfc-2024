@@ -1,6 +1,10 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {SemesterPlanWidgetT, Widget} from "../../schema/widget";
+import {
+  SemesterPlanWidgetContent,
+  Widget,
+  WidgetType,
+} from "../../schema/widget";
 import Table from "../ui_components/Table";
 import Textbox from "../ui_components/Textbox";
 import IconButton from "../ui_components/IconButton";
@@ -19,11 +23,9 @@ type Props = {
 
 const SemesterPlanWidget = (props: Props) => {
   const dispatch = useAppDispatch();
-  const widget = useTypedSelector(
-    (state) => state.Widgets.dict[props.wid]
-  ) as SemesterPlanWidgetT;
-
-  function addColumn(table: any, newHeading: string) {
+  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
+  const widgetContent = widget.content as SemesterPlanWidgetContent;
+  function addColumn(table: SemesterPlanWidgetContent, newHeading: string) {
     const originalTable = structuredClone(table);
     // inspect the original table and add new column with unique name
     let counter = 0;
@@ -37,78 +39,97 @@ const SemesterPlanWidget = (props: Props) => {
     }
 
     originalTable.headings.push(newHeading);
-    originalTable.content.forEach((row: any) => {
+    originalTable.rows.forEach((row: any) => {
       row[newHeading] = "";
     });
     dispatch(
       WidgetsServices.actions.updateWidget({
-        wid: props.wid,
-        newWidget: originalTable,
+        newWidget: {
+          id: props.wid,
+          type: WidgetType.SemesterPlan,
+          content: originalTable,
+        },
       })
     );
   }
 
-  function deleteColumn(table: any, heading: string) {
+  function deleteColumn(table: SemesterPlanWidgetContent, heading: string) {
     const originalTable = structuredClone(table);
     originalTable.headings = originalTable.headings.filter(
       (h: string) => h !== heading
     );
-
-    originalTable.content.forEach((row: any) => {
+    originalTable.rows.forEach((row: any) => {
       delete row[heading];
     });
     dispatch(
       WidgetsServices.actions.updateWidget({
-        wid: props.wid,
-        newWidget: originalTable,
+        newWidget: {
+          id: props.wid,
+          type: WidgetType.SemesterPlan,
+          content: originalTable,
+        },
       })
     );
   }
 
-  function setCell(table: any, heading: string, row: number, value: string) {
+  function setCell(
+    table: SemesterPlanWidgetContent,
+    heading: string,
+    row: number,
+    value: string
+  ) {
     const originalTable = structuredClone(table);
-    originalTable.content[row][heading] = value;
+    originalTable.rows[row][heading] = value;
     dispatch(
       WidgetsServices.actions.updateWidget({
-        wid: props.wid,
-        newWidget: originalTable,
+        newWidget: {
+          id: props.wid,
+          type: WidgetType.SemesterPlan,
+          content: originalTable,
+        },
       })
     );
   }
 
-  function insertRow(table: any, row: number) {
+  function insertRow(table: SemesterPlanWidgetContent, row: number) {
     const originalTable = structuredClone(table);
     const initObj = originalTable.headings.reduce((acc: any, key: string) => {
       acc[key] = "";
       return acc;
     }, {});
 
-    originalTable.content = [
-      ...originalTable.content.slice(0, row),
+    originalTable.rows = [
+      ...originalTable.rows.slice(0, row),
       initObj,
-      ...originalTable.content.slice(row),
+      ...originalTable.rows.slice(row),
     ];
     dispatch(
       WidgetsServices.actions.updateWidget({
-        wid: props.wid,
-        newWidget: originalTable,
+        newWidget: {
+          id: props.wid,
+          type: WidgetType.SemesterPlan,
+          content: originalTable,
+        },
       })
     );
   }
 
-  function deleteRow(table: any, row: number) {
+  function deleteRow(table: SemesterPlanWidgetContent, row: number) {
     const originalTable = structuredClone(table);
 
-    originalTable.content.pop();
+    originalTable.rows.pop();
     dispatch(
       WidgetsServices.actions.updateWidget({
-        wid: props.wid,
-        newWidget: originalTable,
+        newWidget: {
+          id: props.wid,
+          type: WidgetType.SemesterPlan,
+          content: originalTable,
+        },
       })
     );
   }
 
-  const widgetTableContent = widget.content.map((row, rowIndex) =>
+  const widgetTableContent = widgetContent.rows.map((row, rowIndex) =>
     Object.keys(row).reduce((acc: any, key: string) => {
       acc[key] = (
         <SemesterPlanCell
@@ -117,7 +138,7 @@ const SemesterPlanWidget = (props: Props) => {
             // console.log(key, row[key]);
           }}
           onChange={(newValue) => {
-            setCell(widget, key, rowIndex, newValue);
+            setCell(widgetContent, key, rowIndex, newValue);
           }}
         />
       );
@@ -127,7 +148,7 @@ const SemesterPlanWidget = (props: Props) => {
 
   return (
     <div className="semester-plan-widget">
-      <Table headings={widget.headings} content={widgetTableContent} />
+      <Table headings={widgetContent.headings} content={widgetTableContent} />
       <div className="widget-button-row">
         <IconButton
           flex={true}
@@ -135,7 +156,7 @@ const SemesterPlanWidget = (props: Props) => {
           icon={<ColumnInsert />}
           mode={"primary"}
           onClick={() => {
-            addColumn(widget, "新しいカラム");
+            addColumn(widgetContent, "新しいカラム");
           }}
         />
         <IconButton
@@ -144,7 +165,10 @@ const SemesterPlanWidget = (props: Props) => {
           icon={<ColumnDelete />}
           mode={"primary"}
           onClick={() => {
-            deleteColumn(widget, widget.headings[widget.headings.length - 1]);
+            deleteColumn(
+              widgetContent,
+              widgetContent.headings[widgetContent.headings.length - 1]
+            );
           }}
         />
         <IconButton
@@ -153,7 +177,7 @@ const SemesterPlanWidget = (props: Props) => {
           icon={<RowInsert />}
           mode={"primary"}
           onClick={() => {
-            insertRow(widget, widget.content.length);
+            insertRow(widgetContent, widgetContent.rows.length);
           }}
         />
         <IconButton
@@ -162,7 +186,7 @@ const SemesterPlanWidget = (props: Props) => {
           icon={<RowDelete />}
           mode={"primary"}
           onClick={() => {
-            deleteRow(widget, widget.content.length - 1);
+            deleteRow(widgetContent, widgetContent.rows.length - 1);
           }}
         />
       </div>
