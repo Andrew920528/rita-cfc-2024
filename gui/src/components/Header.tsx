@@ -164,6 +164,7 @@ const SaveGroup = () => {
   const scheduleChanged = useTypedSelector(
     (state) => state.User.scheduleChanged
   );
+  const widgetDict = useTypedSelector((state) => state.Widgets.dict);
   const {apiHandler, loading} = useApiHandler();
   const saveAll = async () => {
     let r;
@@ -187,7 +188,10 @@ const SaveGroup = () => {
       apiFunction: (s) =>
         updateWidgetBulkService(s, {
           widgetId: Object.keys(unsavedWidgets),
-          content: Object.keys(unsavedWidgets), //FIXME
+          content: Object.keys(unsavedWidgets).map((w: string) => {
+            let content = widgetDict[w].content;
+            return JSON.stringify(content);
+          }),
         }),
     });
     if (r.status === API_ERROR) {
