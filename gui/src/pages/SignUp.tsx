@@ -29,19 +29,40 @@ const SignUp = () => {
 
   function validateLogin(): boolean {
     let validate = true;
-    if (username.trim() === "") {
+    // username cannot contain spaces
+
+    if (username === "") {
       setUsernameError("請輸入使用者名稱");
       validate = false;
-    }
-    if (password.trim() === "") {
-      setPasswordError("請輸入密碼");
+    } else if (username.includes(" ")) {
+      setUsernameError("使用者名稱不能包含空格");
+      validate = false;
+    } else if (username.length < 8) {
+      setUsernameError("使用者名稱至少8個字元");
+      validate = false;
+    } else if (username.length > 32) {
+      setUsernameError("使用者名稱最多32個字元");
       validate = false;
     }
+
+    if (password === "") {
+      setPasswordError("請輸入密碼");
+      validate = false;
+    } else if (password.includes(" ")) {
+      setPasswordError("密碼不能包含空格");
+      validate = false;
+    } else if (password.length < 8) {
+      setPasswordError("密碼至少8個字元");
+      validate = false;
+    } else if (password.length > 32) {
+      setPasswordError("密碼最多32個字元");
+      validate = false;
+    }
+
     if (confirmPassword.trim() == "") {
       setConfirmPasswordError("請輸入密碼");
       validate = false;
-    }
-    if (confirmPassword.trim() != password.trim()) {
+    } else if (confirmPassword.trim() != password.trim()) {
       setConfirmPasswordError("密碼不匹配");
       setPasswordError("密碼不匹配");
       validate = false;
@@ -77,7 +98,7 @@ const SignUp = () => {
           placeholder="輸入使用者名稱"
           value={username}
           onChange={(e) => {
-            setUsername(e.currentTarget.value);
+            setUsername(e.currentTarget.value.trim());
           }}
           errorMsg={usernameError}
         />
@@ -89,7 +110,7 @@ const SignUp = () => {
           placeholder="輸入密碼"
           value={password}
           onChange={(e) => {
-            setPassword(e.currentTarget.value);
+            setPassword(e.currentTarget.value.trim());
           }}
           errorMsg={passwordError}
         />
@@ -101,7 +122,7 @@ const SignUp = () => {
           placeholder="輸入密碼"
           value={confirmPassword}
           onChange={(e) => {
-            setConfirmPassword(e.currentTarget.value);
+            setConfirmPassword(e.currentTarget.value.trim());
           }}
           errorMsg={confirmPasswordError}
         />

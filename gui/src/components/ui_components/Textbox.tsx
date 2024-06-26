@@ -1,4 +1,6 @@
 import React from "react";
+import IconButton from "./IconButton";
+import {View, ViewOff} from "@carbon/icons-react";
 
 type TextboxProps = {
   flex?: boolean;
@@ -22,17 +24,29 @@ const Textbox = ({
   onChange = () => {},
   autoFocus = false,
 }: TextboxProps) => {
+  const [showPassword, setShowPassword] = React.useState(false);
   return (
-    <div className={`textbox ${flex ? "flex" : "fixed"} ${mode}`}>
+    <div className={`textbox ${flex ? "flex" : "fixed"} ${mode} `}>
       {label && <p className="tb-label --label">{label}</p>}
-      <input
-        className={`${errorMsg ? "error" : ""}`}
-        placeholder={placeholder}
-        onChange={onChange}
-        value={value}
-        autoFocus={autoFocus}
-        type={type}
-      />
+      <div className="input-content-wrapper">
+        <input
+          className={`${errorMsg ? "error" : ""} ${type}`}
+          placeholder={placeholder}
+          onChange={onChange}
+          value={value}
+          autoFocus={autoFocus}
+          type={showPassword && type === "password" ? "text" : type}
+        />
+        {type === "password" && (
+          <div className="btn">
+            <IconButton
+              mode="ghost"
+              icon={showPassword ? <ViewOff /> : <View />}
+              onClick={() => setShowPassword(!showPassword)}
+            />
+          </div>
+        )}
+      </div>
       {errorMsg && <p className="--error --label">{errorMsg}</p>}
     </div>
   );

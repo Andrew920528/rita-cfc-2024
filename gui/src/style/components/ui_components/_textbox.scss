@@ -25,6 +25,17 @@
   .placeholder {
     color: #a8a8a8; // placeholder text color
   }
+  .input-content-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    .btn {
+      position: absolute;
+      right: 0;
+    }
+  }
   input {
     height: 100%;
     width: 100%;
@@ -34,7 +45,9 @@
     border-radius: 0;
     padding-left: 1rem;
     padding-right: 1rem;
-
+    &.password {
+      padding-right: 3rem;
+    }
     &::placeholder {
       color: #a8a8a8; // placeholder text color
     }
