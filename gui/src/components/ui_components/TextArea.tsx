@@ -3,6 +3,7 @@ import React, {useState} from "react";
 type TextAreaProps = {
   flex?: boolean;
   placeholder?: string;
+  mode?: string;
   label?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -13,10 +14,11 @@ const TextArea: React.FC<TextAreaProps> = ({
   placeholder = "寫下筆記、想法...",
   label,
   value,
+  mode = "",
   onChange = () => {},
 }) => {
   return (
-    <div className={`textarea-wrapper ${flex ? "flex" : "fixed"}`}>
+    <div className={`textarea-wrapper ${flex ? "flex" : "fixed"} ${mode}`}>
       {label && <label>{label}</label>}
       <textarea
         className="textarea-input"
