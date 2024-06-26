@@ -24,6 +24,7 @@ const NoteWidget = (props: Props) => {
   }
   return (
     <TextArea
+      mode="single"
       value={(widget.content as NoteWidgetContent).note}
       onChange={(e) => {
         let newNote = {note: e.currentTarget.value} as NoteWidgetContent;

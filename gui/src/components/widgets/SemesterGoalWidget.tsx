@@ -1,9 +1,10 @@
 import React from "react";
 import IconButton from "../ui_components/IconButton";
 import {Alarm} from "@carbon/icons-react";
-import {useAppDispatch} from "../../store/store";
+import TextArea from "../ui_components/TextArea";
+import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {WidgetsServices} from "../../features/WidgetsSlice";
-import {WidgetType} from "../../schema/widget";
+import {WidgetType, Widget, SemesterGoalWidgetContent} from "../../schema/widget";
 
 type Props = {
   wid: string;
@@ -33,9 +34,34 @@ type Props = {
  */
 
 const SemesterGoalWidget = (props: Props) => {
-  const dispatch = useAppDispatch();
-
-  return <div>SemesterGoalWidget</div>;
-};
+    const dispatch = useAppDispatch();
+    const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
+    function editSemesterGoal(newSemesterGoal: SemesterGoalWidgetContent) {
+      const newWidget: Widget = {
+        id: props.wid,
+        type: WidgetType.SemesterGoal,
+        content: newSemesterGoal,
+      };
+      dispatch(
+        WidgetsServices.actions.updateWidget({
+          newWidget: newWidget,
+        })
+      );
+    }
+    const handleListChange = (index: number, value: string) => {
+      const newGoals = [...(widget.content as SemesterGoalWidgetContent).goals];
+      newGoals[index] = value;
+      const newSemesterGoal: SemesterGoalWidgetContent = { goals: newGoals };
+      editSemesterGoal(newSemesterGoal);
+    };
+  
+    return (
+      <TextArea
+        mode = "list"
+        valuelist={(widget.content as SemesterGoalWidgetContent).goals}
+        onChangeList={handleListChange}
+      />
+    );
+  };
 
 export default SemesterGoalWidget;
