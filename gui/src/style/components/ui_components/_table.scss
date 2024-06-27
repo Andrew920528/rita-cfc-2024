@@ -4,6 +4,7 @@
   width: 100%;
   position: relative;
   border: 1px solid #ccc;
+  overflow-x: auto;
 }
 
 .table-header,
@@ -23,7 +24,7 @@
   outline: 1px solid #ccc;
   text-align: left;
   overflow: auto;
-  flex: 1;
+  // flex: 1;
 }
 
 .table-header-item {

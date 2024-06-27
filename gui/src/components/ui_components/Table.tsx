@@ -1,4 +1,4 @@
-import React, {ReactNode, useEffect, useState} from "react";
+import React, {ReactNode, useEffect, useRef, useState} from "react";
 
 type Props = {
   headings: string[];
@@ -9,10 +9,14 @@ type TableStyleProps = {};
 
 const Table = (props: Props & TableStyleProps) => {
   const [columnWidths, setColumnWidths] = useState(
-    Array(props.headings.length).fill(2)
+    Array(props.headings.length).fill(80)
   );
+  const elementRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    setColumnWidths(Array(props.headings.length).fill(2));
+    if (columnWidths.length < props.headings.length) {
+      let newWidths = [...columnWidths, 80];
+      setColumnWidths(newWidths);
+    }
   }, [props.headings.length]);
 
   const handleMouseDown = (
@@ -23,14 +27,32 @@ const Table = (props: Props & TableStyleProps) => {
 
     const start = e.clientX;
     const sizes = columnWidths;
-
+    let totalSize = columnWidths[index] + columnWidths[index + 1];
+    if (index + 1 === columnWidths.length - 1) {
+      console.log("first");
+      if (elementRef.current) {
+        console.log(elementRef.current.offsetWidth);
+        totalSize = columnWidths[index] + elementRef.current.offsetWidth;
+      }
+    }
     const handleMouseMove = (event: MouseEvent) => {
       const delta = event.clientX - start;
-      const newSize = Math.max(20, sizes[index] + delta);
 
       const newWidths = [...columnWidths];
+
+      console.log(index);
+      console.log(newWidths);
+      console.log(newWidths.length);
+
+      const newSize = Math.min(
+        totalSize - 20,
+        Math.max(20, sizes[index] + delta)
+      );
       newWidths[index] = newSize;
-      newWidths[index + 1] = Math.max(20, sizes[index + 1] - delta);
+      newWidths[index + 1] = totalSize - newSize;
+      if (index + 1 === columnWidths.length - 1) {
+        newWidths[index + 1] = 80;
+      }
       setColumnWidths(newWidths);
     };
 
@@ -45,21 +67,30 @@ const Table = (props: Props & TableStyleProps) => {
   return (
     <div className="table-container">
       <div className="table-header">
-        {props.headings.map((heading, index) => (
-          <div
-            key={heading}
-            className="table-header-item"
-            // style={{width: `${columnWidths[index]}px`}}
-          >
-            {heading}
-            {/* {index < props.headings.length - 1 && (
+        {props.headings.map((heading, index) =>
+          index === props.headings.length - 1 ? (
+            <div
+              key={heading}
+              className="table-header-item"
+              ref={elementRef}
+              style={{width: `${columnWidths[index]}px`}}
+            >
+              {heading}
+            </div>
+          ) : (
+            <div
+              key={heading}
+              className="table-header-item"
+              style={{width: `${columnWidths[index]}px`}}
+            >
+              {heading}
               <div
                 className="vertical-resize-handle"
                 onMouseDown={(e) => handleMouseDown(e, index)}
               />
-            )} */}
-          </div>
-        ))}
+            </div>
+          )
+        )}
       </div>
       <div className="table-body">
         <div
@@ -79,7 +110,7 @@ const Table = (props: Props & TableStyleProps) => {
                 <div
                   key={"row" + rowIndex + "col" + column}
                   className="table-row-item"
-                  // style={{width: `${columnWidths[colIndex]}px`}}
+                  style={{width: `${columnWidths[colIndex]}px`}}
                 >
                   {row[column]}
                 </div>
