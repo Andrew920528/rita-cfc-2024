@@ -160,7 +160,7 @@ export function loginService(
     status: API_SUCCESS,
     data: dummyLoginData,
   };
-  return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -179,7 +179,7 @@ export function createUserService(
     status: API_SUCCESS,
     data: "account created",
   };
-  return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -197,7 +197,7 @@ export function updateUserService(
     status: API_SUCCESS,
     data: "user updated",
   };
-  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -219,7 +219,7 @@ export function createClassroomService(
     status: API_SUCCESS,
     data: "classroom created",
   };
-  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -239,7 +239,7 @@ export function updateClassroomService(
     status: API_SUCCESS,
     data: "classroom updated",
   };
-  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -256,7 +256,7 @@ export function createLectureService(
     status: API_SUCCESS,
     data: "lecture created",
   };
-  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -271,7 +271,7 @@ export function deleteLectureService(
     status: API_SUCCESS,
     data: "lecture deleted",
   };
-  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -288,7 +288,7 @@ export function createWidgetService(
     status: API_SUCCESS,
     data: "widget created",
   };
-  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -303,7 +303,7 @@ export function deleteWidgetService(
     status: API_SUCCESS,
     data: "widget deleted",
   };
-  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖 * Currently unused
@@ -318,7 +318,7 @@ export function updateWidgetService(
     status: API_SUCCESS,
     data: "widget updated",
   };
-  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -333,7 +333,7 @@ export function updateWidgetBulkService(
     status: API_SUCCESS,
     data: "all widgets updated",
   };
-  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖
@@ -358,5 +358,5 @@ export function messageRitaService(
     status: API_SUCCESS,
     data: response,
   };
-  return mimicApi(500, JSON.parse(JSON.stringify(dummyResponse)), abortSignal);
+  return mimicApi(100, JSON.parse(JSON.stringify(dummyResponse)), abortSignal);
 }

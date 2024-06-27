@@ -1,23 +1,29 @@
 .table-container {
   display: grid;
-  min-width: 12rem;
+  // min-width: 12rem;
   width: 100%;
+  position: relative;
+  border: 1px solid #ccc;
 }
 
 .table-header,
 .table-row {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(20px, 1fr)
-  ); /* Adjust minmax values as needed */
+  display: flex;
+  width: 100%;
+
+  div:last-child {
+    flex-grow: 1;
+  }
 }
 
 .table-header-item,
 .table-row-item {
+  position: relative; /* Required for the absolute positioning of handles */
   padding: 8px;
   outline: 1px solid #ccc;
   text-align: left;
+  overflow: auto;
+  flex: 1;
 }
 
 .table-header-item {
@@ -27,4 +33,14 @@
 
 .table-row-item {
   background-color: #fff;
+}
+
+.vertical-resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  cursor: col-resize;
 }

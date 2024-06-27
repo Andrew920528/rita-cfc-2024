@@ -1,5 +1,8 @@
 .schedule-widget {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .schedule-widget-cell {

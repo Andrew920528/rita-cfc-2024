@@ -42,6 +42,8 @@ const ClassCard = ({
         dispatch(
           LecturesServices.actions.setCurrent(
             classrooms.dict[id].lastOpenedLecture
+              ? (classrooms.dict[id].lastOpenedLecture as string)
+              : EMPTY_ID
           )
         );
         const chatId = classrooms.dict[id].chatroom;
