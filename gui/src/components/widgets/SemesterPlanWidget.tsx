@@ -219,6 +219,7 @@ const SemesterPlanCell = ({
         onChange={(e) => {
           onChange(e.currentTarget.value);
         }}
+        ariaLabel="semester plan cell"
       />
     </div>
   );

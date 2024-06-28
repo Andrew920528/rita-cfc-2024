@@ -22,8 +22,18 @@ const IconButton = ({
         disabled ? "disabled" : ""
       }`}
       onClick={() => {
+        if (disabled) return;
         onClick();
       }}
+      onKeyDown={(e) => {
+        if (!disabled && (e.key === "Enter" || e.key === " ")) {
+          if (e.repeat) return;
+          if (disabled) return;
+          onClick();
+        }
+      }}
+      role="button"
+      tabIndex={0}
     >
       {text}
       <div className="icon-wrapper">{icon}</div>

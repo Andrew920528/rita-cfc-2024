@@ -12,6 +12,7 @@ type TextboxProps = {
   onChange?: (e: React.FormEvent<HTMLInputElement>) => void;
   autoFocus?: boolean;
   type?: string; // password, etc.
+  ariaLabel?: string;
 };
 const Textbox = ({
   flex,
@@ -23,6 +24,7 @@ const Textbox = ({
   value,
   onChange = () => {},
   autoFocus = false,
+  ariaLabel = "Textbox",
 }: TextboxProps) => {
   const [showPassword, setShowPassword] = React.useState(false);
   return (
@@ -36,6 +38,7 @@ const Textbox = ({
           value={value}
           autoFocus={autoFocus}
           type={showPassword && type === "password" ? "text" : type}
+          aria-label={ariaLabel}
         />
         {type === "password" && (
           <div className="btn">

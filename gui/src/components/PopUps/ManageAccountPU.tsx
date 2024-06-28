@@ -104,6 +104,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
             setAlias(e.currentTarget.value);
           }}
           autoFocus={true}
+          ariaLabel="alias"
         />
         <Textbox
           label="學校"
@@ -114,6 +115,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
           onChange={(e) => {
             setSchool(e.currentTarget.value);
           }}
+          ariaLabel="school"
         />
         <Textbox
           label="職稱"
@@ -124,6 +126,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
           onChange={(e) => {
             setOccupation(e.currentTarget.value);
           }}
+          ariaLabel="occupation"
         />
       </div>
     </PopUp>

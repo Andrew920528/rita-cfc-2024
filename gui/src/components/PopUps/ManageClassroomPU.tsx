@@ -255,6 +255,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
                 setName(e.currentTarget.value);
               }}
               autoFocus={true}
+              ariaLabel="classroom name"
             />
           </div>
           <div>
@@ -302,6 +303,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
                 setCredit(e.currentTarget.value);
               }
             }}
+            ariaLabel="credit"
           />
         </div>
         {subject !== "其他" ? (
@@ -328,6 +330,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
             onChange={(e) => {
               setOtherSubject(e.currentTarget.value);
             }}
+            ariaLabel="other subject"
           />
         )}
       </div>

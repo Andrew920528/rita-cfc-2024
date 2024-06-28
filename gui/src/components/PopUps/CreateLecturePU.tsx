@@ -89,6 +89,7 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
               setName(e.currentTarget.value);
             }}
             autoFocus={true}
+            ariaLabel="lecture name"
           />
         </div>
       </div>

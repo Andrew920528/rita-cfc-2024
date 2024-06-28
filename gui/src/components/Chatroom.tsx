@@ -107,6 +107,7 @@ const Chatroom = ({}: ChatroomProps) => {
             onChange={(e) => {
               setText(e.currentTarget.value);
             }}
+            ariaLabel="chat"
           />
           <IconButton
             mode={"primary"}

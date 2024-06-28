@@ -125,7 +125,7 @@ const Login = () => {
       <div className="login-forming">
         <p className="--heading">登入</p>
         <Textbox
-          label="使用者名稱:"
+          label="使用者名稱"
           mode="form"
           flex={true}
           placeholder="輸入使用者名稱"
@@ -134,6 +134,7 @@ const Login = () => {
             setUsername(e.currentTarget.value.trim());
           }}
           errorMsg={usernameError}
+          ariaLabel="username"
         />
         <Textbox
           mode="form"
@@ -146,6 +147,7 @@ const Login = () => {
             setPassword(e.currentTarget.value.trim());
           }}
           errorMsg={passwordError}
+          ariaLabel="password"
         />
         <IconButton
           mode={"primary"}

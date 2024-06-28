@@ -101,6 +101,7 @@ const SignUp = () => {
             setUsername(e.currentTarget.value.trim());
           }}
           errorMsg={usernameError}
+          ariaLabel="username"
         />
         <Textbox
           mode="form"
@@ -113,6 +114,7 @@ const SignUp = () => {
             setPassword(e.currentTarget.value.trim());
           }}
           errorMsg={passwordError}
+          ariaLabel="password"
         />
         <Textbox
           mode="form"
@@ -125,6 +127,7 @@ const SignUp = () => {
             setConfirmPassword(e.currentTarget.value.trim());
           }}
           errorMsg={confirmPasswordError}
+          ariaLabel="confirm password"
         />
         <IconButton
           mode={"primary"}
