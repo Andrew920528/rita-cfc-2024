@@ -29,9 +29,7 @@ const Table = (props: Props & TableStyleProps) => {
     const sizes = columnWidths;
     let totalSize = columnWidths[index] + columnWidths[index + 1];
     if (index + 1 === columnWidths.length - 1) {
-      console.log("first");
       if (elementRef.current) {
-        console.log(elementRef.current.offsetWidth);
         totalSize = columnWidths[index] + elementRef.current.offsetWidth;
       }
     }
@@ -39,20 +37,15 @@ const Table = (props: Props & TableStyleProps) => {
       const delta = event.clientX - start;
 
       const newWidths = [...columnWidths];
-
-      console.log(index);
-      console.log(newWidths);
-      console.log(newWidths.length);
-
       const newSize = Math.min(
-        totalSize - 20,
-        Math.max(20, sizes[index] + delta)
+        totalSize - 40,
+        Math.max(40, sizes[index] + delta)
       );
       newWidths[index] = newSize;
       newWidths[index + 1] = totalSize - newSize;
-      if (index + 1 === columnWidths.length - 1) {
-        newWidths[index + 1] = 80;
-      }
+      // if (index + 1 === columnWidths.length - 1) {
+      //   newWidths[index + 1] = 80;
+      // }
       setColumnWidths(newWidths);
     };
 
