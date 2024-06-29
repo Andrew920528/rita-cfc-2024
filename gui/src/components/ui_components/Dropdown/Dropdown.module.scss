@@ -1,4 +1,4 @@
-@use "../../abstract/index" as *;
+@use "../../../style/abstract/index" as *;
 $width: 18rem;
 .dropdown-wrapper {
   height: 100%;
@@ -31,9 +31,6 @@ $width: 18rem;
       text-overflow: ellipsis;
       user-select: none;
     }
-    // .value {
-    //   flex: 1;
-    // }
 
     .placeholder {
       color: #a8a8a8;

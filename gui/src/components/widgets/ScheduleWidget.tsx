@@ -8,7 +8,7 @@ import {
 } from "../../schema/schedule";
 import {current} from "@reduxjs/toolkit";
 import {UserServices} from "../../features/UserSlice";
-import IconButton from "../ui_components/IconButton";
+import IconButton from "../ui_components/IconButton/IconButton";
 import {Add, RowDelete, RowInsert, Subtract} from "@carbon/icons-react";
 
 type Props = {

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import IconButton from "./ui_components/IconButton";
-import {FloatingMenuButton} from "./ui_components/FloatingMenu";
+import IconButton from "./ui_components/IconButton/IconButton";
+import {FloatingMenuButton} from "./ui_components/FloatingMenu/FloatingMenu";
 import {
   Close,
   User,
@@ -12,7 +12,7 @@ import {
   UserAvatar,
   Save,
 } from "@carbon/icons-react";
-import Dropdown from "./ui_components/Dropdown";
+import Dropdown from "./ui_components/Dropdown/Dropdown";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 
 import ManageAccountPU from "./PopUps/ManageAccountPU";

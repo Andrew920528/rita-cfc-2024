@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import Textbox from "./ui_components/Textbox";
-import IconButton from "./ui_components/IconButton";
+import IconButton from "./ui_components/IconButton/IconButton";
 import {ArrowRight, ChevronDown, ChevronUp, Stop} from "@carbon/icons-react";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {widgetBook} from "../schema/widget";

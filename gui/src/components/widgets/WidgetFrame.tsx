@@ -1,6 +1,6 @@
 import React, {ReactElement, useState} from "react";
 import {Catalog, Close} from "@carbon/icons-react";
-import IconButton from "../ui_components/IconButton";
+import IconButton from "../ui_components/IconButton/IconButton";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {WidgetType} from "../../schema/widget";

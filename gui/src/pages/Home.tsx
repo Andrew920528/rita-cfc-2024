@@ -11,6 +11,7 @@ const Home = () => {
   const user = useTypedSelector((state) => state.User);
   const navigate = useNavigate();
   useEffect(() => {
+    console.log("home rendered");
     if (!user.username) {
       navigate("/login");
     }

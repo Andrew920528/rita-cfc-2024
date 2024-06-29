@@ -1,5 +1,8 @@
 import React, {ReactElement, ReactNode} from "react";
+import classNames from "classnames/bind";
+import styles from "./IconButton.module.scss";
 
+const cx = classNames.bind(styles);
 export type IconButtonProps = {
   flex?: boolean;
   mode?: string;
@@ -18,13 +21,11 @@ const IconButton = ({
 }: IconButtonProps) => {
   return (
     <div
-      className={`icon-button ${flex ? "flex" : "fixed"} ${mode} ${
-        disabled ? "disabled" : ""
-      }`}
-      onClick={() => {
-        if (disabled) return;
-        onClick();
-      }}
+      className={cx("icon-button", ...mode.split(" "), {
+        flex: flex,
+
+        disabled: disabled,
+      })}
       onKeyDown={(e) => {
         if (!disabled && (e.key === "Enter" || e.key === " ")) {
           if (e.repeat) return;
@@ -34,9 +35,13 @@ const IconButton = ({
       }}
       role="button"
       tabIndex={0}
+      onClick={() => {
+        if (disabled) return;
+        onClick();
+      }}
     >
       {text}
-      <div className="icon-wrapper">{icon}</div>
+      <div className={cx("icon-wrapper")}>{icon}</div>
     </div>
   );
 };

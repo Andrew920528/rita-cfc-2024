@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import IconButton from "../components/ui_components/IconButton";
+import IconButton from "../components/ui_components/IconButton/IconButton";
 import {Checkmark, Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../components/ui_components/Textbox";
 import Login from "./Login";

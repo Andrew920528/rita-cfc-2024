@@ -1,11 +1,14 @@
 import React, {useRef, useState, useEffect, ReactElement} from "react";
+import classNames from "classnames/bind";
+import styles from "./FloatingMenu.module.scss";
 
+const cx = classNames.bind(styles);
 type FloatingMenuProps = {
   content: import("react").ReactElement;
   mode?: string;
 };
 export const FloatingMenu = ({content, mode}: FloatingMenuProps) => {
-  return <div className={`floating-menu ${mode}`}>{content}</div>;
+  return <div className={cx("floating-menu", mode)}>{content}</div>;
 };
 
 type FloatingMenuButtonProps = {
@@ -50,7 +53,13 @@ export const FloatingMenuButton = ({
 
   return (
     <div
-      className={`fm-button a-${anchorOrigin.horizontal} a-${anchorOrigin.vertical} t-${transformOrigin.horizontal} t-${transformOrigin.vertical}`}
+      className={cx(
+        "fm-button",
+        `a-${anchorOrigin.horizontal}`,
+        `a-${anchorOrigin.vertical}`,
+        `t-${transformOrigin.horizontal}`,
+        `t-${transformOrigin.vertical}`
+      )}
       ref={menuRef}
     >
       <div
@@ -62,7 +71,7 @@ export const FloatingMenuButton = ({
       </div>
 
       {isOpen && (
-        <div className="fm-wrapper">
+        <div className={cx("fm-wrapper")}>
           <FloatingMenu {...menuProps} />
         </div>
       )}

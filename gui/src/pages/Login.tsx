@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
-import IconButton from "../components/ui_components/IconButton";
+import IconButton from "../components/ui_components/IconButton/IconButton";
 import {Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../components/ui_components/Textbox";
-import SignUp from "./SignUp";
 import {Link, useNavigate} from "react-router-dom";
 import {
   LoginResponseObject,
@@ -156,6 +155,7 @@ const Login = () => {
           icon={<LoginIcon />}
           onClick={async () => {
             await login();
+            // console.log("log in called");
           }}
           disabled={loading}
         />

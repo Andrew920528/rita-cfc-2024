@@ -3,7 +3,7 @@ import Textbox from "../ui_components/Textbox";
 import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "./PopUp";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import Dropdown from "../ui_components/Dropdown";
+import Dropdown from "../ui_components/Dropdown/Dropdown";
 import {Classroom} from "../../schema/classroom";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {useCreateClassroom, useCreateLecture} from "../../store/globalActions";

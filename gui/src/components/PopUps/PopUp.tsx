@@ -1,6 +1,8 @@
 import {Close} from "@carbon/icons-react";
 import React, {ReactNode} from "react";
-import IconButton, {IconButtonProps} from "../ui_components/IconButton";
+import IconButton, {
+  IconButtonProps,
+} from "../ui_components/IconButton/IconButton";
 
 export type PopUpProps = {
   trigger: boolean;

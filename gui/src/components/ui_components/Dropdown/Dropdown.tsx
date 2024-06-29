@@ -7,8 +7,11 @@ import React, {
   SetStateAction,
 } from "react";
 import {ChevronDown, ChevronUp, Close} from "@carbon/icons-react";
-import IconButton from "./IconButton";
+import IconButton from "../IconButton/IconButton";
+import classNames from "classnames/bind";
+import styles from "./Dropdown.module.scss";
 
+const cx = classNames.bind(styles);
 const UNDEFINED = "UNDEFINED";
 type DropdownDict = {
   [key: string]: any;
@@ -64,20 +67,20 @@ const Dropdown = ({
   }, []);
   return (
     <div
-      className={`dropdown-wrapper ${flex ? "flex" : "fixed"} ${mode}`}
+      className={cx("dropdown-wrapper", {flex: flex, fixed: !flex}, mode)}
       ref={componentRef}
     >
-      {label && <p className="dd-label --label">{label}</p>}
+      {label && <p className={cx("dd-label", "--label")}>{label}</p>}
       <div
-        className={`dropdown ${mode} ${errorMsg ? "error" : ""}`}
+        className={cx("dropdown", mode, {error: errorMsg})}
         onClick={() => {
           setOpenMenu(!openMenu);
         }}
       >
-        <p className={`value ${!(currId in idDict) ? "placeholder" : ""}`}>
+        <p className={cx({placeholder: !(currId in idDict)})}>
           {!(currId in idDict) ? placeholder : getName(currId)}
         </p>
-        <div className="chevron">
+        <div className={cx("chevron")}>
           {openMenu ? (
             <ChevronUp size={20} width={20} />
           ) : (
@@ -86,8 +89,8 @@ const Dropdown = ({
         </div>
       </div>
       {openMenu && (
-        <div className={`dropdown-menu ${flex ? "flex" : "fixed"} ${mode}`}>
-          <div className="dropdown-menu-main">
+        <div className={cx("dropdown-menu", {flex: flex, fixed: !flex}, mode)}>
+          <div className={cx("dropdown-menu-main")}>
             {Object.keys(idDict).map((k) => (
               <DropdownOption
                 key={k}
@@ -108,7 +111,9 @@ const Dropdown = ({
           {extra}
         </div>
       )}
-      {errorMsg && <p className="dd-error --error --label">{errorMsg}</p>}
+      {errorMsg && (
+        <p className={cx("dd-error", "--error", "--label")}>{errorMsg}</p>
+      )}
     </div>
   );
 };
@@ -138,13 +143,13 @@ const DropdownOption = ({
     actionFunction(id);
   };
   return (
-    <div className={`dropdown-option ${id === currId && "selected"}`}>
-      <div className="dropdown-option-left" onClick={onClick}>
+    <div className={cx("dropdown-option", {selected: id === currId})}>
+      <div className={cx("dropdown-option-left")} onClick={onClick}>
         <p>{name}</p>
       </div>
       {action && (
         <IconButton
-          mode={`dropdownBtn ${id === currId ? "selected" : ""}`}
+          mode={`dropdownBtn`}
           onClick={handleIconClick}
           icon={icon}
           disabled={actionDisabled}

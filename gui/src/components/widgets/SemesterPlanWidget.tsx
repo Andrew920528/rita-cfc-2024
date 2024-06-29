@@ -7,7 +7,7 @@ import {
 } from "../../schema/widget";
 import Table from "../ui_components/Table";
 import Textbox from "../ui_components/Textbox";
-import IconButton from "../ui_components/IconButton";
+import IconButton from "../ui_components/IconButton/IconButton";
 import {
   ColumnDelete,
   ColumnInsert,
