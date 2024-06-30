@@ -75,16 +75,14 @@ def sessionCheck(sessionId):
         }
         return response
 
-
-
-def createUser(userId, username, password, school, alias, occupation, schedule_content):
+def createUser(username, password, school, alias, occupation, schedule_content):
     getDatabaseDetails()
 
     if not verifyString(username):
         response = { 
             'status' : 'error',
             'data' : {
-                'Error' : 'invalid username. Username must contain at least 6 characters and must not contain spaces.'
+                'Error' : 'Invalid username. Username must contain at least 6 characters and must not contain spaces.'
             }
         }
         return response
@@ -92,7 +90,7 @@ def createUser(userId, username, password, school, alias, occupation, schedule_c
     if not verifyString(password):
         response = { 
             'status' : 'error',
-            'data' : 'invalid password. Passwords must contain at least 6 characters and must not contain spaces.'
+            'data' : 'Invalid password. Password must contain at least 6 characters and must not contain spaces.'
         }
         return response
 
@@ -112,6 +110,8 @@ def createUser(userId, username, password, school, alias, occupation, schedule_c
                     'data' : 'username existed'
                 }
                 return response
+
+            userId = generate_random_string()
             
             # if not exist, then create user
             query = 'INSERT INTO User_Table (User_ID, Username, Pass'
@@ -141,7 +141,7 @@ def createUser(userId, username, password, school, alias, occupation, schedule_c
             connection.close()
             response = { 
                 'status' : 'success',
-                'data' : 'account created'
+                'data' : 'Account created'
             }
             return response
     
@@ -275,8 +275,7 @@ def loginUser(username, password):
 
                         widgets.append(widgetId)
                         widgetDetails.append({
-                            'widgetId' : widgetId,
-                            'content' : {
+                            widgetId : {
                                 'id' : widgetId,
                                 'type' : widget[1],
                                 'content' : widget[2]
@@ -287,12 +286,11 @@ def loginUser(username, password):
 
                     lectures.append(lectureId)
                     lectureDetails.append({
-                        'lectureId' : lectureId,
-                        'content' : {
+                        lectureId : {
                             'id' : lectureId,
                             'name' : lecture[1],
                             'type' : lecture[2],
-                            'widgets' : widgetIds
+                            'widgetIds' : widgetIds
                         }
                     })
 
@@ -300,8 +298,7 @@ def loginUser(username, password):
 
                 classroomIds.append(classroomId)
                 classroomDetails.append({
-                    'classroomId' : classroomId,
-                    'content' : {
+                    classroomId : {
                         'id' : classroomId,
                         'name' : classroom[1],
                         'subject' : classroom[2],
@@ -312,7 +309,7 @@ def loginUser(username, password):
                         'plan' : classroom[6],
                         'credits' : classroom[7],
                         'chatroomId' : classroom[8],
-                        'sessions' : lectureIds
+                        'lectureIds' : lectureIds
                     }
                 })
 
@@ -329,7 +326,7 @@ def loginUser(username, password):
                         'alias' : userResponse['data'][0][4],
                         'occupation' : userResponse['data'][0][5],
                         'schedule' : userResponse['data'][0][6],
-                        'classroom' : classroomIds 
+                        'classroomIds' : classroomIds 
                     },
                     'classroomsDict' : classroomDetails,
                     'lecturesDict' : lectureDetails,
@@ -371,7 +368,7 @@ def updateUser(sessionId, alias, school, occupation, scheduleContent):
                 connection.close()
                 response = { 
                     'status' : 'error',
-                    'data' : 'user does not exist'
+                    'data' : 'User does not exist'
                 }
                 return response
 
@@ -397,7 +394,7 @@ def updateUser(sessionId, alias, school, occupation, scheduleContent):
             if len(values) == 0:
                 response = {
                     'status' : 'error',
-                    'response' : 'nothing to change!'
+                    'response' : 'Nothing to change'
                 }
                 return response
 
@@ -413,7 +410,7 @@ def updateUser(sessionId, alias, school, occupation, scheduleContent):
             connection.close()
             response = { 
                 'status' : 'success',
-                'data' : 'user updated'
+                'data' : 'User updated'
             }
             return response
     except Exception as e:
@@ -456,7 +453,7 @@ def createClassroom(sessionId, classroomId, classroomName, subject, publisher, g
                 connection.close()
                 response = { 
                     'status' : 'error',
-                    'data' : 'classroomId already exist'
+                    'data' : 'classroomId already exists'
                 }
                 return response
 
@@ -506,7 +503,10 @@ def createClassroom(sessionId, classroomId, classroomName, subject, publisher, g
             connection.close()
             response = { 
                 'status' : 'success',
-                'data' : 'classroom created'
+                'data' : {
+                    'message' : 'Classroom created',
+                    'chatroomId' : chatroomId
+                }
             }
             return response
     except Exception as e:
@@ -578,7 +578,7 @@ def updateClassroom(sessionId, classroomId, classroomName, subject, publisher, g
             if len(values) == 0:
                 response = {
                     'status' : 'error',
-                    'response' : 'nothing to change!'
+                    'response' : 'Nothing to change'
                 }
                 return response
 
@@ -600,7 +600,7 @@ def updateClassroom(sessionId, classroomId, classroomName, subject, publisher, g
             connection.close()
             response = { 
                 'status' : 'success',
-                'data' : 'classroom updated'
+                'data' : 'Classroom updated'
             }
             return response
     except Exception as e:
@@ -641,7 +641,8 @@ def getClassroom(classroomId):
                     'subject':classroomResponse[2],
                     'publisher': classroomResponse[3],
                     'grade': classroomResponse[5],
-                    'credits': 1 # temp
+                    'plan': classroomResponse[6],
+                    'credits' : classroomResponse[7],
                 }
             }
             return response
@@ -664,7 +665,6 @@ def createLecture(sessionId, classroomId, lectureId, lectureName, lectureType):
     
     userId = verifySession['data']
 
-    
     try:
         connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
@@ -679,7 +679,7 @@ def createLecture(sessionId, classroomId, lectureId, lectureName, lectureType):
                 connection.close()
                 response = { 
                     'status' : 'error',
-                    'data' : 'classroom does not exist'
+                    'data' : 'classroomId does not exist'
                 }
                 return response
 
@@ -715,7 +715,7 @@ def createLecture(sessionId, classroomId, lectureId, lectureName, lectureType):
             connection.close()
             response = { 
                 'status' : 'success',
-                'data' : 'lecture created'
+                'data' : 'Lecture created'
             }
             return response
     except Exception as e:
@@ -811,7 +811,7 @@ def updateLecture(sessionId, lectureId, name, type):
             if len(values) == 0:
                 response = {
                     'status' : 'error',
-                    'response' : 'nothing to change!'
+                    'response' : 'Nothing to change'
                 }
                 return response
 
@@ -824,7 +824,7 @@ def updateLecture(sessionId, lectureId, name, type):
             connection.close()
             response = { 
                 'status' : 'success',
-                'data' : 'lecture updated'
+                'data' : 'Lecture updated'
             }
             return response
             
@@ -889,7 +889,7 @@ def deleteLecture(sessionId, classroomId, lectureId):
                 connection.close()
                 response = { 
                     'status' : 'error',
-                    'data' : 'Classroom and Lecture already is not connected'
+                    'data' : 'classroomId and lectureId already is not connected'
                 }
                 return response
 
@@ -958,7 +958,7 @@ def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent):
                 connection.close()
                 response = { 
                     'status' : 'error',
-                    'data' : 'widgetId already exist'
+                    'data' : 'widgetId already exists'
                 }
                 return response
 
@@ -981,7 +981,7 @@ def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent):
             connection.close()
             response = { 
                 'status' : 'success',
-                'data' : 'widget created'
+                'data' : 'Widget created'
             }
             return response
     except Exception as e:
@@ -1046,7 +1046,7 @@ def updateWidgetBulk(sessionId, widgetIds, widgetContents):
     if len(widgetIds) != len(widgetContents):
         response = { 
             'status' : 'error',
-            'data' : 'array sizes do not match'
+            'data' : 'Array sizes do not match'
         }
         return response
 
@@ -1089,7 +1089,7 @@ def updateWidgetBulk(sessionId, widgetIds, widgetContents):
             connection.close()
             response = { 
                 'status' : 'success',
-                'data' : 'all widgets updated'
+                'data' : 'All widgets updated'
             }
             return response
     except Exception as e:
@@ -1153,7 +1153,7 @@ def deleteWidget(sessionId, lectureId, widgetId):
                 connection.close()
                 response = { 
                     'status' : 'error',
-                    'data' : 'Widget and Lecture already is not connected'
+                    'data' : 'widgetId and lectureId already is not connected'
                 }
                 return response
 
