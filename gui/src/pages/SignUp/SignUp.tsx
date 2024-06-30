@@ -1,11 +1,15 @@
 import React, {useEffect, useState} from "react";
-import IconButton from "../components/ui_components/IconButton/IconButton";
+import IconButton from "../../components/ui_components/IconButton/IconButton";
 import {Checkmark, Login as LoginIcon} from "@carbon/icons-react";
-import Textbox from "../components/ui_components/Textbox/Textbox";
-import Login from "./Login";
+import Textbox from "../../components/ui_components/Textbox/Textbox";
+import Login from "../Login/Login";
 import {Link, useNavigate} from "react-router-dom";
-import {createUserService, useApiHandler} from "../utils/service";
-import {API_ERROR} from "../utils/constants";
+import {createUserService, useApiHandler} from "../../utils/service";
+import {API_ERROR} from "../../utils/constants";
+import classNames from "classnames/bind";
+import styles from "./SignUp.module.scss";
+
+const cx = classNames.bind(styles);
 const SignUp = () => {
   //let navigate = useNavigate();
   const [username, setUsername] = useState<string>("");
@@ -88,9 +92,9 @@ const SignUp = () => {
     navigate("/login");
   }
   return (
-    <div className="signup-root">
-      <div className="signup-forming">
-        <p className="--heading">建立帳號</p>
+    <div className={cx("signup-root")}>
+      <div className={cx("signup-forming")}>
+        <p className={cx("--heading")}>建立帳號</p>
         <Textbox
           label="使用者名稱:"
           mode="form"
@@ -140,10 +144,10 @@ const SignUp = () => {
           disabled={loading}
         />
       </div>
-      <div className="signup-login">
+      <div className={cx("signup-login")}>
         <p>已註冊？</p>
 
-        <Link to="/login" className="signup-log">
+        <Link to="/login" className={cx("signup-log")}>
           登入
         </Link>
       </div>

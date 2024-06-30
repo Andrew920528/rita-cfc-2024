@@ -1,9 +1,9 @@
 import React from "react";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import App from "./App";
-import Home from "./pages/Home";
+import Home from "./pages/Home/Home";
 import {renderWithProviders} from "./utils/test_utils";
-import Login from "./pages/Login";
+import Login from "./pages/Login/Login";
 import {
   MemoryRouter,
   Navigate,
@@ -14,7 +14,7 @@ import {
 } from "react-router-dom";
 import {dummyLoginData} from "./utils/constants";
 import {link} from "fs";
-import SignUp from "./pages/SignUp";
+import SignUp from "./pages/SignUp/SignUp";
 
 test("renders app", () => {
   renderWithProviders(

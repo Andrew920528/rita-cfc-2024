@@ -26,11 +26,11 @@ $background-color: #f3f4f6;
     flex-direction: row;
     text-align: center;
     .login-create {
-        text-decoration: underline;
-        color: #0f62fe;
-        &:hover {
-          cursor: pointer;
-        }
+      text-decoration: underline;
+      color: #0f62fe;
+      &:hover {
+        cursor: pointer;
       }
+    }
   }
 }

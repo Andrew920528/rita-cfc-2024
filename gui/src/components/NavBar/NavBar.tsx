@@ -1,17 +1,20 @@
 import React, {Dispatch, ReactElement, SetStateAction, useState} from "react";
 import {Add, Information} from "@carbon/icons-react";
-import IconButton from "./ui_components/IconButton/IconButton";
-import ManageClassroomPU from "./PopUps/ManageClassroomPU/ManageClassroomPU";
-import {useAppDispatch, useTypedSelector} from "../store/store";
-import {ClassroomsServices} from "../features/ClassroomsSlice";
-import {LecturesServices} from "../features/LectureSlice";
-import {WidgetType, initWidget, widgetBook} from "../schema/widget";
-import {useCreateWidget} from "../store/globalActions";
-import {ChatroomsServices} from "../features/ChatroomsSlice";
-import {API_ERROR, EMPTY_ID} from "../utils/constants";
-import {generateId} from "../utils/util";
-import {createWidgetService, useApiHandler} from "../utils/service";
+import IconButton from "../ui_components/IconButton/IconButton";
+import ManageClassroomPU from "../PopUps/ManageClassroomPU/ManageClassroomPU";
+import {useAppDispatch, useTypedSelector} from "../../store/store";
+import {ClassroomsServices} from "../../features/ClassroomsSlice";
+import {LecturesServices} from "../../features/LectureSlice";
+import {WidgetType, initWidget, widgetBook} from "../../schema/widget";
+import {useCreateWidget} from "../../store/globalActions";
+import {ChatroomsServices} from "../../features/ChatroomsSlice";
+import {API_ERROR, EMPTY_ID} from "../../utils/constants";
+import {generateId} from "../../utils/util";
+import {createWidgetService, useApiHandler} from "../../utils/service";
+import classNames from "classnames/bind";
+import styles from "./NavBar.module.scss";
 
+const cx = classNames.bind(styles);
 type ClassCardProps = {
   id: string;
   name: string;
@@ -36,7 +39,7 @@ const ClassCard = ({
   const classrooms = useTypedSelector((state) => state.Classrooms);
   return (
     <div
-      className={`class-card ${selected === id ? "selected" : ""}`}
+      className={cx("class-card", {selected: selected === id})}
       onClick={() => {
         dispatch(ClassroomsServices.actions.setCurrent(id));
         dispatch(
@@ -53,7 +56,7 @@ const ClassCard = ({
       <p>
         <strong>{name}</strong>
       </p>
-      <p className="--label">
+      <p className={cx("--label")}>
         科目：{subject} ｜年級：{grade}｜教材：{publisher}
         <br /> 週堂數：{credits} | 學期規劃：{plan ? "已完成" : "未完成"}
       </p>
@@ -96,15 +99,15 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
     });
   }
   return (
-    <div className="widget-card">
-      <div className="widget-card-left">
+    <div className={cx("widget-card")}>
+      <div className={cx("widget-card-left")}>
         {icon}
         <p>
           <strong>{title}</strong>
         </p>
-        <p className="--label">{hint}</p>
+        <p className={cx("--label")}>{hint}</p>
       </div>
-      <div className="widget-card-right">
+      <div className={cx("widget-card-right")}>
         <IconButton mode={"ghost"} icon={<Information />} />
         <IconButton
           mode={"primary"}
@@ -126,10 +129,10 @@ const NavBar = () => {
   const lectures = useTypedSelector((state) => state.Lectures);
   const [openClassroomCreation, setOpenClassroomCreation] = useState(false);
   return (
-    <div className="navbar">
-      <div className="nav-classroom">
-        <div className="nav-heading">
-          <p className="--heading">教室</p>
+    <div className={cx("navbar")}>
+      <div className={cx("nav-classroom")}>
+        <div className={cx("nav-heading")}>
+          <p className={cx("--heading")}>教室</p>
           <IconButton
             mode={"primary"}
             icon={<Add />}
@@ -145,7 +148,7 @@ const NavBar = () => {
             action="create"
           />
         </div>
-        <div className="nav-stack">
+        <div className={cx("nav-stack")}>
           {user.classrooms.toReversed().map((id) => (
             <ClassCard
               key={id}
@@ -161,12 +164,12 @@ const NavBar = () => {
         </div>
       </div>
 
-      <div className="nav-widget">
-        <div className="nav-heading">
-          <p className="--heading">工具</p>
+      <div className={cx("nav-widget")}>
+        <div className={cx("nav-heading")}>
+          <p className={cx("--heading")}>工具</p>
         </div>
         {lectures.current !== EMPTY_ID && (
-          <div className="nav-stack">
+          <div className={cx("nav-stack")}>
             {Object.values(widgetBook).map((w) => (
               <WidgetCard
                 key={w.title}

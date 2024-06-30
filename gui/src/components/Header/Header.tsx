@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import IconButton from "./ui_components/IconButton/IconButton";
-import {FloatingMenuButton} from "./ui_components/FloatingMenu/FloatingMenu";
+import IconButton from "../ui_components/IconButton/IconButton";
+import {FloatingMenuButton} from "../ui_components/FloatingMenu/FloatingMenu";
 import {
   Close,
   User,
@@ -12,26 +12,29 @@ import {
   UserAvatar,
   Save,
 } from "@carbon/icons-react";
-import Dropdown from "./ui_components/Dropdown/Dropdown";
-import {useAppDispatch, useTypedSelector} from "../store/store";
+import Dropdown from "../ui_components/Dropdown/Dropdown";
+import {useAppDispatch, useTypedSelector} from "../../store/store";
 
-import ManageAccountPU from "./PopUps/ManageAccountPU/ManageAccountPU";
-import ManageClassroomPU from "./PopUps/ManageClassroomPU/ManageClassroomPU";
-import CreateLecturePU from "./PopUps/CreateLecturePU/CreateLecturePU";
-import {LecturesServices} from "../features/LectureSlice";
-import {ClassroomsServices} from "../features/ClassroomsSlice";
-import {WidgetsServices} from "../features/WidgetsSlice";
-import {UserServices} from "../features/UserSlice";
-import {useDeleteLecture} from "../store/globalActions";
-import {API_ERROR, EMPTY_ID} from "../utils/constants";
+import ManageAccountPU from "../PopUps/ManageAccountPU/ManageAccountPU";
+import ManageClassroomPU from "../PopUps/ManageClassroomPU/ManageClassroomPU";
+import CreateLecturePU from "../PopUps/CreateLecturePU/CreateLecturePU";
+import {LecturesServices} from "../../features/LectureSlice";
+import {ClassroomsServices} from "../../features/ClassroomsSlice";
+import {WidgetsServices} from "../../features/WidgetsSlice";
+import {UserServices} from "../../features/UserSlice";
+import {useDeleteLecture} from "../../store/globalActions";
+import {API_ERROR, EMPTY_ID} from "../../utils/constants";
 import {
   deleteLectureService,
   updateClassroomService,
   updateUserService,
   updateWidgetBulkService,
   useApiHandler,
-} from "../utils/service";
+} from "../../utils/service";
+import classNames from "classnames/bind";
+import styles from "./Header.module.scss";
 
+const cx = classNames.bind(styles);
 type HeaderProps = {
   openNav: boolean;
   setOpenNav: (set: boolean) => void;
@@ -59,8 +62,8 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   // ui controllers
   const [openLectureCreation, setopenLectureCreation] = useState(false);
   return (
-    <div className="header">
-      <div className="header-left">
+    <div className={cx("header")}>
+      <div className={cx("header-left")}>
         <IconButton
           mode={"on-dark"}
           icon={openNav ? <Close size={20} /> : <Menu size={20} />}
@@ -68,22 +71,22 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
             setOpenNav(!openNav);
           }}
         />
-        <div className="title">
-          <p className="title-rita">Rita</p>
-          <p className="title-beta">
+        <div className={cx("title")}>
+          <p className={cx("title-rita")}>Rita</p>
+          <p className={cx("title-beta")}>
             <sup>beta</sup>
           </p>
         </div>
       </div>
-      <div className="header-right">
+      <div className={cx("header-right")}>
         {classrooms.current === EMPTY_ID ||
         Object.keys(classrooms.dict).length === 0 ? (
-          <div className="no-subject-hint">
+          <div className={cx("no-subject-hint")}>
             <i>新增教室以開始備課</i>
           </div>
         ) : (
-          <div className="subject-banner">
-            <p className="subject --heading">
+          <div className={cx("subject-banner")}>
+            <p className={cx("subject", "--heading")}>
               {classrooms.dict[classrooms.current].name}
             </p>
             <IconButton
@@ -148,7 +151,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
           </div>
         )}
 
-        <div className="header-right-end">
+        <div className={cx("header-right-end")}>
           <SaveGroup />
           <AccountButton />
         </div>
@@ -201,8 +204,12 @@ const SaveGroup = () => {
     dispatch(WidgetsServices.actions.saveAll());
   };
   return (
-    <div className="save-group">
-      <i className={Object.keys(unsavedWidgets).length === 0 ? "saved" : ""}>
+    <div className={cx("save-group")}>
+      <i
+        className={cx({
+          saved: Object.keys(unsavedWidgets).length === 0 && !scheduleChanged,
+        })}
+      >
         {Object.keys(unsavedWidgets).length === 0 && !scheduleChanged
           ? "All changes saved"
           : "New changes unsaved"}
@@ -231,13 +238,13 @@ const AccountButton = () => {
   }) => {
     const [openManageAccountPU, setOpenManageAccountPU] = useState(false);
     return (
-      <div className="account-content">
-        <div className="user-info">
-          <div className="user-info-col">
+      <div className={cx("account-content")}>
+        <div className={cx("user-info")}>
+          <div className={cx("user-info-col")}>
             <p>
               <strong>{name}</strong>
             </p>
-            <p className="user-detail">
+            <p className={cx("user-detail")}>
               {occupation} @ {school}
             </p>
           </div>

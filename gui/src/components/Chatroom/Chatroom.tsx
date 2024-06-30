@@ -1,16 +1,19 @@
 import React, {useEffect, useRef, useState} from "react";
-import Textbox from "./ui_components/Textbox/Textbox";
-import IconButton from "./ui_components/IconButton/IconButton";
+import Textbox from "../ui_components/Textbox/Textbox";
+import IconButton from "../ui_components/IconButton/IconButton";
 import {ArrowRight, ChevronDown, ChevronUp, Stop} from "@carbon/icons-react";
-import {useAppDispatch, useTypedSelector} from "../store/store";
-import {widgetBook} from "../schema/widget";
-import {ChatMessage as ChatMessageT} from "../schema/chatroom";
-import {ChatroomsServices} from "../features/ChatroomsSlice";
-import {mimicApi} from "../utils/util";
-import {messageRitaService, useApiHandler} from "../utils/service";
+import {useAppDispatch, useTypedSelector} from "../../store/store";
+import {widgetBook} from "../../schema/widget";
+import {ChatMessage as ChatMessageT} from "../../schema/chatroom";
+import {ChatroomsServices} from "../../features/ChatroomsSlice";
+import {mimicApi} from "../../utils/util";
+import {messageRitaService, useApiHandler} from "../../utils/service";
 import {debug} from "console";
-import {EMPTY_ID, API_ERROR} from "../utils/constants";
+import {EMPTY_ID, API_ERROR} from "../../utils/constants";
+import classNames from "classnames/bind";
+import styles from "./Chatroom.module.scss";
 
+const cx = classNames.bind(styles);
 type ChatroomProps = {};
 const Chatroom = ({}: ChatroomProps) => {
   // global states
@@ -80,10 +83,10 @@ const Chatroom = ({}: ChatroomProps) => {
 
   if (!chatroom) return <></>;
   return (
-    <div className={`chatroom ${collapsed ? "collapsed" : "opened"}`}>
-      <div className="chatroom-header">
-        <div className="header-group">
-          <p className="rita">Rita</p>
+    <div className={cx("chatroom", {collapsed: collapsed})}>
+      <div className={cx("chatroom-header")}>
+        <div className={cx("header-group")}>
+          <p className={cx("rita")}>Rita</p>
           <p>
             {widgets.dict[widgets.current]
               ? widgetBook[widgets.dict[widgets.current].type].title
@@ -98,9 +101,9 @@ const Chatroom = ({}: ChatroomProps) => {
           }}
         />
       </div>
-      <div className={`chatroom-content ${collapsed ? "collapsed" : "opened"}`}>
+      <div className={cx("chatroom-content", {collapsed: collapsed})}>
         <ChatroomBody messages={chatroom.messages} loading={waitingForReply} />
-        <div className="chatroom-footer">
+        <div className={cx("chatroom-footer")}>
           <Textbox
             flex={true}
             value={text}
@@ -131,9 +134,9 @@ export default React.memo(Chatroom);
 
 const ChatMessage = ({text, sender}: ChatMessageT) => {
   return (
-    <div className={`chatroom-message ${sender}`}>
-      <div className="chat-msg-decor"></div>
-      <p className="chatroom-message-text">{text}</p>
+    <div className={cx("chatroom-message", sender)}>
+      <div className={cx("chat-msg-decor")}></div>
+      <p className={cx("chatroom-message-text")}>{text}</p>
     </div>
   );
 };
@@ -153,11 +156,11 @@ const ChatroomBody = ({messages, loading}: ChatroomBodyProps) => {
     scrollToBottom();
   }, [messages, loading]);
   return (
-    <div className="chatroom-body" ref={scrollRef}>
+    <div className={cx("chatroom-body")} ref={scrollRef}>
       {messages.map((message, index) => {
         return <ChatMessage {...message} key={index} />;
       })}
-      {loading && <p className="--label">Waiting for response</p>}
+      {loading && <p className={cx("--label")}>Waiting for response</p>}
     </div>
   );
 };

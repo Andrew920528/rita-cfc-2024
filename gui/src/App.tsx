@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
 import "./style/main.scss";
 // import {tryTrySee} from "./utils/service";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
+import Home from "./pages/Home/Home";
+import Login from "./pages/Login/Login";
+import SignUp from "./pages/SignUp/SignUp";
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import {tryTrySee, useApiHandler} from "./utils/service";

@@ -1,4 +1,4 @@
-@use "../abstract/index" as *;
+@use "../../style/abstract/index" as *;
 .chatroom {
   position: fixed;
   background-color: white;
@@ -75,7 +75,5 @@
     padding: 0.5rem;
     border-radius: 12px;
     border-end-end-radius: 4px;
-  }
-  .chatroom-message-text {
   }
 }

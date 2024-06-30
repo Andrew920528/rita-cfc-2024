@@ -1,26 +1,24 @@
 import React, {useEffect, useState} from "react";
-import IconButton from "../components/ui_components/IconButton/IconButton";
+import IconButton from "../../components/ui_components/IconButton/IconButton";
 import {Login as LoginIcon} from "@carbon/icons-react";
-import Textbox from "../components/ui_components/Textbox/Textbox";
+import Textbox from "../../components/ui_components/Textbox/Textbox";
 import {Link, useNavigate} from "react-router-dom";
 import {
   LoginResponseObject,
   loginService,
   useApiHandler,
-} from "../utils/service";
-import {API_ERROR, EMPTY_ID} from "../utils/constants";
-import {useAppDispatch} from "../store/store";
-import {UserServices} from "../features/UserSlice";
-import {ClassroomsServices} from "../features/ClassroomsSlice";
-import {LecturesServices} from "../features/LectureSlice";
-import {WidgetsServices} from "../features/WidgetsSlice";
-/**
- * Notes for Ellen:
- * 1. To keep style consistent, use <Textbox> component, which is a wrapper around <input>
- * 2. Before we proceed with the data flow, let's look at the ui components
- * 3. Let's learn how to use (and read) custom components that I have not documented yet
- * 4. Now, let's change the css to make it look better
- */
+} from "../../utils/service";
+import {API_ERROR, EMPTY_ID} from "../../utils/constants";
+import {useAppDispatch} from "../../store/store";
+import {UserServices} from "../../features/UserSlice";
+import {ClassroomsServices} from "../../features/ClassroomsSlice";
+import {LecturesServices} from "../../features/LectureSlice";
+import {WidgetsServices} from "../../features/WidgetsSlice";
+import classNames from "classnames/bind";
+import styles from "./Login.module.scss";
+
+const cx = classNames.bind(styles);
+
 const Login = () => {
   const {apiHandler, loading} = useApiHandler();
   const dispatch = useAppDispatch();
@@ -120,9 +118,9 @@ const Login = () => {
     navigate("/");
   }
   return (
-    <div className="login-root">
-      <div className="login-forming">
-        <p className="--heading">登入</p>
+    <div className={cx("login-root")}>
+      <div className={cx("login-forming")}>
+        <p className={cx("--heading")}>登入</p>
         <Textbox
           label="使用者名稱"
           mode="form"
@@ -160,9 +158,9 @@ const Login = () => {
           disabled={loading}
         />
       </div>
-      <div className="login-register">
+      <div className={cx("login-register")}>
         <p>尚未註冊？</p>
-        <Link to="/signup" className="login-create">
+        <Link to="/signup" className={cx("login-create")}>
           建立帳號
         </Link>
       </div>

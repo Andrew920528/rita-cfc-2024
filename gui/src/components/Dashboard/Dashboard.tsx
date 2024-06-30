@@ -1,18 +1,22 @@
 import React, {useEffect, useState} from "react";
 import {Cafe} from "@carbon/icons-react";
-import Chatroom from "./Chatroom";
-import WidgetFrame from "./widgets/WidgetFrame/WidgetFrame";
-import {useAppDispatch, useTypedSelector} from "../store/store";
-import {widgetBook} from "../schema/widget";
-import {WidgetsServices} from "../features/WidgetsSlice";
-import {EMPTY_ID} from "../utils/constants";
+import Chatroom from "../Chatroom/Chatroom";
+import WidgetFrame from "../widgets/WidgetFrame/WidgetFrame";
+import {useAppDispatch, useTypedSelector} from "../../store/store";
+import {widgetBook} from "../../schema/widget";
+import {WidgetsServices} from "../../features/WidgetsSlice";
+import {EMPTY_ID} from "../../utils/constants";
+import classNames from "classnames/bind";
+import styles from "./Dashboard.module.scss";
+
+const cx = classNames.bind(styles);
 const DashboardPlaceHolder = () => {
   return (
-    <div className="dp-wrapper">
-      <div className="dashboard-placeholder">
-        <div className="dp-header-row">
+    <div className={cx("dp-wrapper")}>
+      <div className={cx("dashboard-placeholder")}>
+        <div className={cx("dp-header-row")}>
           <Cafe size={20} />
-          <p className="dp-title">老師好。來杯咖啡嗎？</p>
+          <p className={cx("dp-title")}>老師好。來杯咖啡嗎？</p>
         </div>
         <p>
           您可以由左側工具欄新增備課工具，
@@ -37,10 +41,10 @@ const Dashboard = () => {
     }
   };
   return (
-    <div className="dashboard" onClick={deselectWidget}>
+    <div className={cx("dashboard")} onClick={deselectWidget}>
       {lectures.dict[lectures.current] &&
       lectures.dict[lectures.current].widgets.length > 0 ? (
-        <div className="widgets" onClick={deselectWidget}>
+        <div className={cx("widgets")} onClick={deselectWidget}>
           {lectures.dict[lectures.current].widgets.toReversed().map((wid) => {
             const w = widgets.dict[wid];
             return (
