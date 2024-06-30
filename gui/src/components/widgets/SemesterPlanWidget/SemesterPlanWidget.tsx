@@ -1,13 +1,13 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {useAppDispatch, useTypedSelector} from "../../store/store";
+import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import {
   SemesterPlanWidgetContent,
   Widget,
   WidgetType,
-} from "../../schema/widget";
-import Table from "../ui_components/Table/Table";
-import Textbox from "../ui_components/Textbox/Textbox";
-import IconButton from "../ui_components/IconButton/IconButton";
+} from "../../../schema/widget";
+import Table from "../../ui_components/Table/Table";
+import Textbox from "../../ui_components/Textbox/Textbox";
+import IconButton from "../../ui_components/IconButton/IconButton";
 import {
   ColumnDelete,
   ColumnInsert,
@@ -15,8 +15,11 @@ import {
   RowInsert,
   Settings,
 } from "@carbon/icons-react";
-import {WidgetsServices} from "../../features/WidgetsSlice";
+import {WidgetsServices} from "../../../features/WidgetsSlice";
+import classNames from "classnames/bind";
+import styles from "./SemesterPlanWidget.module.scss";
 
+const cx = classNames.bind(styles);
 type Props = {
   wid: string;
 };
@@ -147,9 +150,9 @@ const SemesterPlanWidget = (props: Props) => {
   );
 
   return (
-    <div className="semester-plan-widget">
+    <div className={cx("semester-plan-widget")}>
       <Table headings={widgetContent.headings} content={widgetTableContent} />
-      <div className="widget-button-row">
+      <div className={cx("widget-button-row")}>
         <IconButton
           flex={true}
           text={"Add Column"}

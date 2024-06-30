@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
-import TextArea from "../ui_components/TextArea/TextArea";
-import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {WidgetsServices} from "../../features/WidgetsSlice";
+import TextArea from "../../ui_components/TextArea/TextArea";
+import {useAppDispatch, useTypedSelector} from "../../../store/store";
+import {WidgetsServices} from "../../../features/WidgetsSlice";
 import {
   WidgetType,
   Widget,
   SemesterGoalWidgetContent,
-} from "../../schema/widget";
+} from "../../../schema/widget";
 
 type Props = {
   wid: string;

@@ -1,8 +1,12 @@
 import React, {useEffect} from "react";
-import TextArea from "../ui_components/TextArea/TextArea";
-import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {WidgetsServices} from "../../features/WidgetsSlice";
-import {NoteWidgetContent, Widget, WidgetType} from "../../schema/widget";
+import TextArea from "../../ui_components/TextArea/TextArea";
+import {useAppDispatch, useTypedSelector} from "../../../store/store";
+import {WidgetsServices} from "../../../features/WidgetsSlice";
+import {NoteWidgetContent, Widget, WidgetType} from "../../../schema/widget";
+import classNames from "classnames/bind";
+import styles from "./NoteWidget.module.scss";
+
+const cx = classNames.bind(styles);
 type Props = {
   wid: string;
 };

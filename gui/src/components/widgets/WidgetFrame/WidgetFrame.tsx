@@ -1,16 +1,20 @@
 import React, {ReactElement, useState} from "react";
 import {Catalog, Close} from "@carbon/icons-react";
-import IconButton from "../ui_components/IconButton/IconButton";
-import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {WidgetsServices} from "../../features/WidgetsSlice";
-import {WidgetType} from "../../schema/widget";
-import SemesterGoalWidget from "./SemesterGoalWidget";
-import SemesterPlanWidget from "./SemesterPlanWidget";
-import NoteWidget from "./NoteWidget";
-import ScheduleWidget from "./ScheduleWidget";
-import {useDeleteWidget} from "../../store/globalActions";
-import {deleteWidgetService, useApiHandler} from "../../utils/service";
-import {API_ERROR} from "../../utils/constants";
+import IconButton from "../../ui_components/IconButton/IconButton";
+import {useAppDispatch, useTypedSelector} from "../../../store/store";
+import {WidgetsServices} from "../../../features/WidgetsSlice";
+import {WidgetType} from "../../../schema/widget";
+import SemesterGoalWidget from "../SemesterGoalWidget/SemesterGoalWidget";
+import SemesterPlanWidget from "../SemesterPlanWidget/SemesterPlanWidget";
+import NoteWidget from "../NoteWidget/NoteWidget";
+import ScheduleWidget from "../ScheduleWidget/ScheduleWidget";
+import {useDeleteWidget} from "../../../store/globalActions";
+import {deleteWidgetService, useApiHandler} from "../../../utils/service";
+import {API_ERROR} from "../../../utils/constants";
+import classNames from "classnames/bind";
+import styles from "./WidgetFrame.module.scss";
+
+const cx = classNames.bind(styles);
 const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
   switch (widgetType) {
     case WidgetType.SemesterGoal:
@@ -65,17 +69,21 @@ const WidgetFrame = ({
   }
   return (
     <div
-      className={`widget-frame ${selected ? "selected" : "idle"} w-${
-        widgetWidths[widgetType]
-      }`}
+      className={cx(
+        "widget-frame",
+        {
+          selected: selected,
+        },
+        `w-${widgetWidths[widgetType]}`
+      )}
       onClick={() => {
         dispatch(WidgetsServices.actions.setCurrent(widgetId));
       }}
     >
-      <div className="wf-heading">
-        <div className="wf-heading-left">
+      <div className={cx("wf-heading")}>
+        <div className={cx("wf-heading-left")}>
           {icon}
-          <p className="--heading">{title}</p>
+          <p className={cx("--heading")}>{title}</p>
         </div>
         <IconButton
           icon={<Close />}
@@ -86,7 +94,9 @@ const WidgetFrame = ({
           disabled={loading}
         />
       </div>
-      <div className="wf-content">{widgetComponent(widgetId, widgetType)}</div>
+      <div className={cx("wf-content")}>
+        {widgetComponent(widgetId, widgetType)}
+      </div>
     </div>
   );
 };

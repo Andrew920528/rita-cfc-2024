@@ -13,3 +13,9 @@
     background-color: rgb(200, 200, 200);
   }
 }
+
+.widget-button-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}

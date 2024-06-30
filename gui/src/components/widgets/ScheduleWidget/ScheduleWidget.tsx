@@ -1,16 +1,19 @@
 import React from "react";
-import {useAppDispatch, useTypedSelector} from "../../store/store";
-import Table from "../ui_components/Table/Table";
+import {useAppDispatch, useTypedSelector} from "../../../store/store";
+import Table from "../../ui_components/Table/Table";
 import {
   Schedule,
   ScheduleHeadings,
   scheduleHeadings,
-} from "../../schema/schedule";
+} from "../../../schema/schedule";
 import {current} from "@reduxjs/toolkit";
-import {UserServices} from "../../features/UserSlice";
-import IconButton from "../ui_components/IconButton/IconButton";
+import {UserServices} from "../../../features/UserSlice";
+import IconButton from "../../ui_components/IconButton/IconButton";
 import {Add, RowDelete, RowInsert, Subtract} from "@carbon/icons-react";
+import classNames from "classnames/bind";
+import styles from "./ScheduleWidget.module.scss";
 
+const cx = classNames.bind(styles);
 type Props = {
   wid: string;
 };
@@ -32,9 +35,9 @@ const ScheduleWidget = (props: Props) => {
   );
 
   return (
-    <div className="schedule-widget">
+    <div className={cx("schedule-widget")}>
       <Table headings={scheduleHeadings} content={widgetTableContent} />
-      <div className="widget-button-row">
+      <div className={cx("widget-button-row")}>
         <IconButton
           flex={false}
           icon={<Add />}
@@ -78,9 +81,9 @@ const ScheduleCell = (props: ScheduleCellProps) => {
   }
   return (
     <div
-      className={`schedule-widget-cell ${
-        props.value !== "" && props.value !== classroom.name ? "locked" : ""
-      }`}
+      className={cx("schedule-widget-cell", {
+        locked: props.value !== "" && props.value !== classroom.name,
+      })}
       onClick={() => {
         if (props.value !== "" && props.value !== classroom.name) {
           return;

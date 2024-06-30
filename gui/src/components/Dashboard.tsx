@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Cafe} from "@carbon/icons-react";
 import Chatroom from "./Chatroom";
-import WidgetFrame from "./widgets/WidgetFrame";
+import WidgetFrame from "./widgets/WidgetFrame/WidgetFrame";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {widgetBook} from "../schema/widget";
 import {WidgetsServices} from "../features/WidgetsSlice";
