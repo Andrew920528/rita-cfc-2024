@@ -13,6 +13,7 @@
 - 6/19 23:10 | Almost done with the base implementation of the two widgets... However, AI implementation still seems far from completed. At this pace, we probably have to push iteration 1 back by 1 week.
 - 6/21 17:23 | I'm glad that stuff that I thought that needs to be refactored is actually better the original way. Learned how to write custom hooks today and solve the issue I wanted to solve without compromising scalability. For the most part (most) gui is completed for iteration 1. Besides certain widgets that needs to be thought out a bit more in terms of UX, the gui's data flow is implemented (without api), components are organized with reasonable scalability and performance. Still need a day or two to be fully done with the widgets, but Ellen and I can quickly be switching focus to the backend & ai.
 - 6/24 23:15 | More API integration done... the code structure is fairly stable and extensible in my opinion. The only issue I have is there are certain blocks of logic that is repeated and scattered around gui, but probably going to be over-engineered if try to abstract them out. Perhaps this is the case where better ui will affect the code structure.
+- 6/30 6:04 | After some research it looks like there is virtually no downside with using modularized css. Took sometime refactoring the stylesheet and figuring out a more concise way to put things together, but overall it should increase devex by quite a bit.
 
 ## Backlog
 
