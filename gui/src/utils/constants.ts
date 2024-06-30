@@ -185,6 +185,18 @@ let widgets = {
   current: "dum-username-wid-lxu4g9fh5ayjtgihsqo",
   unsaved: {},
 };
+
+let chatrooms = {
+  "dum-username-chatroom-lxu4e0ar5bk5nztua7": {
+    id: "dum-username-chatroom-lxu4e0ar5bk5nztua7",
+    messages: [],
+  },
+  "dum-username-chatroom-lxu4ehnpjhxo7es2c3r": {
+    id: "dum-username-chatroom-lxu4ehnpjhxo7es2c3r",
+    messages: [],
+  },
+};
+
 export const dummyLoginData: LoginResponseObject = {
   token: "ENCRYPTED STUFF",
   user: dummyUser,

@@ -9,13 +9,15 @@ import {
   useApiHandler,
 } from "../../utils/service";
 import {API_ERROR, EMPTY_ID} from "../../utils/constants";
-import {useAppDispatch} from "../../store/store";
+import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {UserServices} from "../../features/UserSlice";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {LecturesServices} from "../../features/LectureSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import classNames from "classnames/bind";
 import styles from "./Login.module.scss";
+import {Chatroom, Chatrooms} from "../../schema/chatroom";
+import {ChatroomsServices} from "../../features/ChatroomsSlice";
 
 const cx = classNames.bind(styles);
 
@@ -28,7 +30,7 @@ const Login = () => {
 
   const [usernameError, setUsernameError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
-
+  const chatrooms = useTypedSelector((state) => state.Chatrooms);
   function reset(): void {
     setUsername("");
     setPassword("");
@@ -72,12 +74,21 @@ const Login = () => {
 
     let classroomsDict = responseObj.classroomsDict;
     let classrooms = responseObj.user.classrooms;
+    let chatroomsDict = {} as {[key: string]: Chatroom};
     for (let i = 0; i < classrooms.length; i++) {
       let cid = classrooms[i];
       classroomsDict[cid].lastOpenedLecture =
         classroomsDict[cid].lectures.length > 0
           ? classroomsDict[cid].lectures[0]
           : EMPTY_ID;
+
+      let chatroomId = classroomsDict[cid].chatroom as string;
+      dispatch(
+        ChatroomsServices.actions.addChatroom({
+          id: chatroomId,
+          messages: [],
+        })
+      );
     }
     let currentClassroom =
       responseObj.user.classrooms.length > 0
@@ -88,6 +99,12 @@ const Login = () => {
         dict: classroomsDict,
         current: currentClassroom,
       })
+    );
+
+    dispatch(
+      ChatroomsServices.actions.setCurrent(
+        classroomsDict[currentClassroom].chatroom as string
+      )
     );
 
     let currentLecture = EMPTY_ID;
@@ -104,7 +121,10 @@ const Login = () => {
     );
 
     let currentWidget = EMPTY_ID;
-    if (currentLecture !== EMPTY_ID) {
+    if (
+      currentLecture !== EMPTY_ID &&
+      responseObj.lecturesDict[currentLecture].widgets.length > 0
+    ) {
       currentWidget = responseObj.lecturesDict[currentLecture].widgets[0];
     }
     dispatch(
