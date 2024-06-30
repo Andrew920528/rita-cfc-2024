@@ -1,5 +1,8 @@
 import React, {useState} from "react";
+import classNames from "classnames/bind";
+import styles from "./TextArea.module.scss";
 
+const cx = classNames.bind(styles);
 type TextAreaProps = {
   flex?: boolean;
   placeholder?: string;
@@ -18,10 +21,10 @@ const TextArea: React.FC<TextAreaProps> = ({
   onChange = () => {},
 }) => {
   return (
-    <div className={`textarea-wrapper ${flex ? "flex" : "fixed"} ${mode}`}>
+    <div className={cx("textarea-wrapper", mode, {flex: flex})}>
       {label && <label>{label}</label>}
       <textarea
-        className="textarea-input"
+        className={cx("textarea-input")}
         placeholder={placeholder}
         value={value}
         onChange={onChange}

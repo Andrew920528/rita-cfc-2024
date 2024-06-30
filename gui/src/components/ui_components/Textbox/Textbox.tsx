@@ -1,7 +1,10 @@
 import React from "react";
-import IconButton from "./IconButton/IconButton";
+import IconButton from "../IconButton/IconButton";
 import {View, ViewOff} from "@carbon/icons-react";
+import classNames from "classnames/bind";
+import styles from "./Textbox.module.scss";
 
+const cx = classNames.bind(styles);
 type TextboxProps = {
   flex?: boolean;
   mode?: string; // form
@@ -28,11 +31,11 @@ const Textbox = ({
 }: TextboxProps) => {
   const [showPassword, setShowPassword] = React.useState(false);
   return (
-    <div className={`textbox ${flex ? "flex" : "fixed"} ${mode} `}>
-      {label && <p className="tb-label --label">{label}</p>}
-      <div className="input-content-wrapper">
+    <div className={cx("textbox", mode, {flex: flex})}>
+      {label && <p className={cx("tb-label", "--label")}>{label}</p>}
+      <div className={cx("input-content-wrapper")}>
         <input
-          className={`${errorMsg ? "error" : ""} ${type}`}
+          className={cx({error: errorMsg}, type)}
           placeholder={placeholder}
           onChange={onChange}
           value={value}
@@ -41,7 +44,7 @@ const Textbox = ({
           aria-label={ariaLabel}
         />
         {type === "password" && (
-          <div className="btn">
+          <div className={cx("btn")}>
             <IconButton
               mode="ghost"
               icon={showPassword ? <ViewOff /> : <View />}
@@ -50,7 +53,7 @@ const Textbox = ({
           </div>
         )}
       </div>
-      {errorMsg && <p className="--error --label">{errorMsg}</p>}
+      {errorMsg && <p className={cx("--error", "--label")}>{errorMsg}</p>}
     </div>
   );
 };

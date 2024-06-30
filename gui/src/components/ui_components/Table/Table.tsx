@@ -1,5 +1,8 @@
 import React, {ReactNode, useEffect, useRef, useState} from "react";
+import classNames from "classnames/bind";
+import styles from "./Table.module.scss";
 
+const cx = classNames.bind(styles);
 type Props = {
   headings: string[];
   content: {[key: string]: ReactNode}[];
@@ -58,13 +61,13 @@ const Table = (props: Props & TableStyleProps) => {
     document.addEventListener("mouseup", handleMouseUp);
   };
   return (
-    <div className="table-container">
-      <div className="table-header">
+    <div className={cx("table-container")}>
+      <div className={cx("table-header")}>
         {props.headings.map((heading, index) =>
           index === props.headings.length - 1 ? (
             <div
               key={heading}
-              className="table-header-item"
+              className={cx("table-header-item")}
               ref={elementRef}
               style={{width: `${columnWidths[index]}px`}}
             >
@@ -73,21 +76,21 @@ const Table = (props: Props & TableStyleProps) => {
           ) : (
             <div
               key={heading}
-              className="table-header-item"
+              className={cx("table-header-item")}
               style={{width: `${columnWidths[index]}px`}}
             >
               {heading}
               <div
-                className="vertical-resize-handle"
+                className={cx("vertical-resize-handle")}
                 onMouseDown={(e) => handleMouseDown(e, index)}
               />
             </div>
           )
         )}
       </div>
-      <div className="table-body">
+      <div className={cx("table-body")}>
         <div
-          className="row-controller"
+          className={cx("row-controller")}
           onMouseEnter={() => {
             console.log("enter");
           }}
@@ -96,13 +99,13 @@ const Table = (props: Props & TableStyleProps) => {
           }}
         ></div>
         {props.content.map((row, rowIndex) => (
-          <div className="row-wrapper" key={rowIndex}>
+          <div className={cx("row-wrapper")} key={rowIndex}>
             {/* FIXME row index shouldn't be key */}
-            <div className="table-row">
+            <div className={cx("table-row")}>
               {props.headings.map((column, colIndex) => (
                 <div
                   key={"row" + rowIndex + "col" + column}
-                  className="table-row-item"
+                  className={cx("table-row-item")}
                   style={{width: `${columnWidths[colIndex]}px`}}
                 >
                   {row[column]}
@@ -110,7 +113,7 @@ const Table = (props: Props & TableStyleProps) => {
               ))}
             </div>
             <div
-              className="row-controller"
+              className={cx("row-controller")}
               onMouseEnter={() => {
                 console.log("enter");
               }}

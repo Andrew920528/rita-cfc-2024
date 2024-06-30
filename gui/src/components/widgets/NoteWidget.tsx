@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import TextArea from "../ui_components/TextArea";
+import TextArea from "../ui_components/TextArea/TextArea";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {NoteWidgetContent, Widget, WidgetType} from "../../schema/widget";

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import Textbox from "../ui_components/Textbox";
+import Textbox from "../ui_components/Textbox/Textbox";
 import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "./PopUp";
 import {useAppDispatch, useTypedSelector} from "../../store/store";

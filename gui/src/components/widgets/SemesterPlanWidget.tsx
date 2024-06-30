@@ -5,8 +5,8 @@ import {
   Widget,
   WidgetType,
 } from "../../schema/widget";
-import Table from "../ui_components/Table";
-import Textbox from "../ui_components/Textbox";
+import Table from "../ui_components/Table/Table";
+import Textbox from "../ui_components/Textbox/Textbox";
 import IconButton from "../ui_components/IconButton/IconButton";
 import {
   ColumnDelete,
