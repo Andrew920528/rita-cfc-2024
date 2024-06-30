@@ -1,7 +1,7 @@
 import React, {Dispatch, ReactElement, SetStateAction, useState} from "react";
 import {Add, Information} from "@carbon/icons-react";
 import IconButton from "./ui_components/IconButton/IconButton";
-import ManageClassroomPU from "./PopUps/ManageClassroomPU";
+import ManageClassroomPU from "./PopUps/ManageClassroomPU/ManageClassroomPU";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {LecturesServices} from "../features/LectureSlice";

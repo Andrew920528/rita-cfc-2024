@@ -2,8 +2,11 @@ import {Close} from "@carbon/icons-react";
 import React, {ReactNode} from "react";
 import IconButton, {
   IconButtonProps,
-} from "../ui_components/IconButton/IconButton";
+} from "../../ui_components/IconButton/IconButton";
+import classNames from "classnames/bind";
+import styles from "./PopUp.module.scss";
 
+const cx = classNames.bind(styles);
 export type PopUpProps = {
   trigger: boolean;
   setTrigger: (trigger: boolean) => void;
@@ -24,10 +27,10 @@ const PopUp = ({
 }: PopUpProps) => {
   if (!trigger) return <></>;
   return (
-    <div className="pop-up-wrapper">
-      <div className="pop-up">
-        <div className="pop-up-header">
-          <p className="--heading">{title}</p>
+    <div className={cx("pop-up-wrapper")}>
+      <div className={cx("pop-up")}>
+        <div className={cx("pop-up-header")}>
+          <p className={cx("--heading")}>{title}</p>
 
           <IconButton
             icon={<Close size={20} />}
@@ -38,13 +41,13 @@ const PopUp = ({
             }}
           />
         </div>
-        <div className="pu-content">{children}</div>
+        <div className={cx("pu-content")}>{children}</div>
         {footerBtnProps && (
-          <div className="pu-footer">
-            <div className="pu-footer-children cancel-btn">
+          <div className={cx("pu-footer")}>
+            <div className={cx("pu-footer-children", "cancel-btn")}>
               {cancel && (
                 <p
-                  className="cancel"
+                  className={cx("cancel")}
                   onClick={() => {
                     reset();
                     setTrigger(false);
@@ -54,7 +57,7 @@ const PopUp = ({
                 </p>
               )}
             </div>
-            <div className="pu-footer-children">
+            <div className={cx("pu-footer-children")}>
               <IconButton mode="primary" flex={true} {...footerBtnProps} />
             </div>
           </div>

@@ -1,12 +1,15 @@
 import {useEffect, useState} from "react";
-import Textbox from "../ui_components/Textbox/Textbox";
+import Textbox from "../../ui_components/Textbox/Textbox";
 import {Save} from "@carbon/icons-react";
-import PopUp, {PopUpProps} from "./PopUp";
-import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {UserServices} from "../../features/UserSlice";
-import {updateUserService, useApiHandler} from "../../utils/service";
-import {API_ERROR} from "../../utils/constants";
+import PopUp, {PopUpProps} from "../PopUp/PopUp";
+import {useAppDispatch, useTypedSelector} from "../../../store/store";
+import {UserServices} from "../../../features/UserSlice";
+import {updateUserService, useApiHandler} from "../../../utils/service";
+import {API_ERROR} from "../../../utils/constants";
+import classNames from "classnames/bind";
+import styles from "./ManageAccountPU.module.scss";
 
+const cx = classNames.bind(styles);
 type ManageAccountPUProps = {};
 
 const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
@@ -93,7 +96,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
         terminateResponse();
       }}
     >
-      <div className="manage-account-form">
+      <div className={cx("manage-account-form")}>
         <Textbox
           label="暱稱"
           errorMsg={aliasError}

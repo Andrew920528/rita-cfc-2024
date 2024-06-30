@@ -1,13 +1,16 @@
-import React, {useEffect, useState} from "react";
-import Textbox from "../ui_components/Textbox/Textbox";
+import {useState} from "react";
+import Textbox from "../../ui_components/Textbox/Textbox";
 import {Save} from "@carbon/icons-react";
-import PopUp, {PopUpProps} from "./PopUp";
-import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {useCreateLecture} from "../../store/globalActions";
-import {generateId} from "../../utils/util";
-import {createLectureService, useApiHandler} from "../../utils/service";
-import {API_ERROR} from "../../utils/constants";
+import PopUp, {PopUpProps} from "../PopUp/PopUp";
+import {useTypedSelector} from "../../../store/store";
+import {useCreateLecture} from "../../../store/globalActions";
+import {generateId} from "../../../utils/util";
+import {createLectureService, useApiHandler} from "../../../utils/service";
+import {API_ERROR} from "../../../utils/constants";
+import classNames from "classnames/bind";
+import styles from "./CreateLecturePU.module.scss";
 
+const cx = classNames.bind(styles);
 type CreateLecturePUProps = {};
 
 const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
@@ -22,7 +25,6 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
 
   function resetForm() {
     setName("");
-
     setNameError("");
   }
   function validateForm(): boolean {
@@ -77,7 +79,7 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
         terminateResponse();
       }}
     >
-      <div className="create-lecture-form">
+      <div className={cx("create-lecture-form")}>
         <div>
           <Textbox
             label="課堂名稱"

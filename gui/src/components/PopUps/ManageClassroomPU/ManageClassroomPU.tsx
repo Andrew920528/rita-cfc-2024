@@ -1,21 +1,27 @@
 import React, {useEffect, useState} from "react";
-import Textbox from "../ui_components/Textbox/Textbox";
+import Textbox from "../../ui_components/Textbox/Textbox";
 import {Save} from "@carbon/icons-react";
-import PopUp, {PopUpProps} from "./PopUp";
-import {useAppDispatch, useTypedSelector} from "../../store/store";
-import Dropdown from "../ui_components/Dropdown/Dropdown";
-import {Classroom} from "../../schema/classroom";
-import {ClassroomsServices} from "../../features/ClassroomsSlice";
-import {useCreateClassroom, useCreateLecture} from "../../store/globalActions";
-import {generateId, isNumeric} from "../../utils/util";
-import {API_ERROR, EMPTY_ID} from "../../utils/constants";
+import PopUp, {PopUpProps} from "../PopUp/PopUp";
+import {useAppDispatch, useTypedSelector} from "../../../store/store";
+import Dropdown from "../../ui_components/Dropdown/Dropdown";
+import {Classroom} from "../../../schema/classroom";
+import {ClassroomsServices} from "../../../features/ClassroomsSlice";
+import {
+  useCreateClassroom,
+  useCreateLecture,
+} from "../../../store/globalActions";
+import {generateId, isNumeric} from "../../../utils/util";
+import {API_ERROR, EMPTY_ID} from "../../../utils/constants";
 import {
   createClassroomService,
   createLectureService,
   updateClassroomService,
   useApiHandler,
-} from "../../utils/service";
+} from "../../../utils/service";
+import classNames from "classnames/bind";
+import styles from "./ManageClassroomPU.module.scss";
 
+const cx = classNames.bind(styles);
 type ManageClassroomPUProps = {
   action: "create" | "edit";
   editClassroomId?: string;
@@ -242,8 +248,8 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
         terminateResponse();
       }}
     >
-      <div className="create-classroom-form">
-        <div className="ccf-layout-row">
+      <div className={cx("create-classroom-form")}>
+        <div className={cx("ccf-layout-row")}>
           <div>
             <Textbox
               label="課堂名稱"
@@ -274,7 +280,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
             />
           </div>
         </div>
-        <div className="ccf-layout-row">
+        <div className={cx("ccf-layout-row")}>
           <Dropdown
             currId={subject}
             setCurrId={setSubject}

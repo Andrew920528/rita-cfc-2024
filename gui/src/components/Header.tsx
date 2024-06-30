@@ -15,9 +15,9 @@ import {
 import Dropdown from "./ui_components/Dropdown/Dropdown";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 
-import ManageAccountPU from "./PopUps/ManageAccountPU";
-import ManageClassroomPU from "./PopUps/ManageClassroomPU";
-import CreateLecturePU from "./PopUps/CreateLecturePU";
+import ManageAccountPU from "./PopUps/ManageAccountPU/ManageAccountPU";
+import ManageClassroomPU from "./PopUps/ManageClassroomPU/ManageClassroomPU";
+import CreateLecturePU from "./PopUps/CreateLecturePU/CreateLecturePU";
 import {LecturesServices} from "../features/LectureSlice";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {WidgetsServices} from "../features/WidgetsSlice";
