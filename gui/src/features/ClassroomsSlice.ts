@@ -2,16 +2,25 @@ import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import {User} from "../schema/user";
 import {Schedule} from "../schema/schedule";
 import {Classroom, Classrooms} from "../schema/classroom";
+import {EMPTY_ID} from "../utils/constants";
+import {stat} from "fs";
 
 const initialState: Classrooms = {
   dict: {},
-  current: "NONE",
+  current: EMPTY_ID,
 };
 
 const ClassroomsSlice = createSlice({
   name: "classroomsSlice", //must be unique for every slice. convention is to put the same as file name
   initialState,
   reducers: {
+    parseLogin: (
+      state,
+      action: PayloadAction<{dict: {[key: string]: Classroom}; current: string}>
+    ) => {
+      state.dict = action.payload.dict;
+      state.current = action.payload.current;
+    },
     addClassroom: (state, action: PayloadAction<Classroom>) => {
       state.dict[action.payload.id] = action.payload;
     },

@@ -1,9 +1,16 @@
 import {Alarm, Catalog, CertificateCheck, Plan} from "@carbon/icons-react";
 import {Schedule} from "./schedule";
 
+export type WidgetContent =
+  | SemesterGoalWidgetContent
+  | SemesterPlanWidgetContent
+  | NoteWidgetContent
+  | ScheduleWidgetContent;
+
 export type Widget = {
   id: string;
   type: WidgetType;
+  content: WidgetContent;
 };
 
 export type Widgets = {
@@ -12,17 +19,17 @@ export type Widgets = {
   unsaved: {[key: string]: true};
 };
 
-export type SemesterGoalWidgetT = Widget & {
-  content: string[];
+export type SemesterGoalWidgetContent = {
+  goals: string[];
 };
-export type SemesterPlanWidgetT = Widget & {
+export type SemesterPlanWidgetContent = {
   headings: string[];
-  content: {[key: string]: string}[];
+  rows: {[key: string]: string}[];
 };
-export type NoteWidgetT = Widget & {
-  content: string;
+export type NoteWidgetContent = {
+  note: string;
 };
-export type ScheduleWidgetT = Widget;
+export type ScheduleWidgetContent = {}; // currently content comes from user
 
 export enum WidgetType {
   SemesterGoal,
@@ -37,32 +44,36 @@ export function initWidget(id: string, type: WidgetType): Widget {
       return {
         id: id,
         type: type,
-        content: [],
-      } as SemesterGoalWidgetT;
+        content: {goals: []} as SemesterGoalWidgetContent,
+      };
     case WidgetType.SemesterPlan: // semester plan
       return {
         id: id,
         type: type,
-        headings: ["週目", "目標", "教材"],
-        content: [
-          {週目: "1", 目標: "基本的な漢字の習得", 教材: "漢字ドリル第1章"}, // FIXME: testing purposes
-        ],
-      } as SemesterPlanWidgetT;
+        content: {
+          headings: ["週目", "目標", "教材"],
+          rows: [
+            {週目: "1", 目標: "基本的な漢字の習得", 教材: "漢字ドリル第1章"}, // FIXME: testing purposes
+          ],
+        } as SemesterPlanWidgetContent,
+      };
     case WidgetType.Note: // note
       return {
         id: id,
         type: type,
-        content: "",
-      } as NoteWidgetT;
+        content: {note: ""} as NoteWidgetContent,
+      };
     case WidgetType.Schedule: // schedule
       return {
         id: id,
         type: type,
-      } as ScheduleWidgetT;
+        content: {} as ScheduleWidgetContent,
+      };
     default:
       return {
         id,
         type,
+        content: {},
       };
   }
 }

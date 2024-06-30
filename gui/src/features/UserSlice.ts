@@ -3,10 +3,11 @@ import {User} from "../schema/user";
 import {Schedule, ScheduleHeadings} from "../schema/schedule";
 
 const initialState: User = {
-  username: "dum-username",
-  alias: "使用者A",
-  school: "dum-school",
-  occupation: "dum-occupation",
+  username: "",
+  token: "",
+  alias: "",
+  school: "",
+  occupation: "",
   schedule: Array(8).fill({
     mon: "",
     tue: "",
@@ -22,14 +23,26 @@ const UserSlice = createSlice({
   name: "userSlice", //must be unique for every slice. convention is to put the same as file name
   initialState,
   reducers: {
-    setAlias: (state, action: PayloadAction<string>) => {
-      state.alias = action.payload;
+    parseLogin: (state, action: PayloadAction<User>) => {
+      state.username = action.payload.username;
+      state.token = action.payload.token;
+      state.alias = action.payload.alias;
+      state.school = action.payload.school;
+      state.occupation = action.payload.occupation;
+      state.schedule = action.payload.schedule;
+      state.classrooms = action.payload.classrooms;
+      state.scheduleChanged = false;
     },
-    setSchool: (state, action: PayloadAction<string>) => {
-      state.school = action.payload;
+    setProfile: (
+      state,
+      action: PayloadAction<{alias: string; school: string; occupation: string}>
+    ) => {
+      state.alias = action.payload.alias;
+      state.school = action.payload.school;
+      state.occupation = action.payload.occupation;
     },
-    setOccupation: (state, action: PayloadAction<string>) => {
-      state.occupation = action.payload;
+    setToken: (state, action: PayloadAction<string>) => {
+      state.token = action.payload;
     },
     addClassroom: (state, action: PayloadAction<string>) => {
       state.classrooms.push(action.payload);

@@ -1,15 +1,10 @@
 import {PayloadAction, createSlice, current} from "@reduxjs/toolkit";
-import {
-  NoteWidgetT,
-  SemesterPlanWidgetT,
-  Widget,
-  WidgetType,
-  Widgets,
-} from "../schema/widget";
+import {Widget, Widgets} from "../schema/widget";
+import {EMPTY_ID} from "../utils/constants";
 
 const initialState: Widgets = {
   dict: {},
-  current: "NONE",
+  current: EMPTY_ID,
   unsaved: {},
 };
 
@@ -17,6 +12,14 @@ const WidgetsSlice = createSlice({
   name: "WidgetsSlice",
   initialState,
   reducers: {
+    parseLogin: (
+      state,
+      action: PayloadAction<{dict: {[key: string]: Widget}; current: string}>
+    ) => {
+      state.dict = action.payload.dict;
+      state.current = action.payload.current;
+      state.unsaved = {};
+    },
     addWidget: (state, action: PayloadAction<Widget>) => {
       state.dict[action.payload.id] = action.payload;
     },
@@ -26,41 +29,22 @@ const WidgetsSlice = createSlice({
     setCurrent: (state, action: PayloadAction<string>) => {
       state.current = action.payload;
     },
-    updateWidget: (
-      state,
-      action: PayloadAction<{wid: string; newWidget: Widget}>
-    ) => {
-      if (
-        state.dict[action.payload.wid].type !== action.payload.newWidget.type
-      ) {
+    updateWidget: (state, action: PayloadAction<{newWidget: Widget}>) => {
+      const wid = action.payload.newWidget.id;
+      if (!(wid in state.dict)) {
+        console.error("Attempt to update widget that does not exist");
+        return;
+      }
+      const oldWidget = state.dict[wid];
+      if (oldWidget.type !== action.payload.newWidget.type) {
         console.error(
           "Attempts to update widget, but given wrong payload type"
         );
         return;
       }
-      switch (action.payload.newWidget.type) {
-        case WidgetType.SemesterGoal:
-          console.log("update goal");
-          break;
-        case WidgetType.SemesterPlan:
-          const newWidget = action.payload.newWidget as SemesterPlanWidgetT;
-          (state.dict[action.payload.wid] as SemesterPlanWidgetT).headings =
-            newWidget.headings;
-          (state.dict[action.payload.wid] as SemesterPlanWidgetT).content =
-            newWidget.content;
-          break;
-        case WidgetType.Note:
-          updateNoteWidget(
-            state,
-            action as PayloadAction<{wid: string; newWidget: NoteWidgetT}>
-          );
-          break;
-        case WidgetType.Schedule:
-          // schedule is updated at user level
-          break;
-      }
-      if (!(action.payload.wid in state.unsaved)) {
-        state.unsaved[action.payload.wid] = true;
+      oldWidget.content = action.payload.newWidget.content;
+      if (!(wid in state.unsaved)) {
+        state.unsaved[wid] = true;
       }
     },
     saveAll: (state) => {
@@ -78,17 +62,3 @@ export const WidgetsServices = {
 //This is stored in the main store
 const WidgetsReducer = WidgetsSlice.reducer;
 export default WidgetsReducer;
-
-function updateNoteWidget(
-  state: Widgets,
-  action: PayloadAction<{wid: string; newWidget: NoteWidgetT}>
-) {
-  const {wid, newWidget} = action.payload;
-  const oldWidget = state.dict[wid] as NoteWidgetT;
-
-  if (!oldWidget) {
-    console.error(`Widget with id ${wid} not found`);
-    return;
-  }
-  oldWidget.content = newWidget.content;
-}

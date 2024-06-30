@@ -1,16 +1,24 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 
 import {Lecture, Lectures} from "../schema/lecture";
+import {EMPTY_ID} from "../utils/constants";
 
 const initialState: Lectures = {
   dict: {},
-  current: "NONE",
+  current: EMPTY_ID,
 };
 
 const LecturesSlice = createSlice({
   name: "lecturesSlice",
   initialState,
   reducers: {
+    parseLogin: (
+      state,
+      action: PayloadAction<{dict: {[key: string]: Lecture}; current: string}>
+    ) => {
+      state.dict = action.payload.dict;
+      state.current = action.payload.current;
+    },
     addLecture: (state, action: PayloadAction<Lecture>) => {
       state.dict[action.payload.id] = action.payload;
     },
