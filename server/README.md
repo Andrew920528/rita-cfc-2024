@@ -12,21 +12,29 @@ http://localhost:5000
 
 # Accessible Endpoints
 
+## Debug
+
 - GET /hello
 
-- PUT /message-rita
-  - Currently returns the request only!
+## User
+- POST /create-user
+- POST /update-user
+- POST /login
 
-- PUT /login
+## Classroom
+- POST /create-classroom
+- POST /update-classroom
 
-- PUT /create-user
+## Lecture
+- POST /create-lecture
+- POST /update-lecture
+- DELETE /delete-lecture
 
-- PUT /update-user
+## Widget
+- POST /create-widget
+- POST /update-widget
+- POST /update-widget-bulk
+- DELETE /delete-widget
   
-- PUT /create-classroom
-
-- PUT /create-lecture
-
-- PUT /create-widget
-
-- PUT /update-weight
+## Watsonx
+- POST /message-rita

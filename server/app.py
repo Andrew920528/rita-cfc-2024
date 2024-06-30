@@ -1,7 +1,8 @@
 from flask import Flask, request
 from flask_cors import CORS
 from watsonx import getWatsonxResponse
-from databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, createWidget, updateWidget, getWatsonxRequest
+from databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk
+from handle_input import create_prompt, llm_handle_input
 
 app = Flask(__name__)
 CORS(app)
@@ -12,7 +13,7 @@ def get_output():
     return { 'output' : 'hello guys!'}
 
 ######################################################################################################## watsonx
-@app.route('/message-rita', methods=['PUT'])
+@app.route('/message-rita', methods=['POST'])
 def message_rita():
     prompt = request.json['prompt']
     widget = request.json['widget']
@@ -20,70 +21,199 @@ def message_rita():
     classroomId = request.json['classroomId']
     watsonxRequest = getWatsonxRequest(prompt, widget, lectureId, classroomId)
 
-    # call API to Watsonx with watsonxRequest
-    watsonxResponse = {
-        'Status' : 'success',
-        'Response' : ''
-    }
+    llmHandleInput = llm_handle_input(watsonxRequest);
+
     # return watsonxResponse
-    return watsonxRequest
+    return llmHandleInput
     
 ######################################################################################################## users
-@app.route('/create-user', methods=['PUT'])
+@app.route('/create-user', methods=['POST'])
 def create_user():
-    username = request.form['username']
-    password = request.form['password']
-    school = request.form.get('school', None)
-    alias = request.form.get('alias', None)
-    occupation = request.form.get('occupation', None)
-    schedule_content = request.form.get('schedule_content', None)
-    return createUser(username, password, school, alias, occupation, schedule_content)
+    try:
+        userId = request.json['userId']
+        username = request.json['username']
+        password = request.json['password']
+        school = request.json.get('school', None)
+        alias = request.json.get('alias', None)
+        occupation = request.json.get('occupation', None)
+        scheduleContent = request.json.get('schedule_content', None)
+        return createUser(userId, username, password, school, alias, occupation, scheduleContent)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
 
-@app.route('/update-user', methods=['PUT'])
+@app.route('/update-user', methods=['POST'])
 def update_user():
-    username = request.form['username']
-    alias = request.form['alias']
-    school = request.form['school']
-    occupation = request.form['occupation']
-    return updateUser(username, alias, school, occupation)
+    try:
+        sessionId = request.json['sessionId']
+        alias = request.json.get('alias', None)
+        school = request.json.get('school', None)
+        occupation = request.json.get('occupation', None)
+        scheduleContent = request.json.get('scheduleContent', None)
+        return updateUser(sessionId, alias, school, occupation, scheduleContent)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
 
-@app.route('/login', methods=['PUT'])
+@app.route('/login', methods=['POST'])
 def login():
-    username = request.form['username']
-    password = request.form['password']
-    return loginUser(username, password)
+    try:
+        username = request.json['username']
+        password = request.json['password']
+        return loginUser(username, password)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
 
-@app.route('/create-classroom', methods=['PUT'])
+@app.route('/create-classroom', methods=['POST'])
 def create_classroom():
-    userId = request.form['userId']
-    classroomId = request.form['classroomId']
-    classroomName = request.form['classroomName']
-    subject = request.form['subject']
-    publisher = request.form['publisher']
-    return createClassroom(userId, classroomId, classroomName, subject, publisher)
+    try:
+        sessionId = request.json['sessionId']
+        classroomId = request.json['classroomId']
+        classroomName = request.json.get('classroomName', None)
+        subject = request.json.get('subject', None)
+        publisher = request.json.get('publisher', None)
+        grade = request.json.get('grade', None)
+        plan = request.json.get('plan', None)
+        credit = request.json.get('credits', None)
+        return createClassroom(sessionId, classroomId, classroomName, subject, publisher, grade, plan, credit)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
 
-@app.route('/create-lecture', methods=['PUT'])
+@app.route('/update-classroom', methods=['POST'])
+def update_classroom():
+    try:
+        sessionId = request.json['sessionId']
+        classroomId = request.json['classroomId']
+        classroomName = request.json.get('classroomName', None)
+        subject = request.json.get('subject', None)
+        publisher = request.json.get('subject', None)
+        grade = request.json.get('grade', None)
+        plan = request.json.get('plan', None)
+        credit = request.json.get('credits', None)
+        return updateClassroom(sessionId, classroomId, classroomName, subject, publisher, grade, plan, credit)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
+
+@app.route('/create-lecture', methods=['POST'])
 def create_lecture():
-    classroomId = request.form['classroomId']
-    lectureId = request.form['lectureId']
-    name = request.form['name']
-    type = request.form['type']
-    return createLecture(classroomId, lectureId, name, type)
+    try:
+        sessionId = request.json['sessionId']
+        classroomId = request.json['classroomId']
+        lectureId = request.json['lectureId']
+        name = request.json['name']
+        type = request.json['type']
+        return createLecture(sessionId, classroomId, lectureId, name, type)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
 
-@app.route('/create-widget', methods=['PUT'])
+@app.route('/update-lecture', methods=['POST'])
+def update_lecture():
+    try:
+        sessionId = request.json['sessionId']
+        lectureId = request.json['lectureId']
+        name = request.json.get('name', None)
+        type = request.json.get('type', None)
+        return updateLecture(sessionId, lectureId, name, type)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
+
+@app.route('/delete-lecture', methods=['DELETE'])
+def delete_lecture():
+    try:
+        sessionId = request.json['sessionId']
+        classroomId = request.json['classroomId']
+        lectureId = request.json['lectureId']
+        return deleteLecture(sessionId, classroomId, lectureId)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
+
+@app.route('/create-widget', methods=['POST'])
 def create_widget():
-    lectureId = request.form['lectureId']
-    widgetId = request.form['widgetId']
-    type = request.form['type']
-    content = request.form['content']
-    return createWidget(lectureId, widgetId, type, content)
+    try:
+        sessionId = request.json['sessionId']
+        lectureId = request.json['lectureId']
+        widgetId = request.json['widgetId']
+        type = request.json['type']
+        content = request.json['content']
+        return createWidget(sessionId, lectureId, widgetId, type, content)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
 
-@app.route('/update-widget', methods=['PUT'])
-def update_weight():
-    widgetId = request.form['widgetId']
-    content = request.form['content']
-    return updateWidget(widgetId, content)
+@app.route('/update-widget', methods=['POST'])
+def update_widget():
+    try:
+        sessionId = request.json['sessionId']
+        widgetId = request.json['widgetId']
+        content = request.json['content']
+        return updateWidget(sessionId, widgetId, content)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
 
+@app.route('/update-widget-bulk', methods=['POST'])
+def update_widget_bulk():
+    try:
+        sessionId = request.json['sessionId']
+        widgetIds = request.json['widgetIds']
+        contents = request.json['contents']
+        return updateWidgetBulk(sessionId, widgetIds, contents)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
+
+@app.route('/delete-widget', methods=['DELETE'])
+def delete_widget():
+    try:
+        sessionId = request.json['sessionId']
+        lectureId = request.json['lectureId']
+        widgetId = request.json['widgetId']
+        return deleteWidget(sessionId, lectureId, widgetId)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
 
 # @app.route('/get-user', methods=['GET'])
 # def get_user():
