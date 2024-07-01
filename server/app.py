@@ -30,14 +30,13 @@ def message_rita():
 @app.route('/create-user', methods=['POST'])
 def create_user():
     try:
-        userId = request.json['userId']
         username = request.json['username']
         password = request.json['password']
         school = request.json.get('school', None)
         alias = request.json.get('alias', None)
         occupation = request.json.get('occupation', None)
-        scheduleContent = request.json.get('schedule_content', None)
-        return createUser(userId, username, password, school, alias, occupation, scheduleContent)
+        scheduleContent = request.json.get('scheduleContent', None)
+        return createUser(username, password, school, alias, occupation, scheduleContent)
     except Exception as e:
         response = { 
             'status' : 'error',
