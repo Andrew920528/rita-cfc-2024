@@ -161,6 +161,18 @@ export function loginService(
     data: dummyLoginData,
   };
   return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  // const logThis = {
+  //   username: "TEST_ACCOUNT_1",
+  //   password: "TEST_PASSWORD_1",
+  // };
+  // return fetch(BASE_URL_DEV + "/login", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+
+  //   body: JSON.stringify(logThis), // Convert data object to JSON string
+  // });
 }
 
 // 🤖
@@ -180,6 +192,13 @@ export function createUserService(
     data: "account created",
   };
   return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  // return fetch(BASE_URL_DEV + "/login", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify(payload), // Convert data object to JSON string
+  // });
 }
 
 // 🤖
