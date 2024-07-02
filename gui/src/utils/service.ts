@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 import {formatTime, mimicApi} from "./util";
-import {API_SUCCESS, API_ERROR} from "../global/constants";
+import {API_SUCCESS, API_ERROR, INDEPENDENT_MODE} from "../global/constants";
 
 import {User} from "../schema/user";
 import {Classroom} from "../schema/classroom";
@@ -152,7 +152,7 @@ export function tryTrySee(abortSignal: AbortSignal) {
 
 // 😍
 export type LoginResponseObject = {
-  token?: string; // TODO should be required
+  sessionId: string;
   user: User;
   classroomsDict: {[cid: string]: Classroom};
   lecturesDict: {[lid: string]: Lecture};
@@ -162,11 +162,13 @@ export function loginService(
   abortSignal: AbortSignal,
   payload: {username: string; password: string}
 ) {
-  // const response = {
-  //   status: API_SUCCESS,
-  //   data: dummyLoginData,
-  // };
-  // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API_SUCCESS,
+      data: dummyLoginData,
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
   const endPoint = "/login";
   return fetch(BASE_URL_DEV + endPoint, {
     method: "POST",
@@ -191,11 +193,13 @@ export function createUserService(
     schedule?: string;
   }
 ) {
-  // const response = {
-  //   status: API_SUCCESS,
-  //   data: "User created",
-  // };
-  // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API_SUCCESS,
+      data: "User created",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
   const endPoint = "/create-user";
 
   return fetch(BASE_URL_DEV + endPoint, {
@@ -219,13 +223,14 @@ export function updateUserService(
     schedule?: string;
   }
 ) {
-  // const response = {
-  //   status: API_SUCCESS,
-  //   data: "user updated",
-  // };
-  // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API_SUCCESS,
+      data: "user updated",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
   const endPoint = "/update-user";
-
   return fetch(BASE_URL_DEV + endPoint, {
     method: "POST",
     headers: {
@@ -251,11 +256,23 @@ export function createClassroomService(
     credits: number;
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "classroom created",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API_SUCCESS,
+      data: "classroom created",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+
+  const endPoint = "/create-classroom";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
 // 👀
@@ -271,11 +288,23 @@ export function updateClassroomService(
     credits?: number;
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "classroom updated",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API_SUCCESS,
+      data: "classroom updated",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+
+  const endPoint = "/update-classroom";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
 // 👀
@@ -288,11 +317,23 @@ export function createLectureService(
     type: number;
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "lecture created",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API_SUCCESS,
+      data: "lecture created",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+
+  const endPoint = "/create-lecture";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
 // 🤖
@@ -303,11 +344,22 @@ export function deleteLectureService(
     classroomId: string;
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "lecture deleted",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API_SUCCESS,
+      data: "lecture deleted",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/delete-lecture";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
 // 🤖
@@ -320,11 +372,22 @@ export function createWidgetService(
     lectureId: string;
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "widget created",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API_SUCCESS,
+      data: "widget created",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/create-widget";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
 // 🤖
@@ -335,11 +398,23 @@ export function deleteWidgetService(
     lectureId: string;
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "widget deleted",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API_SUCCESS,
+      data: "widget deleted",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+
+  const endPoint = "/delete-widget";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
 // 🤖 * Currently unused
@@ -350,11 +425,22 @@ export function updateWidgetService(
     content: string; // stringify json
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "widget updated",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API_SUCCESS,
+      data: "widget updated",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/update-widget";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
 // 🤖
@@ -365,11 +451,23 @@ export function updateWidgetBulkService(
     content: string[]; // stringify json
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "all widgets updated",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API_SUCCESS,
+      data: "all widgets updated",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+
+  const endPoint = "/update-widget-bulk";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
 // 🤖
@@ -386,13 +484,17 @@ export function messageRitaService(
     classroomId: string;
   }
 ) {
-  const response = {
-    text: "Hello, I'm Rita. I do not understand what you are saying. Ask Edison.",
-    sender: "Rita",
-  };
-  const dummyResponse = {
-    status: API_SUCCESS,
-    data: response,
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(dummyResponse)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const ritaResponse = {
+      text: "Hello, I'm Rita. You are in frontend development mode, where I am not connected to an actual AI",
+      sender: "Rita",
+    };
+    const response = {
+      status: API_SUCCESS,
+      data: ritaResponse,
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
 }
+
+// TODO: if api all follow this format, consider refactor the functions

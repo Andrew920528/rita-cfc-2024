@@ -62,7 +62,7 @@ const Login = () => {
       return;
     }
     // parse to global state
-    // TODO: set token @iteration 2
+    // TODO: Write sessionId to global.json
     let responseObj = r.data as LoginResponseObject;
     dispatch(UserServices.actions.parseLogin(responseObj.user));
 
