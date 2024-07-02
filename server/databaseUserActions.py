@@ -235,9 +235,9 @@ def loginUser(username, password):
             classroomResponse = results
             classroomIds = []
 
-            classroomDetails = []
-            lectureDetails = []
-            widgetDetails = []
+            classroomDetails = {}
+            lectureDetails = {}
+            widgetDetails = {}
 
             for classroom in classroomResponse:
 
@@ -274,7 +274,7 @@ def loginUser(username, password):
                         widgetIds.append(widgetId)
 
                         widgets.append(widgetId)
-                        widgetDetails.append({
+                        widgetDetails.update({
                             widgetId : {
                                 'id' : widgetId,
                                 'type' : widget[1],
@@ -285,7 +285,7 @@ def loginUser(username, password):
                     # end of widget
 
                     lectures.append(lectureId)
-                    lectureDetails.append({
+                    lectureDetails.update({
                         lectureId : {
                             'id' : lectureId,
                             'name' : lecture[1],
@@ -297,7 +297,7 @@ def loginUser(username, password):
                 # end of lecture
 
                 classroomIds.append(classroomId)
-                classroomDetails.append({
+                classroomDetails.update({
                     classroomId : {
                         'id' : classroomId,
                         'name' : classroom[1],
