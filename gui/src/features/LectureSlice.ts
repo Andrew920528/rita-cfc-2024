@@ -1,7 +1,7 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 
 import {Lecture, Lectures} from "../schema/lecture";
-import {EMPTY_ID} from "../utils/constants";
+import {EMPTY_ID} from "../global/constants";
 
 const initialState: Lectures = {
   dict: {},

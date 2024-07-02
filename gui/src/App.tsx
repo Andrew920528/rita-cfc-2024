@@ -5,9 +5,6 @@ import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
-import ReactDOM from "react-dom/client";
-import {tryTrySee, useApiHandler} from "./utils/service";
-import {useTypedSelector} from "./store/store";
 
 function App() {
   return (

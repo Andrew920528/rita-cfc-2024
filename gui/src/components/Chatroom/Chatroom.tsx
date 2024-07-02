@@ -9,7 +9,7 @@ import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {mimicApi} from "../../utils/util";
 import {messageRitaService, useApiHandler} from "../../utils/service";
 import {debug} from "console";
-import {EMPTY_ID, API_ERROR} from "../../utils/constants";
+import {EMPTY_ID, API_ERROR} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./Chatroom.module.scss";
 

@@ -10,7 +10,7 @@ import {Chatroom} from "../schema/chatroom";
 import {Lecture} from "../schema/lecture";
 import {Classroom} from "../schema/classroom";
 import {UserServices} from "../features/UserSlice";
-import {EMPTY_ID} from "../utils/constants";
+import {EMPTY_ID} from "../global/constants";
 
 /* 
  Functions that requires the use of multiple slices to perform
@@ -42,7 +42,7 @@ export const useCreateClassroom = () => {
         subject: args.subject,
         grade: args.grade,
         publisher: args.publisher,
-        lectures: [],
+        lectureIds: [],
         lastOpenedLecture: EMPTY_ID,
         plan: args.plan,
         credits: args.credits,
@@ -80,7 +80,7 @@ export const useCreateLecture = () => {
         id: args.lectureId,
         name: args.name,
         type: args.type,
-        widgets: [],
+        widgetIds: [],
       };
 
       // add reference to classroom's lecture list
@@ -138,7 +138,7 @@ export const useDeleteLecture = () => {
   return useCallback(
     (args: {lectureId: string; classroomId: string}) => {
       // delete all widgets
-      const widgets = lectures.dict[args.lectureId].widgets;
+      const widgets = lectures.dict[args.lectureId].widgetIds;
       for (let i = 0; i < widgets.length; i++) {
         deleteWidget({lectureId: args.lectureId, widgetId: widgets[i]});
       }
@@ -153,7 +153,7 @@ export const useDeleteLecture = () => {
       dispatch(LecturesServices.actions.deleteLecture(args.lectureId));
 
       // reset current lecture if current lecture is deleted
-      const defaultLecture = classrooms.dict[classrooms.current].lectures[0];
+      const defaultLecture = classrooms.dict[classrooms.current].lectureIds[0];
       if (lectures.current === args.lectureId) {
         dispatch(LecturesServices.actions.setCurrent(defaultLecture));
         dispatch(

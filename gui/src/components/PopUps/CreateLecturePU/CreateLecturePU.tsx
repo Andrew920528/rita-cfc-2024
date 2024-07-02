@@ -6,7 +6,7 @@ import {useTypedSelector} from "../../../store/store";
 import {useCreateLecture} from "../../../store/globalActions";
 import {generateId} from "../../../utils/util";
 import {createLectureService, useApiHandler} from "../../../utils/service";
-import {API_ERROR} from "../../../utils/constants";
+import {API_ERROR} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./CreateLecturePU.module.scss";
 

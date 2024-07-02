@@ -2,7 +2,7 @@ import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import {User} from "../schema/user";
 import {Schedule} from "../schema/schedule";
 import {Classroom, Classrooms} from "../schema/classroom";
-import {EMPTY_ID} from "../utils/constants";
+import {EMPTY_ID} from "../global/constants";
 import {stat} from "fs";
 
 const initialState: Classrooms = {

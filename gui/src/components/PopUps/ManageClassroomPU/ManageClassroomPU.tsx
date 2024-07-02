@@ -11,7 +11,7 @@ import {
   useCreateLecture,
 } from "../../../store/globalActions";
 import {generateId, isNumeric} from "../../../utils/util";
-import {API_ERROR, EMPTY_ID} from "../../../utils/constants";
+import {API_ERROR, EMPTY_ID} from "../../../global/constants";
 import {
   createClassroomService,
   createLectureService,
@@ -190,7 +190,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       grade: grade,
       publisher: subject === "其他" ? "綜合" : publisher,
       // these are not editable
-      lectures: [],
+      lectureIds: [],
       lastOpenedLecture: "",
       plan: false,
       credits: parseInt(credit),

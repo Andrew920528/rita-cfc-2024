@@ -1,11 +1,13 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 import {formatTime, mimicApi} from "./util";
-import {API_SUCCESS, API_ERROR, dummyLoginData} from "./constants";
+import {API_SUCCESS, API_ERROR} from "../global/constants";
+
 import {User} from "../schema/user";
 import {Classroom} from "../schema/classroom";
 import {Widget} from "../schema/widget";
 import {Lecture} from "../schema/lecture";
-import SessionId from "../global/SessionId.json";
+import {SESSION_ID} from "../global/global.json";
+import {dummyLoginData} from "./dummy";
 type ResponseData = {
   status: typeof API_ERROR | typeof API_SUCCESS;
   data: any;
@@ -229,7 +231,7 @@ export function updateUserService(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(payload), // Convert data object to JSON string
+    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
     signal: abortSignal,
   });
 }
@@ -249,21 +251,11 @@ export function createClassroomService(
     credits: number;
   }
 ) {
-  // const response = {
-  //   status: API_SUCCESS,
-  //   data: "classroom created",
-  // };
-  // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
-  const endPoint = "/create-classroom";
-
-  return fetch(BASE_URL_DEV + endPoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload), // Convert data object to JSON string
-    signal: abortSignal,
-  });
+  const response = {
+    status: API_SUCCESS,
+    data: "classroom created",
+  };
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 👀
@@ -279,21 +271,11 @@ export function updateClassroomService(
     credits?: number;
   }
 ) {
-  // const response = {
-  //   status: API_SUCCESS,
-  //   data: "classroom updated",
-  // };
-  // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
-  const endPoint = "/create-user";
-
-  return fetch(BASE_URL_DEV + endPoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload), // Convert data object to JSON string
-    signal: abortSignal,
-  });
+  const response = {
+    status: API_SUCCESS,
+    data: "classroom updated",
+  };
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 👀
@@ -306,21 +288,11 @@ export function createLectureService(
     type: number;
   }
 ) {
-  // const response = {
-  //   status: API_SUCCESS,
-  //   data: "lecture created",
-  // };
-  // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
-  const endPoint = "/create-lecture";
-
-  return fetch(BASE_URL_DEV + endPoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload), // Convert data object to JSON string
-    signal: abortSignal,
-  });
+  const response = {
+    status: API_SUCCESS,
+    data: "lecture created",
+  };
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
 }
 
 // 🤖

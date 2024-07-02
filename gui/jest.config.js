@@ -1,3 +1,5 @@
+const {plugins} = require("./babel.config");
+
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "jsdom",

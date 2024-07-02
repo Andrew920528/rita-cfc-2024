@@ -1,10 +1,10 @@
 import {MemoryRouter, Route, Routes} from "react-router-dom";
-import {dummyLoginData} from "../../utils/constants";
 import {renderWithProviders} from "../../utils/test_utils";
 import Home from "../Home/Home";
 import Login from "./Login";
 import {fireEvent, screen, waitFor} from "@testing-library/react";
 import SignUp from "../SignUp/SignUp";
+import {dummyLoginData} from "../../utils/dummy";
 
 jest.mock("../../utils/service", () => ({
   useApiHandler: jest.fn(() => ({

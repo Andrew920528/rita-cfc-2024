@@ -12,7 +12,7 @@ import {
   Routes,
   createMemoryRouter,
 } from "react-router-dom";
-import {dummyLoginData} from "./utils/constants";
+import {dummyLoginData} from "./utils/dummy";
 import {link} from "fs";
 import SignUp from "./pages/SignUp/SignUp";
 

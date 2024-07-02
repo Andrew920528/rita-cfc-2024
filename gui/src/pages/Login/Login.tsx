@@ -8,7 +8,7 @@ import {
   loginService,
   useApiHandler,
 } from "../../utils/service";
-import {API_ERROR, EMPTY_ID} from "../../utils/constants";
+import {API_ERROR, EMPTY_ID} from "../../global/constants";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {UserServices} from "../../features/UserSlice";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";

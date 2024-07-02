@@ -5,7 +5,7 @@ import Textbox from "../../components/ui_components/Textbox/Textbox";
 import Login from "../Login/Login";
 import {Link, useNavigate} from "react-router-dom";
 import {createUserService, useApiHandler} from "../../utils/service";
-import {API_ERROR} from "../../utils/constants";
+import {API_ERROR} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./SignUp.module.scss";
 
