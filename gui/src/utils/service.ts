@@ -145,11 +145,10 @@ export function tryTrySee(abortSignal: AbortSignal) {
   });
 }
 
-// 😍 = actually calls api
-// 🤖 = api called in component
-// 🤡 = function implemented with dymmy data
+// 😍 = Calls API with correct behavior
+// 👀 = Requires Attention
 
-// 🤖
+// 😍
 export type LoginResponseObject = {
   token?: string; // TODO should be required
   user: User;
@@ -165,24 +164,20 @@ export function loginService(
   //   status: API_SUCCESS,
   //   data: dummyLoginData,
   // };
-  // return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
   const endPoint = "/login";
-  const logThis = {
-    username: "TEST_ACCOUNT_1",
-    password: "TEST_PASSWORD_1",
-  };
   return fetch(BASE_URL_DEV + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
 
-    body: JSON.stringify(logThis), // Convert data object to JSON string
+    body: JSON.stringify(payload), // Convert data object to JSON string
     signal: abortSignal,
   });
 }
 
-// 🤖
+// 😍
 export function createUserService(
   abortSignal: AbortSignal,
   payload: {
@@ -196,7 +191,7 @@ export function createUserService(
 ) {
   // const response = {
   //   status: API_SUCCESS,
-  //   data: "account created",
+  //   data: "User created",
   // };
   // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
   const endPoint = "/create-user";
@@ -211,7 +206,7 @@ export function createUserService(
   });
 }
 
-// 🤖
+// 👀
 export function updateUserService(
   abortSignal: AbortSignal,
   payload: {
@@ -222,14 +217,24 @@ export function updateUserService(
     schedule?: string;
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "user updated",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  // const response = {
+  //   status: API_SUCCESS,
+  //   data: "user updated",
+  // };
+  // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  const endPoint = "/update-user";
+
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖
+// 👀
 export function createClassroomService(
   abortSignal: AbortSignal,
   payload: {
@@ -244,14 +249,24 @@ export function createClassroomService(
     credits: number;
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "classroom created",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  // const response = {
+  //   status: API_SUCCESS,
+  //   data: "classroom created",
+  // };
+  // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  const endPoint = "/create-classroom";
+
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖
+// 👀
 export function updateClassroomService(
   abortSignal: AbortSignal,
   payload: {
@@ -264,14 +279,24 @@ export function updateClassroomService(
     credits?: number;
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "classroom updated",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  // const response = {
+  //   status: API_SUCCESS,
+  //   data: "classroom updated",
+  // };
+  // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  const endPoint = "/create-user";
+
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖
+// 👀
 export function createLectureService(
   abortSignal: AbortSignal,
   payload: {
@@ -281,11 +306,21 @@ export function createLectureService(
     type: number;
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "lecture created",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  // const response = {
+  //   status: API_SUCCESS,
+  //   data: "lecture created",
+  // };
+  // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  const endPoint = "/create-lecture";
+
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
 // 🤖

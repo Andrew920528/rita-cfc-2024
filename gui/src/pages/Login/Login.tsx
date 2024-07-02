@@ -30,7 +30,6 @@ const Login = () => {
 
   const [usernameError, setUsernameError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
-  const chatrooms = useTypedSelector((state) => state.Chatrooms);
   function reset(): void {
     setUsername("");
     setPassword("");
@@ -66,15 +65,9 @@ const Login = () => {
     // TODO: set token @iteration 2
     let responseObj = r.data as LoginResponseObject;
     dispatch(UserServices.actions.parseLogin(responseObj.user));
-    console.log(
-      responseObj.user.classroomIds.length > 0
-        ? responseObj.user.classroomIds[0]
-        : EMPTY_ID
-    );
 
     let classroomsDict = responseObj.classroomsDict;
     let classrooms = responseObj.user.classroomIds;
-    let chatroomsDict = {} as {[key: string]: Chatroom};
     for (let i = 0; i < classrooms.length; i++) {
       let cid = classrooms[i];
       classroomsDict[cid].lastOpenedLecture =
@@ -94,6 +87,11 @@ const Login = () => {
       responseObj.user.classroomIds.length > 0
         ? responseObj.user.classroomIds[0]
         : EMPTY_ID;
+    let currentChatroom =
+      currentClassroom === EMPTY_ID
+        ? EMPTY_ID
+        : classroomsDict[currentClassroom].chatroom;
+
     dispatch(
       ClassroomsServices.actions.parseLogin({
         dict: classroomsDict,
@@ -101,11 +99,7 @@ const Login = () => {
       })
     );
 
-    dispatch(
-      ChatroomsServices.actions.setCurrent(
-        classroomsDict[currentClassroom].chatroom as string
-      )
-    );
+    dispatch(ChatroomsServices.actions.setCurrent(currentChatroom as string));
 
     let currentLecture = EMPTY_ID;
     if (currentClassroom !== EMPTY_ID) {
