@@ -52,13 +52,15 @@ const Login = () => {
   async function login() {
     if (!validateLogin()) return;
     let r = await apiHandler({
-      apiFunction: (s) => loginService(s, {username, password}),
+      apiFunction: (s) =>
+        loginService(s, {username: username, password: password}),
       debug: true,
       identifier: "login",
     });
 
     if (r.status === API_ERROR) {
       // TODO error toast
+
       return;
     }
     // parse to global state

@@ -2,7 +2,7 @@ import {LoginResponseObject} from "./service";
 
 const dummyUser = {
   username: "dum-username",
-  token: "ENCRYPTED STUFF",
+  sessionId: "ENCRYPTED STUFF",
   alias: "使用者B",
   school: "dum-school",
   occupation: "dum-occupation",
@@ -194,7 +194,7 @@ let chatrooms = {
 };
 
 export const dummyLoginData: LoginResponseObject = {
-  token: "ENCRYPTED STUFF",
+  sessionId: "ENCRYPTED STUFF",
   user: dummyUser,
   classroomsDict: classrooms.dict,
   lecturesDict: lectures.dict,

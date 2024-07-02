@@ -151,6 +151,8 @@ export function tryTrySee(abortSignal: AbortSignal) {
 // 👀 = Requires Attention
 
 // 😍
+// ✅ Can log in with newly created account
+// ✅ Can log in with existing account
 export type LoginResponseObject = {
   sessionId: string;
   user: User;
@@ -182,6 +184,8 @@ export function loginService(
 }
 
 // 😍
+// ✅ Can log in with newly created account
+// ✅ Can log in with existing account
 export function createUserService(
   abortSignal: AbortSignal,
   payload: {
@@ -495,6 +499,15 @@ export function messageRitaService(
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
   }
+  const endPoint = "/message-rita";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
 // TODO: if api all follow this format, consider refactor the functions

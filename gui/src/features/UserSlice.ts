@@ -4,7 +4,6 @@ import {Schedule, ScheduleHeadings} from "../schema/schedule";
 
 const initialState: User = {
   username: "",
-  token: "",
   alias: "",
   school: "",
   occupation: "",
@@ -25,7 +24,6 @@ const UserSlice = createSlice({
   reducers: {
     parseLogin: (state, action: PayloadAction<User>) => {
       state.username = action.payload.username;
-      state.token = action.payload.token;
       state.alias = action.payload.alias;
       state.school = action.payload.school;
       state.occupation = action.payload.occupation;
@@ -40,9 +38,6 @@ const UserSlice = createSlice({
       state.alias = action.payload.alias;
       state.school = action.payload.school;
       state.occupation = action.payload.occupation;
-    },
-    setToken: (state, action: PayloadAction<string>) => {
-      state.token = action.payload;
     },
     addClassroom: (state, action: PayloadAction<string>) => {
       state.classroomIds.push(action.payload);

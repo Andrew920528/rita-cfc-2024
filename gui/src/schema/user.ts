@@ -3,7 +3,6 @@ import {Classroom} from "./classroom";
 
 export type User = {
   username: string;
-  token: string; // for verification
   alias: string;
   school: string;
   occupation: string;

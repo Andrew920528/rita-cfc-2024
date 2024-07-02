@@ -51,8 +51,8 @@ const Chatroom = ({}: ChatroomProps) => {
     );
     setText("");
     let r = await apiHandler({
-      apiFunction: (c: AbortSignal) =>
-        messageRitaService(c, {
+      apiFunction: (s: AbortSignal) =>
+        messageRitaService(s, {
           prompt: text,
           widget:
             widgets.current === EMPTY_ID
