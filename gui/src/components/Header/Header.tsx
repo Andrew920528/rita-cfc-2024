@@ -114,7 +114,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
                   })
                 );
               }}
-              idDict={classrooms.dict[classrooms.current].lectures.reduce(
+              idDict={classrooms.dict[classrooms.current].lectureIds.reduce(
                 (dict, lectureId: string) => {
                   dict[lectureId] = "";
                   return dict;

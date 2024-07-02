@@ -15,7 +15,7 @@ const initialState: User = {
     thu: "",
     fri: "",
   }),
-  classrooms: [],
+  classroomIds: [],
   scheduleChanged: false,
 };
 
@@ -30,7 +30,7 @@ const UserSlice = createSlice({
       state.school = action.payload.school;
       state.occupation = action.payload.occupation;
       state.schedule = action.payload.schedule;
-      state.classrooms = action.payload.classrooms;
+      state.classroomIds = action.payload.classroomIds;
       state.scheduleChanged = false;
     },
     setProfile: (
@@ -45,7 +45,7 @@ const UserSlice = createSlice({
       state.token = action.payload;
     },
     addClassroom: (state, action: PayloadAction<string>) => {
-      state.classrooms.push(action.payload);
+      state.classroomIds.push(action.payload);
     },
     updateSchedule: (state, action: PayloadAction<"add" | "delete">) => {
       if (action.payload === "add") {

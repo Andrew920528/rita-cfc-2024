@@ -5,7 +5,7 @@ import {User} from "../schema/user";
 import {Classroom} from "../schema/classroom";
 import {Widget} from "../schema/widget";
 import {Lecture} from "../schema/lecture";
-
+import SessionId from "../global/SessionId.json";
 type ResponseData = {
   status: typeof API_ERROR | typeof API_SUCCESS;
   data: any;
@@ -104,12 +104,15 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
         let msg;
         if (err instanceof DOMException && err.name === "AbortError") {
           msg = "Request aborted";
+          if (debug) console.warn(msg);
         } else if (err instanceof Error) {
           msg = err.message;
+          if (debug) console.error(msg);
         } else {
           msg = "Unknown error";
+          if (debug) console.error(msg);
         }
-        if (debug) console.warn(msg);
+
         const errorResponse: ResponseData = {status: "error", data: msg};
         return errorResponse;
       } finally {
@@ -128,11 +131,13 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
 
 /**
  * Raw API calls that calls the backend
+ * Documentation: https://docs.google.com/document/d/1EVmXDQIR49d-g57JczzRZ6wmxlWLhpY_Eczj9dUHrkk/edit
  */
 
 const BASE_URL_DEV = "http://127.0.0.1:5000";
 export function tryTrySee(abortSignal: AbortSignal) {
-  return fetch(BASE_URL_DEV + "/hello", {
+  const endPoint = "/hello";
+  return fetch(BASE_URL_DEV + endPoint, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -156,23 +161,25 @@ export function loginService(
   abortSignal: AbortSignal,
   payload: {username: string; password: string}
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: dummyLoginData,
-  };
-  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
-  // const logThis = {
-  //   username: "TEST_ACCOUNT_1",
-  //   password: "TEST_PASSWORD_1",
+  // const response = {
+  //   status: API_SUCCESS,
+  //   data: dummyLoginData,
   // };
-  // return fetch(BASE_URL_DEV + "/login", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
+  // return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  const endPoint = "/login";
+  const logThis = {
+    username: "TEST_ACCOUNT_1",
+    password: "TEST_PASSWORD_1",
+  };
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
 
-  //   body: JSON.stringify(logThis), // Convert data object to JSON string
-  // });
+    body: JSON.stringify(logThis), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
 // 🤖
@@ -187,18 +194,21 @@ export function createUserService(
     schedule?: string;
   }
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "account created",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
-  // return fetch(BASE_URL_DEV + "/login", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify(payload), // Convert data object to JSON string
-  // });
+  // const response = {
+  //   status: API_SUCCESS,
+  //   data: "account created",
+  // };
+  // return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  const endPoint = "/create-user";
+
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
 // 🤖

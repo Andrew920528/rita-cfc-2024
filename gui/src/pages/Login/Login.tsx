@@ -67,19 +67,19 @@ const Login = () => {
     let responseObj = r.data as LoginResponseObject;
     dispatch(UserServices.actions.parseLogin(responseObj.user));
     console.log(
-      responseObj.user.classrooms.length > 0
-        ? responseObj.user.classrooms[0]
+      responseObj.user.classroomIds.length > 0
+        ? responseObj.user.classroomIds[0]
         : EMPTY_ID
     );
 
     let classroomsDict = responseObj.classroomsDict;
-    let classrooms = responseObj.user.classrooms;
+    let classrooms = responseObj.user.classroomIds;
     let chatroomsDict = {} as {[key: string]: Chatroom};
     for (let i = 0; i < classrooms.length; i++) {
       let cid = classrooms[i];
       classroomsDict[cid].lastOpenedLecture =
-        classroomsDict[cid].lectures.length > 0
-          ? classroomsDict[cid].lectures[0]
+        classroomsDict[cid].lectureIds.length > 0
+          ? classroomsDict[cid].lectureIds[0]
           : EMPTY_ID;
 
       let chatroomId = classroomsDict[cid].chatroom as string;
@@ -91,8 +91,8 @@ const Login = () => {
       );
     }
     let currentClassroom =
-      responseObj.user.classrooms.length > 0
-        ? responseObj.user.classrooms[0]
+      responseObj.user.classroomIds.length > 0
+        ? responseObj.user.classroomIds[0]
         : EMPTY_ID;
     dispatch(
       ClassroomsServices.actions.parseLogin({
@@ -123,9 +123,9 @@ const Login = () => {
     let currentWidget = EMPTY_ID;
     if (
       currentLecture !== EMPTY_ID &&
-      responseObj.lecturesDict[currentLecture].widgets.length > 0
+      responseObj.lecturesDict[currentLecture].widgetIds.length > 0
     ) {
-      currentWidget = responseObj.lecturesDict[currentLecture].widgets[0];
+      currentWidget = responseObj.lecturesDict[currentLecture].widgetIds[0];
     }
     dispatch(
       WidgetsServices.actions.parseLogin({

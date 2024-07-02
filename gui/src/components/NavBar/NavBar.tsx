@@ -149,7 +149,7 @@ const NavBar = () => {
           />
         </div>
         <div className={cx("nav-stack")}>
-          {user.classrooms.toReversed().map((id) => (
+          {user.classroomIds.toReversed().map((id) => (
             <ClassCard
               key={id}
               id={id}

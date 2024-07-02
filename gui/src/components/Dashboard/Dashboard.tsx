@@ -43,9 +43,9 @@ const Dashboard = () => {
   return (
     <div className={cx("dashboard")} onClick={deselectWidget}>
       {lectures.dict[lectures.current] &&
-      lectures.dict[lectures.current].widgets.length > 0 ? (
+      lectures.dict[lectures.current].widgetIds.length > 0 ? (
         <div className={cx("widgets")} onClick={deselectWidget}>
-          {lectures.dict[lectures.current].widgets.toReversed().map((wid) => {
+          {lectures.dict[lectures.current].widgetIds.toReversed().map((wid) => {
             const w = widgets.dict[wid];
             return (
               <WidgetFrame

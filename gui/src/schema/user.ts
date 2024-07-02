@@ -8,6 +8,6 @@ export type User = {
   school: string;
   occupation: string;
   schedule: Schedule;
-  classrooms: string[]; // in order
+  classroomIds: string[]; // in order
   scheduleChanged?: boolean; // not saved in db
 };

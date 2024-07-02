@@ -1,8 +1,7 @@
 {
-    "host": "",
-    "databaseuser": "",
-    "databasepassword": "",
-    "database": "",
-    "port": 0
+    "host": "database-1.cz0egckqohrt.us-east-2.rds.amazonaws.com",
+    "databaseuser": "admin",
+    "databasepassword": "adminpassword",
+    "database": "database1",
+    "port": 3306
 }
-  

@@ -5,7 +5,7 @@ export type Classroom = {
   subject: string;
   grade: string;
   publisher: string;
-  lectures: string[];
+  lectureIds: string[];
   lastOpenedLecture?: string; // not saved in db
   plan: boolean;
   credits: number;
