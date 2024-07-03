@@ -17,6 +17,7 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
   // global states
   const user = useTypedSelector((state) => state.User);
   const currClassroom = useTypedSelector((state) => state.Classrooms.current);
+  const lectures = useTypedSelector((state) => state.Lectures);
   const createLecture = useCreateLecture();
   const {apiHandler, loading, terminateResponse} = useApiHandler();
   // local states
@@ -31,6 +32,13 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
     let validate = true;
     if (name.trim() === "") {
       setNameError("請輸入課程名稱");
+      validate = false;
+    } else if (
+      new Set<string>(Object.values(lectures.dict).map((c) => c.name)).has(
+        name.trim()
+      )
+    ) {
+      setNameError("課堂名稱已存在");
       validate = false;
     }
     return validate;

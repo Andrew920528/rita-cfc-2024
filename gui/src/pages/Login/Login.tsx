@@ -77,7 +77,10 @@ const Login = () => {
     });
 
     if (r.status === API_ERROR) {
-      // TODO error toast
+      if (r.data === "Username or password is incorrect. Please try again.") {
+        setUsernameError("使用者名稱或密碼錯誤");
+        setPasswordError("使用者名稱或密碼錯誤");
+      }
 
       return;
     }

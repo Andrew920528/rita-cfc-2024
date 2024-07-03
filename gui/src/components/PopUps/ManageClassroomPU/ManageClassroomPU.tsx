@@ -107,6 +107,13 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     if (name.trim() === "") {
       setNameError("請輸入課堂名稱");
       validate = false;
+    } else if (
+      new Set<string>(Object.values(classrooms.dict).map((c) => c.name)).has(
+        name.trim()
+      )
+    ) {
+      setNameError("課堂名稱已存在");
+      validate = false;
     }
     if (subject.trim() === "") {
       setSubjectError("請輸入科目");
