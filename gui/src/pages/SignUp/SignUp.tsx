@@ -8,6 +8,7 @@ import {createUserService, useApiHandler} from "../../utils/service";
 import {API_ERROR} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./SignUp.module.scss";
+import {initSchedule} from "../../schema/schedule";
 
 const cx = classNames.bind(styles);
 const SignUp = () => {
@@ -96,7 +97,15 @@ const SignUp = () => {
     if (!validateSignup()) return;
 
     let r = await apiHandler({
-      apiFunction: (s) => createUserService(s, {username, password}),
+      apiFunction: (s) =>
+        createUserService(s, {
+          username,
+          password,
+          school: "",
+          alias: username,
+          occupation: "",
+          schedule: JSON.stringify(initSchedule),
+        }),
       debug: true,
       identifier: "signup",
     });

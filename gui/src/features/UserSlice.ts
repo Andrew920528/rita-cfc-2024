@@ -1,19 +1,13 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import {User} from "../schema/user";
-import {Schedule, ScheduleHeadings} from "../schema/schedule";
+import {Schedule, ScheduleHeadings, initSchedule} from "../schema/schedule";
 
 const initialState: User = {
   username: "",
   alias: "",
   school: "",
   occupation: "",
-  schedule: Array(8).fill({
-    mon: "",
-    tue: "",
-    wed: "",
-    thu: "",
-    fri: "",
-  }),
+  schedule: initSchedule,
   classroomIds: [],
   scheduleChanged: false,
 };
@@ -27,7 +21,9 @@ const UserSlice = createSlice({
       state.alias = action.payload.alias;
       state.school = action.payload.school;
       state.occupation = action.payload.occupation;
-      state.schedule = action.payload.schedule;
+      state.schedule = action.payload.schedule
+        ? action.payload.schedule
+        : initSchedule;
       state.classroomIds = action.payload.classroomIds;
       state.scheduleChanged = false;
     },

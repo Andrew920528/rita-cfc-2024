@@ -251,7 +251,7 @@ const AccountButton = () => {
               <strong>{name}</strong>
             </p>
             <p className={cx("user-detail")}>
-              {occupation} @ {school}
+              {occupation} {occupation !== "" && school !== "" && "@"} {school}
             </p>
           </div>
           <UserAvatar size={30} />

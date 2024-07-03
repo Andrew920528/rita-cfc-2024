@@ -1,13 +1,9 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import IconButton from "../../components/ui_components/IconButton/IconButton";
 import {Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../../components/ui_components/Textbox/Textbox";
 import {Link, useNavigate} from "react-router-dom";
-import {
-  LoginResponseObject,
-  loginService,
-  useApiHandler,
-} from "../../utils/service";
+import {loginService, useApiHandler} from "../../utils/service";
 import {API_ERROR, EMPTY_ID} from "../../global/constants";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {UserServices} from "../../features/UserSlice";
@@ -16,9 +12,8 @@ import {LecturesServices} from "../../features/LectureSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import classNames from "classnames/bind";
 import styles from "./Login.module.scss";
-import {Chatroom, Chatrooms} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
-import {c} from "vite/dist/node/types.d-aGj9QkWt";
+import {initSchedule} from "../../schema/schedule";
 
 const cx = classNames.bind(styles);
 
@@ -85,8 +80,15 @@ const Login = () => {
       return;
     }
     // parse to global state
-    let responseObj = r.data as LoginResponseObject;
+    let responseObj = r.data;
     sessionStorage.setItem("sessionId", responseObj.sessionId);
+
+    let user = responseObj.user;
+    if (responseObj.user.schedule) {
+      responseObj.user.schedule = JSON.parse(user.schedule as string);
+    } else {
+      responseObj.user.schedule = initSchedule;
+    }
     dispatch(UserServices.actions.parseLogin(responseObj.user));
 
     let classroomsDict = responseObj.classroomsDict;

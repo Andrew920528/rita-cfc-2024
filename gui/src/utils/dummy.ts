@@ -1,4 +1,4 @@
-import {LoginResponseObject} from "./service";
+import {initSchedule} from "../schema/schedule";
 
 const dummyUser = {
   username: "dum-username",
@@ -6,13 +6,7 @@ const dummyUser = {
   alias: "使用者B",
   school: "dum-school",
   occupation: "dum-occupation",
-  schedule: Array(8).fill({
-    mon: "",
-    tue: "",
-    wed: "",
-    thu: "",
-    fri: "",
-  }),
+  schedule: JSON.stringify(initSchedule),
   classroomIds: [
     "dum-username-classroom-lxu4e0arlztbh3snv7d",
     "dum-username-classroom-lxu4ehnp9fs1h0utd99",
@@ -181,7 +175,7 @@ let widgets = {
   current: "dum-username-wid-lxu4g9fh5ayjtgihsqo",
   unsaved: {},
 };
-export const dummyLoginData: LoginResponseObject = {
+export const dummyLoginData: any = {
   sessionId: "ENCRYPTED STUFF",
   user: dummyUser,
   classroomsDict: classrooms.dict,

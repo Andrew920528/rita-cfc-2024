@@ -148,13 +148,6 @@ export function tryTrySee(abortSignal: AbortSignal) {
 
 // ✅ Can log in with newly created account
 // ✅ Can log in with existing account
-export type LoginResponseObject = {
-  sessionId: string;
-  user: User;
-  classroomsDict: {[cid: string]: Classroom};
-  lecturesDict: {[lid: string]: Lecture};
-  widgetDict: {[wid: string]: Widget};
-};
 export function loginService(
   abortSignal: AbortSignal,
   payload: {username: string; password: string}
