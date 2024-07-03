@@ -18,6 +18,7 @@ import classNames from "classnames/bind";
 import styles from "./Login.module.scss";
 import {Chatroom, Chatrooms} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
+import {c} from "vite/dist/node/types.d-aGj9QkWt";
 
 const cx = classNames.bind(styles);
 
@@ -30,6 +31,23 @@ const Login = () => {
 
   const [usernameError, setUsernameError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
+
+  useEffect(() => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        if (loading) return;
+        if (event.repeat) return;
+        await login();
+      }
+    };
+    // Add event listener for keydown
+    window.addEventListener("keydown", handleKeyDown);
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [login]);
+
   function reset(): void {
     setUsername("");
     setPassword("");
@@ -126,7 +144,6 @@ const Login = () => {
 
     for (let wid in responseObj.widgetDict) {
       let widget = responseObj.widgetDict[wid];
-      console.log(widget.content);
       responseObj.widgetDict[wid].content = JSON.parse(
         widget.content as string
       );

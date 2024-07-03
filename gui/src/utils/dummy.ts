@@ -112,87 +112,75 @@ let widgets = {
     "dum-username-wid-lxu4el0kwcyyfcov1vq": {
       id: "dum-username-wid-lxu4el0kwcyyfcov1vq",
       type: 0,
-      content: {goals: []},
+      content: `{"goals": []}`,
     },
     "dum-username-wid-lxu4elg2lfnarfers8": {
       id: "dum-username-wid-lxu4elg2lfnarfers8",
       type: 1,
-      content: {
-        headings: ["週目", "目標", "教材"],
-        rows: [{週目: "1", 目標: "畢卡索", 教材: "漢字ドリル第1章"}],
-      },
+      content: `{
+        "headings": ["週目", "目標", "教材"],
+        "rows": [{"週目": "1", "目標": "畢卡索", "教材": "漢字ドリル第1章"}]
+      }`,
     },
     "dum-username-wid-lxu4em4t3ljnn4ddb3r": {
       id: "dum-username-wid-lxu4em4t3ljnn4ddb3r",
       type: 2,
-      content: {note: "你好呀"},
+      content: '{"note": "你好呀"}',
     },
     "dum-username-wid-lxu4fakw3fckulw2l1b": {
       id: "dum-username-wid-lxu4fakw3fckulw2l1b",
       type: 2,
-      content: {note: ""},
+      content: '{"note": ""}',
     },
     "dum-username-wid-lxu4fbgulel7u60vjol": {
       id: "dum-username-wid-lxu4fbgulel7u60vjol",
       type: 1,
-      content: {
-        headings: ["週目", "目標", "教材"],
-        rows: [
-          {週目: "1", 目標: "基本的な漢字の習得", 教材: "漢字ドリル第1章"},
-        ],
-      },
+      content: `{
+        "headings": ["週目", "目標", "教材"],
+        "rows": [
+          {"週目": "1", "目標": "基本的な漢字の習得", "教材": "漢字ドリル第1章"}
+        ]
+      }`,
     },
     "dum-username-wid-lxu4fne0habpt5sqpks": {
       id: "dum-username-wid-lxu4fne0habpt5sqpks",
       type: 0,
-      content: {goals: []},
+      content: `{"goals": []}`,
     },
     "dum-username-wid-lxu4fo90t6q5nmg4wxs": {
       id: "dum-username-wid-lxu4fo90t6q5nmg4wxs",
       type: 1,
-      content: {
-        headings: ["週目", "目標", "教材"],
-        rows: [
-          {週目: "1", 目標: "基本的な漢字の習得", 教材: "漢字ドリル第1章"},
-        ],
-      },
+      content: `{
+        "headings": ["週目", "目標", "教材"],
+        "rows": [
+          {"週目": "1", "目標": "基本的な漢字の習得", "教材": "漢字ドリル第1章"}
+        ]
+      }`,
     },
     "dum-username-wid-lxu4fomft5jcfmifz3c": {
       id: "dum-username-wid-lxu4fomft5jcfmifz3c",
       type: 2,
-      content: {note: ""},
+      content: `{"note": ""}`,
     },
     "dum-username-wid-lxu4fpoexzcylwyebkr": {
       id: "dum-username-wid-lxu4fpoexzcylwyebkr",
       type: 3,
-      content: {},
+      content: `{}`,
     },
     "dum-username-wid-lxu4g9fh5ayjtgihsqo": {
       id: "dum-username-wid-lxu4g9fh5ayjtgihsqo",
       type: 1,
-      content: {
-        headings: ["週目", "目標", "教材"],
-        rows: [
-          {週目: "1", 目標: "基本的な漢字の習得", 教材: "漢字ドリル第1章"},
-        ],
-      },
+      content: `{
+        "headings": ["週目", "目標", "教材"],
+        "rows": [
+          {"週目": "1", "目標": "基本的な漢字の習得", "教材": "漢字ドリル第1章"}
+        ]
+      }`,
     },
   },
   current: "dum-username-wid-lxu4g9fh5ayjtgihsqo",
   unsaved: {},
 };
-
-let chatrooms = {
-  "dum-username-chatroom-lxu4e0ar5bk5nztua7": {
-    id: "dum-username-chatroom-lxu4e0ar5bk5nztua7",
-    messages: [],
-  },
-  "dum-username-chatroom-lxu4ehnpjhxo7es2c3r": {
-    id: "dum-username-chatroom-lxu4ehnpjhxo7es2c3r",
-    messages: [],
-  },
-};
-
 export const dummyLoginData: LoginResponseObject = {
   sessionId: "ENCRYPTED STUFF",
   user: dummyUser,

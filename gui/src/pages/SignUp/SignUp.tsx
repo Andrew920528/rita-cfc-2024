@@ -22,6 +22,24 @@ const SignUp = () => {
 
   const navigate = useNavigate();
   const {apiHandler, loading} = useApiHandler();
+  useEffect(() => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        if (loading) return;
+        if (event.repeat) return;
+        console.log("Enter key pressed");
+        await signup();
+      }
+    };
+
+    // Add event listener for keydown
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [signup]);
   function reset(): void {
     setUsername("");
     setPassword("");
@@ -31,7 +49,7 @@ const SignUp = () => {
     setConfirmPasswordError("");
   }
 
-  function validateLogin(): boolean {
+  function validateSignup(): boolean {
     let validate = true;
     // username cannot contain spaces
 
@@ -48,9 +66,9 @@ const SignUp = () => {
       setUsernameError("使用者名稱最多32個字元");
       validate = false;
     }
-
     if (password === "") {
       setPasswordError("請輸入密碼");
+
       validate = false;
     } else if (password.includes(" ")) {
       setPasswordError("密碼不能包含空格");
@@ -75,7 +93,7 @@ const SignUp = () => {
   }
 
   async function signup() {
-    if (!validateLogin()) return;
+    if (!validateSignup()) return;
 
     let r = await apiHandler({
       apiFunction: (s) => createUserService(s, {username, password}),

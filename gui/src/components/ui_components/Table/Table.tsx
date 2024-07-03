@@ -92,10 +92,10 @@ const Table = (props: Props & TableStyleProps) => {
         <div
           className={cx("row-controller")}
           onMouseEnter={() => {
-            console.log("enter");
+            // console.log("enter");
           }}
           onMouseLeave={() => {
-            console.log("leave");
+            // console.log("leave");
           }}
         ></div>
         {props.content.map((row, rowIndex) => (
@@ -115,10 +115,10 @@ const Table = (props: Props & TableStyleProps) => {
             <div
               className={cx("row-controller")}
               onMouseEnter={() => {
-                console.log("enter");
+                // console.log("enter");
               }}
               onMouseLeave={() => {
-                console.log("leave");
+                // console.log("leave");
               }}
             ></div>
           </div>
