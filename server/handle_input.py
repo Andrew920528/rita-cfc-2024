@@ -13,9 +13,14 @@ from langchain_ibm import WatsonxLLM
 from dotenv import load_dotenv
 import os
 import json
+"""
+Andrew:
+/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/vector-stores/kang_math_5th_1st_vector_store_with_info
+/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/.env
+"""
 
-embedding_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\vector-stores\kang_math_5th_1st_vector_store_with_info"
-dotenv_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\.env"
+embedding_path = r"/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/vector-stores/kang_math_5th_1st_vector_store_with_info"
+dotenv_path = r"/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/.env"
 
 API_KEY = ''
 URL = ''
@@ -129,8 +134,7 @@ def llm_handle_input(input):
     qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
 
     response = qa.run(create_prompt(input))
-
-    return extract_json_as_dict(response);
+    return extract_json_as_dict(response)
 
 def extract_json_as_dict(full_string):
     # Find the starting and ending points of the JSON portion

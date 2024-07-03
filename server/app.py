@@ -21,7 +21,7 @@ def message_rita():
     classroomId = request.json['classroomId']
     watsonxRequest = getWatsonxRequest(prompt, widget, lectureId, classroomId)
 
-    llmHandleInput = llm_handle_input(watsonxRequest);
+    llmHandleInput = llm_handle_input(watsonxRequest)
 
     # return watsonxResponse
     return llmHandleInput

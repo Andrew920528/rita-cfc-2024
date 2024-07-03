@@ -61,6 +61,8 @@ const WidgetFrame = ({
           widgetId: widgetId,
           lectureId: lectures.current,
         }),
+      debug: true,
+      identifier: "deleteWidget",
     });
     if (r.status === API_ERROR) {
       return;

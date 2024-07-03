@@ -179,6 +179,8 @@ const SaveGroup = () => {
             username: user.username,
             schedule: JSON.stringify(user.schedule),
           }),
+        debug: true,
+        identifier: "updateUserService",
       });
       if (r.status === API_ERROR) {
         // TODO Failed to save toast
@@ -187,21 +189,25 @@ const SaveGroup = () => {
       dispatch(UserServices.actions.saveSchedule());
     }
     // save all widgets here
-    r = await apiHandler({
-      apiFunction: (s) =>
-        updateWidgetBulkService(s, {
-          widgetId: Object.keys(unsavedWidgets),
-          content: Object.keys(unsavedWidgets).map((w: string) => {
-            let content = widgetDict[w].content;
-            return JSON.stringify(content);
+    if (Object.keys(unsavedWidgets).length !== 0) {
+      r = await apiHandler({
+        apiFunction: (s) =>
+          updateWidgetBulkService(s, {
+            widgetIds: Object.keys(unsavedWidgets),
+            contents: Object.keys(unsavedWidgets).map((w: string) => {
+              let content = widgetDict[w].content;
+              return JSON.stringify(content);
+            }),
           }),
-        }),
-    });
-    if (r.status === API_ERROR) {
-      // TODO Failed to save toast
-      return;
+        debug: true,
+        identifier: "updateWidgetBulkService",
+      });
+      if (r.status === API_ERROR) {
+        // TODO Failed to save toast
+        return;
+      }
+      dispatch(WidgetsServices.actions.saveAll());
     }
-    dispatch(WidgetsServices.actions.saveAll());
   };
   return (
     <div className={cx("save-group")}>
@@ -217,8 +223,8 @@ const SaveGroup = () => {
       <IconButton
         mode={"on-dark"}
         icon={<Save size={20} />}
-        onClick={() => {
-          saveAll();
+        onClick={async () => {
+          await saveAll();
         }}
         disabled={
           (Object.keys(unsavedWidgets).length === 0 && !scheduleChanged) ||

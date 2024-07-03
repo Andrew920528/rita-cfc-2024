@@ -1,1 +1,7 @@
-{}
+{
+    "host": "",
+    "databaseuser": "",
+    "databasepassword": "",
+    "database": "",
+    "port": ""
+}

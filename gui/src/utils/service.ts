@@ -6,7 +6,6 @@ import {User} from "../schema/user";
 import {Classroom} from "../schema/classroom";
 import {Widget} from "../schema/widget";
 import {Lecture} from "../schema/lecture";
-import {SESSION_ID} from "../global/global.json";
 import {dummyLoginData} from "./dummy";
 type ResponseData = {
   status: typeof API_ERROR | typeof API_SUCCESS;
@@ -147,10 +146,6 @@ export function tryTrySee(abortSignal: AbortSignal) {
   });
 }
 
-// 😍 = Calls API with correct behavior
-// 👀 = Requires Attention
-
-// 😍
 // ✅ Can log in with newly created account
 // ✅ Can log in with existing account
 export type LoginResponseObject = {
@@ -183,9 +178,8 @@ export function loginService(
   });
 }
 
-// 😍
-// ✅ Can log in with newly created account
-// ✅ Can log in with existing account
+// ✅ Can create account via signup gui
+// 👀 Pass in placeholder values when first create user
 export function createUserService(
   abortSignal: AbortSignal,
   payload: {
@@ -216,7 +210,7 @@ export function createUserService(
   });
 }
 
-// 👀
+// ✅ Can update account via header (top right)
 export function updateUserService(
   abortSignal: AbortSignal,
   payload: {
@@ -240,12 +234,15 @@ export function updateUserService(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
     signal: abortSignal,
   });
 }
 
-// 👀
+// ✅ Can create classroom via navbar
 export function createClassroomService(
   abortSignal: AbortSignal,
   payload: {
@@ -274,12 +271,15 @@ export function createClassroomService(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
     signal: abortSignal,
   });
 }
 
-// 👀
+// ✅ Can update classroom via header
 export function updateClassroomService(
   abortSignal: AbortSignal,
   payload: {
@@ -306,12 +306,15 @@ export function updateClassroomService(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
     signal: abortSignal,
   });
 }
 
-// 👀
+// ✅ Can create lecture via header dropdown
 export function createLectureService(
   abortSignal: AbortSignal,
   payload: {
@@ -335,12 +338,15 @@ export function createLectureService(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
     signal: abortSignal,
   });
 }
 
-// 🤖
+// ✅ Can delete lecture via header dropdown
 export function deleteLectureService(
   abortSignal: AbortSignal,
   payload: {
@@ -357,16 +363,23 @@ export function deleteLectureService(
   }
   const endPoint = "/delete-lecture";
   return fetch(BASE_URL_DEV + endPoint, {
-    method: "POST",
+    method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
     signal: abortSignal,
   });
 }
 
-// 🤖
+// ✅ Can create note widget without issue
+// ✅ Can create semester goal widget without issue
+// ✅ Can create semester plan widget without issue
+// 👀 Semester plan widget cannot take null value (login not properly passed in)
+// ✅ Content properly parsed in when refresh
 export function createWidgetService(
   abortSignal: AbortSignal,
   payload: {
@@ -389,12 +402,16 @@ export function createWidgetService(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
     signal: abortSignal,
   });
 }
 
-// 🤖
+// ✅ Can delete widget via WidgetFrame
+// 👀 Havn't tested schedule
 export function deleteWidgetService(
   abortSignal: AbortSignal,
   payload: {
@@ -412,47 +429,25 @@ export function deleteWidgetService(
 
   const endPoint = "/delete-widget";
   return fetch(BASE_URL_DEV + endPoint, {
-    method: "POST",
+    method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
     signal: abortSignal,
   });
 }
 
-// 🤖 * Currently unused
-export function updateWidgetService(
-  abortSignal: AbortSignal,
-  payload: {
-    widgetId: string;
-    content: string; // stringify json
-  }
-) {
-  if (INDEPENDENT_MODE) {
-    const response = {
-      status: API_SUCCESS,
-      data: "widget updated",
-    };
-    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
-  }
-  const endPoint = "/update-widget";
-  return fetch(BASE_URL_DEV + endPoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
-    signal: abortSignal,
-  });
-}
-
-// 🤖
+// ✅ Can update widgets properly
+// 👀 Havn't tested schedule
 export function updateWidgetBulkService(
   abortSignal: AbortSignal,
   payload: {
-    widgetId: string[];
-    content: string[]; // stringify json
+    widgetIds: string[];
+    contents: string[]; // stringify json
   }
 ) {
   if (INDEPENDENT_MODE) {
@@ -469,7 +464,10 @@ export function updateWidgetBulkService(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
     signal: abortSignal,
   });
 }
@@ -505,7 +503,10 @@ export function messageRitaService(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({sessionId: SESSION_ID, ...payload}), // Convert data object to JSON string
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
     signal: abortSignal,
   });
 }

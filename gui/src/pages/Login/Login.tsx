@@ -64,8 +64,8 @@ const Login = () => {
       return;
     }
     // parse to global state
-    // TODO: Write sessionId to global.json
     let responseObj = r.data as LoginResponseObject;
+    sessionStorage.setItem("sessionId", responseObj.sessionId);
     dispatch(UserServices.actions.parseLogin(responseObj.user));
 
     let classroomsDict = responseObj.classroomsDict;
@@ -123,6 +123,18 @@ const Login = () => {
     ) {
       currentWidget = responseObj.lecturesDict[currentLecture].widgetIds[0];
     }
+
+    for (let wid in responseObj.widgetDict) {
+      let widget = responseObj.widgetDict[wid];
+      console.log(widget.content);
+      responseObj.widgetDict[wid].content = JSON.parse(
+        widget.content as string
+      );
+      responseObj.widgetDict[wid].type = parseInt(
+        widget.type as unknown as string
+      );
+    }
+
     dispatch(
       WidgetsServices.actions.parseLogin({
         dict: responseObj.widgetDict,

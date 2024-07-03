@@ -75,7 +75,8 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
   const username = useTypedSelector((state) => state.User.username);
   const addWidget = useCreateWidget();
   const {apiHandler, loading} = useApiHandler();
-
+  // TODO DELETE
+  const widgets = useTypedSelector((state) => state.Widgets);
   async function createWidget() {
     const newWidgetId = username + "-wid-" + generateId();
     let r = await apiHandler({
@@ -84,7 +85,7 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
           widgetId: newWidgetId,
           type: widgetType,
           lectureId: lectures.current,
-          content: "",
+          content: JSON.stringify(initWidget(newWidgetId, widgetType).content), // TODO Needs to save initial content
         }),
       debug: true,
       identifier: "createWidget",
@@ -97,6 +98,7 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
       lectureId: lectures.current,
       widgetId: newWidgetId,
     });
+    console.log(widgets.unsaved);
   }
   return (
     <div className={cx("widget-card")}>
