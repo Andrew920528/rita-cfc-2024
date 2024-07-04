@@ -33,6 +33,7 @@ import {
 } from "../../utils/service";
 import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
+import {useNavigate} from "react-router-dom";
 
 const cx = classNames.bind(styles);
 type HeaderProps = {
@@ -236,6 +237,7 @@ const SaveGroup = () => {
 
 const AccountButton = () => {
   const user = useTypedSelector((state) => state.User);
+  const navigate = useNavigate();
   const AccountContent = ({
     name = "廖偉良",
     occupation = "級任老師",
@@ -278,6 +280,8 @@ const AccountButton = () => {
           mode={"on-dark-2"}
           onClick={() => {
             // TODO: logout
+            sessionStorage.removeItem("sessionId");
+            navigate("/login");
             console.log("Log out");
           }}
         />

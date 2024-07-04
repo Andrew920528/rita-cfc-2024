@@ -114,7 +114,7 @@ const SignUp = () => {
       // failed to create user
       return;
     }
-
+    // TODO toast account created, please log in
     reset();
     navigate("/login");
   }
