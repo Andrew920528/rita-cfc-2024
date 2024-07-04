@@ -50,20 +50,25 @@ const Chatroom = ({}: ChatroomProps) => {
       })
     );
     setText("");
+
+    let payload = {
+      prompt: text,
+      widget:
+        widgets.current === EMPTY_ID
+          ? undefined
+          : {
+              id: widgets.current,
+              type: widgets.dict[widgets.current].type,
+              content: JSON.stringify(widgets.dict[widgets.current]),
+            },
+      lectureId: lecture.id,
+      classroomId: classroomId,
+    };
+    console.log(payload);
     let r = await apiHandler({
       apiFunction: (s: AbortSignal) =>
         messageRitaService(s, {
-          prompt: text,
-          widget:
-            widgets.current === EMPTY_ID
-              ? undefined
-              : {
-                  id: widgets.current,
-                  type: widgets.dict[widgets.current].type,
-                  content: JSON.stringify(widgets.dict[widgets.current]),
-                },
-          lectureId: lecture.id,
-          classroomId: classroomId,
+          ...payload,
         }),
       debug: true,
       identifier: "messageRita",

@@ -57,7 +57,6 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
     let r = await apiHandler({
       apiFunction: (c) =>
         updateUserService(c, {
-          username: user.username,
           alias: alias.trim(),
           school: school.trim(),
           occupation: occupation.trim(),

@@ -110,7 +110,8 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     } else if (
       new Set<string>(Object.values(classrooms.dict).map((c) => c.name)).has(
         name.trim()
-      )
+      ) &&
+      props.action === "create"
     ) {
       setNameError("課堂名稱已存在");
       validate = false;
@@ -156,7 +157,6 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     let r = await apiHandler({
       apiFunction: (s) =>
         createClassroomService(s, {
-          username: user.username,
           ...classroomData,
         }),
       debug: true,

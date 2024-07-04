@@ -176,7 +176,6 @@ const SaveGroup = () => {
       r = await apiHandler({
         apiFunction: (s) =>
           updateUserService(s, {
-            username: user.username,
             schedule: JSON.stringify(user.schedule),
           }),
         debug: true,

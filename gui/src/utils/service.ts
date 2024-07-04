@@ -172,7 +172,6 @@ export function loginService(
 }
 
 // ✅ Can create account via signup gui
-// 👀 Pass in placeholder values when first create user
 export function createUserService(
   abortSignal: AbortSignal,
   payload: {
@@ -207,7 +206,6 @@ export function createUserService(
 export function updateUserService(
   abortSignal: AbortSignal,
   payload: {
-    username: string;
     alias?: string;
     school?: string;
     occupation?: string;
@@ -239,7 +237,6 @@ export function updateUserService(
 export function createClassroomService(
   abortSignal: AbortSignal,
   payload: {
-    username: string;
     classroomId: string;
     classroomName: string;
     subject: string;
@@ -371,7 +368,7 @@ export function deleteLectureService(
 // ✅ Can create note widget without issue
 // ✅ Can create semester goal widget without issue
 // ✅ Can create semester plan widget without issue
-// 👀 Semester plan widget cannot take null value (login not properly passed in)
+// ✅ Can create schedule widget without issue
 // ✅ Content properly parsed in when refresh
 export function createWidgetService(
   abortSignal: AbortSignal,
@@ -404,7 +401,6 @@ export function createWidgetService(
 }
 
 // ✅ Can delete widget via WidgetFrame
-// 👀 Havn't tested schedule
 export function deleteWidgetService(
   abortSignal: AbortSignal,
   payload: {
@@ -435,7 +431,6 @@ export function deleteWidgetService(
 }
 
 // ✅ Can update widgets properly
-// 👀 Havn't tested schedule
 export function updateWidgetBulkService(
   abortSignal: AbortSignal,
   payload: {
