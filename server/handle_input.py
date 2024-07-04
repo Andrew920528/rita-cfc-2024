@@ -79,7 +79,7 @@ def create_prompt(input):
                 {"週目": "2", "目標": "第一次段考", "教材": "無"},
                 {"週目": "3", "目標": "讓學生學習多位小數的加減及日常應用", "教材": "1-3"},
                 {"週目": "4", "目標": "讓學生了解小數與概數", "教材": "無"},
-                {"週目": "5", "目標": "第二次段考", "教材": "1-3, 1-4"},
+                {"週目": "5", "目標": "第二次段考", "教材": "1-3, 1-4"}
             ]
         }
     }
@@ -137,6 +137,7 @@ def llm_handle_input(input):
     return extract_json_as_dict(response)
 
 def extract_json_as_dict(full_string):
+    print(full_string)
     # Find the starting and ending points of the JSON portion
     start_index = full_string.find('{')
     end_index = full_string.rfind('}') + 1

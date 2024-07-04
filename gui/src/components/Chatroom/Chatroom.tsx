@@ -75,7 +75,7 @@ const Chatroom = ({}: ChatroomProps) => {
     });
 
     let status = r.status;
-    let responseMessage = r.data;
+    let responseMessage = r.data.reply;
 
     if (status === API_ERROR) return;
     dispatch(
