@@ -10,7 +10,7 @@ import {loginWithSidService, useApiHandler} from "./utils/service";
 import {API} from "./global/constants";
 import {useAppDispatch, useTypedSelector} from "./store/store";
 import {LoginStatusServices} from "./features/LoginStatusSlice";
-import LoginBuffer from "./pages/LoginBuffer/LoginBuffer";
+import Redirect from "./pages/Redirect/Redirect";
 
 function App() {
   const loginParseState = useLoginParseState();
@@ -85,11 +85,7 @@ function App() {
           <Route
             path="/redirecting"
             element={
-              loginStatus.loading ? (
-                <LoginBuffer />
-              ) : (
-                <Navigate to="/" replace />
-              )
+              loginStatus.loading ? <Redirect /> : <Navigate to="/" replace />
             }
           />
 
