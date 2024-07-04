@@ -1,16 +1,10 @@
-import {useEffect, useRef, useState} from "react";
+import {ReactNode, useEffect, useRef, useState} from "react";
 import "./style/main.scss";
 // import {tryTrySee} from "./utils/service";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-  useNavigate,
-} from "react-router-dom";
+import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import {useLoginParseState} from "./store/globalActions";
 import {loginWithSidService, useApiHandler} from "./utils/service";
 import {API} from "./global/constants";
@@ -25,7 +19,6 @@ function App() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log("app rendered");
     async function loginWithSid() {
       // console.log(isMounted.current);
       const sid = sessionStorage.getItem("sessionId");
@@ -69,40 +62,26 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={
-              loginStatus.loading ? (
-                <Navigate to="/redirecting" replace />
-              ) : loginStatus.complete ? (
-                <Home />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
+            element={RouteHandler({
+              element: <Home />,
+              rule: "after-login",
+            })}
           />
           <Route
             path="/login"
-            element={
-              loginStatus.loading ? (
-                <Navigate to="/redirecting" replace />
-              ) : loginStatus.complete ? (
-                <Navigate to="/" replace />
-              ) : (
-                <Login />
-              )
-            }
+            element={RouteHandler({
+              element: <Login />,
+              rule: "before-login",
+            })}
           />
           <Route
             path="/signup"
-            element={
-              loginStatus.loading ? (
-                <Navigate to="/redirecting" replace />
-              ) : loginStatus.complete ? (
-                <Navigate to="/" replace />
-              ) : (
-                <SignUp />
-              )
-            }
+            element={RouteHandler({
+              element: <SignUp />,
+              rule: "before-login",
+            })}
           />
+
           <Route
             path="/redirecting"
             element={
@@ -120,5 +99,35 @@ function App() {
     </div>
   );
 }
+
+type RouteProps = {
+  element: ReactNode;
+  rule: "after-login" | "before-login";
+};
+const RouteHandler = ({element, rule}: RouteProps) => {
+  const loginStatus = useTypedSelector((state) => state.LoginStatus);
+
+  if (rule === "before-login") {
+    if (loginStatus.loading) {
+      return <Navigate to="/redirecting" replace />;
+    } else {
+      if (loginStatus.complete) {
+        return <Navigate to="/" replace />;
+      } else {
+        return element;
+      }
+    }
+  } else if (rule === "after-login") {
+    if (loginStatus.loading) {
+      return <Navigate to="/redirecting" replace />;
+    } else {
+      if (loginStatus.complete) {
+        return element;
+      } else {
+        return <Navigate to="/login" replace />;
+      }
+    }
+  }
+};
 
 export default App;

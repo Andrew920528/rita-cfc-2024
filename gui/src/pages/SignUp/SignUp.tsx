@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import IconButton from "../../components/ui_components/IconButton/IconButton";
 import {Checkmark, Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../../components/ui_components/Textbox/Textbox";
-import Login from "../Login/Login";
 import {Link, useNavigate} from "react-router-dom";
 import {createUserService, useApiHandler} from "../../utils/service";
 import {API} from "../../global/constants";
@@ -12,7 +11,6 @@ import {initSchedule} from "../../schema/schedule";
 
 const cx = classNames.bind(styles);
 const SignUp = () => {
-  //let navigate = useNavigate();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState("");

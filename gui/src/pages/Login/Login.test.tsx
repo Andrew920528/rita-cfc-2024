@@ -11,7 +11,6 @@ jest.mock("../../global/constants", () => {
     API: {
       ERROR: "error",
       SUCCESS: "success",
-      SESSION_EXPIRED: "session_expired",
       ABORTED: "aborted",
     },
   };

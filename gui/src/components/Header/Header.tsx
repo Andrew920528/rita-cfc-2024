@@ -33,7 +33,6 @@ import {
 } from "../../utils/service";
 import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
-import {useNavigate} from "react-router-dom";
 import {LoginStatusServices} from "../../features/LoginStatusSlice";
 
 const cx = classNames.bind(styles);
@@ -238,7 +237,6 @@ const SaveGroup = () => {
 
 const AccountButton = () => {
   const user = useTypedSelector((state) => state.User);
-  const navigate = useNavigate();
   const AccountContent = ({
     name = "廖偉良",
     occupation = "級任老師",

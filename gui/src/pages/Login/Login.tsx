@@ -2,18 +2,12 @@ import {useEffect, useState} from "react";
 import IconButton from "../../components/ui_components/IconButton/IconButton";
 import {Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../../components/ui_components/Textbox/Textbox";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {loginService, useApiHandler} from "../../utils/service";
 import {API, EMPTY_ID} from "../../global/constants";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {UserServices} from "../../features/UserSlice";
-import {ClassroomsServices} from "../../features/ClassroomsSlice";
-import {LecturesServices} from "../../features/LectureSlice";
-import {WidgetsServices} from "../../features/WidgetsSlice";
 import classNames from "classnames/bind";
 import styles from "./Login.module.scss";
-import {ChatroomsServices} from "../../features/ChatroomsSlice";
-import {initSchedule} from "../../schema/schedule";
 import {useLoginParseState} from "../../store/globalActions";
 import {LoginStatusServices} from "../../features/LoginStatusSlice";
 
@@ -22,7 +16,6 @@ const cx = classNames.bind(styles);
 const Login = () => {
   const {apiHandler, loading} = useApiHandler();
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const loginParseState = useLoginParseState();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
