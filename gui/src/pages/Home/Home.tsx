@@ -14,15 +14,9 @@ const Home = () => {
   const user = useTypedSelector((state) => state.User);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // check for username instead of sessionId
-    // because we only display this page when data
-    // are parsed correctly
-    // if (!user.username) {
-    //   navigate("/login");
-    // }
-    console.log("home");
-  }, []);
+  if (!user.username) {
+    return;
+  }
   return (
     <div className={cx("home")}>
       <Header openNav={openNav} setOpenNav={setOpenNav} />

@@ -42,8 +42,9 @@ function App() {
       });
 
       if (r.status === API.ABORTED) {
-        // in this scenario, abort is only possible when page is refreshed,
+        // In this scenario, abort is only possible when page is refreshed,
         // therefore we'll rely on next render to set loading status
+        // This is to deal with strict mode, and is unlikely to happen in practice
         return;
       }
       if (r.status === API.ERROR) {
