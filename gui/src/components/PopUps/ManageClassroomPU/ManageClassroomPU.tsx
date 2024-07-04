@@ -11,7 +11,7 @@ import {
   useCreateLecture,
 } from "../../../store/globalActions";
 import {generateId, isNumeric} from "../../../utils/util";
-import {API_ERROR, EMPTY_ID} from "../../../global/constants";
+import {API, EMPTY_ID} from "../../../global/constants";
 import {
   createClassroomService,
   createLectureService,
@@ -162,7 +162,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       debug: true,
       identifier: "createClassroom",
     });
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
     let lectureData = {
@@ -176,7 +176,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       debug: true,
       identifier: "createLecture",
     });
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
     createClassroomState(classroomData);
@@ -216,7 +216,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       debug: true,
       identifier: "editClassroom",
     });
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
     // update classroom to classrooms dict

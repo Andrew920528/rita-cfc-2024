@@ -10,7 +10,7 @@ import NoteWidget from "../NoteWidget/NoteWidget";
 import ScheduleWidget from "../ScheduleWidget/ScheduleWidget";
 import {useDeleteWidget} from "../../../store/globalActions";
 import {deleteWidgetService, useApiHandler} from "../../../utils/service";
-import {API_ERROR} from "../../../global/constants";
+import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./WidgetFrame.module.scss";
 
@@ -64,7 +64,7 @@ const WidgetFrame = ({
       debug: true,
       identifier: "deleteWidget",
     });
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
     deleteWidget({lectureId: lectures.current, widgetId: widgetId});

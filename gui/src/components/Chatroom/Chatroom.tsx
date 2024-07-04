@@ -8,8 +8,8 @@ import {ChatMessage as ChatMessageT} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {mimicApi} from "../../utils/util";
 import {messageRitaService, useApiHandler} from "../../utils/service";
-import {debug} from "console";
-import {EMPTY_ID, API_ERROR} from "../../global/constants";
+import {debug, error} from "console";
+import {EMPTY_ID, API} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./Chatroom.module.scss";
 
@@ -38,6 +38,7 @@ const Chatroom = ({}: ChatroomProps) => {
   const [collapsed, setCollapsed] = useState(false);
   // const [readyToSend, setReadyToSend] = useState(true);
   const [text, setText] = useState("");
+  const [ritaError, setRitaError] = useState("");
   async function sendMessage(text: string) {
     let newMessage = {
       text: text,
@@ -50,6 +51,7 @@ const Chatroom = ({}: ChatroomProps) => {
       })
     );
     setText("");
+    setRitaError("");
 
     let payload = {
       prompt: text,
@@ -64,7 +66,7 @@ const Chatroom = ({}: ChatroomProps) => {
       lectureId: lecture.id,
       classroomId: classroomId,
     };
-    console.log(payload);
+
     let r = await apiHandler({
       apiFunction: (s: AbortSignal) =>
         messageRitaService(s, {
@@ -75,16 +77,38 @@ const Chatroom = ({}: ChatroomProps) => {
     });
 
     let status = r.status;
-    let responseMessage = r.data.reply;
+    if (status === API.ERROR) {
+      setRitaError(r.data);
+      return;
+    } else if (r.status === API.ABORTED) {
+      return;
+    }
+    handleReply(r); // FIXME should be r.data (wait for jim to change)
+  }
 
-    if (status === API_ERROR) return;
+  const handleReply = (data: any) => {
+    let reply = data.reply;
+    let widgetContent = data.content;
+    let widgetId = data.widgetId;
+    let messageObj = {
+      text: reply,
+      sender: "Rita",
+    };
+
     dispatch(
       ChatroomsServices.actions.addMessage({
         chatroomId: chatroom.id,
-        message: responseMessage,
+        message: messageObj,
       })
     );
-  }
+
+    // if widgetId matches
+    // and widgetContent is different
+    // and widgetContent has the correct data structure
+    // then modify the widget
+
+    // send a message if something is changed
+  };
 
   if (!chatroom) return <></>;
   return (
@@ -107,7 +131,11 @@ const Chatroom = ({}: ChatroomProps) => {
         />
       </div>
       <div className={cx("chatroom-content", {collapsed: collapsed})}>
-        <ChatroomBody messages={chatroom.messages} loading={waitingForReply} />
+        <ChatroomBody
+          messages={chatroom.messages}
+          loading={waitingForReply}
+          ritaError={ritaError}
+        />
         <div className={cx("chatroom-footer")}>
           <Textbox
             flex={true}
@@ -149,8 +177,9 @@ const ChatMessage = ({text, sender}: ChatMessageT) => {
 type ChatroomBodyProps = {
   messages: ChatMessageT[];
   loading: boolean;
+  ritaError: string;
 };
-const ChatroomBody = ({messages, loading}: ChatroomBodyProps) => {
+const ChatroomBody = ({messages, loading, ritaError}: ChatroomBodyProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const scrollToBottom = () => {
@@ -165,7 +194,10 @@ const ChatroomBody = ({messages, loading}: ChatroomBodyProps) => {
       {messages.map((message, index) => {
         return <ChatMessage {...message} key={index} />;
       })}
-      {loading && <p className={cx("--label")}>Waiting for response</p>}
+      {loading && <p className={cx("--label")}>回覆中，請稍等</p>}
+      {ritaError && (
+        <p className={cx("--label", "--error")}>出了點問題。請再試一次。</p>
+      )}
     </div>
   );
 };

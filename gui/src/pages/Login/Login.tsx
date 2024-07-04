@@ -4,7 +4,7 @@ import {Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../../components/ui_components/Textbox/Textbox";
 import {Link, useNavigate} from "react-router-dom";
 import {loginService, useApiHandler} from "../../utils/service";
-import {API_ERROR, EMPTY_ID} from "../../global/constants";
+import {API, EMPTY_ID} from "../../global/constants";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {UserServices} from "../../features/UserSlice";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
@@ -71,7 +71,7 @@ const Login = () => {
       identifier: "login",
     });
 
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       if (r.data === "Username or password is incorrect. Please try again.") {
         setUsernameError("使用者名稱或密碼錯誤");
         setPasswordError("使用者名稱或密碼錯誤");

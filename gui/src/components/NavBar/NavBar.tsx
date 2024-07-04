@@ -8,7 +8,7 @@ import {LecturesServices} from "../../features/LectureSlice";
 import {WidgetType, initWidget, widgetBook} from "../../schema/widget";
 import {useCreateWidget} from "../../store/globalActions";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
-import {API_ERROR, EMPTY_ID} from "../../global/constants";
+import {API, EMPTY_ID} from "../../global/constants";
 import {generateId} from "../../utils/util";
 import {createWidgetService, useApiHandler} from "../../utils/service";
 import classNames from "classnames/bind";
@@ -90,7 +90,7 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
       debug: true,
       identifier: "createWidget",
     });
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
     addWidget({

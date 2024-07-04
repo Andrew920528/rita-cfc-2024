@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 import {formatTime, mimicApi} from "./util";
-import {API_SUCCESS, API_ERROR, INDEPENDENT_MODE} from "../global/constants";
+import {API, INDEPENDENT_MODE} from "../global/constants";
 
 import {User} from "../schema/user";
 import {Classroom} from "../schema/classroom";
@@ -8,7 +8,7 @@ import {Widget} from "../schema/widget";
 import {Lecture} from "../schema/lecture";
 import {dummyLoginData} from "./dummy";
 type ResponseData = {
-  status: typeof API_ERROR | typeof API_SUCCESS;
+  status: API;
   data: any;
 };
 
@@ -92,7 +92,7 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
         if (!r.ok) throw new Error("Server error" + r.statusText);
 
         let body: ResponseData = await r.json();
-        if (body.status === API_ERROR) throw new Error(body.data);
+        if (body.status === API.ERROR) throw new Error(body.data);
 
         if (debug) {
           console.log(
@@ -103,18 +103,22 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
         return sideEffect(body);
       } catch (err) {
         let msg;
+        let stat;
         if (err instanceof DOMException && err.name === "AbortError") {
           msg = "Request aborted";
+          stat = API.ABORTED;
           if (debug) console.warn(msg);
         } else if (err instanceof Error) {
           msg = err.message;
+          stat = API.ERROR;
           if (debug) console.error(msg);
         } else {
           msg = "Unknown error";
+          stat = API.ERROR;
           if (debug) console.error(msg);
         }
 
-        const errorResponse: ResponseData = {status: "error", data: msg};
+        const errorResponse: ResponseData = {status: stat, data: msg};
         return errorResponse;
       } finally {
         setLoading(false);
@@ -154,7 +158,7 @@ export function loginService(
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
-      status: API_SUCCESS,
+      status: API.SUCCESS,
       data: dummyLoginData,
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
@@ -185,7 +189,7 @@ export function createUserService(
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
-      status: API_SUCCESS,
+      status: API.SUCCESS,
       data: "User created",
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
@@ -214,7 +218,7 @@ export function updateUserService(
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
-      status: API_SUCCESS,
+      status: API.SUCCESS,
       data: "user updated",
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
@@ -249,7 +253,7 @@ export function createClassroomService(
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
-      status: API_SUCCESS,
+      status: API.SUCCESS,
       data: "classroom created",
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
@@ -284,7 +288,7 @@ export function updateClassroomService(
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
-      status: API_SUCCESS,
+      status: API.SUCCESS,
       data: "classroom updated",
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
@@ -316,7 +320,7 @@ export function createLectureService(
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
-      status: API_SUCCESS,
+      status: API.SUCCESS,
       data: "lecture created",
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
@@ -346,7 +350,7 @@ export function deleteLectureService(
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
-      status: API_SUCCESS,
+      status: API.SUCCESS,
       data: "lecture deleted",
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
@@ -381,7 +385,7 @@ export function createWidgetService(
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
-      status: API_SUCCESS,
+      status: API.SUCCESS,
       data: "widget created",
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
@@ -410,7 +414,7 @@ export function deleteWidgetService(
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
-      status: API_SUCCESS,
+      status: API.SUCCESS,
       data: "widget deleted",
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
@@ -440,7 +444,7 @@ export function updateWidgetBulkService(
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
-      status: API_SUCCESS,
+      status: API.SUCCESS,
       data: "all widgets updated",
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
@@ -475,13 +479,16 @@ export function messageRitaService(
   }
 ) {
   if (INDEPENDENT_MODE) {
-    const ritaResponse = {
-      text: "Hello, I'm Rita. You are in frontend development mode, where I am not connected to an actual AI",
-      sender: "Rita",
+    const mimicResponse = {
+      reply:
+        "Hello, I'm Rita. You are in frontend development mode, where I am not connected to an actual AI",
+      content: "",
+      widgetId: "",
     };
+
     const response = {
-      status: API_SUCCESS,
-      data: ritaResponse,
+      status: API.SUCCESS,
+      data: mimicResponse, // TODO Modify data to meet api response
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
   }

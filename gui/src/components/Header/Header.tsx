@@ -23,7 +23,7 @@ import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {UserServices} from "../../features/UserSlice";
 import {useDeleteLecture} from "../../store/globalActions";
-import {API_ERROR, EMPTY_ID} from "../../global/constants";
+import {API, EMPTY_ID} from "../../global/constants";
 import {
   deleteLectureService,
   updateClassroomService,
@@ -54,7 +54,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
           classroomId: classrooms.current,
         }),
     });
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
     deleteLectureState({lectureId: lectureId, classroomId: classrooms.current});
@@ -181,7 +181,7 @@ const SaveGroup = () => {
         debug: true,
         identifier: "updateUserService",
       });
-      if (r.status === API_ERROR) {
+      if (r.status === API.ERROR || r.status === API.ABORTED) {
         // TODO Failed to save toast
         return;
       }
@@ -201,7 +201,7 @@ const SaveGroup = () => {
         debug: true,
         identifier: "updateWidgetBulkService",
       });
-      if (r.status === API_ERROR) {
+      if (r.status === API.ERROR || r.status === API.ABORTED) {
         // TODO Failed to save toast
         return;
       }

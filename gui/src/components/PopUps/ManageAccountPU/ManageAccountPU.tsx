@@ -5,7 +5,7 @@ import PopUp, {PopUpProps} from "../PopUp/PopUp";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import {UserServices} from "../../../features/UserSlice";
 import {updateUserService, useApiHandler} from "../../../utils/service";
-import {API_ERROR} from "../../../global/constants";
+import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./ManageAccountPU.module.scss";
 
@@ -63,7 +63,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
         }),
     });
 
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       // TODO: toast error: not saved
       return;
     }
