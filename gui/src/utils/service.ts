@@ -161,9 +161,33 @@ export function loginService(
       status: API.SUCCESS,
       data: dummyLoginData,
     };
-    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+    return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/login";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify(payload), // Convert data object to JSON string
+    signal: abortSignal,
+  });
+}
+
+// ✅ Can log in when sessionId exists
+export function loginWithSidService(
+  abortSignal: AbortSignal,
+  payload: {sessionId: string}
+) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: dummyLoginData,
+    };
+    return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/login-with-sid";
   return fetch(BASE_URL_DEV + endPoint, {
     method: "POST",
     headers: {

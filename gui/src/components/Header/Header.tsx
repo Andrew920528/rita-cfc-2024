@@ -34,6 +34,7 @@ import {
 import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
 import {useNavigate} from "react-router-dom";
+import {LoginStatusServices} from "../../features/LoginStatusSlice";
 
 const cx = classNames.bind(styles);
 type HeaderProps = {
@@ -244,6 +245,8 @@ const AccountButton = () => {
     school = "松山高中",
   }) => {
     const [openManageAccountPU, setOpenManageAccountPU] = useState(false);
+    const dispatch = useAppDispatch();
+
     return (
       <div className={cx("account-content")}>
         <div className={cx("user-info")}>
@@ -279,10 +282,8 @@ const AccountButton = () => {
           icon={<Logout />}
           mode={"on-dark-2"}
           onClick={() => {
-            // TODO: logout
             sessionStorage.removeItem("sessionId");
-            navigate("/login");
-            console.log("Log out");
+            dispatch(LoginStatusServices.actions.setComplete(false));
           }}
         />
       </div>

@@ -24,6 +24,7 @@ const SignUp = () => {
   const navigate = useNavigate();
   const {apiHandler, loading} = useApiHandler();
   useEffect(() => {
+    console.log("sign up");
     const handleKeyDown = async (event: KeyboardEvent) => {
       if (event.key === "Enter") {
         if (loading) return;
@@ -66,10 +67,12 @@ const SignUp = () => {
     } else if (username.length > 32) {
       setUsernameError("使用者名稱最多32個字元");
       validate = false;
+    } else {
+      setUsernameError("");
     }
+
     if (password === "") {
       setPasswordError("請輸入密碼");
-
       validate = false;
     } else if (password.includes(" ")) {
       setPasswordError("密碼不能包含空格");
@@ -80,6 +83,8 @@ const SignUp = () => {
     } else if (password.length > 32) {
       setPasswordError("密碼最多32個字元");
       validate = false;
+    } else {
+      setPasswordError("");
     }
 
     if (confirmPassword.trim() == "") {
@@ -89,7 +94,10 @@ const SignUp = () => {
       setConfirmPasswordError("密碼不匹配");
       setPasswordError("密碼不匹配");
       validate = false;
+    } else {
+      setConfirmPasswordError("");
     }
+    console.log(validate);
     return validate;
   }
 

@@ -14,6 +14,8 @@ import classNames from "classnames/bind";
 import styles from "./Login.module.scss";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {initSchedule} from "../../schema/schedule";
+import {useLoginParseState} from "../../store/globalActions";
+import {LoginStatusServices} from "../../features/LoginStatusSlice";
 
 const cx = classNames.bind(styles);
 
@@ -21,6 +23,7 @@ const Login = () => {
   const {apiHandler, loading} = useApiHandler();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const loginParseState = useLoginParseState();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -38,6 +41,7 @@ const Login = () => {
     // Add event listener for keydown
     window.addEventListener("keydown", handleKeyDown);
     // Cleanup the event listener on component unmount
+    console.log("login");
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
@@ -76,96 +80,11 @@ const Login = () => {
         setUsernameError("使用者名稱或密碼錯誤");
         setPasswordError("使用者名稱或密碼錯誤");
       }
-
       return;
     }
-    // parse to global state
-    let responseObj = r.data;
-    sessionStorage.setItem("sessionId", responseObj.sessionId);
-
-    let user = responseObj.user;
-    if (responseObj.user.schedule) {
-      responseObj.user.schedule = JSON.parse(user.schedule as string);
-    } else {
-      responseObj.user.schedule = initSchedule;
-    }
-    dispatch(UserServices.actions.parseLogin(responseObj.user));
-
-    let classroomsDict = responseObj.classroomsDict;
-    let classrooms = responseObj.user.classroomIds;
-    for (let i = 0; i < classrooms.length; i++) {
-      let cid = classrooms[i];
-      classroomsDict[cid].lastOpenedLecture =
-        classroomsDict[cid].lectureIds.length > 0
-          ? classroomsDict[cid].lectureIds[0]
-          : EMPTY_ID;
-
-      let chatroomId = classroomsDict[cid].chatroom as string;
-      dispatch(
-        ChatroomsServices.actions.addChatroom({
-          id: chatroomId,
-          messages: [],
-        })
-      );
-    }
-    let currentClassroom =
-      responseObj.user.classroomIds.length > 0
-        ? responseObj.user.classroomIds[0]
-        : EMPTY_ID;
-    let currentChatroom =
-      currentClassroom === EMPTY_ID
-        ? EMPTY_ID
-        : classroomsDict[currentClassroom].chatroom;
-
-    dispatch(
-      ClassroomsServices.actions.parseLogin({
-        dict: classroomsDict,
-        current: currentClassroom,
-      })
-    );
-
-    dispatch(ChatroomsServices.actions.setCurrent(currentChatroom as string));
-
-    let currentLecture = EMPTY_ID;
-    if (currentClassroom !== EMPTY_ID) {
-      currentLecture = classroomsDict[currentClassroom]
-        .lastOpenedLecture as string;
-    }
-
-    dispatch(
-      LecturesServices.actions.parseLogin({
-        dict: responseObj.lecturesDict,
-        current: currentLecture,
-      })
-    );
-
-    let currentWidget = EMPTY_ID;
-    if (
-      currentLecture !== EMPTY_ID &&
-      responseObj.lecturesDict[currentLecture].widgetIds.length > 0
-    ) {
-      currentWidget = responseObj.lecturesDict[currentLecture].widgetIds[0];
-    }
-
-    for (let wid in responseObj.widgetDict) {
-      let widget = responseObj.widgetDict[wid];
-      responseObj.widgetDict[wid].content = JSON.parse(
-        widget.content as string
-      );
-      responseObj.widgetDict[wid].type = parseInt(
-        widget.type as unknown as string
-      );
-    }
-
-    dispatch(
-      WidgetsServices.actions.parseLogin({
-        dict: responseObj.widgetDict,
-        current: currentWidget,
-      })
-    );
-
+    loginParseState(r.data);
     reset();
-    navigate("/");
+    dispatch(LoginStatusServices.actions.setComplete(true));
   }
   return (
     <div className={cx("login-root")}>
