@@ -9,7 +9,7 @@ export type Classroom = {
   lastOpenedLecture?: string; // not saved in db
   plan: boolean;
   credits: number;
-  chatroom: string; // chatroom id
+  chatroomId: string; // chatroom id
 };
 
 export type Classrooms = {

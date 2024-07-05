@@ -13,6 +13,7 @@ import {generateId} from "../../utils/util";
 import {createWidgetService, useApiHandler} from "../../utils/service";
 import classNames from "classnames/bind";
 import styles from "./NavBar.module.scss";
+import {WidgetsServices} from "../../features/WidgetsSlice";
 
 const cx = classNames.bind(styles);
 type ClassCardProps = {
@@ -37,20 +38,29 @@ const ClassCard = ({
 }: ClassCardProps) => {
   const dispatch = useAppDispatch();
   const classrooms = useTypedSelector((state) => state.Classrooms);
+  const lectures = useTypedSelector((state) => state.Lectures);
   return (
     <div
       className={cx("class-card", {selected: selected === id})}
       onClick={() => {
         dispatch(ClassroomsServices.actions.setCurrent(id));
+        const lastLecture = classrooms.dict[id].lastOpenedLecture;
         dispatch(
           LecturesServices.actions.setCurrent(
-            classrooms.dict[id].lastOpenedLecture
-              ? (classrooms.dict[id].lastOpenedLecture as string)
-              : EMPTY_ID
+            lastLecture ? (lastLecture as string) : EMPTY_ID
           )
         );
-        const chatId = classrooms.dict[id].chatroom;
+        const chatId = classrooms.dict[id].chatroomId;
         dispatch(ChatroomsServices.actions.setCurrent(chatId));
+
+        if (lastLecture) {
+          const firstWidget = lectures.dict[lastLecture].widgetIds[0];
+          if (firstWidget) {
+            dispatch(WidgetsServices.actions.setCurrent(firstWidget));
+          } else {
+            dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
+          }
+        }
       }}
     >
       <p>

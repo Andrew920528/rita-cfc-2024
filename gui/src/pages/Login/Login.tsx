@@ -15,6 +15,7 @@ const cx = classNames.bind(styles);
 
 const Login = () => {
   const {apiHandler, loading} = useApiHandler();
+  const dispatch = useAppDispatch();
   const loginParseState = useLoginParseState();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -79,6 +80,7 @@ const Login = () => {
 
     loginParseState(r.data);
     reset();
+    dispatch(LoginStatusServices.actions.setComplete(true));
   }
   return (
     <div className={cx("login-root")}>

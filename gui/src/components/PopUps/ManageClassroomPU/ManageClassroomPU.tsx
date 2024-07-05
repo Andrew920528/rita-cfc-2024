@@ -140,7 +140,6 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   }
 
   async function createClassroom() {
-    const newChatroomId: string = user.username + "-chatroom-" + generateId();
     const newClassroomId: string = user.username + "-classroom-" + generateId();
     const newLectureId: string = user.username + "-lecture-0" + generateId();
     let classroomData = {
@@ -151,7 +150,6 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       grade: grade,
       plan: false,
       credits: parseInt(credit),
-      chatroomId: newChatroomId,
     };
 
     let r = await apiHandler({
@@ -168,6 +166,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
+    const newChatroomId = r.data["chatroomId"];
     let lectureData = {
       lectureId: newLectureId,
       name: "學期規劃",
@@ -182,7 +181,8 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
-    createClassroomState(classroomData);
+
+    createClassroomState({...classroomData, chatroomId: newChatroomId});
     // create initial lecture & corresponding chatroom
     createLecture(lectureData);
   }
@@ -204,7 +204,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       lastOpenedLecture: "",
       plan: false,
       credits: parseInt(credit),
-      chatroom: EMPTY_ID,
+      chatroomId: EMPTY_ID,
     };
     let r = await apiHandler({
       apiFunction: (s) =>

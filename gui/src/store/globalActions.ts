@@ -41,7 +41,7 @@ export const useLoginParseState = () => {
             ? classroomsDict[cid].lectureIds[0]
             : EMPTY_ID;
 
-        let chatroomId = classroomsDict[cid].chatroom as string;
+        let chatroomId = classroomsDict[cid].chatroomId as string;
         dispatch(
           ChatroomsServices.actions.addChatroom({
             id: chatroomId,
@@ -56,8 +56,8 @@ export const useLoginParseState = () => {
       let currentChatroom =
         currentClassroom === EMPTY_ID
           ? EMPTY_ID
-          : classroomsDict[currentClassroom].chatroom;
-
+          : classroomsDict[currentClassroom].chatroomId;
+      console.log(currentChatroom);
       dispatch(
         ClassroomsServices.actions.parseLogin({
           dict: classroomsDict,
@@ -136,7 +136,7 @@ export const useCreateClassroom = () => {
         lastOpenedLecture: EMPTY_ID,
         plan: args.plan,
         credits: args.credits,
-        chatroom: args.chatroomId,
+        chatroomId: args.chatroomId,
       };
 
       // add new chatroom to chatrooms dict

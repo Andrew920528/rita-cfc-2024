@@ -19,7 +19,7 @@ const SemesterGoalWidget = (props: Props) => {
     (widget.content as SemesterGoalWidgetContent).goals.join("\n")
   );
   function editSemesterGoal(textAreaValue: string) {
-    let goalList = textAreaValue.split("\n").filter((x) => x !== "");
+    let goalList = textAreaValue.split("\n");
     let newSemesterGoal: SemesterGoalWidgetContent = {
       goals: goalList,
     };

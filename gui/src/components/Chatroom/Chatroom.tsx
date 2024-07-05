@@ -57,7 +57,11 @@ const Chatroom = ({}: ChatroomProps) => {
       prompt: text,
       widget:
         widgets.current === EMPTY_ID
-          ? undefined
+          ? {
+              id: EMPTY_ID,
+              type: -1,
+              content: "{}",
+            }
           : {
               id: widgets.current,
               type: widgets.dict[widgets.current].type,
@@ -104,8 +108,11 @@ const Chatroom = ({}: ChatroomProps) => {
         message: messageObj,
       })
     );
-
+    // TODO
     // if widgetId matches
+    if (widgetId === widgets.current) {
+      console.log(widgetContent);
+    }
     // and widgetContent is different
     // and widgetContent has the correct data structure
     // then modify the widget

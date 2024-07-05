@@ -270,7 +270,6 @@ export function createClassroomService(
     publisher: string;
     grade: string;
     plan: boolean;
-    chatroomId: string;
     credits: number;
   },
   abortSignal?: AbortSignal

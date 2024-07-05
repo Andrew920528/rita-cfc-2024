@@ -28,7 +28,7 @@ let classrooms = {
       ],
       plan: false,
       credits: 3,
-      chatroom: "dum-username-chatroom-lxu4e0ar5bk5nztua7",
+      chatroomId: "dum-username-chatroom-lxu4e0ar5bk5nztua7",
     },
     "dum-username-classroom-lxu4ehnp9fs1h0utd99": {
       id: "dum-username-classroom-lxu4ehnp9fs1h0utd99",
@@ -43,7 +43,7 @@ let classrooms = {
       ],
       plan: false,
       credits: 3,
-      chatroom: "dum-username-chatroom-lxu4ehnpjhxo7es2c3r",
+      chatroomId: "dum-username-chatroom-lxu4ehnpjhxo7es2c3r",
     },
   },
   current: "dum-username-classroom-lxu4ehnp9fs1h0utd99",
