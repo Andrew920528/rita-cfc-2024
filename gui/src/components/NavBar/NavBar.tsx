@@ -113,7 +113,6 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
       lectureId: lectures.current,
       widgetId: newWidgetId,
     });
-    console.log(widgets.unsaved);
   }
   return (
     <div className={cx("widget-card")}>

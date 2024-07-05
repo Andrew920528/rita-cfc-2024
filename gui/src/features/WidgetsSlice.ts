@@ -48,7 +48,6 @@ const WidgetsSlice = createSlice({
       }
     },
     saveAll: (state) => {
-      console.log("Saving...", current(state.unsaved));
       state.unsaved = {};
     },
   },

@@ -61,8 +61,6 @@ const Login = () => {
 
   async function login() {
     if (!validateLogin()) return;
-
-    console.log("this function is still running");
     let r = await apiHandler({
       apiFunction: (s) =>
         loginService({username: username, password: password}, s),

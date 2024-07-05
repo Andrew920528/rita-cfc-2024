@@ -20,7 +20,6 @@ function App() {
 
   useEffect(() => {
     async function loginWithSid() {
-      // console.log(isMounted.current);
       const sid = sessionStorage.getItem("sessionId");
       if (!sid) return;
       // loginWithSid

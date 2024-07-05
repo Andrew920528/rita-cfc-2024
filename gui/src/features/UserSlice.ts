@@ -70,7 +70,6 @@ const UserSlice = createSlice({
     },
     saveSchedule: (state) => {
       state.scheduleChanged = false;
-      console.log("Saving schedule");
     },
   },
 });

@@ -3,7 +3,7 @@ import Textbox from "../ui_components/Textbox/Textbox";
 import IconButton from "../ui_components/IconButton/IconButton";
 import {ArrowRight, ChevronDown, ChevronUp, Stop} from "@carbon/icons-react";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {widgetBook} from "../../schema/widget";
+import {contentIsOfType, widgetBook} from "../../schema/widget";
 import {ChatMessage as ChatMessageT} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {mimicApi} from "../../utils/util";
@@ -12,6 +12,7 @@ import {debug, error} from "console";
 import {EMPTY_ID, API} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./Chatroom.module.scss";
+import {WidgetsServices} from "../../features/WidgetsSlice";
 
 const cx = classNames.bind(styles);
 type ChatroomProps = {};
@@ -108,16 +109,33 @@ const Chatroom = ({}: ChatroomProps) => {
         message: messageObj,
       })
     );
-    // TODO
-    // if widgetId matches
-    if (widgetId === widgets.current) {
-      console.log(widgetContent);
-    }
-    // and widgetContent is different
-    // and widgetContent has the correct data structure
-    // then modify the widget
 
-    // send a message if something is changed
+    if (widgetId === widgets.current) {
+      if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {
+        return;
+      }
+      dispatch(
+        WidgetsServices.actions.updateWidget({
+          newWidget: {
+            id: widgetId,
+            type: widgets.dict[widgets.current].type,
+            content: widgetContent,
+          },
+        })
+      );
+
+      let messageObj = {
+        text: `更新了 ${widgetBook[widgets.dict[widgets.current].type].title}`,
+        sender: "Rita",
+      };
+
+      dispatch(
+        ChatroomsServices.actions.addMessage({
+          chatroomId: chatroom.id,
+          message: messageObj,
+        })
+      );
+    }
   };
 
   if (!chatroom) return <></>;

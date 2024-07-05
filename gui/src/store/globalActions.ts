@@ -57,7 +57,6 @@ export const useLoginParseState = () => {
         currentClassroom === EMPTY_ID
           ? EMPTY_ID
           : classroomsDict[currentClassroom].chatroomId;
-      console.log(currentChatroom);
       dispatch(
         ClassroomsServices.actions.parseLogin({
           dict: classroomsDict,

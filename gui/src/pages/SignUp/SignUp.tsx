@@ -22,12 +22,10 @@ const SignUp = () => {
   const navigate = useNavigate();
   const {apiHandler, loading} = useApiHandler();
   useEffect(() => {
-    console.log("sign up");
     const handleKeyDown = async (event: KeyboardEvent) => {
       if (event.key === "Enter") {
         if (loading) return;
         if (event.repeat) return;
-        console.log("Enter key pressed");
         await signup();
       }
     };
@@ -95,7 +93,6 @@ const SignUp = () => {
     } else {
       setConfirmPasswordError("");
     }
-    console.log(validate);
     return validate;
   }
 
