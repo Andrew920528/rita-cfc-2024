@@ -143,6 +143,24 @@ const Chatroom = ({}: ChatroomProps) => {
     setText("");
   }, [widgets.current]);
 
+  useEffect(() => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.repeat) return;
+      if (event.key === "Enter") {
+        if (waitingForReply) return;
+        if (text.trim() === "") return;
+        await sendMessage(text);
+      }
+    };
+    // Add event listener for keydown
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [waitingForReply, sendMessage, text]);
+
   if (!chatroom) return <></>;
   return (
     <div className={cx("chatroom", {collapsed: collapsed})}>

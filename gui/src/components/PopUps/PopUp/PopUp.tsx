@@ -29,6 +29,7 @@ const PopUp = ({
 }: PopUpProps) => {
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.repeat) return;
       if (trigger && event.key === "Enter" && puAction) {
         puAction();
       }
