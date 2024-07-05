@@ -52,6 +52,7 @@ const WidgetFrame = ({
 }: WidgetFrameProps) => {
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
+  const widgets = useTypedSelector((state) => state.Widgets);
   const deleteWidget = useDeleteWidget();
   const {apiHandler, loading} = useApiHandler();
   async function deleteWidgetAction() {
@@ -82,6 +83,8 @@ const WidgetFrame = ({
         `w-${widgetWidths[widgetType]}`
       )}
       onClick={() => {
+        console.log(widgetId);
+        console.log(JSON.stringify(widgets.dict[widgetId].content));
         dispatch(WidgetsServices.actions.setCurrent(widgetId));
       }}
     >

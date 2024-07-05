@@ -505,8 +505,8 @@ export function messageRitaService(
     const mimicResponse = {
       reply:
         "Hello, I'm Rita. You are in frontend development mode, where I am not connected to an actual AI",
-      content: "",
-      widgetId: "",
+      content: {goals: ["你好呀"]},
+      widgetId: "dum-username-wid-lxu4el0kwcyyfcov1vq",
     };
 
     const response = {

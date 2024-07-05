@@ -64,6 +64,8 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
           },
           s
         ),
+      debug: true,
+      identifier: "updateUserService",
     });
 
     if (r.status === API.ERROR || r.status === API.ABORTED) {
@@ -89,13 +91,13 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
       footerBtnProps={{
         icon: <Save size={20} />,
         text: "儲存變更",
-        onClick: () => {
-          submitForm();
-        },
         disabled: loading,
       }}
       reset={() => {
         terminateResponse();
+      }}
+      puAction={() => {
+        submitForm();
       }}
     >
       <div className={cx("manage-account-form")}>

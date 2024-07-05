@@ -35,6 +35,12 @@ const SemesterGoalWidget = (props: Props) => {
     );
   }
 
+  useEffect(() => {
+    setDisplayGoals(
+      (widget.content as SemesterGoalWidgetContent).goals.join("\n")
+    );
+  }, [widget]);
+
   return (
     <TextArea
       value={displayGoals}

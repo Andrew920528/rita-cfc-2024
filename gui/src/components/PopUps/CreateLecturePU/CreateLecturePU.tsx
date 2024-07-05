@@ -77,14 +77,14 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
       footerBtnProps={{
         icon: <Save size={20} />,
         text: "儲存變更",
-        onClick: async () => {
-          await submitForm();
-        },
         disabled: loading,
       }}
       reset={() => {
         resetForm();
         terminateResponse();
+      }}
+      puAction={async () => {
+        await submitForm();
       }}
     >
       <div className={cx("create-lecture-form")}>

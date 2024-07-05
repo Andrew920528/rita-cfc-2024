@@ -110,7 +110,7 @@ const Chatroom = ({}: ChatroomProps) => {
       })
     );
 
-    if (widgetId === widgets.current) {
+    if (widgetId === widgets.current && widgetId !== EMPTY_ID) {
       if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {
         return;
       }
@@ -137,6 +137,11 @@ const Chatroom = ({}: ChatroomProps) => {
       );
     }
   };
+
+  useEffect(() => {
+    setRitaError("");
+    setText("");
+  }, [widgets.current]);
 
   if (!chatroom) return <></>;
   return (

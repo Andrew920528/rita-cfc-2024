@@ -251,10 +251,10 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       footerBtnProps={{
         icon: <Save size={20} />,
         text: "儲存變更",
-        onClick: () => {
-          submitForm();
-        },
         disabled: loading,
+      }}
+      puAction={() => {
+        submitForm();
       }}
       reset={() => {
         resetForm();
