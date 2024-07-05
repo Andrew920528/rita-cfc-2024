@@ -20,11 +20,25 @@ def message_rita():
     lectureId = request.json['lectureId']
     classroomId = request.json['classroomId']
     watsonxRequest = getWatsonxRequest(prompt, widget, lectureId, classroomId)
-
-    llmHandleInput = llm_handle_input(watsonxRequest)
+    # check if output is correct
+    if watsonxRequest['status'] == 'error':
+        return watsonxRequest
+    
+    try:
+        llmOutput = llm_handle_input(watsonxRequest['data']) # returns rita's reply asdict
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : str(e)
+        }
+        return response
 
     # return watsonxResponse
-    return llmHandleInput
+    response = {
+        'status' : 'success',
+        'data' : llmOutput
+    }
+    return response
     
 ######################################################################################################## users
 @app.route('/create-user', methods=['POST'])

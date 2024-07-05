@@ -488,7 +488,7 @@ export function updateWidgetBulkService(
   });
 }
 
-// 🤖
+// ✅ can send and recieve message properly
 export function messageRitaService(
   abortSignal: AbortSignal,
   payload: {

@@ -83,7 +83,7 @@ const Chatroom = ({}: ChatroomProps) => {
     } else if (r.status === API.ABORTED) {
       return;
     }
-    handleReply(r); // FIXME should be r.data (wait for jim to change)
+    handleReply(r.data);
   }
 
   const handleReply = (data: any) => {

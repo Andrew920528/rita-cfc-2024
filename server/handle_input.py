@@ -97,7 +97,6 @@ def llm_handle_input(input):
     global embedding_path, dotenv_path, API_KEY, URL, PROJECT_ID
     load_details()
     
-
     # Word embeddings model
     embedding_model = HuggingFaceEmbeddings(
         model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
@@ -112,7 +111,6 @@ def llm_handle_input(input):
     retriever = faiss_store.as_retriever()
 
     # Initialize WatsonX LLM Interface
-
     credentials = Credentials.from_dict({"url": URL, "apikey": API_KEY})
 
     params = {
@@ -133,7 +131,9 @@ def llm_handle_input(input):
     # Define the QA chain
     qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
 
-    response = qa.run(create_prompt(input))
+    prompt = create_prompt(input)
+    
+    response = qa.run(prompt)
     return extract_json_as_dict(response)
 
 def extract_json_as_dict(full_string):
