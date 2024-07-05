@@ -1,36 +1,44 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import IconButton from "../../components/ui_components/IconButton/IconButton";
 import {Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../../components/ui_components/Textbox/Textbox";
-import {Link, useNavigate} from "react-router-dom";
-import {
-  LoginResponseObject,
-  loginService,
-  useApiHandler,
-} from "../../utils/service";
-import {API_ERROR, EMPTY_ID} from "../../utils/constants";
+import {Link} from "react-router-dom";
+import {loginService, useApiHandler} from "../../utils/service";
+import {API, EMPTY_ID} from "../../global/constants";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {UserServices} from "../../features/UserSlice";
-import {ClassroomsServices} from "../../features/ClassroomsSlice";
-import {LecturesServices} from "../../features/LectureSlice";
-import {WidgetsServices} from "../../features/WidgetsSlice";
 import classNames from "classnames/bind";
 import styles from "./Login.module.scss";
-import {Chatroom, Chatrooms} from "../../schema/chatroom";
-import {ChatroomsServices} from "../../features/ChatroomsSlice";
+import {useLoginParseState} from "../../store/globalActions";
+import {LoginStatusServices} from "../../features/LoginStatusSlice";
 
 const cx = classNames.bind(styles);
 
 const Login = () => {
   const {apiHandler, loading} = useApiHandler();
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const loginParseState = useLoginParseState();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const [usernameError, setUsernameError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
-  const chatrooms = useTypedSelector((state) => state.Chatrooms);
+
+  useEffect(() => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        if (loading) return;
+        if (event.repeat) return;
+        await login();
+      }
+    };
+    // Add event listener for keydown
+    window.addEventListener("keydown", handleKeyDown);
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [login]);
+
   function reset(): void {
     setUsername("");
     setPassword("");
@@ -50,92 +58,27 @@ const Login = () => {
     }
     return validate;
   }
+
   async function login() {
     if (!validateLogin()) return;
     let r = await apiHandler({
-      apiFunction: (s) => loginService(s, {username, password}),
+      apiFunction: (s) =>
+        loginService({username: username, password: password}, s),
       debug: true,
       identifier: "login",
     });
 
-    if (r.status === API_ERROR) {
-      // TODO error toast
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
+      if (r.data === "Username or password is incorrect. Please try again.") {
+        setUsernameError("使用者名稱或密碼錯誤");
+        setPasswordError("使用者名稱或密碼錯誤");
+      }
       return;
     }
-    // parse to global state
-    // TODO: set token @iteration 2
-    let responseObj = r.data as LoginResponseObject;
-    dispatch(UserServices.actions.parseLogin(responseObj.user));
-    console.log(
-      responseObj.user.classrooms.length > 0
-        ? responseObj.user.classrooms[0]
-        : EMPTY_ID
-    );
 
-    let classroomsDict = responseObj.classroomsDict;
-    let classrooms = responseObj.user.classrooms;
-    let chatroomsDict = {} as {[key: string]: Chatroom};
-    for (let i = 0; i < classrooms.length; i++) {
-      let cid = classrooms[i];
-      classroomsDict[cid].lastOpenedLecture =
-        classroomsDict[cid].lectures.length > 0
-          ? classroomsDict[cid].lectures[0]
-          : EMPTY_ID;
-
-      let chatroomId = classroomsDict[cid].chatroom as string;
-      dispatch(
-        ChatroomsServices.actions.addChatroom({
-          id: chatroomId,
-          messages: [],
-        })
-      );
-    }
-    let currentClassroom =
-      responseObj.user.classrooms.length > 0
-        ? responseObj.user.classrooms[0]
-        : EMPTY_ID;
-    dispatch(
-      ClassroomsServices.actions.parseLogin({
-        dict: classroomsDict,
-        current: currentClassroom,
-      })
-    );
-
-    dispatch(
-      ChatroomsServices.actions.setCurrent(
-        classroomsDict[currentClassroom].chatroom as string
-      )
-    );
-
-    let currentLecture = EMPTY_ID;
-    if (currentClassroom !== EMPTY_ID) {
-      currentLecture = classroomsDict[currentClassroom]
-        .lastOpenedLecture as string;
-    }
-
-    dispatch(
-      LecturesServices.actions.parseLogin({
-        dict: responseObj.lecturesDict,
-        current: currentLecture,
-      })
-    );
-
-    let currentWidget = EMPTY_ID;
-    if (
-      currentLecture !== EMPTY_ID &&
-      responseObj.lecturesDict[currentLecture].widgets.length > 0
-    ) {
-      currentWidget = responseObj.lecturesDict[currentLecture].widgets[0];
-    }
-    dispatch(
-      WidgetsServices.actions.parseLogin({
-        dict: responseObj.widgetDict,
-        current: currentWidget,
-      })
-    );
-
+    loginParseState(r.data);
     reset();
-    navigate("/");
+    dispatch(LoginStatusServices.actions.setComplete(true));
   }
   return (
     <div className={cx("login-root")}>

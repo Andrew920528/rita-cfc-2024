@@ -2,16 +2,15 @@ import React, {useEffect, useState} from "react";
 import IconButton from "../../components/ui_components/IconButton/IconButton";
 import {Checkmark, Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../../components/ui_components/Textbox/Textbox";
-import Login from "../Login/Login";
 import {Link, useNavigate} from "react-router-dom";
 import {createUserService, useApiHandler} from "../../utils/service";
-import {API_ERROR} from "../../utils/constants";
+import {API} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./SignUp.module.scss";
+import {initSchedule} from "../../schema/schedule";
 
 const cx = classNames.bind(styles);
 const SignUp = () => {
-  //let navigate = useNavigate();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,6 +21,23 @@ const SignUp = () => {
 
   const navigate = useNavigate();
   const {apiHandler, loading} = useApiHandler();
+  useEffect(() => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        if (loading) return;
+        if (event.repeat) return;
+        await signup();
+      }
+    };
+
+    // Add event listener for keydown
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [signup]);
   function reset(): void {
     setUsername("");
     setPassword("");
@@ -31,7 +47,7 @@ const SignUp = () => {
     setConfirmPasswordError("");
   }
 
-  function validateLogin(): boolean {
+  function validateSignup(): boolean {
     let validate = true;
     // username cannot contain spaces
 
@@ -47,6 +63,8 @@ const SignUp = () => {
     } else if (username.length > 32) {
       setUsernameError("使用者名稱最多32個字元");
       validate = false;
+    } else {
+      setUsernameError("");
     }
 
     if (password === "") {
@@ -61,6 +79,8 @@ const SignUp = () => {
     } else if (password.length > 32) {
       setPasswordError("密碼最多32個字元");
       validate = false;
+    } else {
+      setPasswordError("");
     }
 
     if (confirmPassword.trim() == "") {
@@ -70,24 +90,34 @@ const SignUp = () => {
       setConfirmPasswordError("密碼不匹配");
       setPasswordError("密碼不匹配");
       validate = false;
+    } else {
+      setConfirmPasswordError("");
     }
     return validate;
   }
 
   async function signup() {
-    if (!validateLogin()) return;
+    if (!validateSignup()) return;
 
+    const userPayload = {
+      username,
+      password,
+      school: "",
+      alias: username,
+      occupation: "",
+      schedule: JSON.stringify(initSchedule),
+    };
     let r = await apiHandler({
-      apiFunction: (s) => createUserService(s, {username, password}),
+      apiFunction: (s) => createUserService(userPayload, s),
       debug: true,
       identifier: "signup",
     });
 
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       // failed to create user
       return;
     }
-
+    // TODO toast account created, please log in
     reset();
     navigate("/login");
   }

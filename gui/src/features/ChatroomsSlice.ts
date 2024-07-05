@@ -1,6 +1,6 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import {ChatMessage, Chatroom, Chatrooms} from "../schema/chatroom";
-import {EMPTY_ID} from "../utils/constants";
+import {EMPTY_ID} from "../global/constants";
 
 const initialState: Chatrooms = {
   dict: {},

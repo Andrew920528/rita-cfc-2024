@@ -10,7 +10,7 @@ import NoteWidget from "../NoteWidget/NoteWidget";
 import ScheduleWidget from "../ScheduleWidget/ScheduleWidget";
 import {useDeleteWidget} from "../../../store/globalActions";
 import {deleteWidgetService, useApiHandler} from "../../../utils/service";
-import {API_ERROR} from "../../../utils/constants";
+import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./WidgetFrame.module.scss";
 
@@ -52,17 +52,23 @@ const WidgetFrame = ({
 }: WidgetFrameProps) => {
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
+  const widgets = useTypedSelector((state) => state.Widgets);
   const deleteWidget = useDeleteWidget();
   const {apiHandler, loading} = useApiHandler();
   async function deleteWidgetAction() {
     let r = await apiHandler({
       apiFunction: (s) =>
-        deleteWidgetService(s, {
-          widgetId: widgetId,
-          lectureId: lectures.current,
-        }),
+        deleteWidgetService(
+          {
+            widgetId: widgetId,
+            lectureId: lectures.current,
+          },
+          s
+        ),
+      debug: true,
+      identifier: "deleteWidget",
     });
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
     deleteWidget({lectureId: lectures.current, widgetId: widgetId});
@@ -77,6 +83,8 @@ const WidgetFrame = ({
         `w-${widgetWidths[widgetType]}`
       )}
       onClick={() => {
+        console.log(widgetId);
+        console.log(JSON.stringify(widgets.dict[widgetId].content));
         dispatch(WidgetsServices.actions.setCurrent(widgetId));
       }}
     >

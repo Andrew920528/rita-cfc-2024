@@ -13,9 +13,14 @@ from langchain_ibm import WatsonxLLM
 from dotenv import load_dotenv
 import os
 import json
+"""
+Andrew:
+/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/vector-stores/kang_math_5th_1st_vector_store_with_info
+/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/.env
+"""
 
-embedding_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\vector-stores\kang_math_5th_1st_vector_store_with_info"
-dotenv_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\.env"
+embedding_path = r"/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/vector-stores/kang_math_5th_1st_vector_store_with_info"
+dotenv_path = r"/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/.env"
 
 API_KEY = ''
 URL = ''
@@ -74,7 +79,7 @@ def create_prompt(input):
                 {"週目": "2", "目標": "第一次段考", "教材": "無"},
                 {"週目": "3", "目標": "讓學生學習多位小數的加減及日常應用", "教材": "1-3"},
                 {"週目": "4", "目標": "讓學生了解小數與概數", "教材": "無"},
-                {"週目": "5", "目標": "第二次段考", "教材": "1-3, 1-4"},
+                {"週目": "5", "目標": "第二次段考", "教材": "1-3, 1-4"}
             ]
         }
     }
@@ -92,7 +97,6 @@ def llm_handle_input(input):
     global embedding_path, dotenv_path, API_KEY, URL, PROJECT_ID
     load_details()
     
-
     # Word embeddings model
     embedding_model = HuggingFaceEmbeddings(
         model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
@@ -107,7 +111,6 @@ def llm_handle_input(input):
     retriever = faiss_store.as_retriever()
 
     # Initialize WatsonX LLM Interface
-
     credentials = Credentials.from_dict({"url": URL, "apikey": API_KEY})
 
     params = {
@@ -128,11 +131,13 @@ def llm_handle_input(input):
     # Define the QA chain
     qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
 
-    response = qa.run(create_prompt(input))
-
-    return extract_json_as_dict(response);
+    prompt = create_prompt(input)
+    
+    response = qa.run(prompt)
+    return extract_json_as_dict(response)
 
 def extract_json_as_dict(full_string):
+    print(full_string)
     # Find the starting and ending points of the JSON portion
     start_index = full_string.find('{')
     end_index = full_string.rfind('}') + 1

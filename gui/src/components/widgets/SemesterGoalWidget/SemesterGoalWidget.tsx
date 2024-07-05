@@ -14,9 +14,12 @@ type Props = {
 
 const SemesterGoalWidget = (props: Props) => {
   const dispatch = useAppDispatch();
-  const [textAreaValue, setTextAreaValue] = useState("");
+  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
+  const [displayGoals, setDisplayGoals] = useState(
+    (widget.content as SemesterGoalWidgetContent).goals.join("\n")
+  );
   function editSemesterGoal(textAreaValue: string) {
-    let goalList = textAreaValue.split("\n").filter((x) => x !== "");
+    let goalList = textAreaValue.split("\n");
     let newSemesterGoal: SemesterGoalWidgetContent = {
       goals: goalList,
     };
@@ -33,14 +36,17 @@ const SemesterGoalWidget = (props: Props) => {
   }
 
   useEffect(() => {
-    editSemesterGoal(textAreaValue);
-  }, [textAreaValue]);
+    setDisplayGoals(
+      (widget.content as SemesterGoalWidgetContent).goals.join("\n")
+    );
+  }, [widget]);
 
   return (
     <TextArea
-      value={textAreaValue}
+      value={displayGoals}
       onChange={(e) => {
-        setTextAreaValue(e.currentTarget.value);
+        editSemesterGoal(e.currentTarget.value);
+        setDisplayGoals(e.currentTarget.value);
       }}
       placeholder="輸入本學期的學習重點，並用 enter 分隔不同項目"
     />

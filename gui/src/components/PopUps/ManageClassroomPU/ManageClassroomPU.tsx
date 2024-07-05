@@ -11,7 +11,7 @@ import {
   useCreateLecture,
 } from "../../../store/globalActions";
 import {generateId, isNumeric} from "../../../utils/util";
-import {API_ERROR, EMPTY_ID} from "../../../utils/constants";
+import {API, EMPTY_ID} from "../../../global/constants";
 import {
   createClassroomService,
   createLectureService,
@@ -107,6 +107,14 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     if (name.trim() === "") {
       setNameError("請輸入課堂名稱");
       validate = false;
+    } else if (
+      new Set<string>(Object.values(classrooms.dict).map((c) => c.name)).has(
+        name.trim()
+      ) &&
+      props.action === "create"
+    ) {
+      setNameError("課堂名稱已存在");
+      validate = false;
     }
     if (subject.trim() === "") {
       setSubjectError("請輸入科目");
@@ -132,7 +140,6 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   }
 
   async function createClassroom() {
-    const newChatroomId: string = user.username + "-chatroom-" + generateId();
     const newClassroomId: string = user.username + "-classroom-" + generateId();
     const newLectureId: string = user.username + "-lecture-0" + generateId();
     let classroomData = {
@@ -143,21 +150,23 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       grade: grade,
       plan: false,
       credits: parseInt(credit),
-      chatroomId: newChatroomId,
     };
 
     let r = await apiHandler({
       apiFunction: (s) =>
-        createClassroomService(s, {
-          username: user.username,
-          ...classroomData,
-        }),
+        createClassroomService(
+          {
+            ...classroomData,
+          },
+          s
+        ),
       debug: true,
       identifier: "createClassroom",
     });
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
+    const newChatroomId = r.data["chatroomId"];
     let lectureData = {
       lectureId: newLectureId,
       name: "學期規劃",
@@ -165,14 +174,15 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       type: 0,
     };
     r = await apiHandler({
-      apiFunction: (s) => createLectureService(s, lectureData),
+      apiFunction: (s) => createLectureService(lectureData, s),
       debug: true,
       identifier: "createLecture",
     });
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
-    createClassroomState(classroomData);
+
+    createClassroomState({...classroomData, chatroomId: newChatroomId});
     // create initial lecture & corresponding chatroom
     createLecture(lectureData);
   }
@@ -190,26 +200,29 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       grade: grade,
       publisher: subject === "其他" ? "綜合" : publisher,
       // these are not editable
-      lectures: [],
+      lectureIds: [],
       lastOpenedLecture: "",
       plan: false,
       credits: parseInt(credit),
-      chatroom: EMPTY_ID,
+      chatroomId: EMPTY_ID,
     };
     let r = await apiHandler({
       apiFunction: (s) =>
-        updateClassroomService(s, {
-          classroomId: classroomId,
-          classroomName: name,
-          subject: subject === "其他" ? otherSubject : subject,
-          publisher: subject === "其他" ? "綜合" : publisher,
-          grade: grade,
-          credits: parseInt(credit),
-        }),
+        updateClassroomService(
+          {
+            classroomId: classroomId,
+            classroomName: name,
+            subject: subject === "其他" ? otherSubject : subject,
+            publisher: subject === "其他" ? "綜合" : publisher,
+            grade: grade,
+            credits: parseInt(credit),
+          },
+          s
+        ),
       debug: true,
       identifier: "editClassroom",
     });
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
     // update classroom to classrooms dict
@@ -238,10 +251,10 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       footerBtnProps={{
         icon: <Save size={20} />,
         text: "儲存變更",
-        onClick: () => {
-          submitForm();
-        },
         disabled: loading,
+      }}
+      puAction={() => {
+        submitForm();
       }}
       reset={() => {
         resetForm();

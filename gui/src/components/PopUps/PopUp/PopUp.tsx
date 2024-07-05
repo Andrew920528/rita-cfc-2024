@@ -1,5 +1,5 @@
 import {Close} from "@carbon/icons-react";
-import React, {ReactNode} from "react";
+import React, {ReactNode, useEffect} from "react";
 import IconButton, {
   IconButtonProps,
 } from "../../ui_components/IconButton/IconButton";
@@ -15,6 +15,7 @@ export type PopUpProps = {
   children?: ReactNode;
   cancel?: boolean;
   footerBtnProps?: IconButtonProps;
+  puAction?: () => void;
 };
 const PopUp = ({
   trigger,
@@ -24,7 +25,24 @@ const PopUp = ({
   children,
   cancel,
   footerBtnProps,
+  puAction,
 }: PopUpProps) => {
+  useEffect(() => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.repeat) return;
+      if (trigger && event.key === "Enter" && puAction) {
+        puAction();
+      }
+    };
+
+    // Add event listener for keydown
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [puAction, trigger]);
   if (!trigger) return <></>;
   return (
     <div className={cx("pop-up-wrapper")}>
@@ -57,9 +75,16 @@ const PopUp = ({
                 </p>
               )}
             </div>
-            <div className={cx("pu-footer-children")}>
-              <IconButton mode="primary" flex={true} {...footerBtnProps} />
-            </div>
+            {puAction && (
+              <div className={cx("pu-footer-children")}>
+                <IconButton
+                  mode="primary"
+                  flex={true}
+                  {...footerBtnProps}
+                  onClick={puAction}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

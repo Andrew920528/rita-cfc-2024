@@ -3,15 +3,16 @@ import Textbox from "../ui_components/Textbox/Textbox";
 import IconButton from "../ui_components/IconButton/IconButton";
 import {ArrowRight, ChevronDown, ChevronUp, Stop} from "@carbon/icons-react";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {widgetBook} from "../../schema/widget";
+import {contentIsOfType, widgetBook} from "../../schema/widget";
 import {ChatMessage as ChatMessageT} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {mimicApi} from "../../utils/util";
 import {messageRitaService, useApiHandler} from "../../utils/service";
-import {debug} from "console";
-import {EMPTY_ID, API_ERROR} from "../../utils/constants";
+import {debug, error} from "console";
+import {EMPTY_ID, API} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./Chatroom.module.scss";
+import {WidgetsServices} from "../../features/WidgetsSlice";
 
 const cx = classNames.bind(styles);
 type ChatroomProps = {};
@@ -38,6 +39,7 @@ const Chatroom = ({}: ChatroomProps) => {
   const [collapsed, setCollapsed] = useState(false);
   // const [readyToSend, setReadyToSend] = useState(true);
   const [text, setText] = useState("");
+  const [ritaError, setRitaError] = useState("");
   async function sendMessage(text: string) {
     let newMessage = {
       text: text,
@@ -50,36 +52,114 @@ const Chatroom = ({}: ChatroomProps) => {
       })
     );
     setText("");
+    setRitaError("");
+
+    let payload = {
+      prompt: text,
+      widget:
+        widgets.current === EMPTY_ID
+          ? {
+              id: EMPTY_ID,
+              type: -1,
+              content: "{}",
+            }
+          : {
+              id: widgets.current,
+              type: widgets.dict[widgets.current].type,
+              content: JSON.stringify(widgets.dict[widgets.current]),
+            },
+      lectureId: lecture.id,
+      classroomId: classroomId,
+    };
+
     let r = await apiHandler({
-      apiFunction: (c: AbortSignal) =>
-        messageRitaService(c, {
-          prompt: text,
-          widget:
-            widgets.current === EMPTY_ID
-              ? undefined
-              : {
-                  id: widgets.current,
-                  type: widgets.dict[widgets.current].type,
-                  content: JSON.stringify(widgets.dict[widgets.current]),
-                },
-          lectureId: lecture.id,
-          classroomId: classroomId,
-        }),
+      apiFunction: (s) =>
+        messageRitaService(
+          {
+            ...payload,
+          },
+          s
+        ),
       debug: true,
       identifier: "messageRita",
     });
 
     let status = r.status;
-    let responseMessage = r.data;
+    if (status === API.ERROR) {
+      setRitaError(r.data);
+      return;
+    } else if (r.status === API.ABORTED) {
+      return;
+    }
+    handleReply(r.data);
+  }
 
-    if (status === API_ERROR) return;
+  const handleReply = (data: any) => {
+    let reply = data.reply;
+    let widgetContent = data.content;
+    let widgetId = data.widgetId;
+    let messageObj = {
+      text: reply,
+      sender: "Rita",
+    };
+
     dispatch(
       ChatroomsServices.actions.addMessage({
         chatroomId: chatroom.id,
-        message: responseMessage,
+        message: messageObj,
       })
     );
-  }
+
+    if (widgetId === widgets.current && widgetId !== EMPTY_ID) {
+      if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {
+        return;
+      }
+      dispatch(
+        WidgetsServices.actions.updateWidget({
+          newWidget: {
+            id: widgetId,
+            type: widgets.dict[widgets.current].type,
+            content: widgetContent,
+          },
+        })
+      );
+
+      let messageObj = {
+        text: `更新了 ${widgetBook[widgets.dict[widgets.current].type].title}`,
+        sender: "Rita",
+      };
+
+      dispatch(
+        ChatroomsServices.actions.addMessage({
+          chatroomId: chatroom.id,
+          message: messageObj,
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    setRitaError("");
+    setText("");
+  }, [widgets.current]);
+
+  useEffect(() => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.repeat) return;
+      if (event.key === "Enter") {
+        if (waitingForReply) return;
+        if (text.trim() === "") return;
+        await sendMessage(text);
+      }
+    };
+    // Add event listener for keydown
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [waitingForReply, sendMessage, text]);
 
   if (!chatroom) return <></>;
   return (
@@ -102,7 +182,11 @@ const Chatroom = ({}: ChatroomProps) => {
         />
       </div>
       <div className={cx("chatroom-content", {collapsed: collapsed})}>
-        <ChatroomBody messages={chatroom.messages} loading={waitingForReply} />
+        <ChatroomBody
+          messages={chatroom.messages}
+          loading={waitingForReply}
+          ritaError={ritaError}
+        />
         <div className={cx("chatroom-footer")}>
           <Textbox
             flex={true}
@@ -144,8 +228,9 @@ const ChatMessage = ({text, sender}: ChatMessageT) => {
 type ChatroomBodyProps = {
   messages: ChatMessageT[];
   loading: boolean;
+  ritaError: string;
 };
-const ChatroomBody = ({messages, loading}: ChatroomBodyProps) => {
+const ChatroomBody = ({messages, loading, ritaError}: ChatroomBodyProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const scrollToBottom = () => {
@@ -160,7 +245,10 @@ const ChatroomBody = ({messages, loading}: ChatroomBodyProps) => {
       {messages.map((message, index) => {
         return <ChatMessage {...message} key={index} />;
       })}
-      {loading && <p className={cx("--label")}>Waiting for response</p>}
+      {loading && <p className={cx("--label")}>回覆中，請稍等</p>}
+      {ritaError && (
+        <p className={cx("--label", "--error")}>出了點問題。請再試一次。</p>
+      )}
     </div>
   );
 };

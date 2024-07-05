@@ -1,7 +1,7 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 
 import {Lecture, Lectures} from "../schema/lecture";
-import {EMPTY_ID} from "../utils/constants";
+import {EMPTY_ID} from "../global/constants";
 
 const initialState: Lectures = {
   dict: {},
@@ -34,7 +34,7 @@ const LecturesSlice = createSlice({
       state,
       action: PayloadAction<{lectureId: string; widgetId: string}>
     ) => {
-      state.dict[action.payload.lectureId].widgets.push(
+      state.dict[action.payload.lectureId].widgetIds.push(
         action.payload.widgetId
       );
     },
@@ -43,9 +43,9 @@ const LecturesSlice = createSlice({
       state,
       action: PayloadAction<{lectureId: string; widgetId: string}>
     ) => {
-      state.dict[action.payload.lectureId].widgets = state.dict[
+      state.dict[action.payload.lectureId].widgetIds = state.dict[
         action.payload.lectureId
-      ].widgets.filter((w) => w !== action.payload.widgetId);
+      ].widgetIds.filter((w) => w !== action.payload.widgetId);
     },
   },
 });

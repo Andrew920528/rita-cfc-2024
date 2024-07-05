@@ -23,7 +23,7 @@ import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {UserServices} from "../../features/UserSlice";
 import {useDeleteLecture} from "../../store/globalActions";
-import {API_ERROR, EMPTY_ID} from "../../utils/constants";
+import {API, EMPTY_ID} from "../../global/constants";
 import {
   deleteLectureService,
   updateClassroomService,
@@ -33,6 +33,7 @@ import {
 } from "../../utils/service";
 import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
+import {LoginStatusServices} from "../../features/LoginStatusSlice";
 
 const cx = classNames.bind(styles);
 type HeaderProps = {
@@ -49,12 +50,15 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   async function deleteLecture(lectureId: string) {
     let r = await apiHandler({
       apiFunction: (s) =>
-        deleteLectureService(s, {
-          lectureId: lectureId,
-          classroomId: classrooms.current,
-        }),
+        deleteLectureService(
+          {
+            lectureId: lectureId,
+            classroomId: classrooms.current,
+          },
+          s
+        ),
     });
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
     deleteLectureState({lectureId: lectureId, classroomId: classrooms.current});
@@ -114,7 +118,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
                   })
                 );
               }}
-              idDict={classrooms.dict[classrooms.current].lectures.reduce(
+              idDict={classrooms.dict[classrooms.current].lectureIds.reduce(
                 (dict, lectureId: string) => {
                   dict[lectureId] = "";
                   return dict;
@@ -175,33 +179,44 @@ const SaveGroup = () => {
       // update user here
       r = await apiHandler({
         apiFunction: (s) =>
-          updateUserService(s, {
-            username: user.username,
-            schedule: JSON.stringify(user.schedule),
-          }),
+          updateUserService(
+            {
+              schedule: JSON.stringify(user.schedule),
+            },
+            s
+          ),
+        debug: true,
+        identifier: "updateUserService",
       });
-      if (r.status === API_ERROR) {
+      if (r.status === API.ERROR || r.status === API.ABORTED) {
         // TODO Failed to save toast
         return;
       }
       dispatch(UserServices.actions.saveSchedule());
     }
     // save all widgets here
-    r = await apiHandler({
-      apiFunction: (s) =>
-        updateWidgetBulkService(s, {
-          widgetId: Object.keys(unsavedWidgets),
-          content: Object.keys(unsavedWidgets).map((w: string) => {
-            let content = widgetDict[w].content;
-            return JSON.stringify(content);
-          }),
-        }),
-    });
-    if (r.status === API_ERROR) {
-      // TODO Failed to save toast
-      return;
+    if (Object.keys(unsavedWidgets).length !== 0) {
+      r = await apiHandler({
+        apiFunction: (s) =>
+          updateWidgetBulkService(
+            {
+              widgetIds: Object.keys(unsavedWidgets),
+              contents: Object.keys(unsavedWidgets).map((w: string) => {
+                let content = widgetDict[w].content;
+                return JSON.stringify(content);
+              }),
+            },
+            s
+          ),
+        debug: true,
+        identifier: "updateWidgetBulkService",
+      });
+      if (r.status === API.ERROR || r.status === API.ABORTED) {
+        // TODO Failed to save toast
+        return;
+      }
+      dispatch(WidgetsServices.actions.saveAll());
     }
-    dispatch(WidgetsServices.actions.saveAll());
   };
   return (
     <div className={cx("save-group")}>
@@ -217,8 +232,8 @@ const SaveGroup = () => {
       <IconButton
         mode={"on-dark"}
         icon={<Save size={20} />}
-        onClick={() => {
-          saveAll();
+        onClick={async () => {
+          await saveAll();
         }}
         disabled={
           (Object.keys(unsavedWidgets).length === 0 && !scheduleChanged) ||
@@ -237,6 +252,8 @@ const AccountButton = () => {
     school = "松山高中",
   }) => {
     const [openManageAccountPU, setOpenManageAccountPU] = useState(false);
+    const dispatch = useAppDispatch();
+
     return (
       <div className={cx("account-content")}>
         <div className={cx("user-info")}>
@@ -245,7 +262,7 @@ const AccountButton = () => {
               <strong>{name}</strong>
             </p>
             <p className={cx("user-detail")}>
-              {occupation} @ {school}
+              {occupation} {occupation !== "" && school !== "" && "@"} {school}
             </p>
           </div>
           <UserAvatar size={30} />
@@ -272,8 +289,8 @@ const AccountButton = () => {
           icon={<Logout />}
           mode={"on-dark-2"}
           onClick={() => {
-            // TODO: logout
-            console.log("Log out");
+            sessionStorage.removeItem("sessionId");
+            dispatch(LoginStatusServices.actions.setComplete(false));
           }}
         />
       </div>

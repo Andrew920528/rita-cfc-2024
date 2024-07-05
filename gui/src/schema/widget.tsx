@@ -22,6 +22,7 @@ export type Widgets = {
 export type SemesterGoalWidgetContent = {
   goals: string[];
 };
+
 export type SemesterPlanWidgetContent = {
   headings: string[];
   rows: {[key: string]: string}[];
@@ -104,3 +105,55 @@ export const widgetBook = {
     type: WidgetType.Schedule,
   },
 };
+
+// Type guards
+function isSemesterGoalWidgetContent(
+  obj: any
+): obj is SemesterGoalWidgetContent {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    Array.isArray(obj.goals) &&
+    obj.goals.every((goal: any) => typeof goal === "string")
+  );
+}
+
+export function isSemesterPlanWidgetContent(
+  obj: any
+): obj is SemesterPlanWidgetContent {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    Array.isArray(obj.headings) &&
+    obj.headings.every((heading: any) => typeof heading === "string") &&
+    Array.isArray(obj.rows) &&
+    obj.rows.every(
+      (row: any) =>
+        typeof row === "object" &&
+        row !== null &&
+        Object.values(row).every((value) => typeof value === "string")
+    )
+  );
+}
+
+export function isNoteWidgetContent(obj: any): obj is NoteWidgetContent {
+  return (
+    typeof obj === "object" && obj !== null && typeof obj.note === "string"
+  );
+}
+
+export function contentIsOfType(type: WidgetType, content: any) {
+  switch (type) {
+    case WidgetType.SemesterGoal:
+      return isSemesterGoalWidgetContent(content);
+    case WidgetType.SemesterPlan:
+      return isSemesterPlanWidgetContent(content);
+    case WidgetType.Note:
+      return isNoteWidgetContent(content);
+    case WidgetType.Schedule:
+      console.log("Schedule update is not implemented yet");
+      return true;
+    default:
+      return false;
+  }
+}

@@ -345,7 +345,7 @@ def loginUser(username, password):
         }
         return response
 
-def updateUser(sessionId, alias, school, occupation, scheduleContent):
+def updateUser(sessionId, alias, school, occupation, schedule):
     getDatabaseDetails()
     
     verifySession = sessionCheck(sessionId)
@@ -387,9 +387,9 @@ def updateUser(sessionId, alias, school, occupation, scheduleContent):
                 query += 'Occupation=%s, '
                 values.append(occupation)
 
-            if scheduleContent != None:
+            if schedule != None:
                 query += 'Schedule_Content=%s, '
-                values.append(scheduleContent)
+                values.append(schedule)
 
             if len(values) == 0:
                 response = {
@@ -1197,6 +1197,7 @@ def getWatsonxRequest(prompt, widgetResponse, lectureId, classroomId):
     if lectureResponse['status'] == 'error':
         return lectureResponse
 
+    widgetResponse["content"] =  json.loads(widgetResponse["content"])
     response = {
         'status' : 'success',
         'data' : {
@@ -1206,6 +1207,8 @@ def getWatsonxRequest(prompt, widgetResponse, lectureId, classroomId):
             'lecture' : lectureResponse
         }
     }
+
+    
 
     return response
 

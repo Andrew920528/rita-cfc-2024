@@ -2,7 +2,7 @@ import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import {User} from "../schema/user";
 import {Schedule} from "../schema/schedule";
 import {Classroom, Classrooms} from "../schema/classroom";
-import {EMPTY_ID} from "../utils/constants";
+import {EMPTY_ID} from "../global/constants";
 import {stat} from "fs";
 
 const initialState: Classrooms = {
@@ -36,7 +36,7 @@ const ClassroomsSlice = createSlice({
       state,
       action: PayloadAction<{classroomId: string; lectureId: string}>
     ) => {
-      state.dict[action.payload.classroomId].lectures.push(
+      state.dict[action.payload.classroomId].lectureIds.push(
         action.payload.lectureId
       );
       state.dict[action.payload.classroomId].lastOpenedLecture =
@@ -53,11 +53,11 @@ const ClassroomsSlice = createSlice({
       state,
       action: PayloadAction<{classroomId: string; lectureId: string}>
     ) => {
-      const index = state.dict[action.payload.classroomId].lectures.indexOf(
+      const index = state.dict[action.payload.classroomId].lectureIds.indexOf(
         action.payload.lectureId
       );
       if (index > -1) {
-        state.dict[action.payload.classroomId].lectures.splice(index, 1);
+        state.dict[action.payload.classroomId].lectureIds.splice(index, 1);
       }
     },
     setCurrent: (state, action: PayloadAction<string>) => {

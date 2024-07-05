@@ -13,15 +13,11 @@
 - 6/19 23:10 | Almost done with the base implementation of the two widgets... However, AI implementation still seems far from completed. At this pace, we probably have to push iteration 1 back by 1 week.
 - 6/21 17:23 | I'm glad that stuff that I thought that needs to be refactored is actually better the original way. Learned how to write custom hooks today and solve the issue I wanted to solve without compromising scalability. For the most part (most) gui is completed for iteration 1. Besides certain widgets that needs to be thought out a bit more in terms of UX, the gui's data flow is implemented (without api), components are organized with reasonable scalability and performance. Still need a day or two to be fully done with the widgets, but Ellen and I can quickly be switching focus to the backend & ai.
 - 6/24 23:15 | More API integration done... the code structure is fairly stable and extensible in my opinion. The only issue I have is there are certain blocks of logic that is repeated and scattered around gui, but probably going to be over-engineered if try to abstract them out. Perhaps this is the case where better ui will affect the code structure.
-- 6/30 6:04 | After some research it looks like there is virtually no downside with using modularized css. Took sometime refactoring the stylesheet and figuring out a more concise way to put things together, but overall it should increase devex by quite a bit.
+- 6/30 18:04 | After some research it looks like there is virtually no downside with using modularized css. Took sometime refactoring the stylesheet and figuring out a more concise way to put things together, but overall it should increase devex by quite a bit.
+- 7/5 15:29 | They say lazy people speaks the most and do the least （反正魯迅大概說過吧？）The past week there are definitely a lot of progress made, but little logging done. Updates: v1 is very close to an end. Although we do not have enough testing to have the confident that it won't break, it is at a "good enough" state. As the overall architecture & pipeline become better tested and more stable, we can put all our thoughts on the meat of this project. Currently, all three teams have a major task. GUI = drag & drop + infinite canvas. API = latency issue. AI = ai being stupid issue. I am very excited.
 
 ## Backlog
 
-- Forms should be submitted when enter is pressed
-  - Urgency: 1
-- Header layout should be somewhat consistent even when classroom name changes
-  - Urgency: 1
 - Widget enter and exit animation
   - Urgency: 4
 - ctrl+z and other key board shortcut (to reduce the need to confirm delete)
-- Header layout is off when squashed

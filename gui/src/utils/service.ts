@@ -1,13 +1,14 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 import {formatTime, mimicApi} from "./util";
-import {API_SUCCESS, API_ERROR, dummyLoginData} from "./constants";
+import {API, INDEPENDENT_MODE} from "../global/constants";
+
 import {User} from "../schema/user";
 import {Classroom} from "../schema/classroom";
 import {Widget} from "../schema/widget";
 import {Lecture} from "../schema/lecture";
-
+import {dummyLoginData} from "./dummy";
 type ResponseData = {
-  status: typeof API_ERROR | typeof API_SUCCESS;
+  status: API;
   data: any;
 };
 
@@ -34,7 +35,7 @@ type ResponseData = {
  * @param identifier (optional) - The identifier of the API call (for debugging)
  */
 interface ApiHandlerArgs {
-  apiFunction: (s: AbortSignal) => Promise<Response>;
+  apiFunction: (s?: AbortSignal) => Promise<Response>;
   sideEffect?: (r: ResponseData) => ResponseData;
   debug?: boolean;
   identifier?: string;
@@ -91,7 +92,7 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
         if (!r.ok) throw new Error("Server error" + r.statusText);
 
         let body: ResponseData = await r.json();
-        if (body.status === API_ERROR) throw new Error(body.data);
+        if (body.status === API.ERROR) throw new Error(body.data);
 
         if (debug) {
           console.log(
@@ -102,15 +103,22 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
         return sideEffect(body);
       } catch (err) {
         let msg;
+        let stat;
         if (err instanceof DOMException && err.name === "AbortError") {
           msg = "Request aborted";
+          stat = API.ABORTED;
+          if (debug) console.warn(msg);
         } else if (err instanceof Error) {
           msg = err.message;
+          stat = API.ERROR;
+          if (debug) console.error(msg);
         } else {
           msg = "Unknown error";
+          stat = API.ERROR;
+          if (debug) console.error(msg);
         }
-        if (debug) console.warn(msg);
-        const errorResponse: ResponseData = {status: "error", data: msg};
+
+        const errorResponse: ResponseData = {status: stat, data: msg};
         return errorResponse;
       } finally {
         setLoading(false);
@@ -128,11 +136,13 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
 
 /**
  * Raw API calls that calls the backend
+ * Documentation: https://docs.google.com/document/d/1EVmXDQIR49d-g57JczzRZ6wmxlWLhpY_Eczj9dUHrkk/edit
  */
 
 const BASE_URL_DEV = "http://127.0.0.1:5000";
-export function tryTrySee(abortSignal: AbortSignal) {
-  return fetch(BASE_URL_DEV + "/hello", {
+export function tryTrySee(abortSignal?: AbortSignal) {
+  const endPoint = "/hello";
+  return fetch(BASE_URL_DEV + endPoint, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -140,44 +150,57 @@ export function tryTrySee(abortSignal: AbortSignal) {
   });
 }
 
-// 😍 = actually calls api
-// 🤖 = api called in component
-// 🤡 = function implemented with dymmy data
-
-// 🤖
-export type LoginResponseObject = {
-  token?: string; // TODO should be required
-  user: User;
-  classroomsDict: {[cid: string]: Classroom};
-  lecturesDict: {[lid: string]: Lecture};
-  widgetDict: {[wid: string]: Widget};
-};
+// ✅ Can log in with newly created account
+// ✅ Can log in with existing account
 export function loginService(
-  abortSignal: AbortSignal,
-  payload: {username: string; password: string}
+  payload: {username: string; password: string},
+  abortSignal?: AbortSignal
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: dummyLoginData,
-  };
-  return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
-  // const logThis = {
-  //   username: "TEST_ACCOUNT_1",
-  //   password: "TEST_PASSWORD_1",
-  // };
-  // return fetch(BASE_URL_DEV + "/login", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: dummyLoginData,
+    };
+    return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/login";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
 
-  //   body: JSON.stringify(logThis), // Convert data object to JSON string
-  // });
+    body: JSON.stringify(payload), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖
+// ✅ Can log in when sessionId exists
+export function loginWithSidService(
+  payload: {sessionId: string},
+  abortSignal?: AbortSignal
+) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: dummyLoginData,
+    };
+    return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/login-with-sid";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify(payload), // Convert data object to JSON string
+    signal: abortSignal,
+  });
+}
+
+// ✅ Can create account via signup gui
 export function createUserService(
-  abortSignal: AbortSignal,
   payload: {
     username: string;
     password: string;
@@ -185,65 +208,96 @@ export function createUserService(
     alias?: string;
     occupation?: string;
     schedule?: string;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "account created",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
-  // return fetch(BASE_URL_DEV + "/login", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify(payload), // Convert data object to JSON string
-  // });
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "User created",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/create-user";
+
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖
+// ✅ Can update account via header (top right)
 export function updateUserService(
-  abortSignal: AbortSignal,
   payload: {
-    username: string;
     alias?: string;
     school?: string;
     occupation?: string;
     schedule?: string;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "user updated",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "user updated",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/update-user";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖
+// ✅ Can create classroom via navbar
 export function createClassroomService(
-  abortSignal: AbortSignal,
   payload: {
-    username: string;
     classroomId: string;
     classroomName: string;
     subject: string;
     publisher: string;
     grade: string;
     plan: boolean;
-    chatroomId: string;
     credits: number;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "classroom created",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "classroom created",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+
+  const endPoint = "/create-classroom";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖
+// ✅ Can update classroom via header
 export function updateClassroomService(
-  abortSignal: AbortSignal,
   payload: {
     classroomId: string;
     classroomName?: string;
@@ -252,112 +306,189 @@ export function updateClassroomService(
     grade?: string;
     plan?: boolean;
     credits?: number;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "classroom updated",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "classroom updated",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+
+  const endPoint = "/update-classroom";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖
+// ✅ Can create lecture via header dropdown
 export function createLectureService(
-  abortSignal: AbortSignal,
   payload: {
     lectureId: string;
     classroomId: string;
     name: string;
     type: number;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "lecture created",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "lecture created",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+
+  const endPoint = "/create-lecture";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖
+// ✅ Can delete lecture via header dropdown
 export function deleteLectureService(
-  abortSignal: AbortSignal,
   payload: {
     lectureId: string;
     classroomId: string;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "lecture deleted",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "lecture deleted",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/delete-lecture";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖
+// ✅ Can create note widget without issue
+// ✅ Can create semester goal widget without issue
+// ✅ Can create semester plan widget without issue
+// ✅ Can create schedule widget without issue
+// ✅ Content properly parsed in when refresh
 export function createWidgetService(
-  abortSignal: AbortSignal,
   payload: {
     widgetId: string;
     type: number;
     content: string; // stringify json
     lectureId: string;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "widget created",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "widget created",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/create-widget";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖
+// ✅ Can delete widget via WidgetFrame
 export function deleteWidgetService(
-  abortSignal: AbortSignal,
   payload: {
     widgetId: string;
     lectureId: string;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "widget deleted",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "widget deleted",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+
+  const endPoint = "/delete-widget";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖 * Currently unused
-export function updateWidgetService(
-  abortSignal: AbortSignal,
-  payload: {
-    widgetId: string;
-    content: string; // stringify json
-  }
-) {
-  const response = {
-    status: API_SUCCESS,
-    data: "widget updated",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
-}
-
-// 🤖
+// ✅ Can update widgets properly
 export function updateWidgetBulkService(
-  abortSignal: AbortSignal,
   payload: {
-    widgetId: string[];
-    content: string[]; // stringify json
-  }
+    widgetIds: string[];
+    contents: string[]; // stringify json
+  },
+  abortSignal?: AbortSignal
 ) {
-  const response = {
-    status: API_SUCCESS,
-    data: "all widgets updated",
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "all widgets updated",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+
+  const endPoint = "/update-widget-bulk";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
 
-// 🤖
+// ✅ can send and recieve message properly
 export function messageRitaService(
-  abortSignal: AbortSignal,
   payload: {
     prompt: string;
     widget?: {
@@ -367,15 +498,35 @@ export function messageRitaService(
     };
     lectureId: string;
     classroomId: string;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
-  const response = {
-    text: "Hello, I'm Rita. I do not understand what you are saying. Ask Edison.",
-    sender: "Rita",
-  };
-  const dummyResponse = {
-    status: API_SUCCESS,
-    data: response,
-  };
-  return mimicApi(100, JSON.parse(JSON.stringify(dummyResponse)), abortSignal);
+  if (INDEPENDENT_MODE) {
+    const mimicResponse = {
+      reply:
+        "Hello, I'm Rita. You are in frontend development mode, where I am not connected to an actual AI",
+      content: {goals: ["你好呀"]},
+      widgetId: "dum-username-wid-lxu4el0kwcyyfcov1vq",
+    };
+
+    const response = {
+      status: API.SUCCESS,
+      data: mimicResponse, // TODO Modify data to meet api response
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/message-rita";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
+    signal: abortSignal,
+  });
 }
+
+// TODO: if api all follow this format, consider refactor the functions

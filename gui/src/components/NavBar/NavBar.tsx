@@ -8,11 +8,12 @@ import {LecturesServices} from "../../features/LectureSlice";
 import {WidgetType, initWidget, widgetBook} from "../../schema/widget";
 import {useCreateWidget} from "../../store/globalActions";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
-import {API_ERROR, EMPTY_ID} from "../../utils/constants";
+import {API, EMPTY_ID} from "../../global/constants";
 import {generateId} from "../../utils/util";
 import {createWidgetService, useApiHandler} from "../../utils/service";
 import classNames from "classnames/bind";
 import styles from "./NavBar.module.scss";
+import {WidgetsServices} from "../../features/WidgetsSlice";
 
 const cx = classNames.bind(styles);
 type ClassCardProps = {
@@ -37,20 +38,29 @@ const ClassCard = ({
 }: ClassCardProps) => {
   const dispatch = useAppDispatch();
   const classrooms = useTypedSelector((state) => state.Classrooms);
+  const lectures = useTypedSelector((state) => state.Lectures);
   return (
     <div
       className={cx("class-card", {selected: selected === id})}
       onClick={() => {
         dispatch(ClassroomsServices.actions.setCurrent(id));
+        const lastLecture = classrooms.dict[id].lastOpenedLecture;
         dispatch(
           LecturesServices.actions.setCurrent(
-            classrooms.dict[id].lastOpenedLecture
-              ? (classrooms.dict[id].lastOpenedLecture as string)
-              : EMPTY_ID
+            lastLecture ? (lastLecture as string) : EMPTY_ID
           )
         );
-        const chatId = classrooms.dict[id].chatroom;
+        const chatId = classrooms.dict[id].chatroomId;
         dispatch(ChatroomsServices.actions.setCurrent(chatId));
+
+        if (lastLecture) {
+          const firstWidget = lectures.dict[lastLecture].widgetIds[0];
+          if (firstWidget) {
+            dispatch(WidgetsServices.actions.setCurrent(firstWidget));
+          } else {
+            dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
+          }
+        }
       }}
     >
       <p>
@@ -75,21 +85,27 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
   const username = useTypedSelector((state) => state.User.username);
   const addWidget = useCreateWidget();
   const {apiHandler, loading} = useApiHandler();
-
+  // TODO DELETE
+  const widgets = useTypedSelector((state) => state.Widgets);
   async function createWidget() {
     const newWidgetId = username + "-wid-" + generateId();
     let r = await apiHandler({
       apiFunction: (s) =>
-        createWidgetService(s, {
-          widgetId: newWidgetId,
-          type: widgetType,
-          lectureId: lectures.current,
-          content: "",
-        }),
+        createWidgetService(
+          {
+            widgetId: newWidgetId,
+            type: widgetType,
+            lectureId: lectures.current,
+            content: JSON.stringify(
+              initWidget(newWidgetId, widgetType).content
+            ), // TODO Needs to save initial content
+          },
+          s
+        ),
       debug: true,
       identifier: "createWidget",
     });
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
     addWidget({
@@ -149,7 +165,7 @@ const NavBar = () => {
           />
         </div>
         <div className={cx("nav-stack")}>
-          {user.classrooms.toReversed().map((id) => (
+          {user.classroomIds.toReversed().map((id) => (
             <ClassCard
               key={id}
               id={id}

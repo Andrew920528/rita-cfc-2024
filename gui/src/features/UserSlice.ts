@@ -1,21 +1,14 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import {User} from "../schema/user";
-import {Schedule, ScheduleHeadings} from "../schema/schedule";
+import {Schedule, ScheduleHeadings, initSchedule} from "../schema/schedule";
 
 const initialState: User = {
   username: "",
-  token: "",
   alias: "",
   school: "",
   occupation: "",
-  schedule: Array(8).fill({
-    mon: "",
-    tue: "",
-    wed: "",
-    thu: "",
-    fri: "",
-  }),
-  classrooms: [],
+  schedule: initSchedule,
+  classroomIds: [],
   scheduleChanged: false,
 };
 
@@ -25,12 +18,13 @@ const UserSlice = createSlice({
   reducers: {
     parseLogin: (state, action: PayloadAction<User>) => {
       state.username = action.payload.username;
-      state.token = action.payload.token;
       state.alias = action.payload.alias;
       state.school = action.payload.school;
       state.occupation = action.payload.occupation;
-      state.schedule = action.payload.schedule;
-      state.classrooms = action.payload.classrooms;
+      state.schedule = action.payload.schedule
+        ? action.payload.schedule
+        : initSchedule;
+      state.classroomIds = action.payload.classroomIds;
       state.scheduleChanged = false;
     },
     setProfile: (
@@ -41,11 +35,8 @@ const UserSlice = createSlice({
       state.school = action.payload.school;
       state.occupation = action.payload.occupation;
     },
-    setToken: (state, action: PayloadAction<string>) => {
-      state.token = action.payload;
-    },
     addClassroom: (state, action: PayloadAction<string>) => {
-      state.classrooms.push(action.payload);
+      state.classroomIds.push(action.payload);
     },
     updateSchedule: (state, action: PayloadAction<"add" | "delete">) => {
       if (action.payload === "add") {
@@ -79,7 +70,6 @@ const UserSlice = createSlice({
     },
     saveSchedule: (state) => {
       state.scheduleChanged = false;
-      console.log("Saving schedule");
     },
   },
 });

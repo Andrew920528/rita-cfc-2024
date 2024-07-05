@@ -5,7 +5,7 @@ import PopUp, {PopUpProps} from "../PopUp/PopUp";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import {UserServices} from "../../../features/UserSlice";
 import {updateUserService, useApiHandler} from "../../../utils/service";
-import {API_ERROR} from "../../../utils/constants";
+import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./ManageAccountPU.module.scss";
 
@@ -55,16 +55,20 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
       return;
     }
     let r = await apiHandler({
-      apiFunction: (c) =>
-        updateUserService(c, {
-          username: user.username,
-          alias: alias.trim(),
-          school: school.trim(),
-          occupation: occupation.trim(),
-        }),
+      apiFunction: (s) =>
+        updateUserService(
+          {
+            alias: alias.trim(),
+            school: school.trim(),
+            occupation: occupation.trim(),
+          },
+          s
+        ),
+      debug: true,
+      identifier: "updateUserService",
     });
 
-    if (r.status === API_ERROR) {
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
       // TODO: toast error: not saved
       return;
     }
@@ -87,13 +91,13 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
       footerBtnProps={{
         icon: <Save size={20} />,
         text: "儲存變更",
-        onClick: () => {
-          submitForm();
-        },
         disabled: loading,
       }}
       reset={() => {
         terminateResponse();
+      }}
+      puAction={() => {
+        submitForm();
       }}
     >
       <div className={cx("manage-account-form")}>

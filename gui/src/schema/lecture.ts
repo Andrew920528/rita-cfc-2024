@@ -2,7 +2,7 @@ export type Lecture = {
   id: string;
   name: string;
   type: number;
-  widgets: string[]; // in order
+  widgetIds: string[]; // in order
 };
 
 export type Lectures = {

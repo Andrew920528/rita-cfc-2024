@@ -20,11 +20,25 @@ def message_rita():
     lectureId = request.json['lectureId']
     classroomId = request.json['classroomId']
     watsonxRequest = getWatsonxRequest(prompt, widget, lectureId, classroomId)
-
-    llmHandleInput = llm_handle_input(watsonxRequest);
+    # check if output is correct
+    if watsonxRequest['status'] == 'error':
+        return watsonxRequest
+    
+    try:
+        llmOutput = llm_handle_input(watsonxRequest['data']) # returns rita's reply asdict
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : str(e)
+        }
+        return response
 
     # return watsonxResponse
-    return llmHandleInput
+    response = {
+        'status' : 'success',
+        'data' : llmOutput
+    }
+    return response
     
 ######################################################################################################## users
 @app.route('/create-user', methods=['POST'])
@@ -35,8 +49,8 @@ def create_user():
         school = request.json.get('school', None)
         alias = request.json.get('alias', None)
         occupation = request.json.get('occupation', None)
-        scheduleContent = request.json.get('scheduleContent', None)
-        return createUser(username, password, school, alias, occupation, scheduleContent)
+        schedule = request.json.get('schedule', None)
+        return createUser(username, password, school, alias, occupation, schedule)
     except Exception as e:
         response = { 
             'status' : 'error',
@@ -51,8 +65,8 @@ def update_user():
         alias = request.json.get('alias', None)
         school = request.json.get('school', None)
         occupation = request.json.get('occupation', None)
-        scheduleContent = request.json.get('scheduleContent', None)
-        return updateUser(sessionId, alias, school, occupation, scheduleContent)
+        schedule = request.json.get('schedule', None)
+        return updateUser(sessionId, alias, school, occupation, schedule)
     except Exception as e:
         response = { 
             'status' : 'error',

@@ -1,6 +1,6 @@
 import {PayloadAction, createSlice, current} from "@reduxjs/toolkit";
 import {Widget, Widgets} from "../schema/widget";
-import {EMPTY_ID} from "../utils/constants";
+import {EMPTY_ID} from "../global/constants";
 
 const initialState: Widgets = {
   dict: {},
@@ -48,7 +48,6 @@ const WidgetsSlice = createSlice({
       }
     },
     saveAll: (state) => {
-      console.log("Saving...", current(state.unsaved));
       state.unsaved = {};
     },
   },
