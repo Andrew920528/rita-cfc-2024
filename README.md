@@ -15,6 +15,10 @@ Otherwise, to open the gui, run the following at root dir:
 ```
 npm run gui:dev
 ```
+To run the gui independently of the frontend (for demo reasons), run
+```
+npm run gui:indep
+```
 
 This will open a new window in your local host with the GUI. Note these are custom scripts I wrote to make life a little easier. You can also do `cd gui`, `npm install`, and `npm start`.
 
@@ -47,9 +51,9 @@ This is going to open up port 5000 as the api endpoint. You can go to http://127
 2. Because conda doesn't update `environment.yml` automatically, whenever you install some new package, run
    ```
    cd server
-   conda env export > environment.yml
+   conda env export > environment.yml --from-history
    ```
-   to overwrite the current environment.yml`. This way, other people can update there environments.
+   to overwrite the current environment.yml`. This way, other people can update their environments.
 
 ### 3. Best Practices
 
