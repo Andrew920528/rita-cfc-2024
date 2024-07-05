@@ -10,11 +10,9 @@ const LoginStatusSlice = createSlice({
   initialState,
   reducers: {
     setLoading: (state, action: PayloadAction<boolean>) => {
-      console.log("set loading to " + action.payload);
       state.loading = action.payload;
     },
     setComplete: (state, action: PayloadAction<boolean>) => {
-      console.log("set complete to " + action.payload);
       state.complete = action.payload;
     },
   },

@@ -15,7 +15,6 @@ const cx = classNames.bind(styles);
 
 const Login = () => {
   const {apiHandler, loading} = useApiHandler();
-  const dispatch = useAppDispatch();
   const loginParseState = useLoginParseState();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -34,7 +33,6 @@ const Login = () => {
     // Add event listener for keydown
     window.addEventListener("keydown", handleKeyDown);
     // Cleanup the event listener on component unmount
-    console.log("login");
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
@@ -59,11 +57,14 @@ const Login = () => {
     }
     return validate;
   }
+
   async function login() {
     if (!validateLogin()) return;
+
+    console.log("this function is still running");
     let r = await apiHandler({
       apiFunction: (s) =>
-        loginService(s, {username: username, password: password}),
+        loginService({username: username, password: password}, s),
       debug: true,
       identifier: "login",
     });
@@ -75,9 +76,9 @@ const Login = () => {
       }
       return;
     }
+
     loginParseState(r.data);
     reset();
-    dispatch(LoginStatusServices.actions.setComplete(true));
   }
   return (
     <div className={cx("login-root")}>

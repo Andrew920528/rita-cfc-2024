@@ -35,7 +35,7 @@ type ResponseData = {
  * @param identifier (optional) - The identifier of the API call (for debugging)
  */
 interface ApiHandlerArgs {
-  apiFunction: (s: AbortSignal) => Promise<Response>;
+  apiFunction: (s?: AbortSignal) => Promise<Response>;
   sideEffect?: (r: ResponseData) => ResponseData;
   debug?: boolean;
   identifier?: string;
@@ -140,7 +140,7 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
  */
 
 const BASE_URL_DEV = "http://127.0.0.1:5000";
-export function tryTrySee(abortSignal: AbortSignal) {
+export function tryTrySee(abortSignal?: AbortSignal) {
   const endPoint = "/hello";
   return fetch(BASE_URL_DEV + endPoint, {
     headers: {
@@ -153,8 +153,8 @@ export function tryTrySee(abortSignal: AbortSignal) {
 // ✅ Can log in with newly created account
 // ✅ Can log in with existing account
 export function loginService(
-  abortSignal: AbortSignal,
-  payload: {username: string; password: string}
+  payload: {username: string; password: string},
+  abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
@@ -177,8 +177,8 @@ export function loginService(
 
 // ✅ Can log in when sessionId exists
 export function loginWithSidService(
-  abortSignal: AbortSignal,
-  payload: {sessionId: string}
+  payload: {sessionId: string},
+  abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
@@ -201,7 +201,6 @@ export function loginWithSidService(
 
 // ✅ Can create account via signup gui
 export function createUserService(
-  abortSignal: AbortSignal,
   payload: {
     username: string;
     password: string;
@@ -209,7 +208,8 @@ export function createUserService(
     alias?: string;
     occupation?: string;
     schedule?: string;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
@@ -232,13 +232,13 @@ export function createUserService(
 
 // ✅ Can update account via header (top right)
 export function updateUserService(
-  abortSignal: AbortSignal,
   payload: {
     alias?: string;
     school?: string;
     occupation?: string;
     schedule?: string;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
@@ -263,7 +263,6 @@ export function updateUserService(
 
 // ✅ Can create classroom via navbar
 export function createClassroomService(
-  abortSignal: AbortSignal,
   payload: {
     classroomId: string;
     classroomName: string;
@@ -273,7 +272,8 @@ export function createClassroomService(
     plan: boolean;
     chatroomId: string;
     credits: number;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
@@ -299,7 +299,6 @@ export function createClassroomService(
 
 // ✅ Can update classroom via header
 export function updateClassroomService(
-  abortSignal: AbortSignal,
   payload: {
     classroomId: string;
     classroomName?: string;
@@ -308,7 +307,8 @@ export function updateClassroomService(
     grade?: string;
     plan?: boolean;
     credits?: number;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
@@ -334,13 +334,13 @@ export function updateClassroomService(
 
 // ✅ Can create lecture via header dropdown
 export function createLectureService(
-  abortSignal: AbortSignal,
   payload: {
     lectureId: string;
     classroomId: string;
     name: string;
     type: number;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
@@ -366,11 +366,11 @@ export function createLectureService(
 
 // ✅ Can delete lecture via header dropdown
 export function deleteLectureService(
-  abortSignal: AbortSignal,
   payload: {
     lectureId: string;
     classroomId: string;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
@@ -399,13 +399,13 @@ export function deleteLectureService(
 // ✅ Can create schedule widget without issue
 // ✅ Content properly parsed in when refresh
 export function createWidgetService(
-  abortSignal: AbortSignal,
   payload: {
     widgetId: string;
     type: number;
     content: string; // stringify json
     lectureId: string;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
@@ -430,11 +430,11 @@ export function createWidgetService(
 
 // ✅ Can delete widget via WidgetFrame
 export function deleteWidgetService(
-  abortSignal: AbortSignal,
   payload: {
     widgetId: string;
     lectureId: string;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
@@ -460,11 +460,11 @@ export function deleteWidgetService(
 
 // ✅ Can update widgets properly
 export function updateWidgetBulkService(
-  abortSignal: AbortSignal,
   payload: {
     widgetIds: string[];
     contents: string[]; // stringify json
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
     const response = {
@@ -490,7 +490,6 @@ export function updateWidgetBulkService(
 
 // ✅ can send and recieve message properly
 export function messageRitaService(
-  abortSignal: AbortSignal,
   payload: {
     prompt: string;
     widget?: {
@@ -500,7 +499,8 @@ export function messageRitaService(
     };
     lectureId: string;
     classroomId: string;
-  }
+  },
+  abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
     const mimicResponse = {

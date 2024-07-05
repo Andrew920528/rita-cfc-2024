@@ -50,10 +50,13 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   async function deleteLecture(lectureId: string) {
     let r = await apiHandler({
       apiFunction: (s) =>
-        deleteLectureService(s, {
-          lectureId: lectureId,
-          classroomId: classrooms.current,
-        }),
+        deleteLectureService(
+          {
+            lectureId: lectureId,
+            classroomId: classrooms.current,
+          },
+          s
+        ),
     });
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
@@ -176,9 +179,12 @@ const SaveGroup = () => {
       // update user here
       r = await apiHandler({
         apiFunction: (s) =>
-          updateUserService(s, {
-            schedule: JSON.stringify(user.schedule),
-          }),
+          updateUserService(
+            {
+              schedule: JSON.stringify(user.schedule),
+            },
+            s
+          ),
         debug: true,
         identifier: "updateUserService",
       });
@@ -192,13 +198,16 @@ const SaveGroup = () => {
     if (Object.keys(unsavedWidgets).length !== 0) {
       r = await apiHandler({
         apiFunction: (s) =>
-          updateWidgetBulkService(s, {
-            widgetIds: Object.keys(unsavedWidgets),
-            contents: Object.keys(unsavedWidgets).map((w: string) => {
-              let content = widgetDict[w].content;
-              return JSON.stringify(content);
-            }),
-          }),
+          updateWidgetBulkService(
+            {
+              widgetIds: Object.keys(unsavedWidgets),
+              contents: Object.keys(unsavedWidgets).map((w: string) => {
+                let content = widgetDict[w].content;
+                return JSON.stringify(content);
+              }),
+            },
+            s
+          ),
         debug: true,
         identifier: "updateWidgetBulkService",
       });

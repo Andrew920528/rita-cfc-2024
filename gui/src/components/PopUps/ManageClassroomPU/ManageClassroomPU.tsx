@@ -156,9 +156,12 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
 
     let r = await apiHandler({
       apiFunction: (s) =>
-        createClassroomService(s, {
-          ...classroomData,
-        }),
+        createClassroomService(
+          {
+            ...classroomData,
+          },
+          s
+        ),
       debug: true,
       identifier: "createClassroom",
     });
@@ -172,7 +175,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       type: 0,
     };
     r = await apiHandler({
-      apiFunction: (s) => createLectureService(s, lectureData),
+      apiFunction: (s) => createLectureService(lectureData, s),
       debug: true,
       identifier: "createLecture",
     });
@@ -205,14 +208,17 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     };
     let r = await apiHandler({
       apiFunction: (s) =>
-        updateClassroomService(s, {
-          classroomId: classroomId,
-          classroomName: name,
-          subject: subject === "其他" ? otherSubject : subject,
-          publisher: subject === "其他" ? "綜合" : publisher,
-          grade: grade,
-          credits: parseInt(credit),
-        }),
+        updateClassroomService(
+          {
+            classroomId: classroomId,
+            classroomName: name,
+            subject: subject === "其他" ? otherSubject : subject,
+            publisher: subject === "其他" ? "綜合" : publisher,
+            grade: grade,
+            credits: parseInt(credit),
+          },
+          s
+        ),
       debug: true,
       identifier: "editClassroom",
     });

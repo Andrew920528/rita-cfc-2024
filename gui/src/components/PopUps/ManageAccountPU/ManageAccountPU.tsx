@@ -55,12 +55,15 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
       return;
     }
     let r = await apiHandler({
-      apiFunction: (c) =>
-        updateUserService(c, {
-          alias: alias.trim(),
-          school: school.trim(),
-          occupation: occupation.trim(),
-        }),
+      apiFunction: (s) =>
+        updateUserService(
+          {
+            alias: alias.trim(),
+            school: school.trim(),
+            occupation: occupation.trim(),
+          },
+          s
+        ),
     });
 
     if (r.status === API.ERROR || r.status === API.ABORTED) {

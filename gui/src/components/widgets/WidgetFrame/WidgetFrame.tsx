@@ -57,10 +57,13 @@ const WidgetFrame = ({
   async function deleteWidgetAction() {
     let r = await apiHandler({
       apiFunction: (s) =>
-        deleteWidgetService(s, {
-          widgetId: widgetId,
-          lectureId: lectures.current,
-        }),
+        deleteWidgetService(
+          {
+            widgetId: widgetId,
+            lectureId: lectures.current,
+          },
+          s
+        ),
       debug: true,
       identifier: "deleteWidget",
     });

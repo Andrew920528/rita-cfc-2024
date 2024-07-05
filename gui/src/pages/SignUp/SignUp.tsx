@@ -102,16 +102,16 @@ const SignUp = () => {
   async function signup() {
     if (!validateSignup()) return;
 
+    const userPayload = {
+      username,
+      password,
+      school: "",
+      alias: username,
+      occupation: "",
+      schedule: JSON.stringify(initSchedule),
+    };
     let r = await apiHandler({
-      apiFunction: (s) =>
-        createUserService(s, {
-          username,
-          password,
-          school: "",
-          alias: username,
-          occupation: "",
-          schedule: JSON.stringify(initSchedule),
-        }),
+      apiFunction: (s) => createUserService(userPayload, s),
       debug: true,
       identifier: "signup",
     });

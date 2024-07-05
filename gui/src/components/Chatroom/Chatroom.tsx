@@ -68,10 +68,13 @@ const Chatroom = ({}: ChatroomProps) => {
     };
 
     let r = await apiHandler({
-      apiFunction: (s: AbortSignal) =>
-        messageRitaService(s, {
-          ...payload,
-        }),
+      apiFunction: (s) =>
+        messageRitaService(
+          {
+            ...payload,
+          },
+          s
+        ),
       debug: true,
       identifier: "messageRita",
     });

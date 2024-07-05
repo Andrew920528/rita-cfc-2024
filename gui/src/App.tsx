@@ -26,10 +26,13 @@ function App() {
       // loginWithSid
       dispatch(LoginStatusServices.actions.setLoading(true));
       let r = await apiHandler({
-        apiFunction: (s: AbortSignal) =>
-          loginWithSidService(s, {
-            sessionId: sid,
-          }),
+        apiFunction: (s) =>
+          loginWithSidService(
+            {
+              sessionId: sid,
+            },
+            s
+          ),
         debug: true,
         identifier: "login with sid",
       });

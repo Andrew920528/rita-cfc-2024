@@ -81,12 +81,17 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
     const newWidgetId = username + "-wid-" + generateId();
     let r = await apiHandler({
       apiFunction: (s) =>
-        createWidgetService(s, {
-          widgetId: newWidgetId,
-          type: widgetType,
-          lectureId: lectures.current,
-          content: JSON.stringify(initWidget(newWidgetId, widgetType).content), // TODO Needs to save initial content
-        }),
+        createWidgetService(
+          {
+            widgetId: newWidgetId,
+            type: widgetType,
+            lectureId: lectures.current,
+            content: JSON.stringify(
+              initWidget(newWidgetId, widgetType).content
+            ), // TODO Needs to save initial content
+          },
+          s
+        ),
       debug: true,
       identifier: "createWidget",
     });
