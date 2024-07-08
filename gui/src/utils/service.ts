@@ -511,7 +511,7 @@ export function messageRitaService(
 
     const response = {
       status: API.SUCCESS,
-      data: mimicResponse, // TODO Modify data to meet api response
+      data: mimicResponse,
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
   }

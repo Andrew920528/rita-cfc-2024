@@ -66,7 +66,9 @@ const Chatroom = ({}: ChatroomProps) => {
           : {
               id: widgets.current,
               type: widgets.dict[widgets.current].type,
-              content: JSON.stringify(widgets.dict[widgets.current]),
+              content: JSON.parse(
+                JSON.stringify(widgets.dict[widgets.current])
+              ),
             },
       lectureId: lecture.id,
       classroomId: classroomId,
