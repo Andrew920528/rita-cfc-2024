@@ -83,8 +83,6 @@ const WidgetFrame = ({
         `w-${widgetWidths[widgetType]}`
       )}
       onClick={() => {
-        console.log(widgetId);
-        console.log(JSON.stringify(widgets.dict[widgetId].content));
         dispatch(WidgetsServices.actions.setCurrent(widgetId));
       }}
     >

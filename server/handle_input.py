@@ -38,7 +38,7 @@ def create_prompt(input):
     load_details()
     input_str = json.dumps(input, indent=4, ensure_ascii=False)
     input_output_instruction = """
-
+    
     Sample LLM Input: 
 
     input = {
