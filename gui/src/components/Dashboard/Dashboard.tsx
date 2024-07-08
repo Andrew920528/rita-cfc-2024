@@ -8,6 +8,7 @@ import {WidgetsServices} from "../../features/WidgetsSlice";
 import {EMPTY_ID} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./Dashboard.module.scss";
+import Playground from "./Playground";
 
 const cx = classNames.bind(styles);
 const DashboardPlaceHolder = () => {
@@ -44,21 +45,18 @@ const Dashboard = () => {
     <div className={cx("dashboard")} onClick={deselectWidget}>
       {lectures.dict[lectures.current] &&
       lectures.dict[lectures.current].widgetIds.length > 0 ? (
-        <div className={cx("widgets")} onClick={deselectWidget}>
-          {lectures.dict[lectures.current].widgetIds.toReversed().map((wid) => {
-            const w = widgets.dict[wid];
-            return (
-              <WidgetFrame
-                key={wid}
-                title={widgetBook[w.type].title}
-                icon={widgetBook[w.type].icon}
-                selected={wid === widgets.current}
-                widgetId={wid}
-                widgetType={widgets.dict[wid].type}
-              />
-            );
-          })}
-        </div>
+        // <div className={cx("widgets")} onClick={deselectWidget}>
+        //   {lectures.dict[lectures.current].widgetIds.toReversed().map((wid) => {
+        //     return (
+        //       <WidgetFrame
+        //         key={wid}
+        //         selected={wid === widgets.current}
+        //         widgetId={wid}
+        //       />
+        //     );
+        //   })}
+        // </div>
+        <Playground />
       ) : (
         <DashboardPlaceHolder />
       )}

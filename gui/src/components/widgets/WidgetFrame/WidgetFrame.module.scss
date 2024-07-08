@@ -10,18 +10,20 @@ $dashboard-gap: 0.5rem;
   &.selected {
     outline: 2px solid $primary-color;
   }
+  // because reactflow's node wraps a div
+  // around the content, we can't use % widths
 
-  &.w-33 {
-    width: calc((100% / 3 - #{$dashboard-gap}));
-  }
+  // &.w-33 {
+  //   width: calc((100% / 3 - #{$dashboard-gap}));
+  // }
 
-  &.w-66 {
-    width: calc((100% * 2 / 3 - #{$dashboard-gap}));
-  }
+  // &.w-66 {
+  //   width: calc((100% * 2 / 3 - #{$dashboard-gap}));
+  // }
 
-  &.w-99 {
-    width: calc(100% - #{$dashboard-gap});
-  }
+  // &.w-99 {
+  //   width: calc(100% - #{$dashboard-gap});
+  // }
 
   .wf-heading {
     display: flex;
@@ -30,6 +32,8 @@ $dashboard-gap: 0.5rem;
     gap: 0.5rem;
     padding-left: 1rem;
     justify-content: space-between;
+    z-index: 20;
+
     .wf-heading-left {
       display: flex;
       flex-direction: row;
@@ -38,7 +42,18 @@ $dashboard-gap: 0.5rem;
     }
   }
   .wf-content {
-    padding: 1rem;
+    margin: 1rem;
     overflow: auto;
+    z-index: 20;
+    &:hover {
+      cursor: default;
+    }
+  }
+
+  .draggable-area {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
   }
 }

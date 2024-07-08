@@ -3,7 +3,7 @@ import {Catalog, Close} from "@carbon/icons-react";
 import IconButton from "../../ui_components/IconButton/IconButton";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
-import {WidgetType} from "../../../schema/widget";
+import {WidgetType, widgetBook} from "../../../schema/widget";
 import SemesterGoalWidget from "../SemesterGoalWidget/SemesterGoalWidget";
 import SemesterPlanWidget from "../SemesterPlanWidget/SemesterPlanWidget";
 import NoteWidget from "../NoteWidget/NoteWidget";
@@ -36,20 +36,20 @@ const widgetWidths = {
   [WidgetType.Schedule]: "33",
   [WidgetType.Note]: "33",
 };
-type WidgetFrameProps = {
+export type WidgetFrameProps = {
   selected?: boolean;
-  icon?: ReactElement;
-  title?: string;
+  // icon?: ReactElement;
+  // title?: string;
   widgetId: string;
-  widgetType: WidgetType;
+  // widgetType: WidgetType;
 };
 const WidgetFrame = ({
   selected,
-  icon = <Catalog size={20} />,
-  title = "Widget",
+  // icon = <Catalog size={20} />,
+  // title = "Widget",
   widgetId,
-  widgetType,
-}: WidgetFrameProps) => {
+}: // widgetType,
+WidgetFrameProps) => {
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
   const widgets = useTypedSelector((state) => state.Widgets);
@@ -73,6 +73,10 @@ const WidgetFrame = ({
     }
     deleteWidget({lectureId: lectures.current, widgetId: widgetId});
   }
+  const widgetType = widgets.dict[widgetId].type;
+  const title = widgetBook[widgetType].title;
+  const icon = widgetBook[widgetType].icon;
+
   return (
     <div
       className={cx(
@@ -103,6 +107,7 @@ const WidgetFrame = ({
       <div className={cx("wf-content")}>
         {widgetComponent(widgetId, widgetType)}
       </div>
+      <div className={cx("draggable-area")} />
     </div>
   );
 };

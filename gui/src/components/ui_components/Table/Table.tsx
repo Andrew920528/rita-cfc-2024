@@ -27,7 +27,6 @@ const Table = (props: Props & TableStyleProps) => {
     index: number
   ) => {
     e.preventDefault();
-
     const start = e.clientX;
     const sizes = columnWidths;
     let totalSize = columnWidths[index] + columnWidths[index + 1];
