@@ -46,3 +46,18 @@ export const mimicApi = (
 export function isNumeric(str: string) {
   return /^\d+$/.test(str);
 }
+
+export const overrideConsoleWarning = (ignorePattern: string) => {
+  const originalWarn = console.warn;
+  console.warn = (...args) => {
+    const [msgId, msg] = args;
+    if (
+      (typeof msgId === "string" && msgId.includes(ignorePattern)) ||
+      (typeof msg === "string" && msg.includes(ignorePattern))
+    ) {
+      return; // Ignore specific warning messages containing '002'
+    }
+
+    originalWarn.apply(console, args); // Pass all arguments to original console.warn
+  };
+};

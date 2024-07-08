@@ -11,18 +11,10 @@ import {API} from "./global/constants";
 import {useAppDispatch, useTypedSelector} from "./store/store";
 import {LoginStatusServices} from "./features/LoginStatusSlice";
 import Redirect from "./pages/Redirect/Redirect";
-// const originalWarn = console.warn;
-// console.warn = (...args) => {
-//   const [firstArg] = args;
-//   console.log(firstArg);
-//   if (typeof firstArg === "string" && firstArg.includes("002")) {
-//     console.log("002 hidden");
-//     return; // Ignore specific warning messages containing '002'
-//     console.log("what?");
-//   }
+import {overrideConsoleWarning} from "./utils/util";
 
-//   originalWarn.apply(console, args); // Pass all arguments to original console.warn
-// };
+overrideConsoleWarning("https://reactflow.dev/error#002");
+
 function App() {
   const loginParseState = useLoginParseState();
   const {apiHandler} = useApiHandler();
