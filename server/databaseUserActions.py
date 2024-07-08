@@ -1197,7 +1197,7 @@ def getWatsonxRequest(prompt, widgetResponse, lectureId, classroomId):
     if lectureResponse['status'] == 'error':
         return lectureResponse
 
-    widgetResponse["content"] =  json.loads(widgetResponse["content"])
+    widgetResponse["content"] =  widgetResponse["content"]
     response = {
         'status' : 'success',
         'data' : {
