@@ -53,6 +53,8 @@ WidgetFrameProps) => {
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
   const widgets = useTypedSelector((state) => state.Widgets);
+  const draggingNodeId = useTypedSelector((state) => state.RF.draggingNodeId);
+
   const deleteWidget = useDeleteWidget();
   const {apiHandler, loading} = useApiHandler();
   async function deleteWidgetAction() {
@@ -79,13 +81,10 @@ WidgetFrameProps) => {
 
   return (
     <div
-      className={cx(
-        "widget-frame",
-        {
-          selected: selected,
-        },
-        `w-${widgetWidths[widgetType]}`
-      )}
+      className={cx("widget-frame", {
+        selected: selected,
+        dragging: draggingNodeId === widgetId,
+      })}
       style={{
         width: widgetBook[widgetType].width,
         minHeight: widgetBook[widgetType].minHeight,

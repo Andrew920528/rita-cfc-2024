@@ -4,6 +4,7 @@ import {useAppDispatch, useTypedSelector} from "../store/store";
 import classNames from "classnames/bind";
 import styles from "../components/widgets/WidgetFrame/WidgetFrame.module.scss";
 import {Widget, widgetBook} from "../schema/widget";
+import {EMPTY_ID} from "../global/constants";
 
 const cx = classNames.bind(styles);
 export type NodeDimension = {
@@ -15,10 +16,12 @@ export type NodeDimension = {
 interface RFState {
   nodes: Node[];
   dict: {[id: string]: NodeDimension};
+  draggingNodeId: string;
 }
 const initialState: RFState = {
   nodes: [],
   dict: {},
+  draggingNodeId: EMPTY_ID,
 };
 
 const RFSlice = createSlice({
@@ -98,6 +101,18 @@ const RFSlice = createSlice({
           state.dict[node.id].height = node.dimensions.height;
         }
       }
+    },
+
+    onNodeDragStart: (state, action) => {
+      state.draggingNodeId = action.payload;
+    },
+    onNodeDrag: (state, action) => {
+      if (state.draggingNodeId !== EMPTY_ID) {
+        state.draggingNodeId = action.payload;
+      }
+    },
+    onNodeDragEnd: (state) => {
+      state.draggingNodeId = EMPTY_ID;
     },
   },
 });

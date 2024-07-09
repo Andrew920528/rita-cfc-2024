@@ -3,14 +3,13 @@ import ReactFlow, {
   Background,
   NodeProps,
   Controls,
-  Node,
   NodeChange,
   useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import WidgetFrame from "../widgets/WidgetFrame/WidgetFrame";
-import {NodeDimension, RFServices} from "../../features/RFSlice";
+import {RFServices} from "../../features/RFSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {EMPTY_ID} from "../../global/constants";
 
@@ -24,7 +23,6 @@ export default function Flow() {
   const widgetDict = useTypedSelector((state) => state.Widgets.dict);
   const onNodesChange = (changes: NodeChange[]) =>
     dispatch(RFServices.actions.onNodesChange(changes));
-
   const flowRef = useRef<HTMLDivElement>(null);
   const reactFlow = useReactFlow();
 
@@ -66,6 +64,14 @@ export default function Flow() {
         onPaneClick={(event: React.MouseEvent<Element, MouseEvent>) =>
           deselectWidget(event)
         }
+        onNodeDragStart={(_, node) => {
+          // note: node drag start is called even with just a click
+          dispatch(RFServices.actions.onNodeDragStart(node.id));
+        }}
+        onNodeDragStop={() => {
+          console.log("stop");
+          dispatch(RFServices.actions.onNodeDragEnd());
+        }}
       >
         <Controls />
         <Background variant={"dots" as any} gap={12} size={1} />
