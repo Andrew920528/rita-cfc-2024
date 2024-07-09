@@ -29,7 +29,9 @@ const RFSlice = createSlice({
       state,
       action: PayloadAction<{
         widgetList: string[];
-        canvasWidth: number;
+        canvasBound: number;
+        topLeftX: number;
+        topLeftY: number;
         widgetDict: {[id: string]: Widget};
       }>
     ) => {
@@ -48,8 +50,9 @@ const RFSlice = createSlice({
       // make sure dict contains all nodes
       let temp = newNodes.map((node) => node.id);
       for (let nodeId of toAdd) {
-        let startX = 0;
-        let startY = 0;
+        let startX = action.payload.topLeftX + 8;
+        let startY = action.payload.topLeftY + 8;
+        console.log("startX", startX, "startY", startY);
         let w = widgetBook[widgetDict[nodeId].type].width;
         let h = widgetBook[widgetDict[nodeId].type].minHeight;
         let spacing = 8;
@@ -59,7 +62,7 @@ const RFSlice = createSlice({
             startY,
             w,
             h,
-            action.payload.canvasWidth,
+            action.payload.canvasBound,
             temp.map((id) => state.dict[id]),
             spacing
           );
@@ -82,7 +85,6 @@ const RFSlice = createSlice({
     },
 
     onNodesChange: (state, action) => {
-      //   console.log("onNodesChange", action.payload);
       state.nodes = applyNodeChanges(action.payload, state.nodes);
       // updates the dict accordingly
       for (let node of action.payload as NodeChange[]) {
@@ -109,6 +111,9 @@ export default RFReducer;
 
 // helper functions
 function initNode(id: string, dimension: NodeDimension) {
+  console.log(
+    `node created at ${dimension.x}, ${dimension.y} with dimention w = ${dimension.width}, h = ${dimension.height}`
+  );
   return {
     id: id,
     type: "widget",
@@ -129,9 +134,9 @@ function isOverlapping(
 ): boolean {
   return existingNodes.some((node) => {
     const isOverlappingX =
-      newNode.x < node.x + node.width && newNode.x + node.width > node.x;
+      newNode.x < node.x + node.width && newNode.x + newNode.width > node.x;
     const isOverlappingY =
-      newNode.y < node.y + node.height && newNode.y + node.height > node.y;
+      newNode.y < node.y + node.height && newNode.y + newNode.height > node.y;
     return isOverlappingX && isOverlappingY;
   });
 }
@@ -148,14 +153,21 @@ function findNextAvailableSpace(
 ): {x: number; y: number} {
   let x = startX;
   let y = startY;
-  let rows: Set<number> = new Set([0]);
+  let cols: Set<number> = new Set([startX]);
+  let rows: Set<number> = new Set([startY]);
   for (let node of otherNodes) {
     // get the node at the last y position with the shortest height
     rows.add(node.y + node.height);
+    cols.add(node.x + node.width);
   }
+
+  let colsList = Array.from(cols);
+  colsList.sort((a, b) => a - b);
+
   let rowsList = Array.from(rows);
   rowsList.sort((a, b) => a - b);
-  console.log(rowsList);
+
+  let currCol = 0;
   let currRow = 0;
   while (true) {
     const newNodeDimension: NodeDimension = {
@@ -167,10 +179,11 @@ function findNextAvailableSpace(
     if (!isOverlapping(newNodeDimension, otherNodes)) {
       return {x, y};
     }
-
-    x += nodeWidth + spacing;
+    currCol++;
+    x = colsList[currCol] + spacing;
     if (x + nodeWidth > canvasWidth) {
       currRow++;
+      currCol = 0;
       x = startX;
       y = rowsList[currRow] + spacing;
     }

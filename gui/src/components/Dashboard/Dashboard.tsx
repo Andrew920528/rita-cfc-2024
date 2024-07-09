@@ -4,7 +4,8 @@ import Chatroom from "../Chatroom/Chatroom";
 import {useTypedSelector} from "../../store/store";
 import classNames from "classnames/bind";
 import styles from "./Dashboard.module.scss";
-import Playground from "./Playground";
+import Flow from "./Flow";
+import {ReactFlowProvider} from "reactflow";
 
 const cx = classNames.bind(styles);
 const DashboardPlaceHolder = () => {
@@ -31,7 +32,9 @@ const Dashboard = () => {
     <div className={cx("dashboard")}>
       {lectures.dict[lectures.current] &&
       lectures.dict[lectures.current].widgetIds.length > 0 ? (
-        <Playground />
+        <ReactFlowProvider>
+          <Flow />
+        </ReactFlowProvider>
       ) : (
         <DashboardPlaceHolder />
       )}

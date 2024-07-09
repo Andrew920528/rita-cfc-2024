@@ -5,6 +5,7 @@ import ReactFlow, {
   Controls,
   Node,
   NodeChange,
+  useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
@@ -15,7 +16,7 @@ import {EMPTY_ID} from "../../global/constants";
 
 const nodeTypes = {widget: WidgetNode};
 
-export default function Playground() {
+export default function Flow() {
   // Global states
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
@@ -25,13 +26,26 @@ export default function Playground() {
     dispatch(RFServices.actions.onNodesChange(changes));
 
   const flowRef = useRef<HTMLDivElement>(null);
+  const reactFlow = useReactFlow();
 
   useEffect(() => {
     const widgetIds = lectures.dict[lectures.current].widgetIds;
+    console.log(reactFlow.getViewport());
+    const {x, y, zoom} = reactFlow.getViewport();
+    let canvasBound;
+    if (flowRef.current?.offsetWidth) {
+      canvasBound = (flowRef.current?.offsetWidth - x) / zoom;
+    } else {
+      canvasBound = 0;
+    }
+    let topLeftX = -x / zoom;
+    let topLeftY = -y / zoom;
     dispatch(
       RFServices.actions.setNodesWithWidgetList({
         widgetList: widgetIds,
-        canvasWidth: flowRef.current?.offsetWidth || 0,
+        canvasBound: canvasBound,
+        topLeftX: topLeftX,
+        topLeftY: topLeftY,
         widgetDict: widgetDict,
       })
     );
