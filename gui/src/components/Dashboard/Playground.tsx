@@ -1,63 +1,40 @@
-import React, {useCallback, useEffect, useMemo} from "react";
+import React, {useCallback, useEffect, useMemo, useRef} from "react";
 import ReactFlow, {
-  useNodesState,
-  useEdgesState,
-  addEdge,
   Background,
-  Handle,
-  Position,
   NodeProps,
   Controls,
+  Node,
+  NodeChange,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import WidgetFrame, {
-  WidgetFrameProps,
-} from "../widgets/WidgetFrame/WidgetFrame";
-import {
-  useAddNode,
-  useDeleteNode,
-  useNodes,
-  useOnNodesChange,
-  useSetNodes,
-} from "../../features/RFSlice";
+import WidgetFrame from "../widgets/WidgetFrame/WidgetFrame";
+import {NodeDimension, RFServices} from "../../features/RFSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {EMPTY_ID} from "../../global/constants";
-import classNames from "classnames/bind";
-import styles from "../widgets/WidgetFrame/WidgetFrame.module.scss";
-
-const cx = classNames.bind(styles);
 
 const nodeTypes = {widget: WidgetNode};
+
 export default function Playground() {
   // Global states
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
-  const nodes = useNodes();
-  const addNode = useAddNode();
-  const deleteNode = useDeleteNode();
-  const onNodesChange = useOnNodesChange();
-  useEffect(() => {
-    let currentNodes = nodes.map((n) => n.id);
-    const widgetIds = lectures.dict[lectures.current].widgetIds;
-    if (currentNodes.length < widgetIds.length) {
-      let newIds = widgetIds.filter((wid) => !currentNodes.includes(wid));
-      for (let newId of newIds) {
-        addNode({
-          id: newId,
-          type: "widget",
-          position: {x: 0, y: 0},
-          dragHandle: "." + cx("draggable-area") + ", ." + cx("wf-heading"),
-          data: {},
-        });
-      }
-    } else if (currentNodes.length > widgetIds.length) {
-      let removedIds = currentNodes.filter((wid) => !widgetIds.includes(wid));
+  const nodes = useTypedSelector((state) => state.RF.nodes);
+  const widgetDict = useTypedSelector((state) => state.Widgets.dict);
+  const onNodesChange = (changes: NodeChange[]) =>
+    dispatch(RFServices.actions.onNodesChange(changes));
 
-      for (let removedId of removedIds) {
-        deleteNode(removedId);
-      }
-    }
+  const flowRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const widgetIds = lectures.dict[lectures.current].widgetIds;
+    dispatch(
+      RFServices.actions.setNodesWithWidgetList({
+        widgetList: widgetIds,
+        canvasWidth: flowRef.current?.offsetWidth || 0,
+        widgetDict: widgetDict,
+      })
+    );
   }, [lectures]);
   const deselectWidget = (e: React.MouseEvent<Element, MouseEvent>) => {
     e.preventDefault();
@@ -67,7 +44,7 @@ export default function Playground() {
     }
   };
   return (
-    <div style={{width: "100%", height: "100%"}}>
+    <div style={{width: "100%", height: "100%"}} ref={flowRef}>
       <ReactFlow
         nodes={nodes}
         onNodesChange={onNodesChange}
@@ -85,6 +62,7 @@ export default function Playground() {
 
 function WidgetNode(props: NodeProps) {
   const widgets = useTypedSelector((state) => state.Widgets);
+  if (widgets.dict[props.id] === undefined) return;
   return (
     <WidgetFrame widgetId={props.id} selected={props.id === widgets.current} />
   );

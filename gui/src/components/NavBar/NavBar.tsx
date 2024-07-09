@@ -45,6 +45,7 @@ const ClassCard = ({
       onClick={() => {
         dispatch(ClassroomsServices.actions.setCurrent(id));
         const lastLecture = classrooms.dict[id].lastOpenedLecture;
+
         dispatch(
           LecturesServices.actions.setCurrent(
             lastLecture ? (lastLecture as string) : EMPTY_ID

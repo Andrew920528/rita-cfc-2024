@@ -86,6 +86,11 @@ WidgetFrameProps) => {
         },
         `w-${widgetWidths[widgetType]}`
       )}
+      style={{
+        width: widgetBook[widgetType].width,
+        minHeight: widgetBook[widgetType].minHeight,
+        maxHeight: widgetBook[widgetType].maxHeight,
+      }}
       onClick={() => {
         dispatch(WidgetsServices.actions.setCurrent(widgetId));
       }}

@@ -1,83 +1,178 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
-import {
-  Edge,
-  Node,
-  NodeChange,
-  addEdge,
-  applyNodeChanges,
-  applyEdgeChanges,
-} from "reactflow";
+import {Node, NodeChange, applyNodeChanges} from "reactflow";
 import {useAppDispatch, useTypedSelector} from "../store/store";
+import classNames from "classnames/bind";
+import styles from "../components/widgets/WidgetFrame/WidgetFrame.module.scss";
+import {Widget, widgetBook} from "../schema/widget";
 
+const cx = classNames.bind(styles);
+export type NodeDimension = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
 interface RFState {
   nodes: Node[];
-  edges: Edge[];
+  dict: {[id: string]: NodeDimension};
 }
 const initialState: RFState = {
   nodes: [],
-  edges: [],
+  dict: {},
 };
 
 const RFSlice = createSlice({
   name: "RFSlice", //must be unique for every slice. convention is to put the same as file name
   initialState,
   reducers: {
-    setNodes: (state, action) => {
-      state.nodes = action.payload;
-    },
-    setEdges: (state, action) => {
-      state.edges = action.payload;
-    },
-    onNodesChange: (state, action) => {
-      state.nodes = applyNodeChanges(action.payload, state.nodes);
-    },
-    onEdgesChange: (state, action) => {
-      state.edges = applyEdgeChanges(action.payload, state.edges);
-    },
-    onConnect: (state, action) => {
-      state.edges = addEdge(action.payload, state.edges);
-    },
-    addNode: (state, action: PayloadAction<Node>) => {
-      if (state.nodes.map((n) => n.id).includes(action.payload.id)) {
-        return;
+    setNodesWithWidgetList: (
+      state,
+      action: PayloadAction<{
+        widgetList: string[];
+        canvasWidth: number;
+        widgetDict: {[id: string]: Widget};
+      }>
+    ) => {
+      let widgetList = action.payload.widgetList;
+      let widgetDict = action.payload.widgetDict;
+      // nodes should only contain nodes that are in widgetList (we don't actually delete the nodes)
+      let newNodes = [...state.nodes].filter((node) =>
+        widgetList.includes(node.id)
+      );
+
+      // if a node is not in nodes, add it
+      let toAdd = widgetList.filter(
+        (nodeId) => !newNodes.map((node) => node.id).includes(nodeId)
+      );
+
+      // make sure dict contains all nodes
+      let temp = newNodes.map((node) => node.id);
+      for (let nodeId of toAdd) {
+        let startX = 0;
+        let startY = 0;
+        let w = widgetBook[widgetDict[nodeId].type].width;
+        let h = widgetBook[widgetDict[nodeId].type].minHeight;
+        let spacing = 8;
+        if (!state.dict[nodeId]) {
+          let {x, y} = findNextAvailableSpace(
+            startX,
+            startY,
+            w,
+            h,
+            action.payload.canvasWidth,
+            temp.map((id) => state.dict[id]),
+            spacing
+          );
+          state.dict[nodeId] = {
+            x: x,
+            y: y,
+            width: w, // TODO define widget sizes
+            height: h,
+          };
+        }
+        temp.push(nodeId);
       }
-      state.nodes = [...state.nodes, action.payload];
+
+      for (let widgetId of toAdd) {
+        let nodeDimension = state.dict[widgetId];
+        let node = initNode(widgetId, nodeDimension);
+        newNodes.push(node);
+      }
+      state.nodes = [...newNodes];
     },
-    deleteNode: (state, action: PayloadAction<string>) => {
-      state.nodes = state.nodes.filter((n) => n.id !== action.payload);
+
+    onNodesChange: (state, action) => {
+      //   console.log("onNodesChange", action.payload);
+      state.nodes = applyNodeChanges(action.payload, state.nodes);
+      // updates the dict accordingly
+      for (let node of action.payload as NodeChange[]) {
+        if (node.type === "position" && node.position) {
+          state.dict[node.id].x = node.position.x;
+          state.dict[node.id].y = node.position.y;
+        }
+
+        if (node.type === "dimensions" && node.dimensions) {
+          state.dict[node.id].width = node.dimensions.width;
+          state.dict[node.id].height = node.dimensions.height;
+        }
+      }
     },
   },
 });
 
-// This is used to perform action
 export const RFServices = {
   actions: RFSlice.actions,
 };
 
-//This is stored in the main store
 const RFReducer = RFSlice.reducer;
 export default RFReducer;
 
-// hooks
-export const useNodes = () => useTypedSelector((state) => state.RF.nodes);
-export const useEdges = () => useTypedSelector((state) => state.RF.edges);
+// helper functions
+function initNode(id: string, dimension: NodeDimension) {
+  return {
+    id: id,
+    type: "widget",
+    position: {
+      x: dimension.x,
+      y: dimension.y,
+    },
+    data: {},
+    width: dimension.width,
+    height: dimension.height,
+    dragHandle: "." + cx("draggable-area") + ", ." + cx("wf-heading"),
+  };
+}
 
-export const useSetNodes = () => {
-  const dispatch = useAppDispatch();
-  return (nodes: Node[]) => dispatch(RFServices.actions.setNodes(nodes));
-};
+function isOverlapping(
+  newNode: NodeDimension,
+  existingNodes: NodeDimension[]
+): boolean {
+  return existingNodes.some((node) => {
+    const isOverlappingX =
+      newNode.x < node.x + node.width && newNode.x + node.width > node.x;
+    const isOverlappingY =
+      newNode.y < node.y + node.height && newNode.y + node.height > node.y;
+    return isOverlappingX && isOverlappingY;
+  });
+}
 
-export const useOnNodesChange = () => {
-  const dispatch = useAppDispatch();
-  return (changes: NodeChange[]) =>
-    dispatch(RFServices.actions.onNodesChange(changes));
-};
-export const useAddNode = () => {
-  const dispatch = useAppDispatch();
-  return (node: Node) => dispatch(RFServices.actions.addNode(node));
-};
+// returns position of the next available space
+function findNextAvailableSpace(
+  startX: number,
+  startY: number,
+  nodeWidth: number,
+  nodeHeight: number,
+  canvasWidth: number,
+  otherNodes: NodeDimension[],
+  spacing: number
+): {x: number; y: number} {
+  let x = startX;
+  let y = startY;
+  let rows: Set<number> = new Set([0]);
+  for (let node of otherNodes) {
+    // get the node at the last y position with the shortest height
+    rows.add(node.y + node.height);
+  }
+  let rowsList = Array.from(rows);
+  rowsList.sort((a, b) => a - b);
+  console.log(rowsList);
+  let currRow = 0;
+  while (true) {
+    const newNodeDimension: NodeDimension = {
+      x,
+      y,
+      width: nodeWidth,
+      height: nodeHeight,
+    };
+    if (!isOverlapping(newNodeDimension, otherNodes)) {
+      return {x, y};
+    }
 
-export const useDeleteNode = () => {
-  const dispatch = useAppDispatch();
-  return (id: string) => dispatch(RFServices.actions.deleteNode(id));
-};
+    x += nodeWidth + spacing;
+    if (x + nodeWidth > canvasWidth) {
+      currRow++;
+      x = startX;
+      y = rowsList[currRow] + spacing;
+    }
+  }
+}

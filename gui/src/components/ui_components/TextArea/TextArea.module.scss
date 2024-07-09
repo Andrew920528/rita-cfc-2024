@@ -1,9 +1,16 @@
 @use "../../../style/abstract/index" as *;
 
 .textarea-wrapper {
+  height: 100%;
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
   .textarea-input {
+    flex-grow: 1;
     width: 100%;
-    min-height: 8rem;
+    min-height: 6rem;
+    height: 100%;
     padding: 10px;
     border: none;
     border-bottom: 1px solid #000000;

@@ -79,30 +79,43 @@ export function initWidget(id: string, type: WidgetType): Widget {
   }
 }
 
+// Defines UI related properties
 export const widgetBook = {
   [WidgetType.SemesterGoal]: {
     title: "學習目標",
     hint: "列出學習重點",
     icon: <CertificateCheck />,
     type: WidgetType.SemesterGoal,
+    width: 300,
+    minHeight: 200,
+    maxHeight: 500,
   },
   [WidgetType.SemesterPlan]: {
     title: "進度表",
     hint: "製作學期進度",
     icon: <Plan />,
     type: WidgetType.SemesterPlan,
+    width: 700,
+    minHeight: 300,
+    maxHeight: 800,
   },
   [WidgetType.Note]: {
     title: "筆記",
     hint: "快速整理想法",
     icon: <Catalog />,
     type: WidgetType.Note,
+    width: 300,
+    minHeight: 200,
+    maxHeight: 500,
   },
   [WidgetType.Schedule]: {
     title: "課表",
     hint: "瀏覽每週課表",
     icon: <Alarm />,
     type: WidgetType.Schedule,
+    width: 300,
+    minHeight: 300,
+    maxHeight: 500,
   },
 };
 

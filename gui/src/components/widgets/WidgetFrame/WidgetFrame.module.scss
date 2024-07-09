@@ -1,29 +1,14 @@
 @use "../../../style/abstract/index" as *;
 
 $dashboard-gap: 0.5rem;
+
 .widget-frame {
   background-color: white;
-  height: 20%;
   display: flex;
   flex-direction: column;
-
   &.selected {
     outline: 2px solid $primary-color;
   }
-  // because reactflow's node wraps a div
-  // around the content, we can't use % widths
-
-  // &.w-33 {
-  //   width: calc((100% / 3 - #{$dashboard-gap}));
-  // }
-
-  // &.w-66 {
-  //   width: calc((100% * 2 / 3 - #{$dashboard-gap}));
-  // }
-
-  // &.w-99 {
-  //   width: calc(100% - #{$dashboard-gap});
-  // }
 
   .wf-heading {
     display: flex;
@@ -45,6 +30,9 @@ $dashboard-gap: 0.5rem;
     margin: 1rem;
     overflow: auto;
     z-index: 20;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
     &:hover {
       cursor: default;
     }
