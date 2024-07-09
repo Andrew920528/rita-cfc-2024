@@ -28,7 +28,6 @@ export default function Flow() {
 
   useEffect(() => {
     const widgetIds = lectures.dict[lectures.current].widgetIds;
-    console.log(reactFlow.getViewport());
     const {x, y, zoom} = reactFlow.getViewport();
     let canvasBound;
     if (flowRef.current?.offsetWidth) {
@@ -69,7 +68,6 @@ export default function Flow() {
           dispatch(RFServices.actions.onNodeDragStart(node.id));
         }}
         onNodeDragStop={() => {
-          console.log("stop");
           dispatch(RFServices.actions.onNodeDragEnd());
         }}
       >

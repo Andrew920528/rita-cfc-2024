@@ -126,9 +126,6 @@ export default RFReducer;
 
 // helper functions
 function initNode(id: string, dimension: NodeDimension) {
-  console.log(
-    `node created at ${dimension.x}, ${dimension.y} with dimention w = ${dimension.width}, h = ${dimension.height}`
-  );
   return {
     id: id,
     type: "widget",
