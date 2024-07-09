@@ -1,4 +1,4 @@
-import React, {ReactElement, useState} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import {Catalog, Close} from "@carbon/icons-react";
 import IconButton from "../../ui_components/IconButton/IconButton";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
@@ -13,6 +13,7 @@ import {deleteWidgetService, useApiHandler} from "../../../utils/service";
 import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./WidgetFrame.module.scss";
+import {delay} from "../../../utils/util";
 
 const cx = classNames.bind(styles);
 const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
@@ -73,17 +74,23 @@ WidgetFrameProps) => {
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
+    setIsExiting(true);
+    await delay(500); // wait for exit animation
     deleteWidget({lectureId: lectures.current, widgetId: widgetId});
   }
   const widgetType = widgets.dict[widgetId].type;
   const title = widgetBook[widgetType].title;
   const icon = widgetBook[widgetType].icon;
 
+  // handle animation
+  const [isExiting, setIsExiting] = useState(false);
   return (
     <div
       className={cx("widget-frame", {
         selected: selected,
         dragging: draggingNodeId === widgetId,
+        exiting: isExiting,
+        entering: !isExiting,
       })}
       style={{
         width: widgetBook[widgetType].width,

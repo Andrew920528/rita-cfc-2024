@@ -1,6 +1,8 @@
 @use "../../../style/abstract/index" as *;
 
 $dashboard-gap: 0.5rem;
+// Keyframe is set to 100% after the animation
+// so reverse does not work
 @keyframes popup {
   0% {
     opacity: 0;
@@ -11,16 +13,33 @@ $dashboard-gap: 0.5rem;
     transform: scale(1);
   }
 }
+
+@keyframes popupReverse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
 .widget-frame {
   background-color: white;
   display: flex;
   flex-direction: column;
-  animation: popup 0.1s ease-in-out;
   &.selected {
     outline: 2px solid $primary-color;
   }
   &.dragging {
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+  }
+  &.entering {
+    animation: popup 0.1s ease-in-out;
+  }
+  &.exiting {
+    animation: popupReverse 0.1s ease-in-out;
+    animation-fill-mode: forwards;
   }
 
   .wf-heading {
