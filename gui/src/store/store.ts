@@ -6,7 +6,8 @@ import LecturesReducer from "../features/LectureSlice";
 import WidgetsReducer from "../features/WidgetsSlice";
 import ChatroomsReducer from "../features/ChatroomsSlice";
 import LoginStatusReducer from "../features/LoginStatusSlice";
-import RFReducer from "../features/RFSlice";
+import RfReducer from "../features/RfSlice";
+import UiReducer from "../features/UiSlice";
 
 const rootReducer = combineReducers({
   User: UserReducer, //convention is to to write the text preceding the word "Reducer"
@@ -15,7 +16,8 @@ const rootReducer = combineReducers({
   Widgets: WidgetsReducer,
   Chatrooms: ChatroomsReducer,
   LoginStatus: LoginStatusReducer,
-  RF: RFReducer,
+  Rf: RfReducer,
+  Ui: UiReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) => {

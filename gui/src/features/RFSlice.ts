@@ -13,19 +13,19 @@ export type NodeDimension = {
   width: number;
   height: number;
 };
-interface RFState {
+interface RfState {
   nodes: Node[];
   dict: {[id: string]: NodeDimension};
   draggingNodeId: string;
 }
-const initialState: RFState = {
+const initialState: RfState = {
   nodes: [],
   dict: {},
   draggingNodeId: EMPTY_ID,
 };
 
-const RFSlice = createSlice({
-  name: "RFSlice", //must be unique for every slice. convention is to put the same as file name
+const RfSlice = createSlice({
+  name: "RfSlice", //must be unique for every slice. convention is to put the same as file name
   initialState,
   reducers: {
     setNodesWithWidgetList: (
@@ -102,6 +102,25 @@ const RFSlice = createSlice({
         }
       }
     },
+    setNodePosition: (
+      state,
+      action: PayloadAction<{id: string; position: {x: number; y: number}}>
+    ) => {
+      state.dict[action.payload.id].x = action.payload.position.x;
+      state.dict[action.payload.id].y = action.payload.position.y;
+      state.nodes.filter((node) => node.id === action.payload.id)[0].position =
+        {
+          ...state.dict[action.payload.id],
+        };
+    },
+
+    addNode: (
+      state,
+      action: PayloadAction<{id: string; dimension: NodeDimension}>
+    ) => {
+      // adds node to dictionary
+      state.dict[action.payload.id] = action.payload.dimension;
+    },
 
     onNodeDragStart: (state, action) => {
       state.draggingNodeId = action.payload;
@@ -117,12 +136,12 @@ const RFSlice = createSlice({
   },
 });
 
-export const RFServices = {
-  actions: RFSlice.actions,
+export const RfServices = {
+  actions: RfSlice.actions,
 };
 
-const RFReducer = RFSlice.reducer;
-export default RFReducer;
+const RfReducer = RfSlice.reducer;
+export default RfReducer;
 
 // helper functions
 function initNode(id: string, dimension: NodeDimension) {

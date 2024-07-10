@@ -31,30 +31,15 @@ const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
   }
 };
 
-const widgetWidths = {
-  [WidgetType.SemesterGoal]: "33",
-  [WidgetType.SemesterPlan]: "66",
-  [WidgetType.Schedule]: "33",
-  [WidgetType.Note]: "33",
-};
 export type WidgetFrameProps = {
   selected?: boolean;
-  // icon?: ReactElement;
-  // title?: string;
   widgetId: string;
-  // widgetType: WidgetType;
 };
-const WidgetFrame = ({
-  selected,
-  // icon = <Catalog size={20} />,
-  // title = "Widget",
-  widgetId,
-}: // widgetType,
-WidgetFrameProps) => {
+const WidgetFrame = ({selected, widgetId}: WidgetFrameProps) => {
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
   const widgets = useTypedSelector((state) => state.Widgets);
-  const draggingNodeId = useTypedSelector((state) => state.RF.draggingNodeId);
+  const draggingNodeId = useTypedSelector((state) => state.Rf.draggingNodeId);
 
   const deleteWidget = useDeleteWidget();
   const {apiHandler, loading} = useApiHandler();
@@ -75,7 +60,7 @@ WidgetFrameProps) => {
       return;
     }
     setIsExiting(true);
-    await delay(500); // wait for exit animation
+    await delay(100); // wait for exit animation
     deleteWidget({lectureId: lectures.current, widgetId: widgetId});
   }
   const widgetType = widgets.dict[widgetId].type;
@@ -117,6 +102,34 @@ WidgetFrameProps) => {
       </div>
       <div className={cx("wf-content")}>
         {widgetComponent(widgetId, widgetType)}
+      </div>
+      <div className={cx("draggable-area")} />
+    </div>
+  );
+};
+
+export const WidgetFrameGhost = ({widgetType}: {widgetType: WidgetType}) => {
+  const title = widgetBook[widgetType].title;
+  const icon = widgetBook[widgetType].icon;
+
+  return (
+    <div
+      className={cx("widget-frame")}
+      style={{
+        width: widgetBook[widgetType].width,
+        minHeight: widgetBook[widgetType].minHeight,
+        maxHeight: widgetBook[widgetType].maxHeight,
+      }}
+    >
+      <div className={cx("wf-heading")}>
+        <div className={cx("wf-heading-left")}>
+          {icon}
+          <p className={cx("--heading")}>{title}</p>
+        </div>
+        <IconButton icon={<Close />} mode="ghost" />
+      </div>
+      <div className={cx("wf-content")}>
+        {/* {widgetComponent(widgetId, widgetType)} */}
       </div>
       <div className={cx("draggable-area")} />
     </div>

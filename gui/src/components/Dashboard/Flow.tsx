@@ -9,9 +9,11 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import WidgetFrame from "../widgets/WidgetFrame/WidgetFrame";
-import {RFServices} from "../../features/RFSlice";
+import {RfServices} from "../../features/RfSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {EMPTY_ID} from "../../global/constants";
+import {useCreateWidgetWithApi} from "../NavBar/WidgetCard/WidgetCard";
+import {WidgetType, widgetBook} from "../../schema/widget";
 
 const nodeTypes = {widget: WidgetNode};
 
@@ -19,13 +21,14 @@ export default function Flow() {
   // Global states
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
-  const nodes = useTypedSelector((state) => state.RF.nodes);
+  const nodes = useTypedSelector((state) => state.Rf.nodes);
   const widgetDict = useTypedSelector((state) => state.Widgets.dict);
   const onNodesChange = (changes: NodeChange[]) =>
-    dispatch(RFServices.actions.onNodesChange(changes));
+    dispatch(RfServices.actions.onNodesChange(changes));
   const flowRef = useRef<HTMLDivElement>(null);
   const reactFlow = useReactFlow();
 
+  const {createWidget} = useCreateWidgetWithApi();
   useEffect(() => {
     const widgetIds = lectures.dict[lectures.current].widgetIds;
     const {x, y, zoom} = reactFlow.getViewport();
@@ -38,7 +41,7 @@ export default function Flow() {
     let topLeftX = -x / zoom;
     let topLeftY = -y / zoom;
     dispatch(
-      RFServices.actions.setNodesWithWidgetList({
+      RfServices.actions.setNodesWithWidgetList({
         widgetList: widgetIds,
         canvasBound: canvasBound,
         topLeftX: topLeftX,
@@ -54,8 +57,39 @@ export default function Flow() {
       dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
     }
   };
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    let tstr = e.dataTransfer.getData("text/plain");
+    let type = Number(tstr);
+
+    let {x, y} = reactFlow.screenToFlowPosition({x: e.clientX, y: e.clientY});
+    x = x - widgetBook[type as WidgetType].width / 2;
+    y = y - widgetBook[type as WidgetType].minHeight / 2;
+    // create widget and set position to x and y
+    let wid = await createWidget(type);
+    dispatch(
+      RfServices.actions.setNodePosition({
+        id: wid,
+        position: {
+          x,
+          y,
+        },
+      })
+    );
+  };
+
   return (
-    <div style={{width: "100%", height: "100%"}} ref={flowRef}>
+    <div
+      style={{width: "100%", height: "100%"}}
+      ref={flowRef}
+      onDrop={(e) => {
+        handleDrop(e);
+      }}
+      onDragOver={(e) => {
+        e.preventDefault();
+      }}
+    >
       <ReactFlow
         nodes={nodes}
         onNodesChange={onNodesChange}
@@ -65,10 +99,10 @@ export default function Flow() {
         }
         onNodeDragStart={(_, node) => {
           // note: node drag start is called even with just a click
-          dispatch(RFServices.actions.onNodeDragStart(node.id));
+          dispatch(RfServices.actions.onNodeDragStart(node.id));
         }}
         onNodeDragStop={() => {
-          dispatch(RFServices.actions.onNodeDragEnd());
+          dispatch(RfServices.actions.onNodeDragEnd());
         }}
       >
         <Controls />
