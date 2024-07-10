@@ -30,11 +30,14 @@ type WidgetCardProps = {
 const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
   const {createWidget} = useCreateWidgetWithApi();
   const ui = useTypedSelector((state) => state.Ui);
+  const dispatch = useAppDispatch();
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     if (dragImageRef.current) {
       dragImageRef.current.style.display = "block";
-      let offsetX = widgetBook[widgetType].width / 2;
-      let offsetY = widgetBook[widgetType].minHeight / 2;
+
+      let offsetX = e.clientX - e.currentTarget.getBoundingClientRect().x;
+      let offsetY = e.clientY - e.currentTarget.getBoundingClientRect().y;
+      dispatch(UiServices.actions.setDragOffset({x: offsetX, y: offsetY}));
       e.dataTransfer.setDragImage(dragImageRef.current, offsetX, offsetY);
     }
     e.dataTransfer.effectAllowed = "move";

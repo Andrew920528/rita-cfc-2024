@@ -3,9 +3,13 @@ import {useTypedSelector} from "../store/store";
 
 interface UiState {
   loadingWidgets: {[key: string]: boolean};
+  dragOffset: {x: number; y: number};
+  dragOver: boolean;
 }
 const initialState: UiState = {
   loadingWidgets: {},
+  dragOffset: {x: 0, y: 0},
+  dragOver: false,
 };
 
 const UiSlice = createSlice({
@@ -17,6 +21,12 @@ const UiSlice = createSlice({
       action: PayloadAction<{id: string; value: boolean}>
     ) => {
       state.loadingWidgets[action.payload.id] = action.payload.value;
+    },
+    setDragOffset: (state, action: PayloadAction<{x: number; y: number}>) => {
+      state.dragOffset = action.payload;
+    },
+    setDragOver: (state, action: PayloadAction<boolean>) => {
+      state.dragOver = action.payload;
     },
   },
 });

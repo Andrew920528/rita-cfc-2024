@@ -14,6 +14,7 @@ import {WidgetsServices} from "../../features/WidgetsSlice";
 import {EMPTY_ID} from "../../global/constants";
 import {WidgetType, widgetBook} from "../../schema/widget";
 import {useCreateWidgetWithApi} from "../../global/globalActions";
+import {UiServices} from "../../features/UiSlice";
 
 const nodeTypes = {widget: WidgetNode};
 
@@ -27,7 +28,7 @@ export default function Flow() {
     dispatch(RfServices.actions.onNodesChange(changes));
   const flowRef = useRef<HTMLDivElement>(null);
   const reactFlow = useReactFlow();
-
+  const ui = useTypedSelector((state) => state.Ui);
   const {createWidget} = useCreateWidgetWithApi();
   useEffect(() => {
     const widgetIds = lectures.dict[lectures.current].widgetIds;
@@ -60,12 +61,14 @@ export default function Flow() {
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    dispatch(UiServices.actions.setDragOver(false));
     let tstr = e.dataTransfer.getData("text/plain");
     let type = Number(tstr);
 
     let {x, y} = reactFlow.screenToFlowPosition({x: e.clientX, y: e.clientY});
-    x = x - widgetBook[type as WidgetType].width / 2;
-    y = y - widgetBook[type as WidgetType].minHeight / 2;
+    x = x - ui.dragOffset.x;
+    y = y - ui.dragOffset.y;
+
     // create widget and set position to x and y
 
     await createWidget(type, {x, y});

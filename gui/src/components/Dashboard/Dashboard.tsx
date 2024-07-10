@@ -6,10 +6,9 @@ import classNames from "classnames/bind";
 import styles from "./Dashboard.module.scss";
 import Flow from "./Flow";
 import {ReactFlowProvider} from "reactflow";
-import {RfServices} from "../../features/RfSlice";
-import {WidgetType, widgetBook} from "../../schema/widget";
-import {UiServices} from "../../features/UiSlice";
 import {useCreateWidgetWithApi} from "../../global/globalActions";
+import {pointIsInRect} from "../../utils/util";
+import {UiServices} from "../../features/UiSlice";
 
 const cx = classNames.bind(styles);
 const DashboardPlaceHolder = () => {
@@ -30,11 +29,11 @@ const DashboardPlaceHolder = () => {
   );
 };
 const Dashboard = () => {
-  const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
   const dashboardRef = useRef<HTMLDivElement>(null);
-
+  const ui = useTypedSelector((state) => state.Ui);
   const {createWidget} = useCreateWidgetWithApi();
+  const dispatch = useAppDispatch();
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -46,21 +45,34 @@ const Dashboard = () => {
       x = e.clientX - dashboardRef.current?.getBoundingClientRect().x;
       y = e.clientY - dashboardRef.current?.getBoundingClientRect().y;
     }
-    x = x - widgetBook[type as WidgetType].width / 2;
-    y = y - widgetBook[type as WidgetType].minHeight / 2;
-
+    x = x - ui.dragOffset.x;
+    y = y - ui.dragOffset.y;
+    dispatch(UiServices.actions.setDragOver(false));
     await createWidget(type, {x, y});
   };
+  function handleDragEnter(e: React.DragEvent<HTMLDivElement>) {
+    e.stopPropagation();
+    dispatch(UiServices.actions.setDragOver(true));
+  }
+  function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
+    e.stopPropagation();
+    if (dashboardRef.current?.getBoundingClientRect()) {
+      if (
+        !pointIsInRect(
+          {x: e.clientX, y: e.clientY},
+          dashboardRef.current?.getBoundingClientRect()
+        )
+      ) {
+        dispatch(UiServices.actions.setDragOver(false));
+      }
+    }
+  }
   return (
     <div
-      className={cx("dashboard")}
+      className={cx("dashboard", {isDragging: ui.dragOver})}
       onDrop={handleDrop}
-      onDragEnter={(e) => {
-        e.stopPropagation();
-      }}
-      onDragLeave={(e) => {
-        e.stopPropagation();
-      }}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
       onDragOver={(e) => {
         e.preventDefault();
         e.stopPropagation();
