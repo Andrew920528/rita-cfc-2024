@@ -55,7 +55,6 @@ const RfSlice = createSlice({
       for (let nodeId of toAdd) {
         let startX = action.payload.topLeftX + 8;
         let startY = action.payload.topLeftY + 8;
-        console.log("startX", startX, "startY", startY);
         let w = widgetBook[widgetDict[nodeId].type].width;
         let h = widgetBook[widgetDict[nodeId].type].minHeight;
         let spacing = 8;

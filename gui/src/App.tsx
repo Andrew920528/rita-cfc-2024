@@ -13,7 +13,7 @@ import {LoginStatusServices} from "./features/LoginStatusSlice";
 import Redirect from "./pages/Redirect/Redirect";
 import {overrideConsoleWarning} from "./utils/util";
 
-overrideConsoleWarning("https://reactflow.dev/error#002");
+overrideConsoleWarning("https://reactflow.dev/error#002"); // weird react flow warning that doesn't apply here
 
 function App() {
   const loginParseState = useLoginParseState();

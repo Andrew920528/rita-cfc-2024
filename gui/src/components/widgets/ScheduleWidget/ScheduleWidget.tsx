@@ -12,6 +12,8 @@ import IconButton from "../../ui_components/IconButton/IconButton";
 import {Add, RowDelete, RowInsert, Subtract} from "@carbon/icons-react";
 import classNames from "classnames/bind";
 import styles from "./ScheduleWidget.module.scss";
+import Skeleton from "@mui/material/Skeleton";
+import {useWidgetLoading} from "../../../features/UiSlice";
 
 const cx = classNames.bind(styles);
 type Props = {
@@ -33,8 +35,10 @@ const ScheduleWidget = (props: Props) => {
       return acc;
     }, {})
   );
-
-  return (
+  const loading = useWidgetLoading(props.wid);
+  return loading ? (
+    <ScheduleSkeleton />
+  ) : (
     <div className={cx("schedule-widget")}>
       <Table headings={scheduleHeadings} content={widgetTableContent} />
       <div className={cx("widget-button-row")}>
@@ -97,6 +101,17 @@ const ScheduleCell = (props: ScheduleCellProps) => {
     >
       {props.value}
     </div>
+  );
+};
+
+const ScheduleSkeleton = () => {
+  return (
+    <Skeleton
+      variant="rectangular"
+      width={"100%"}
+      animation="wave"
+      sx={{flexGrow: 1}}
+    />
   );
 };
 

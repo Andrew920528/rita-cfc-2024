@@ -3,15 +3,15 @@ import {Information, Add} from "@carbon/icons-react";
 import {ReactElement, useCallback, useEffect, useRef, useState} from "react";
 import {API, EMPTY_ID} from "../../../global/constants";
 import {WidgetType, initWidget, widgetBook} from "../../../schema/widget";
-import {useCreateWidget} from "../../../store/globalActions";
-import {useTypedSelector} from "../../../store/store";
+import {useCreateWidget, useDeleteWidget} from "../../../store/globalActions";
+import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import {useApiHandler, createWidgetService} from "../../../utils/service";
-import {generateId} from "../../../utils/util";
+import {delay, generateId} from "../../../utils/util";
 import IconButton from "../../ui_components/IconButton/IconButton";
 import classNames from "classnames/bind";
 import styles from "./WidgetCard.module.scss";
-import SemesterPlanWidget from "../../widgets/SemesterPlanWidget/SemesterPlanWidget";
 import {WidgetFrameGhost} from "../../widgets/WidgetFrame/WidgetFrame";
+import {UiServices} from "../../../features/UiSlice";
 
 const cx = classNames.bind(styles);
 
@@ -32,7 +32,7 @@ type WidgetCardProps = {
 
 const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
   const {createWidget, loading} = useCreateWidgetWithApi();
-
+  const ui = useTypedSelector((state) => state.Ui);
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     if (dragImageRef.current) {
       dragImageRef.current.style.display = "block";
@@ -54,6 +54,8 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
     }
   };
   const dragImageRef = useRef<HTMLDivElement>(null);
+
+  // Update position on mouse move
 
   return (
     <div
@@ -81,14 +83,13 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
           disabled={loading}
         />
       </div>
-
       <div
         ref={dragImageRef}
         style={{
           position: "fixed",
           top: -1000,
           left: -1000,
-          display: "none",
+          display: "block",
           opacity: 0.5,
         }}
       >
@@ -105,11 +106,17 @@ export default WidgetCard;
 export const useCreateWidgetWithApi = () => {
   const lectures = useTypedSelector((state) => state.Lectures);
   const username = useTypedSelector((state) => state.User.username);
+  const deleteWidget = useDeleteWidget();
   const addWidget = useCreateWidget();
   const {apiHandler, loading} = useApiHandler();
 
   async function createWidget(widgetType: WidgetType) {
     const newWidgetId = username + "-wid-" + generateId();
+    addWidget({
+      widgetType: widgetType,
+      lectureId: lectures.current,
+      widgetId: newWidgetId,
+    });
     let r = await apiHandler({
       apiFunction: (s) =>
         createWidgetService(
@@ -127,13 +134,12 @@ export const useCreateWidgetWithApi = () => {
       identifier: "createWidget",
     });
     if (r.status === API.ERROR || r.status === API.ABORTED) {
+      // If api fails, delete widget from store
+      // TODO: toast error
+      deleteWidget({lectureId: lectures.current, widgetId: newWidgetId});
       return EMPTY_ID;
     }
-    addWidget({
-      widgetType: widgetType,
-      lectureId: lectures.current,
-      widgetId: newWidgetId,
-    });
+
     return newWidgetId;
   }
   return {

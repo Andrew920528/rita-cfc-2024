@@ -44,24 +44,21 @@ const WidgetFrame = ({selected, widgetId}: WidgetFrameProps) => {
   const deleteWidget = useDeleteWidget();
   const {apiHandler, loading} = useApiHandler();
   async function deleteWidgetAction() {
+    setIsExiting(true);
+    await delay(100); // wait for exit animation
+    deleteWidget({lectureId: lectures.current, widgetId: widgetId});
     let r = await apiHandler({
-      apiFunction: (s) =>
-        deleteWidgetService(
-          {
-            widgetId: widgetId,
-            lectureId: lectures.current,
-          },
-          s
-        ),
+      apiFunction: () =>
+        deleteWidgetService({
+          widgetId: widgetId,
+          lectureId: lectures.current,
+        }),
       debug: true,
       identifier: "deleteWidget",
     });
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
-    setIsExiting(true);
-    await delay(100); // wait for exit animation
-    deleteWidget({lectureId: lectures.current, widgetId: widgetId});
   }
   const widgetType = widgets.dict[widgetId].type;
   const title = widgetBook[widgetType].title;

@@ -411,7 +411,7 @@ export function createWidgetService(
       status: API.SUCCESS,
       data: "widget created",
     };
-    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+    return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/create-widget";
   return fetch(BASE_URL_DEV + endPoint, {
@@ -440,6 +440,7 @@ export function deleteWidgetService(
       status: API.SUCCESS,
       data: "widget deleted",
     };
+
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
   }
 

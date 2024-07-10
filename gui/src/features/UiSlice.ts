@@ -1,33 +1,31 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import {Node, NodeChange, applyNodeChanges} from "reactflow";
-import {useAppDispatch, useTypedSelector} from "../store/store";
-import classNames from "classnames/bind";
-import styles from "../components/widgets/WidgetFrame/WidgetFrame.module.scss";
-import {Widget, widgetBook} from "../schema/widget";
 import {EMPTY_ID} from "../global/constants";
+import {useTypedSelector} from "../store/store";
 
-const cx = classNames.bind(styles);
-export type NodeDimension = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
 interface UiState {
-  nodes: Node[];
-  dict: {[id: string]: NodeDimension};
-  draggingNodeId: string;
+  draggingOver: boolean; // if widgetCard is dragged over a target
+  loadingWidgets: {[key: string]: boolean};
 }
 const initialState: UiState = {
-  nodes: [],
-  dict: {},
-  draggingNodeId: EMPTY_ID,
+  draggingOver: false,
+  loadingWidgets: {},
 };
 
 const UiSlice = createSlice({
   name: "UiSlice", //must be unique for every slice. convention is to put the same as file name
   initialState,
-  reducers: {},
+  reducers: {
+    setDraggingOver: (state, action: PayloadAction<boolean>) => {
+      state.draggingOver = action.payload;
+    },
+    setLoadingWidgets: (
+      state,
+      action: PayloadAction<{id: string; value: boolean}>
+    ) => {
+      state.loadingWidgets[action.payload.id] = action.payload.value;
+    },
+  },
 });
 
 export const UiServices = {
@@ -36,3 +34,9 @@ export const UiServices = {
 
 const UiReducer = UiSlice.reducer;
 export default UiReducer;
+
+// hooks for readability
+export const useWidgetLoading = (widgetId: string) => {
+  const loadingWidgets = useTypedSelector((state) => state.Ui.loadingWidgets);
+  return widgetId in loadingWidgets && loadingWidgets[widgetId] === true;
+};

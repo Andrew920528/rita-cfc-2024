@@ -37,7 +37,7 @@ export const mimicApi = (
     }, ms);
 
     // Listen for the abort event to clear the timeout and reject the promise
-    signal!.addEventListener("abort", () => {
+    signal?.addEventListener("abort", () => {
       clearTimeout(timeoutId);
       reject(new DOMException("Aborted", "AbortError"));
     });

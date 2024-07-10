@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Add, Cafe} from "@carbon/icons-react";
+import {Cafe} from "@carbon/icons-react";
 import Chatroom from "../Chatroom/Chatroom";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import classNames from "classnames/bind";
@@ -9,6 +9,7 @@ import {ReactFlowProvider} from "reactflow";
 import {useCreateWidgetWithApi} from "../NavBar/WidgetCard/WidgetCard";
 import {RfServices} from "../../features/RfSlice";
 import {WidgetType, widgetBook} from "../../schema/widget";
+import {UiServices} from "../../features/UiSlice";
 
 const cx = classNames.bind(styles);
 const DashboardPlaceHolder = () => {
@@ -32,9 +33,8 @@ const Dashboard = () => {
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
   const dashboardRef = useRef<HTMLDivElement>(null);
+  const ui = useTypedSelector((state) => state.Ui);
   const {createWidget} = useCreateWidgetWithApi();
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
-  const addRef = useRef<HTMLDivElement>(null);
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -62,13 +62,26 @@ const Dashboard = () => {
   };
   return (
     <div
-      className={cx("dashboard")}
+      className={cx("dashboard", {
+        "dashboard-dragging-over": ui.draggingOver,
+      })}
+      style={{
+        cursor: ui.draggingOver ? "copy" : "default",
+      }}
       onDrop={handleDrop}
-      onDragEnter={() => setIsDraggingOver(true)}
-      onDragLeave={() => setIsDraggingOver(false)}
+      onDragEnter={(e) => {
+        console.log(true);
+        e.stopPropagation();
+        dispatch(UiServices.actions.setDraggingOver(true));
+      }}
+      onDragLeave={(e) => {
+        console.log(false);
+        e.stopPropagation();
+        dispatch(UiServices.actions.setDraggingOver(false));
+      }}
       onDragOver={(e) => {
         e.preventDefault();
-        setIsDraggingOver(true);
+        e.stopPropagation();
       }}
       ref={dashboardRef}
     >
@@ -82,21 +95,6 @@ const Dashboard = () => {
       )}
 
       <Chatroom />
-
-      {isDraggingOver && (
-        <div
-          ref={addRef}
-          style={{
-            position: "fixed",
-            top: -1000,
-            left: -1000,
-            display: "none",
-            opacity: 0.5,
-          }}
-        >
-          <Add />
-        </div>
-      )}
     </div>
   );
 };
