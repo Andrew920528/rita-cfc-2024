@@ -6,7 +6,7 @@ import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {LecturesServices} from "../../features/LectureSlice";
 import {WidgetType, initWidget, widgetBook} from "../../schema/widget";
-import {useCreateWidget} from "../../store/globalActions";
+import {useCreateWidget} from "../../global/globalActions";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {API, EMPTY_ID} from "../../global/constants";
 import {generateId} from "../../utils/util";

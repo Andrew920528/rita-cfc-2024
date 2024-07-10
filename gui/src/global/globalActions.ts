@@ -3,15 +3,17 @@ import {ChatroomsServices} from "../features/ChatroomsSlice";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {LecturesServices} from "../features/LectureSlice";
 import {WidgetsServices} from "../features/WidgetsSlice";
-import {useAppDispatch, useTypedSelector} from "./store";
+import {useAppDispatch, useTypedSelector} from "../store/store";
 import {generateId, mimicApi} from "../utils/util";
-import {WidgetType, initWidget} from "../schema/widget";
+import {WidgetType, initWidget, widgetBook} from "../schema/widget";
 import {Chatroom} from "../schema/chatroom";
 import {Lecture} from "../schema/lecture";
 import {Classroom} from "../schema/classroom";
 import {UserServices} from "../features/UserSlice";
-import {EMPTY_ID} from "../global/constants";
+import {API, EMPTY_ID} from "./constants";
 import {initSchedule} from "../schema/schedule";
+import {createWidgetService, useApiHandler} from "../utils/service";
+import {RfServices} from "../features/RfSlice";
 
 /* 
  Functions that requires the use of multiple slices to perform
@@ -200,7 +202,12 @@ export const useCreateWidget = () => {
   const dispatch = useAppDispatch();
   const username = useTypedSelector((state) => state.User.username);
   return useCallback(
-    (args: {widgetType: WidgetType; lectureId: string; widgetId: string}) => {
+    (args: {
+      widgetType: WidgetType;
+      lectureId: string;
+      widgetId: string;
+      position?: {x: number; y: number};
+    }) => {
       // create widget
 
       const newWidget = initWidget(args.widgetId, args.widgetType);
@@ -214,9 +221,71 @@ export const useCreateWidget = () => {
       );
       // set current widget
       dispatch(WidgetsServices.actions.setCurrent(args.widgetId));
+      if (args.position) {
+        dispatch(
+          RfServices.actions.addNode({
+            id: args.widgetId,
+            dimension: {
+              x: args.position.x,
+              y: args.position.y,
+              width: widgetBook[args.widgetType].width,
+              height: widgetBook[args.widgetType].minHeight,
+            },
+          })
+        );
+      }
     },
     [dispatch, username]
   );
+};
+export const useCreateWidgetWithApi = () => {
+  const lectures = useTypedSelector((state) => state.Lectures);
+  const username = useTypedSelector((state) => state.User.username);
+  const deleteWidget = useDeleteWidget();
+  const addWidget = useCreateWidget();
+  const {apiHandler, loading} = useApiHandler();
+  async function createWidget(
+    widgetType: WidgetType,
+    position?: {x: number; y: number}
+  ) {
+    const newWidgetId = username + "-wid-" + generateId();
+    addWidget({
+      widgetType: widgetType,
+      lectureId: lectures.current,
+      widgetId: newWidgetId,
+      position: position,
+    });
+
+    let r = await apiHandler({
+      apiFunction: () =>
+        createWidgetService({
+          widgetId: newWidgetId,
+          type: widgetType,
+          lectureId: lectures.current,
+          content: JSON.stringify(initWidget(newWidgetId, widgetType).content),
+        }),
+      debug: true,
+      identifier: "createWidget",
+    });
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
+      // If api fails, delete widget from store
+      // TODO: toast error
+      deleteWidget({lectureId: lectures.current, widgetId: newWidgetId});
+      return EMPTY_ID;
+    }
+
+    return newWidgetId;
+  }
+  return {
+    createWidget: useCallback(createWidget, [
+      lectures,
+      username,
+      addWidget,
+      deleteWidget,
+      apiHandler,
+    ]),
+    loading: loading,
+  };
 };
 
 export const useDeleteLecture = () => {

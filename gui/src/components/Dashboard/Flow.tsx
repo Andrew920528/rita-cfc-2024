@@ -12,8 +12,8 @@ import WidgetFrame from "../widgets/WidgetFrame/WidgetFrame";
 import {RfServices} from "../../features/RfSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {EMPTY_ID} from "../../global/constants";
-import {useCreateWidgetWithApi} from "../NavBar/WidgetCard/WidgetCard";
 import {WidgetType, widgetBook} from "../../schema/widget";
+import {useCreateWidgetWithApi} from "../../global/globalActions";
 
 const nodeTypes = {widget: WidgetNode};
 
@@ -67,16 +67,8 @@ export default function Flow() {
     x = x - widgetBook[type as WidgetType].width / 2;
     y = y - widgetBook[type as WidgetType].minHeight / 2;
     // create widget and set position to x and y
-    let wid = await createWidget(type);
-    dispatch(
-      RfServices.actions.setNodePosition({
-        id: wid,
-        position: {
-          x,
-          y,
-        },
-      })
-    );
+
+    await createWidget(type, {x, y});
   };
 
   return (

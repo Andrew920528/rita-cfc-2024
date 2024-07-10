@@ -8,7 +8,7 @@ import SemesterGoalWidget from "../SemesterGoalWidget/SemesterGoalWidget";
 import SemesterPlanWidget from "../SemesterPlanWidget/SemesterPlanWidget";
 import NoteWidget from "../NoteWidget/NoteWidget";
 import ScheduleWidget from "../ScheduleWidget/ScheduleWidget";
-import {useDeleteWidget} from "../../../store/globalActions";
+import {useDeleteWidget} from "../../../global/globalActions";
 import {deleteWidgetService, useApiHandler} from "../../../utils/service";
 import {API} from "../../../global/constants";
 import classNames from "classnames/bind";

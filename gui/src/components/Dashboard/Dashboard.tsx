@@ -6,10 +6,10 @@ import classNames from "classnames/bind";
 import styles from "./Dashboard.module.scss";
 import Flow from "./Flow";
 import {ReactFlowProvider} from "reactflow";
-import {useCreateWidgetWithApi} from "../NavBar/WidgetCard/WidgetCard";
 import {RfServices} from "../../features/RfSlice";
 import {WidgetType, widgetBook} from "../../schema/widget";
 import {UiServices} from "../../features/UiSlice";
+import {useCreateWidgetWithApi} from "../../global/globalActions";
 
 const cx = classNames.bind(styles);
 const DashboardPlaceHolder = () => {
@@ -48,16 +48,8 @@ const Dashboard = () => {
     }
     x = x - widgetBook[type as WidgetType].width / 2;
     y = y - widgetBook[type as WidgetType].minHeight / 2;
-    let wid = await createWidget(type);
-    dispatch(
-      RfServices.actions.setNodePosition({
-        id: wid,
-        position: {
-          x,
-          y,
-        },
-      })
-    );
+
+    await createWidget(type, {x, y});
   };
   return (
     <div

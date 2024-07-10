@@ -22,7 +22,7 @@ import {LecturesServices} from "../../features/LectureSlice";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {UserServices} from "../../features/UserSlice";
-import {useDeleteLecture} from "../../store/globalActions";
+import {useDeleteLecture} from "../../global/globalActions";
 import {API, EMPTY_ID} from "../../global/constants";
 import {
   deleteLectureService,

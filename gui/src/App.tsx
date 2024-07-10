@@ -5,7 +5,7 @@ import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
-import {useLoginParseState} from "./store/globalActions";
+import {useLoginParseState} from "./global/globalActions";
 import {loginWithSidService, useApiHandler} from "./utils/service";
 import {API} from "./global/constants";
 import {useAppDispatch, useTypedSelector} from "./store/store";

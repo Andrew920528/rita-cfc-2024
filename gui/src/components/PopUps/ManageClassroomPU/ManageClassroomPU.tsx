@@ -9,7 +9,7 @@ import {ClassroomsServices} from "../../../features/ClassroomsSlice";
 import {
   useCreateClassroom,
   useCreateLecture,
-} from "../../../store/globalActions";
+} from "../../../global/globalActions";
 import {generateId, isNumeric} from "../../../utils/util";
 import {API, EMPTY_ID} from "../../../global/constants";
 import {

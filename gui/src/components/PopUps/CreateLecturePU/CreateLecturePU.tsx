@@ -3,7 +3,7 @@ import Textbox from "../../ui_components/Textbox/Textbox";
 import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "../PopUp/PopUp";
 import {useTypedSelector} from "../../../store/store";
-import {useCreateLecture} from "../../../store/globalActions";
+import {useCreateLecture} from "../../../global/globalActions";
 import {generateId} from "../../../utils/util";
 import {createLectureService, useApiHandler} from "../../../utils/service";
 import {API} from "../../../global/constants";
