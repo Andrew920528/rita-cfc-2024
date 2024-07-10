@@ -22,5 +22,3 @@
 - toast api error
 - ctrl+z and other key board shortcut (to reduce the need to confirm delete)
 - Chat can memorize input text
-- Update note in chatroom can have different style
-- Dropdown is selectable

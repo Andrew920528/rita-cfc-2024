@@ -127,8 +127,8 @@ const Chatroom = ({}: ChatroomProps) => {
       );
 
       let messageObj = {
-        text: `更新了 ${widgetBook[widgets.dict[widgets.current].type].title}`,
-        sender: "Rita",
+        text: `更新了${widgetBook[widgets.dict[widgets.current].type].title}`,
+        sender: "System",
       };
 
       dispatch(
@@ -145,16 +145,6 @@ const Chatroom = ({}: ChatroomProps) => {
     setText("");
   }, [widgets.current]);
 
-  // useEffect(() => {
-
-  //   // Add event listener for keydown
-  //   window.addEventListener("keydown", handleKeyDown);
-
-  //   // Cleanup the event listener on component unmount
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyDown);
-  //   };
-  // }, [waitingForReply, sendMessage, text]);
   const handleKeyDown = async (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
@@ -238,7 +228,14 @@ const ChatMessage = ({text, sender}: ChatMessageT) => {
   return (
     <div className={cx("chatroom-message", sender)}>
       <div className={cx("chat-msg-decor")}></div>
-      <p className={cx("chatroom-message-text")}>{text}</p>
+      {sender === "System" ? (
+        <p className={cx("chatroom-message-text")}>
+          {text.slice(0, 3)}
+          <strong>{text.slice(3)}</strong>
+        </p>
+      ) : (
+        <p className={cx("chatroom-message-text")}>{text}</p>
+      )}
     </div>
   );
 };
