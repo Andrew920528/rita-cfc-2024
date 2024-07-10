@@ -33,14 +33,13 @@ const Dashboard = () => {
   const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
   const dashboardRef = useRef<HTMLDivElement>(null);
-  const ui = useTypedSelector((state) => state.Ui);
+
   const {createWidget} = useCreateWidgetWithApi();
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     let tstr = e.dataTransfer.getData("text/plain");
     let type = Number(tstr);
-    console.log(e.clientX, e.clientY);
     let x = e.clientX;
     let y = e.clientY;
     if (dashboardRef.current?.getBoundingClientRect()) {
@@ -62,22 +61,13 @@ const Dashboard = () => {
   };
   return (
     <div
-      className={cx("dashboard", {
-        "dashboard-dragging-over": ui.draggingOver,
-      })}
-      style={{
-        cursor: ui.draggingOver ? "copy" : "default",
-      }}
+      className={cx("dashboard")}
       onDrop={handleDrop}
       onDragEnter={(e) => {
-        console.log(true);
         e.stopPropagation();
-        dispatch(UiServices.actions.setDraggingOver(true));
       }}
       onDragLeave={(e) => {
-        console.log(false);
         e.stopPropagation();
-        dispatch(UiServices.actions.setDraggingOver(false));
       }}
       onDragOver={(e) => {
         e.preventDefault();

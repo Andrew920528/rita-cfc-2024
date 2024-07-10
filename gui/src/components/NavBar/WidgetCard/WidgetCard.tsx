@@ -55,8 +55,6 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
   };
   const dragImageRef = useRef<HTMLDivElement>(null);
 
-  // Update position on mouse move
-
   return (
     <div
       draggable
@@ -83,16 +81,7 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
           disabled={loading}
         />
       </div>
-      <div
-        ref={dragImageRef}
-        style={{
-          position: "fixed",
-          top: -1000,
-          left: -1000,
-          display: "block",
-          opacity: 0.5,
-        }}
-      >
+      <div ref={dragImageRef} className={cx("card-ghost")}>
         <WidgetFrameGhost widgetType={widgetType} />
       </div>
     </div>
