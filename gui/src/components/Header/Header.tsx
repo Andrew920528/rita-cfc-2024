@@ -227,6 +227,8 @@ const SaveGroup = () => {
       >
         {Object.keys(unsavedWidgets).length === 0 && !scheduleChanged
           ? "All changes saved"
+          : loading
+          ? "Saving..."
           : "New changes unsaved"}
       </i>
       <IconButton

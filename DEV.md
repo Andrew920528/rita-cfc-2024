@@ -15,13 +15,12 @@
 - 6/24 23:15 | More API integration done... the code structure is fairly stable and extensible in my opinion. The only issue I have is there are certain blocks of logic that is repeated and scattered around gui, but probably going to be over-engineered if try to abstract them out. Perhaps this is the case where better ui will affect the code structure.
 - 6/30 18:04 | After some research it looks like there is virtually no downside with using modularized css. Took sometime refactoring the stylesheet and figuring out a more concise way to put things together, but overall it should increase devex by quite a bit.
 - 7/5 15:29 | They say lazy people speaks the most and do the least （反正魯迅大概說過吧？）The past week there are definitely a lot of progress made, but little logging done. Updates: v1 is very close to an end. Although we do not have enough testing to have the confident that it won't break, it is at a "good enough" state. As the overall architecture & pipeline become better tested and more stable, we can put all our thoughts on the meat of this project. Currently, all three teams have a major task. GUI = drag & drop + infinite canvas. API = latency issue. AI = ai being stupid issue. I am very excited.
+- 7/10 17:14 | Today the rain was crazy. In my opinion the UI is completed at least for v2. It has basically all the key features that I envisioned a drag and drop UI will have. Of course tons of improvements can be made, but I think GUI is at a good state here (comparing to other parts of the project, at least). So far, this branch is only tested with independent mode. Since I changed a bit on how widgets are handled, we have to test with actual APIs tomorrow.
 
 ## Backlog
 
-- Widget enter and exit animation
-  - Urgency: 4
+- toast api error
 - ctrl+z and other key board shortcut (to reduce the need to confirm delete)
-- Header layout is off when squashed
 - Chat can memorize input text
 - Update note in chatroom can have different style
 - Dropdown is selectable
