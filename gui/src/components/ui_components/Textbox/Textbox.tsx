@@ -16,7 +16,7 @@ type TextboxProps = {
   autoFocus?: boolean;
   type?: string; // password, etc.
   ariaLabel?: string;
-};
+} & React.InputHTMLAttributes<HTMLInputElement>;
 const Textbox = ({
   flex,
   mode,
@@ -28,6 +28,7 @@ const Textbox = ({
   onChange = () => {},
   autoFocus = false,
   ariaLabel = "Textbox",
+  ...rest
 }: TextboxProps) => {
   const [showPassword, setShowPassword] = React.useState(false);
   return (
@@ -42,6 +43,7 @@ const Textbox = ({
           autoFocus={autoFocus}
           type={showPassword && type === "password" ? "text" : type}
           aria-label={ariaLabel}
+          {...rest}
         />
         {type === "password" && (
           <div className={cx("btn")}>

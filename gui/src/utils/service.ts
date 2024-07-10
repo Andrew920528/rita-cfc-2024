@@ -514,7 +514,7 @@ export function messageRitaService(
       status: API.SUCCESS,
       data: mimicResponse,
     };
-    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/message-rita";
   return fetch(BASE_URL_DEV + endPoint, {

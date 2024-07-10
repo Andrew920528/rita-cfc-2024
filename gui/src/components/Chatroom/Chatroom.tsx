@@ -145,23 +145,36 @@ const Chatroom = ({}: ChatroomProps) => {
     setText("");
   }, [widgets.current]);
 
-  useEffect(() => {
-    const handleKeyDown = async (event: KeyboardEvent) => {
-      if (event.repeat) return;
-      if (event.key === "Enter") {
-        if (waitingForReply) return;
-        if (text.trim() === "") return;
-        await sendMessage(text);
-      }
-    };
-    // Add event listener for keydown
-    window.addEventListener("keydown", handleKeyDown);
+  // useEffect(() => {
 
-    // Cleanup the event listener on component unmount
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [waitingForReply, sendMessage, text]);
+  //   // Add event listener for keydown
+  //   window.addEventListener("keydown", handleKeyDown);
+
+  //   // Cleanup the event listener on component unmount
+  //   return () => {
+  //     window.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, [waitingForReply, sendMessage, text]);
+  const handleKeyDown = async (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.repeat) return;
+    if (event.key === "Enter") {
+      if (waitingForReply) return;
+      if (isComposing) return;
+      if (text.trim() === "") return;
+      await sendMessage(text);
+    }
+  };
+
+  const [isComposing, setIsComposing] = useState(false);
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false);
+  };
 
   if (!chatroom) return <></>;
   return (
@@ -197,6 +210,9 @@ const Chatroom = ({}: ChatroomProps) => {
               setText(e.currentTarget.value);
             }}
             ariaLabel="chat"
+            onKeyDown={handleKeyDown}
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
           />
           <IconButton
             mode={"primary"}
