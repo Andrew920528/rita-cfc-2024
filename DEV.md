@@ -16,12 +16,12 @@
 - 6/30 18:04 | After some research it looks like there is virtually no downside with using modularized css. Took sometime refactoring the stylesheet and figuring out a more concise way to put things together, but overall it should increase devex by quite a bit.
 - 7/5 15:29 | They say lazy people speaks the most and do the least （反正魯迅大概說過吧？）The past week there are definitely a lot of progress made, but little logging done. Updates: v1 is very close to an end. Although we do not have enough testing to have the confident that it won't break, it is at a "good enough" state. As the overall architecture & pipeline become better tested and more stable, we can put all our thoughts on the meat of this project. Currently, all three teams have a major task. GUI = drag & drop + infinite canvas. API = latency issue. AI = ai being stupid issue. I am very excited.
 - 7/10 17:14 | Today the rain was crazy. In my opinion the UI is completed at least for v2. It has basically all the key features that I envisioned a drag and drop UI will have. Of course tons of improvements can be made, but I think GUI is at a good state here (comparing to other parts of the project, at least). So far, this branch is only tested with independent mode. Since I changed a bit on how widgets are handled, we have to test with actual APIs tomorrow.
+- 7/11 16:34 | Entered infinite patching hell today. The problem is trying to solve small problems constantly quickly accumulate code debt, and they have minor impact on "winning the competition" (although those are important changes if we are treating rita as an "actual product"). While spending time on bettering UI, catching edge cases and minor bugs, definitely made me better frontend developer, it is important to pivot on the most important features. Moving forward, I will be writing UI improvement as backlog for v3, and focus on stuff that we as a team are not familiar on.
 
 ## Backlog
 
 - toast api error
 - Chat can memorize input text
 - v3 improvements:
-
-1. right click: delete classroom, prompt with widget, etc.
-2. keyboard shortcuts
+  1. right click: delete classroom, prompt with widget, etc.
+  2. keyboard shortcuts
