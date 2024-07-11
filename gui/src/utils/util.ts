@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 export function formatTime(date: Date): string {
   const padZero = (num: number): string => (num < 10 ? "0" : "") + num;
 
@@ -73,3 +75,20 @@ export function pointIsInRect(
     point.y <= rect.y + rect.height
   );
 }
+
+export const useCompose = () => {
+  const [isComposing, setIsComposing] = useState(false);
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false);
+  };
+
+  return {
+    isComposing,
+    handleCompositionStart,
+    handleCompositionEnd,
+  };
+};

@@ -6,7 +6,7 @@ import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {contentIsOfType, widgetBook} from "../../schema/widget";
 import {ChatMessage as ChatMessageT} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
-import {mimicApi} from "../../utils/util";
+import {mimicApi, useCompose} from "../../utils/util";
 import {messageRitaService, useApiHandler} from "../../utils/service";
 import {debug, error} from "console";
 import {EMPTY_ID, API} from "../../global/constants";
@@ -157,14 +157,8 @@ const Chatroom = ({}: ChatroomProps) => {
     }
   };
 
-  const [isComposing, setIsComposing] = useState(false);
-  const handleCompositionStart = () => {
-    setIsComposing(true);
-  };
-
-  const handleCompositionEnd = () => {
-    setIsComposing(false);
-  };
+  const {isComposing, handleCompositionEnd, handleCompositionStart} =
+    useCompose();
 
   if (!chatroom) return <></>;
   return (

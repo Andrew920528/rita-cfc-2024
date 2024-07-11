@@ -8,6 +8,7 @@ import {updateUserService, useApiHandler} from "../../../utils/service";
 import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./ManageAccountPU.module.scss";
+import {useCompose} from "../../../utils/util";
 
 const cx = classNames.bind(styles);
 type ManageAccountPUProps = {};
@@ -26,7 +27,8 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
   const [alias, setAlias] = useState("");
   const [school, setSchool] = useState("");
   const [occupation, setOccupation] = useState("");
-
+  const {isComposing, handleCompositionStart, handleCompositionEnd} =
+    useCompose();
   useEffect(() => {
     setAlias(user.alias);
     setSchool(user.school);
@@ -99,6 +101,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
       puAction={() => {
         submitForm();
       }}
+      isComposing={isComposing}
     >
       <div className={cx("manage-account-form")}>
         <Textbox
@@ -112,6 +115,8 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
           }}
           autoFocus={true}
           ariaLabel="alias"
+          onCompositionStart={handleCompositionStart}
+          onCompositionEnd={handleCompositionEnd}
         />
         <Textbox
           label="學校"
@@ -123,6 +128,8 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
             setSchool(e.currentTarget.value);
           }}
           ariaLabel="school"
+          onCompositionStart={handleCompositionStart}
+          onCompositionEnd={handleCompositionEnd}
         />
         <Textbox
           label="職稱"
@@ -134,6 +141,8 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
             setOccupation(e.currentTarget.value);
           }}
           ariaLabel="occupation"
+          onCompositionStart={handleCompositionStart}
+          onCompositionEnd={handleCompositionEnd}
         />
       </div>
     </PopUp>
