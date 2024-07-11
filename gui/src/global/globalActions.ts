@@ -52,9 +52,10 @@ export const useLoginParseState = () => {
           })
         );
       }
+      let numClassrooms = responseObj.user.classroomIds.length;
       let currentClassroom =
-        responseObj.user.classroomIds.length > 0
-          ? responseObj.user.classroomIds[0]
+        numClassrooms > 0
+          ? responseObj.user.classroomIds[numClassrooms - 1]
           : EMPTY_ID;
       let currentChatroom =
         currentClassroom === EMPTY_ID
