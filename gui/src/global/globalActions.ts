@@ -249,9 +249,12 @@ export const useCreateWidgetWithApi = () => {
   const {apiHandler, loading, terminateResponse} = useApiHandler();
   const dispatch = useAppDispatch();
   const apiSignals = useTypedSelector((state) => state.Api.signals);
-  const newWidgetId = useRef(username + "-wid-" + generateId()).current;
-
+  const newWidgetIdRef = useRef<string>();
+  // const newWidgetId = username + "-wid-" + generateId();
   useEffect(() => {
+    // newWidgetIdRef.current = username + "-wid-" + generateId();
+    const newWidgetId = newWidgetIdRef.current;
+    if (!newWidgetId) return;
     if (newWidgetId in apiSignals && apiSignals[newWidgetId] === true) {
       terminateResponse();
       dispatch(ApiServices.actions.deleteSignal({id: newWidgetId}));
@@ -261,6 +264,8 @@ export const useCreateWidgetWithApi = () => {
     widgetType: WidgetType,
     position?: {x: number; y: number}
   ) {
+    newWidgetIdRef.current = username + "-wid-" + generateId();
+    const newWidgetId = newWidgetIdRef.current;
     addWidget({
       widgetType: widgetType,
       lectureId: lectures.current,

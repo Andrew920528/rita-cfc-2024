@@ -65,6 +65,7 @@ const WidgetFrame = ({selected, widgetId}: WidgetFrameProps) => {
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       return; // API will error if attempt to delete before it's created, but actual creation will be aborted if this is the case
     }
+    dispatch(ApiServices.actions.deleteSignal({id: widgetId}));
   }
   const widgetType = widgets.dict[widgetId].type;
   const title = widgetBook[widgetType].title;
