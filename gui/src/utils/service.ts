@@ -67,6 +67,7 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
   );
   function terminateResponse() {
     if (abortControllerRef.current) {
+      console.log(abortControllerRef.current);
       abortControllerRef.current.abort();
     }
     setLoading(false);

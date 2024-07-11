@@ -1,4 +1,4 @@
-import {useCallback, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {ChatroomsServices} from "../features/ChatroomsSlice";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {LecturesServices} from "../features/LectureSlice";
@@ -14,6 +14,7 @@ import {API, EMPTY_ID} from "./constants";
 import {initSchedule} from "../schema/schedule";
 import {createWidgetService, useApiHandler} from "../utils/service";
 import {RfServices} from "../features/RfSlice";
+import {ApiServices} from "../features/ApiSlice";
 
 /* 
  Functions that requires the use of multiple slices to perform
@@ -201,6 +202,7 @@ export const useCreateLecture = () => {
 export const useCreateWidget = () => {
   const dispatch = useAppDispatch();
   const username = useTypedSelector((state) => state.User.username);
+
   return useCallback(
     (args: {
       widgetType: WidgetType;
@@ -238,17 +240,27 @@ export const useCreateWidget = () => {
     [dispatch, username]
   );
 };
+// username + "-wid-" + generateId()
 export const useCreateWidgetWithApi = () => {
   const lectures = useTypedSelector((state) => state.Lectures);
   const username = useTypedSelector((state) => state.User.username);
   const deleteWidget = useDeleteWidget();
   const addWidget = useCreateWidget();
-  const {apiHandler, loading} = useApiHandler();
+  const {apiHandler, loading, terminateResponse} = useApiHandler();
+  const dispatch = useAppDispatch();
+  const apiSignals = useTypedSelector((state) => state.Api.signals);
+  const newWidgetId = useRef(username + "-wid-" + generateId()).current;
+
+  useEffect(() => {
+    if (newWidgetId in apiSignals && apiSignals[newWidgetId] === true) {
+      terminateResponse();
+      dispatch(ApiServices.actions.deleteSignal({id: newWidgetId}));
+    }
+  }, [apiSignals]);
   async function createWidget(
     widgetType: WidgetType,
     position?: {x: number; y: number}
   ) {
-    const newWidgetId = username + "-wid-" + generateId();
     addWidget({
       widgetType: widgetType,
       lectureId: lectures.current,
@@ -257,16 +269,22 @@ export const useCreateWidgetWithApi = () => {
     });
 
     let r = await apiHandler({
-      apiFunction: () =>
-        createWidgetService({
-          widgetId: newWidgetId,
-          type: widgetType,
-          lectureId: lectures.current,
-          content: JSON.stringify(initWidget(newWidgetId, widgetType).content),
-        }),
+      apiFunction: (s) =>
+        createWidgetService(
+          {
+            widgetId: newWidgetId,
+            type: widgetType,
+            lectureId: lectures.current,
+            content: JSON.stringify(
+              initWidget(newWidgetId, widgetType).content
+            ),
+          },
+          s
+        ),
       debug: true,
       identifier: "createWidget",
     });
+    dispatch(ApiServices.actions.deleteSignal({id: newWidgetId}));
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       // If api fails, delete widget from store
       // TODO: toast error

@@ -14,6 +14,7 @@ import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./WidgetFrame.module.scss";
 import {delay} from "../../../utils/util";
+import {ApiServices} from "../../../features/ApiSlice";
 
 const cx = classNames.bind(styles);
 const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
@@ -43,10 +44,15 @@ const WidgetFrame = ({selected, widgetId}: WidgetFrameProps) => {
 
   const deleteWidget = useDeleteWidget();
   const {apiHandler, loading} = useApiHandler();
+
   async function deleteWidgetAction() {
     setIsExiting(true);
     await delay(100); // wait for exit animation
     deleteWidget({lectureId: lectures.current, widgetId: widgetId});
+
+    // tells widget creators the widget is being deleted
+    dispatch(ApiServices.actions.setSignal({id: widgetId, signal: true}));
+
     let r = await apiHandler({
       apiFunction: () =>
         deleteWidgetService({
@@ -57,7 +63,7 @@ const WidgetFrame = ({selected, widgetId}: WidgetFrameProps) => {
       identifier: "deleteWidget",
     });
     if (r.status === API.ERROR || r.status === API.ABORTED) {
-      return;
+      return; // API will error if attempt to delete before it's created, but actual creation will be aborted if this is the case
     }
   }
   const widgetType = widgets.dict[widgetId].type;
