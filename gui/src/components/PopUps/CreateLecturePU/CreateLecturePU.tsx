@@ -57,6 +57,8 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
     };
     let r = await apiHandler({
       apiFunction: (s) => createLectureService(lectureData, s),
+      debug: true,
+      identifier: "createLecture",
     });
 
     if (r.status === API.ERROR || r.status === API.ABORTED) {

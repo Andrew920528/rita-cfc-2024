@@ -49,6 +49,10 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const deleteLectureState = useDeleteLecture();
   const {apiHandler, loading, terminateResponse} = useApiHandler();
   async function deleteLecture(lectureId: string) {
+    // to prevent race condition where a new widget is created when a lecture is being deleted
+    // even if the server fails to delete the lecture in database,
+    // we should update the frontend state
+    deleteLectureState({lectureId: lectureId, classroomId: classrooms.current});
     let r = await apiHandler({
       apiFunction: (s) =>
         deleteLectureService(
@@ -58,11 +62,12 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
           },
           s
         ),
+      debug: true,
+      identifier: "deleteLecture",
     });
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       return;
     }
-    deleteLectureState({lectureId: lectureId, classroomId: classrooms.current});
   }
   // ui controllers
   const [openLectureCreation, setopenLectureCreation] = useState(false);

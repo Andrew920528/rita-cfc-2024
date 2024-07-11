@@ -903,7 +903,7 @@ def deleteLecture(sessionId, classroomId, lectureId):
             query = 'DELETE FROM Lecture_Table WHERE Lecture_ID=%s'
             values = (lectureId)
             cursor.execute(query, values)
-            connection.commit()
+            connection.commit() 
 
             connection.close()
             response = { 
