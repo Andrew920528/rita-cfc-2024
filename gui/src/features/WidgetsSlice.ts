@@ -25,6 +25,9 @@ const WidgetsSlice = createSlice({
     },
     deleteWidget: (state, action: PayloadAction<string>) => {
       delete state.dict[action.payload];
+      if (action.payload in state.unsaved) {
+        delete state.unsaved[action.payload];
+      }
     },
     setCurrent: (state, action: PayloadAction<string>) => {
       state.current = action.payload;

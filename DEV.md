@@ -20,5 +20,8 @@
 ## Backlog
 
 - toast api error
-- ctrl+z and other key board shortcut (to reduce the need to confirm delete)
 - Chat can memorize input text
+- v3 improvements:
+
+1. right click: delete classroom, prompt with widget, etc.
+2. keyboard shortcuts

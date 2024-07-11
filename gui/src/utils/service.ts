@@ -39,6 +39,7 @@ interface ApiHandlerArgs {
   sideEffect?: (r: ResponseData) => ResponseData;
   debug?: boolean;
   identifier?: string;
+  allowAsync?: boolean;
 }
 interface ApiHandlerResult {
   apiHandler: ({
@@ -46,6 +47,7 @@ interface ApiHandlerResult {
     sideEffect,
     debug,
     identifier,
+    allowAsync,
   }: ApiHandlerArgs) => Promise<ResponseData>;
   loading: boolean;
   abortControllerRef: React.MutableRefObject<AbortController | null>;
@@ -77,9 +79,10 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
       sideEffect = (r: ResponseData): ResponseData => r,
       debug = false,
       identifier = "",
+      allowAsync = false,
     }: ApiHandlerArgs) => {
       setLoading(true);
-      if (abortControllerRef.current) {
+      if (!allowAsync && abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
       abortControllerRef.current = new AbortController();

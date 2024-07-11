@@ -286,6 +286,7 @@ export const useCreateWidgetWithApi = () => {
           },
           s
         ),
+      allowAsync: true,
       debug: true,
       identifier: "createWidget",
     });
