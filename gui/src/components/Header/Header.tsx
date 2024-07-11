@@ -22,7 +22,7 @@ import {LecturesServices} from "../../features/LectureSlice";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {UserServices} from "../../features/UserSlice";
-import {useDeleteLecture} from "../../store/globalActions";
+import {useDeleteLecture} from "../../global/globalActions";
 import {API, EMPTY_ID} from "../../global/constants";
 import {
   deleteLectureService,
@@ -34,6 +34,7 @@ import {
 import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
 import {LoginStatusServices} from "../../features/LoginStatusSlice";
+import {CircularProgress} from "@mui/material";
 
 const cx = classNames.bind(styles);
 type HeaderProps = {
@@ -227,19 +228,25 @@ const SaveGroup = () => {
       >
         {Object.keys(unsavedWidgets).length === 0 && !scheduleChanged
           ? "All changes saved"
+          : loading
+          ? "Saving..."
           : "New changes unsaved"}
       </i>
-      <IconButton
-        mode={"on-dark"}
-        icon={<Save size={20} />}
-        onClick={async () => {
-          await saveAll();
-        }}
-        disabled={
-          (Object.keys(unsavedWidgets).length === 0 && !scheduleChanged) ||
-          loading
-        }
-      />
+      {loading ? (
+        <CircularProgress color="inherit" size={12} />
+      ) : (
+        <IconButton
+          mode={"on-dark"}
+          icon={<Save size={20} />}
+          onClick={async () => {
+            await saveAll();
+          }}
+          disabled={
+            (Object.keys(unsavedWidgets).length === 0 && !scheduleChanged) ||
+            loading
+          }
+        />
+      )}
     </div>
   );
 };

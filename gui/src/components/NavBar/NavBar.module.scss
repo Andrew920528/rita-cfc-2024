@@ -58,32 +58,4 @@
       user-select: none;
     }
   }
-
-  .widget-card {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e0e0e0;
-    overflow: hidden;
-    .widget-card-left {
-      display: flex;
-      flex-direction: row;
-      gap: 0.5rem;
-      height: 100%;
-      align-items: center;
-      margin-left: 1rem;
-      overflow: hidden;
-      p {
-        text-wrap: nowrap;
-        display: flex;
-        flex-direction: column;
-      }
-    }
-    .widget-card-right {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-    }
-  }
 }

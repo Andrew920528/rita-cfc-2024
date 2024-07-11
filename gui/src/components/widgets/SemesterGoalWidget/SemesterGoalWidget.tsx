@@ -7,6 +7,8 @@ import {
   Widget,
   SemesterGoalWidgetContent,
 } from "../../../schema/widget";
+import {Skeleton} from "@mui/material";
+import {useWidgetLoading} from "../../../features/UiSlice";
 
 type Props = {
   wid: string;
@@ -40,8 +42,8 @@ const SemesterGoalWidget = (props: Props) => {
       (widget.content as SemesterGoalWidgetContent).goals.join("\n")
     );
   }, [widget]);
-
-  return (
+  const loading = useWidgetLoading(props.wid);
+  return !loading ? (
     <TextArea
       value={displayGoals}
       onChange={(e) => {
@@ -49,6 +51,19 @@ const SemesterGoalWidget = (props: Props) => {
         setDisplayGoals(e.currentTarget.value);
       }}
       placeholder="輸入本學期的學習重點，並用 enter 分隔不同項目"
+    />
+  ) : (
+    <SemesterGoalSkeleton />
+  );
+};
+
+const SemesterGoalSkeleton = () => {
+  return (
+    <Skeleton
+      variant="rectangular"
+      width={"100%"}
+      animation="wave"
+      sx={{flexGrow: 1}}
     />
   );
 };

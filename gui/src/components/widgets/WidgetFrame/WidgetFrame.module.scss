@@ -1,26 +1,45 @@
 @use "../../../style/abstract/index" as *;
 
 $dashboard-gap: 0.5rem;
+// Keyframe is set to 100% after the animation
+// so reverse does not work
+@keyframes popup {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes popupReverse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
 .widget-frame {
   background-color: white;
-  height: 20%;
   display: flex;
   flex-direction: column;
-
   &.selected {
     outline: 2px solid $primary-color;
   }
-
-  &.w-33 {
-    width: calc((100% / 3 - #{$dashboard-gap}));
+  &.dragging {
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
   }
-
-  &.w-66 {
-    width: calc((100% * 2 / 3 - #{$dashboard-gap}));
+  &.entering {
+    animation: popup 0.1s ease-in-out;
   }
-
-  &.w-99 {
-    width: calc(100% - #{$dashboard-gap});
+  &.exiting {
+    animation: popupReverse 0.1s ease-in-out;
+    animation-fill-mode: forwards;
   }
 
   .wf-heading {
@@ -30,6 +49,8 @@ $dashboard-gap: 0.5rem;
     gap: 0.5rem;
     padding-left: 1rem;
     justify-content: space-between;
+    z-index: 20;
+
     .wf-heading-left {
       display: flex;
       flex-direction: row;
@@ -38,7 +59,21 @@ $dashboard-gap: 0.5rem;
     }
   }
   .wf-content {
-    padding: 1rem;
+    margin: 1rem;
     overflow: auto;
+    z-index: 20;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    &:hover {
+      cursor: default;
+    }
+  }
+
+  .draggable-area {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
   }
 }

@@ -6,7 +6,7 @@ import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {LecturesServices} from "../../features/LectureSlice";
 import {WidgetType, initWidget, widgetBook} from "../../schema/widget";
-import {useCreateWidget} from "../../store/globalActions";
+import {useCreateWidget} from "../../global/globalActions";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {API, EMPTY_ID} from "../../global/constants";
 import {generateId} from "../../utils/util";
@@ -14,6 +14,7 @@ import {createWidgetService, useApiHandler} from "../../utils/service";
 import classNames from "classnames/bind";
 import styles from "./NavBar.module.scss";
 import {WidgetsServices} from "../../features/WidgetsSlice";
+import WidgetCard from "./WidgetCard/WidgetCard";
 
 const cx = classNames.bind(styles);
 type ClassCardProps = {
@@ -45,6 +46,7 @@ const ClassCard = ({
       onClick={() => {
         dispatch(ClassroomsServices.actions.setCurrent(id));
         const lastLecture = classrooms.dict[id].lastOpenedLecture;
+
         dispatch(
           LecturesServices.actions.setCurrent(
             lastLecture ? (lastLecture as string) : EMPTY_ID
@@ -70,70 +72,6 @@ const ClassCard = ({
         科目：{subject} ｜年級：{grade}｜教材：{publisher}
         <br /> 週堂數：{credits} | 學期規劃：{plan ? "已完成" : "未完成"}
       </p>
-    </div>
-  );
-};
-
-type WidgetCardProps = {
-  icon: ReactElement;
-  title: string;
-  hint: string;
-  widgetType: WidgetType;
-};
-const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
-  const lectures = useTypedSelector((state) => state.Lectures);
-  const username = useTypedSelector((state) => state.User.username);
-  const addWidget = useCreateWidget();
-  const {apiHandler, loading} = useApiHandler();
-  // TODO DELETE
-  const widgets = useTypedSelector((state) => state.Widgets);
-  async function createWidget() {
-    const newWidgetId = username + "-wid-" + generateId();
-    let r = await apiHandler({
-      apiFunction: (s) =>
-        createWidgetService(
-          {
-            widgetId: newWidgetId,
-            type: widgetType,
-            lectureId: lectures.current,
-            content: JSON.stringify(
-              initWidget(newWidgetId, widgetType).content
-            ), // TODO Needs to save initial content
-          },
-          s
-        ),
-      debug: true,
-      identifier: "createWidget",
-    });
-    if (r.status === API.ERROR || r.status === API.ABORTED) {
-      return;
-    }
-    addWidget({
-      widgetType: widgetType,
-      lectureId: lectures.current,
-      widgetId: newWidgetId,
-    });
-  }
-  return (
-    <div className={cx("widget-card")}>
-      <div className={cx("widget-card-left")}>
-        {icon}
-        <p>
-          <strong>{title}</strong>
-        </p>
-        <p className={cx("--label")}>{hint}</p>
-      </div>
-      <div className={cx("widget-card-right")}>
-        <IconButton mode={"ghost"} icon={<Information />} />
-        <IconButton
-          mode={"primary"}
-          icon={<Add />}
-          onClick={async () => {
-            await createWidget();
-          }}
-          disabled={loading}
-        />
-      </div>
     </div>
   );
 };

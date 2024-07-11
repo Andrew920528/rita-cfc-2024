@@ -127,8 +127,8 @@ const Chatroom = ({}: ChatroomProps) => {
       );
 
       let messageObj = {
-        text: `更新了 ${widgetBook[widgets.dict[widgets.current].type].title}`,
-        sender: "Rita",
+        text: `更新了${widgetBook[widgets.dict[widgets.current].type].title}`,
+        sender: "System",
       };
 
       dispatch(
@@ -145,23 +145,26 @@ const Chatroom = ({}: ChatroomProps) => {
     setText("");
   }, [widgets.current]);
 
-  useEffect(() => {
-    const handleKeyDown = async (event: KeyboardEvent) => {
-      if (event.repeat) return;
-      if (event.key === "Enter") {
-        if (waitingForReply) return;
-        if (text.trim() === "") return;
-        await sendMessage(text);
-      }
-    };
-    // Add event listener for keydown
-    window.addEventListener("keydown", handleKeyDown);
+  const handleKeyDown = async (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.repeat) return;
+    if (event.key === "Enter") {
+      if (waitingForReply) return;
+      if (isComposing) return;
+      if (text.trim() === "") return;
+      await sendMessage(text);
+    }
+  };
 
-    // Cleanup the event listener on component unmount
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [waitingForReply, sendMessage, text]);
+  const [isComposing, setIsComposing] = useState(false);
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false);
+  };
 
   if (!chatroom) return <></>;
   return (
@@ -197,6 +200,9 @@ const Chatroom = ({}: ChatroomProps) => {
               setText(e.currentTarget.value);
             }}
             ariaLabel="chat"
+            onKeyDown={handleKeyDown}
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
           />
           <IconButton
             mode={"primary"}
@@ -222,7 +228,14 @@ const ChatMessage = ({text, sender}: ChatMessageT) => {
   return (
     <div className={cx("chatroom-message", sender)}>
       <div className={cx("chat-msg-decor")}></div>
-      <p className={cx("chatroom-message-text")}>{text}</p>
+      {sender === "System" ? (
+        <p className={cx("chatroom-message-text")}>
+          {text.slice(0, 3)}
+          <strong>{text.slice(3)}</strong>
+        </p>
+      ) : (
+        <p className={cx("chatroom-message-text")}>{text}</p>
+      )}
     </div>
   );
 };

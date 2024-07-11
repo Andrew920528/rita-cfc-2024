@@ -8,7 +8,7 @@ import {API, EMPTY_ID} from "../../global/constants";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import classNames from "classnames/bind";
 import styles from "./Login.module.scss";
-import {useLoginParseState} from "../../store/globalActions";
+import {useLoginParseState} from "../../global/globalActions";
 import {LoginStatusServices} from "../../features/LoginStatusSlice";
 
 const cx = classNames.bind(styles);

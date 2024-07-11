@@ -37,7 +37,7 @@ export const mimicApi = (
     }, ms);
 
     // Listen for the abort event to clear the timeout and reject the promise
-    signal!.addEventListener("abort", () => {
+    signal?.addEventListener("abort", () => {
       clearTimeout(timeoutId);
       reject(new DOMException("Aborted", "AbortError"));
     });
@@ -45,4 +45,31 @@ export const mimicApi = (
 
 export function isNumeric(str: string) {
   return /^\d+$/.test(str);
+}
+
+export const overrideConsoleWarning = (ignorePattern: string) => {
+  const originalWarn = console.warn;
+  console.warn = (...args) => {
+    const [msgId, msg] = args;
+    if (
+      (typeof msgId === "string" && msgId.includes(ignorePattern)) ||
+      (typeof msg === "string" && msg.includes(ignorePattern))
+    ) {
+      return; // Ignore specific warning messages containing '002'
+    }
+
+    originalWarn.apply(console, args); // Pass all arguments to original console.warn
+  };
+};
+
+export function pointIsInRect(
+  point: {x: number; y: number},
+  rect: {x: number; y: number; width: number; height: number}
+) {
+  return (
+    point.x >= rect.x &&
+    point.x <= rect.x + rect.width &&
+    point.y >= rect.y &&
+    point.y <= rect.y + rect.height
+  );
 }

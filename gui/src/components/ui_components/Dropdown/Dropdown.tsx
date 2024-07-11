@@ -76,6 +76,12 @@ const Dropdown = ({
         onClick={() => {
           setOpenMenu(!openMenu);
         }}
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            setOpenMenu(!openMenu);
+          }
+        }}
       >
         <p className={cx({placeholder: !(currId in idDict)})}>
           {!(currId in idDict) ? placeholder : getName(currId)}

@@ -18,6 +18,8 @@ import {
 import {WidgetsServices} from "../../../features/WidgetsSlice";
 import classNames from "classnames/bind";
 import styles from "./SemesterPlanWidget.module.scss";
+import {Skeleton} from "@mui/material";
+import {useWidgetLoading} from "../../../features/UiSlice";
 
 const cx = classNames.bind(styles);
 type Props = {
@@ -148,8 +150,10 @@ const SemesterPlanWidget = (props: Props) => {
       return acc;
     }, {})
   );
-
-  return (
+  const loading = useWidgetLoading(props.wid);
+  return loading ? (
+    <SemesterPlanSkeleton />
+  ) : (
     <div className={cx("semester-plan-widget")}>
       <Table headings={widgetContent.headings} content={widgetTableContent} />
       <div className={cx("widget-button-row")}>
@@ -225,6 +229,17 @@ const SemesterPlanCell = ({
         ariaLabel="semester plan cell"
       />
     </div>
+  );
+};
+
+const SemesterPlanSkeleton = () => {
+  return (
+    <Skeleton
+      variant="rectangular"
+      width={"100%"}
+      animation="wave"
+      sx={{flexGrow: 1}}
+    />
   );
 };
 

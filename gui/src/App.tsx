@@ -5,12 +5,15 @@ import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
-import {useLoginParseState} from "./store/globalActions";
+import {useLoginParseState} from "./global/globalActions";
 import {loginWithSidService, useApiHandler} from "./utils/service";
 import {API} from "./global/constants";
 import {useAppDispatch, useTypedSelector} from "./store/store";
 import {LoginStatusServices} from "./features/LoginStatusSlice";
 import Redirect from "./pages/Redirect/Redirect";
+import {overrideConsoleWarning} from "./utils/util";
+
+overrideConsoleWarning("https://reactflow.dev/error#002"); // weird react flow warning that doesn't apply here
 
 function App() {
   const loginParseState = useLoginParseState();

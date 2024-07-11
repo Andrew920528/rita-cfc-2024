@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Cafe} from "@carbon/icons-react";
 import Chatroom from "../Chatroom/Chatroom";
-import WidgetFrame from "../widgets/WidgetFrame/WidgetFrame";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {widgetBook} from "../../schema/widget";
-import {WidgetsServices} from "../../features/WidgetsSlice";
-import {EMPTY_ID} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./Dashboard.module.scss";
+import Flow from "./Flow";
+import {ReactFlowProvider} from "reactflow";
+import {useCreateWidgetWithApi} from "../../global/globalActions";
+import {pointIsInRect} from "../../utils/util";
+import {UiServices} from "../../features/UiSlice";
 
 const cx = classNames.bind(styles);
 const DashboardPlaceHolder = () => {
@@ -27,38 +28,62 @@ const DashboardPlaceHolder = () => {
     </div>
   );
 };
-
 const Dashboard = () => {
-  const dispatch = useAppDispatch();
   const lectures = useTypedSelector((state) => state.Lectures);
-  const widgets = useTypedSelector((state) => state.Widgets);
-
-  const deselectWidget = (e: React.MouseEvent<HTMLElement>) => {
+  const dashboardRef = useRef<HTMLDivElement>(null);
+  const ui = useTypedSelector((state) => state.Ui);
+  const {createWidget} = useCreateWidgetWithApi();
+  const dispatch = useAppDispatch();
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    if (e.target === e.currentTarget) {
-      // handle
-      dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
+    e.stopPropagation();
+    let tstr = e.dataTransfer.getData("text/plain");
+    let type = Number(tstr);
+    let x = e.clientX;
+    let y = e.clientY;
+    if (dashboardRef.current?.getBoundingClientRect()) {
+      x = e.clientX - dashboardRef.current?.getBoundingClientRect().x;
+      y = e.clientY - dashboardRef.current?.getBoundingClientRect().y;
     }
+    x = x - ui.dragOffset.x;
+    y = y - ui.dragOffset.y;
+    dispatch(UiServices.actions.setDragOver(false));
+    await createWidget(type, {x, y});
   };
+  function handleDragEnter(e: React.DragEvent<HTMLDivElement>) {
+    e.stopPropagation();
+    dispatch(UiServices.actions.setDragOver(true));
+  }
+  function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
+    e.stopPropagation();
+    if (dashboardRef.current?.getBoundingClientRect()) {
+      if (
+        !pointIsInRect(
+          {x: e.clientX, y: e.clientY},
+          dashboardRef.current?.getBoundingClientRect()
+        )
+      ) {
+        dispatch(UiServices.actions.setDragOver(false));
+      }
+    }
+  }
   return (
-    <div className={cx("dashboard")} onClick={deselectWidget}>
+    <div
+      className={cx("dashboard", {isDragging: ui.dragOver})}
+      onDrop={handleDrop}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+      ref={dashboardRef}
+    >
       {lectures.dict[lectures.current] &&
       lectures.dict[lectures.current].widgetIds.length > 0 ? (
-        <div className={cx("widgets")} onClick={deselectWidget}>
-          {lectures.dict[lectures.current].widgetIds.toReversed().map((wid) => {
-            const w = widgets.dict[wid];
-            return (
-              <WidgetFrame
-                key={wid}
-                title={widgetBook[w.type].title}
-                icon={widgetBook[w.type].icon}
-                selected={wid === widgets.current}
-                widgetId={wid}
-                widgetType={widgets.dict[wid].type}
-              />
-            );
-          })}
-        </div>
+        <ReactFlowProvider>
+          <Flow />
+        </ReactFlowProvider>
       ) : (
         <DashboardPlaceHolder />
       )}
