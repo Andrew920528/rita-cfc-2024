@@ -137,7 +137,6 @@ def llm_handle_input(input):
     return extract_json_as_dict(response)
 
 def extract_json_as_dict(full_string):
-    print(full_string)
     # Find the starting and ending points of the JSON portion
     start_index = full_string.find('{')
     end_index = full_string.rfind('}') + 1

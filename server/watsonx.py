@@ -70,7 +70,7 @@ def getWatsonxResponse():
         return {'Response' : data}
 
     except Exception as e:
-        print("Error: {}".format(e))
+        # print("Error: {}".format(e))
         return {'Response' : None}
 
 

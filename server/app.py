@@ -3,9 +3,14 @@ from flask_cors import CORS
 from watsonx import getWatsonxResponse
 from databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk
 from handle_input import create_prompt, llm_handle_input
+import time
+import logging
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
+
+logging.basicConfig(level=logging.INFO)
 
 ######################################################################################################## debug
 @app.route('/hello', methods=['GET'])
@@ -15,17 +20,28 @@ def get_output():
 ######################################################################################################## watsonx
 @app.route('/message-rita', methods=['POST'])
 def message_rita():
+    start_time = time.time()
+    now_formatted = datetime.fromtimestamp(start_time).strftime('%H:%M:%S.%f')[:-3]
+    app.logger.info(f"Recieved request at time = {now_formatted}")
+
     prompt = request.json['prompt']
     widget = request.json['widget']
     lectureId = request.json['lectureId']
     classroomId = request.json['classroomId']
     watsonxRequest = getWatsonxRequest(prompt, widget, lectureId, classroomId)
+    latency = time.time() - start_time
+    now_formatted = datetime.fromtimestamp(time.time()).strftime('%H:%M:%S.%f')[:-3]
+    latency_formatted = datetime.fromtimestamp(latency).strftime('%S.%f')[:-3]
+    app.logger.info(f"Finised fetching classroom and lecture from the database at time = {now_formatted}, time passed = {latency_formatted}")
     # check if output is correct
     if watsonxRequest['status'] == 'error':
         return watsonxRequest
-    
     try:
         llmOutput = llm_handle_input(watsonxRequest['data']) # returns rita's reply asdict
+        latency = time.time() - start_time
+        now_formatted = datetime.fromtimestamp(time.time()).strftime('%H:%M:%S.%f')[:-3]
+        latency_formatted = datetime.fromtimestamp(latency).strftime('%S.%f')[:-3]
+        app.logger.info(f"LLM successfully returned at time = {now_formatted}, time passed = {latency_formatted}")
     except Exception as e:
         response = { 
             'status' : 'error',
