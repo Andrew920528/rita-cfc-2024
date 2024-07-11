@@ -34,6 +34,7 @@ import {
 import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
 import {LoginStatusServices} from "../../features/LoginStatusSlice";
+import {CircularProgress} from "@mui/material";
 
 const cx = classNames.bind(styles);
 type HeaderProps = {
@@ -231,17 +232,21 @@ const SaveGroup = () => {
           ? "Saving..."
           : "New changes unsaved"}
       </i>
-      <IconButton
-        mode={"on-dark"}
-        icon={<Save size={20} />}
-        onClick={async () => {
-          await saveAll();
-        }}
-        disabled={
-          (Object.keys(unsavedWidgets).length === 0 && !scheduleChanged) ||
-          loading
-        }
-      />
+      {loading ? (
+        <CircularProgress color="inherit" size={12} />
+      ) : (
+        <IconButton
+          mode={"on-dark"}
+          icon={<Save size={20} />}
+          onClick={async () => {
+            await saveAll();
+          }}
+          disabled={
+            (Object.keys(unsavedWidgets).length === 0 && !scheduleChanged) ||
+            loading
+          }
+        />
+      )}
     </div>
   );
 };
