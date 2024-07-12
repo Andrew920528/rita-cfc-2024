@@ -8,7 +8,7 @@ import ChatroomsReducer from "../features/ChatroomsSlice";
 import LoginStatusReducer from "../features/LoginStatusSlice";
 import UiReducer from "../features/UiSlice";
 import ApiReducer from "../features/ApiSlice";
-import RfReducer from "../features/temp";
+import RfReducer from "../features/RfSlice";
 const rootReducer = combineReducers({
   User: UserReducer, //convention is to to write the text preceding the word "Reducer"
   Classrooms: ClassroomsReducer,

@@ -16,7 +16,7 @@ import classNames from "classnames/bind";
 import styles from "./WidgetCard.module.scss";
 import {WidgetFrameGhost} from "../../widgets/WidgetFrame/WidgetFrame";
 import {UiServices} from "../../../features/UiSlice";
-import {RfServices} from "../../../features/temp";
+import {RfServices} from "../../../features/RfSlice";
 
 const cx = classNames.bind(styles);
 
