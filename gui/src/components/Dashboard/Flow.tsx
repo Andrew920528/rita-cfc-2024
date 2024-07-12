@@ -10,7 +10,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import WidgetFrame from "../widgets/WidgetFrame/WidgetFrame";
-import {RfServices} from "../../features/RfSlice";
+import {RfServices} from "../../features/temp";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {EMPTY_ID} from "../../global/constants";
 import {WidgetType, widgetBook} from "../../schema/widget";
