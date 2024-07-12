@@ -1,8 +1,10 @@
-from flask import Flask, request
+from flask import Flask, Response, request, stream_with_context
 from flask_cors import CORS
+from utils.streaming import StreamingStdOutCallbackHandlerYield
+from util import logTime
 from watsonx import getWatsonxResponse
 from databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk
-from handle_input import create_prompt, llm_handle_input
+from handle_input import create_prompt, llm_handle_input, minimum_streaming_example
 import time
 import logging
 from datetime import datetime
@@ -29,19 +31,15 @@ def message_rita():
     lectureId = request.json['lectureId']
     classroomId = request.json['classroomId']
     watsonxRequest = getWatsonxRequest(prompt, widget, lectureId, classroomId)
-    latency = time.time() - start_time
-    now_formatted = datetime.fromtimestamp(time.time()).strftime('%H:%M:%S.%f')[:-3]
-    latency_formatted = datetime.fromtimestamp(latency).strftime('%S.%f')[:-3]
-    app.logger.info(f"Finised fetching classroom and lecture from the database at time = {now_formatted}, time passed = {latency_formatted}")
+    
+    logTime(start_time, "Fetched classroom and lecture from the database")
     # check if output is correct
     if watsonxRequest['status'] == 'error':
         return watsonxRequest
     try:
         llmOutput = llm_handle_input(watsonxRequest['data']) # returns rita's reply asdict
-        latency = time.time() - start_time
-        now_formatted = datetime.fromtimestamp(time.time()).strftime('%H:%M:%S.%f')[:-3]
-        latency_formatted = datetime.fromtimestamp(latency).strftime('%S.%f')[:-3]
-        app.logger.info(f"LLM successfully returned at time = {now_formatted}, time passed = {latency_formatted}")
+        logTime(start_time, "LLM successfully returned")
+       
     except Exception as e:
         response = { 
             'status' : 'error',
@@ -243,6 +241,11 @@ def delete_widget():
             'data' : 'Missing ' + str(e)
         }
         return response
+
+
+@app.route('/try-stream-output', methods=['POST'])
+def tryStreamOutput():   
+    return minimum_streaming_example()
 
 # @app.route('/get-user', methods=['GET'])
 # def get_user():

@@ -12,6 +12,7 @@ import {useAppDispatch, useTypedSelector} from "./store/store";
 import {LoginStatusServices} from "./features/LoginStatusSlice";
 import Redirect from "./pages/Redirect/Redirect";
 import {overrideConsoleWarning} from "./utils/util";
+import {c} from "vite/dist/node/types.d-aGj9QkWt";
 
 overrideConsoleWarning("https://reactflow.dev/error#002"); // weird react flow warning that doesn't apply here
 
@@ -20,6 +21,38 @@ function App() {
   const {apiHandler} = useApiHandler();
   const loginStatus = useTypedSelector((state) => state.LoginStatus);
   const dispatch = useAppDispatch();
+  const [streamData, setStreamData] = useState("");
+  const runOnce = useRef<boolean>(false);
+  useEffect(() => {
+    if (runOnce.current) return;
+    runOnce.current = true;
+    async function streamGetter() {
+      const BASE_URL_DEV = "http://127.0.0.1:5000";
+      const endPoint = "/try-stream-output";
+      const response = await fetch(BASE_URL_DEV + endPoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}), // Convert data object to JSON string
+      });
+      const reader = response.body?.getReader();
+      let result = "";
+      const decoder = new TextDecoder();
+      let counter = 0;
+      let chunks = [];
+      while (true) {
+        const {done, value} = await reader!.read();
+        if (done) break;
+        let newVal = decoder.decode(value);
+        result += newVal;
+        setStreamData(result);
+        chunks.push(newVal);
+      }
+      console.log(chunks);
+    }
+    streamGetter();
+  }, []);
 
   useEffect(() => {
     async function loginWithSid() {
@@ -63,6 +96,7 @@ function App() {
   }, []);
   return (
     <div className="App">
+      <div>{streamData}</div>
       <BrowserRouter>
         <Routes>
           <Route
