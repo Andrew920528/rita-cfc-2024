@@ -160,6 +160,8 @@ def llm_handle_input(input):
     # the stream into a json object. I commented out the part at frontend
     # where we put the message in chatroom so it doesn't crash.
     # for now, test with postman and see how long it took to get the first token.
+    # update api docs as well.
+    # when you're done with this, don't forget to implement login-with-sid endpoint
     response = qa.run(prompt)
     return extract_json_as_dict(response)
         
