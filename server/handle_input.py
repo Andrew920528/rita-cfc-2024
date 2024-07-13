@@ -110,6 +110,10 @@ def llm_handle_input(input):
     load_details()
     
     logTime(start_time, "loaded IBM watsonX credentials")
+    
+    
+    # NOTE to Jim: This part prepares RAG and should be called once on init, not every time a message is sent. Will save probably 4 seconds.
+    # ================== Things below this should be on init ==================
     # Word embeddings model
     embedding_model = HuggingFaceEmbeddings(
         model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
@@ -124,6 +128,7 @@ def llm_handle_input(input):
     # Create a retriever chain
     retriever = faiss_store.as_retriever()
     logTime(start_time, "Created embedding retriever")
+    # ================= Things above this should be on init ==================
     
     # Initialize WatsonX LLM Interface
     credentials = Credentials.from_dict({"url": URL, "apikey": API_KEY})
@@ -148,6 +153,13 @@ def llm_handle_input(input):
     
     prompt = create_prompt(input)
     logTime(start_time, "Generated prompt")
+    
+    
+    # NOTE to Jim: Alter this part to support streaming.
+    # the problem is that the frontend needs to be able to convert
+    # the stream into a json object. I commented out the part at frontend
+    # where we put the message in chatroom so it doesn't crash.
+    # for now, test with postman and see how long it took to get the first token.
     response = qa.run(prompt)
     return extract_json_as_dict(response)
         

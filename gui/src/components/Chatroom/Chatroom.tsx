@@ -74,26 +74,26 @@ const Chatroom = ({}: ChatroomProps) => {
       classroomId: classroomId,
     };
 
-    let r = await apiHandler({
-      apiFunction: (s) =>
-        messageRitaService(
-          {
-            ...payload,
-          },
-          s
-        ),
-      debug: true,
-      identifier: "messageRita",
-    });
+    // let r = await apiHandler({
+    //   apiFunction: (s) =>
+    //     messageRitaService(
+    //       {
+    //         ...payload,
+    //       },
+    //       s
+    //     ),
+    //   debug: true,
+    //   identifier: "messageRita",
+    // });
 
-    let status = r.status;
-    if (status === API.ERROR) {
-      setRitaError(r.data);
-      return;
-    } else if (r.status === API.ABORTED) {
-      return;
-    }
-    handleReply(r.data);
+    // let status = r.status;
+    // if (status === API.ERROR) {
+    //   setRitaError(r.data);
+    //   return;
+    // } else if (r.status === API.ABORTED) {
+    //   return;
+    // }
+    // handleReply(r.data);
   }
 
   const handleReply = (data: any) => {

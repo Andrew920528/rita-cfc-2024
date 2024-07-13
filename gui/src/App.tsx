@@ -39,7 +39,6 @@ function App() {
       const reader = response.body?.getReader();
       let result = "";
       const decoder = new TextDecoder();
-      let counter = 0;
       let chunks = [];
       while (true) {
         const {done, value} = await reader!.read();
