@@ -28,13 +28,38 @@ function App() {
     runOnce.current = true;
     async function streamGetter() {
       const BASE_URL_DEV = "http://127.0.0.1:5000";
-      const endPoint = "/try-stream-output";
-      const response = await fetch(BASE_URL_DEV + endPoint, {
+
+      const endPointSetup = "/setup-rita"
+      const responseSetup = await fetch(BASE_URL_DEV + endPointSetup, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({}), // Convert data object to JSON string
+      });
+
+      const endPoint = "/message-rita";
+      const response = await fetch(BASE_URL_DEV + endPoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "prompt": "幫我刪除第三周然後把第二周的教材改成2-1",
+          "widget": {
+           "id": 1,
+           "type": 0,
+           "content": {
+            "headings": ["週目", "目標", "教材"],
+            "rows": [
+                {"週目": 1, "目標": "讓學生能認識多位小數與比較小數", "教材": "1-1, 1-2"},
+                {"週目": 2, "目標": "讓學生學習多位小數的加減及日常應用", "教材": "1-3"},
+                {"週目": 3, "目標": "讓學生了解小數與概數", "教材": "1-4"}]
+        }
+          },
+          "lectureId": 1,
+          "classroomId": 1
+        }), // Convert data object to JSON string
       });
       const reader = response.body?.getReader();
       let result = "";

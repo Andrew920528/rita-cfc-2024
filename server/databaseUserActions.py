@@ -75,7 +75,7 @@ def sessionCheck(sessionId):
         }
         return response
 
-def createUser(username, password, school, alias, occupation, schedule_content):
+def createUser(username, password, school, alias, occupation, schedule):
     getDatabaseDetails()
 
     if not verifyString(username):
@@ -129,9 +129,9 @@ def createUser(username, password, school, alias, occupation, schedule_content):
                 query += ', Occupation'
                 values.append(occupation)
 
-            if schedule_content != None:
+            if schedule != None:
                 query += ', Schedule_Content'
-                values.append(schedule_content)
+                values.append(schedule)
 
             query += ') VALUES (' + ('%s,' * len(values))[:-1] + ')'
             values = tuple(values)
@@ -214,15 +214,6 @@ def loginUser(username, password):
 
             cursor.execute(query, values)
             connection.commit()
-
-            # # get most recent, which is the one we just created for this user
-
-            # query = 'SELECT Session_ID FROM Log_Table WHERE `Created_Time` = (SELECT MAX(Created_Time) FROM Log_Table WHERE User_ID = %s)'
-            # values = (userId)
-
-            # cursor.execute(query, values)
-            # results = cursor.fetchall()
-            # session_Id = results[0][0]
 
             # get all information from user
 
@@ -326,6 +317,161 @@ def loginUser(username, password):
                         'alias' : userResponse['data'][0][4],
                         'occupation' : userResponse['data'][0][5],
                         'schedule' : userResponse['data'][0][6],
+                        'classroomIds' : classroomIds 
+                    },
+                    'classroomsDict' : classroomDetails,
+                    'lecturesDict' : lectureDetails,
+                    'widgetDict' : widgetDetails
+                }
+            }
+            
+            return returnResponse
+    
+    except Exception as e:
+        print("Error: {}".format(e))
+        connection.close()
+        response = { 
+            'status' : 'error',
+            'data' : str(e)
+        }
+        return response
+
+def loginSessionId(sessionId):
+    getDatabaseDetails()
+
+    verifySession = sessionCheck(sessionId)
+
+    if verifySession['status'] == 'error':
+        response = { 
+            'status' : 'error',
+            'data' : 'sessionId does not exist'
+        }
+        return response
+
+    userId = verifySession['data']
+
+    try:
+        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        with connection.cursor() as cursor:
+
+            # get all information from user
+
+            query = 'SELECT * FROM User_Table WHERE User_ID=%s'
+            values = (userId)
+
+            cursor.execute(query, values)
+            results = cursor.fetchall()
+
+            if len(results) == 0:
+                connection.close()
+                response = { 
+                    'status' : 'error',
+                    'data' : 'No user associated to this sessionId'
+                }
+                return response
+
+            userResponse = results[0]
+
+            # classroom
+            query = 'SELECT * FROM Classroom_Table WHERE Classroom_ID IN (SELECT Classroom_ID FROM User_Classroom_Join_Table WHERE User_ID = %s)'
+            values = (userId)
+
+            cursor.execute(query, values)
+            results = cursor.fetchall()
+            classroomResponse = results
+            classroomIds = []
+
+            classroomDetails = {}
+            lectureDetails = {}
+            widgetDetails = {}
+
+            for classroom in classroomResponse:
+
+                classroomId = classroom[0]
+
+                # lecture
+                query = 'SELECT * FROM Lecture_Table WHERE Lecture_ID IN (SELECT Lecture_ID FROM Classroom_Lecture_Join_Table WHERE Classroom_ID = %s)'
+                values = (classroomId)
+
+                cursor.execute(query, values)
+                results = cursor.fetchall()
+                lectureResponse = results
+                lectures = []
+                lectureIds = []
+
+                for lecture in lectureResponse:
+        
+                    lectureId = lecture[0]
+                    lectureIds.append(lectureId)
+
+                    # widget
+                    query = 'SELECT * FROM Widget_Table WHERE Widget_ID IN (SELECT Widget_ID FROM Lecture_Widget_Table WHERE Lecture_ID = %s)'
+                    values = (lectureId)
+
+                    cursor.execute(query, values)
+                    results = cursor.fetchall()
+                    widgetResponse = results
+                    widgets = []
+                    widgetIds = []
+
+                    for widget in widgetResponse:
+
+                        widgetId = widget[0]
+                        widgetIds.append(widgetId)
+
+                        widgets.append(widgetId)
+                        widgetDetails.update({
+                            widgetId : {
+                                'id' : widgetId,
+                                'type' : widget[1],
+                                'content' : widget[2]
+                            }
+                        })
+
+                    # end of widget
+
+                    lectures.append(lectureId)
+                    lectureDetails.update({
+                        lectureId : {
+                            'id' : lectureId,
+                            'name' : lecture[1],
+                            'type' : lecture[2],
+                            'widgetIds' : widgetIds
+                        }
+                    })
+
+                # end of lecture
+
+                classroomIds.append(classroomId)
+                classroomDetails.update({
+                    classroomId : {
+                        'id' : classroomId,
+                        'name' : classroom[1],
+                        'subject' : classroom[2],
+                        'publisher' : classroom[3],
+                        'lastOpenedSession' : classroom[4],
+                        'grade' : classroom[5],
+                        # 'plan' : (False if (classroom[6] == None or classroom[6] == b'\x00') else True),
+                        'plan' : classroom[6],
+                        'credits' : classroom[7],
+                        'chatroomId' : classroom[8],
+                        'lectureIds' : lectureIds
+                    }
+                })
+
+            # end of classroom
+            
+            connection.close()
+            returnResponse = { 
+                'status' : 'success',
+                'data' : {
+                    'sessionId' : sessionId,
+                    'user' : {
+                        'username' : userResponse[1],
+                        'school' : userResponse[3],
+                        'alias' : userResponse[4],
+                        'occupation' : userResponse[5],
+                        'schedule' : userResponse[6],
                         'classroomIds' : classroomIds 
                     },
                     'classroomsDict' : classroomDetails,
@@ -1197,7 +1343,6 @@ def getWatsonxRequest(prompt, widgetResponse, lectureId, classroomId):
     if lectureResponse['status'] == 'error':
         return lectureResponse
 
-    widgetResponse["content"] =  widgetResponse["content"]
     response = {
         'status' : 'success',
         'data' : {
@@ -1207,8 +1352,6 @@ def getWatsonxRequest(prompt, widgetResponse, lectureId, classroomId):
             'lecture' : lectureResponse
         }
     }
-
-    
 
     return response
 
@@ -1255,6 +1398,53 @@ def createChatroom(content=""):
         }
         return response
 
+def updateChatroom(sessionId, chatoomId, content):
+    getDatabaseDetails()
+
+    verifySession = sessionCheck(sessionId)
+
+    if verifySession['status'] == 'error':
+        return verifySession
+    
+    userId = verifySession['data']
+
+    try:
+        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        with connection.cursor() as cursor:
+
+            # see if there is entry first
+            query = 'SELECT * FROM Chatroom_Table WHERE Chatroom_ID=%s'
+            values = (chatoomId)
+            cursor.execute(query, values)
+
+            if len(cursor.fetchall()) == 0:
+                connection.close()
+                response = { 
+                    'status' : 'error',
+                    'data' : 'chatoomId does not exist'
+                }
+                return response
+
+            query = 'UPDATE Chatroom_Table SET Content=%s WHERE Chatroom_ID=%s'
+            values = (content, chatoomId)
+
+            cursor.execute(query, values)
+            connection.commit()
+            connection.close()
+            response = { 
+                'status' : 'success',
+                'data' : 'chatroom updated'
+            }
+            return response
+            
+    except Exception as e:
+        print("Error: {}".format(e))
+        connection.close()
+        response = { 
+            'status' : 'error',
+            'data' : str(e)
+        }
+        return response
 
 # def modifyUser(username, password, updatedUsername, updatedPassword):
 #     getDatabaseDetails()

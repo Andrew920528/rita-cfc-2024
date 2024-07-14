@@ -1,10 +1,10 @@
-from flask import Flask, Response, request, stream_with_context
+from flask import Flask, Response, request, stream_with_context, jsonify
 from flask_cors import CORS
 from utils.streaming import StreamingStdOutCallbackHandlerYield
 from util import logTime
 from watsonx import getWatsonxResponse
-from databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk
-from handle_input import create_prompt, llm_handle_input, minimum_streaming_example
+from databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
+from handle_input import create_prompt, llm_handle_input, initializeSetup
 import time
 import logging
 from datetime import datetime
@@ -14,14 +14,37 @@ CORS(app)
 
 logging.basicConfig(level=logging.INFO)
 
+RETRIEVER = ''
+
 ######################################################################################################## debug
+
 @app.route('/hello', methods=['GET'])
 def get_output():
     return { 'output' : 'hello guys!'}
 
 ######################################################################################################## watsonx
+
+@app.route('/setup-rita', methods=['POST'])
+def setup_rita():
+    global RETRIEVER
+    try: 
+        RETRIEVER = initializeSetup()
+        response = {
+        'status' : 'success',
+        'data' : 'Successfully initialized'
+        }
+        return response
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : str(e)
+        }
+        return response
+
+
 @app.route('/message-rita', methods=['POST'])
 def message_rita():
+    global RETRIEVER
     start_time = time.time()
     now_formatted = datetime.fromtimestamp(start_time).strftime('%H:%M:%S.%f')[:-3]
     app.logger.info(f"Recieved request at time = {now_formatted}")
@@ -37,24 +60,19 @@ def message_rita():
     if watsonxRequest['status'] == 'error':
         return watsonxRequest
     try:
-        llmOutput = llm_handle_input(watsonxRequest['data']) # returns rita's reply asdict
+        llmOutput = llm_handle_input(watsonxRequest['data'], RETRIEVER) # returns rita's reply asdict
         logTime(start_time, "LLM successfully returned")
-       
+        print(llmOutput)
+        return llmOutput
     except Exception as e:
         response = { 
             'status' : 'error',
             'data' : str(e)
         }
         return response
-
-    # return watsonxResponse
-    response = {
-        'status' : 'success',
-        'data' : llmOutput
-    }
-    return response
     
 ######################################################################################################## users
+
 @app.route('/create-user', methods=['POST'])
 def create_user():
     try:
@@ -101,6 +119,20 @@ def login():
         }
         return response
 
+@app.route('/login-with-spid', methods=['POST'])
+def login_sessionId():
+    try:
+        sessionId = request.json['sessionId']
+        return loginSessionId(sessionId)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
+
+######################################################################################################## classroom
+
 @app.route('/create-classroom', methods=['POST'])
 def create_classroom():
     try:
@@ -138,6 +170,8 @@ def update_classroom():
             'data' : 'Missing ' + str(e)
         }
         return response
+
+######################################################################################################## lecture
 
 @app.route('/create-lecture', methods=['POST'])
 def create_lecture():
@@ -183,6 +217,8 @@ def delete_lecture():
             'data' : 'Missing ' + str(e)
         }
         return response
+
+######################################################################################################## widget
 
 @app.route('/create-widget', methods=['POST'])
 def create_widget():
@@ -242,10 +278,21 @@ def delete_widget():
         }
         return response
 
+######################################################################################################## chatroom
+@app.route('/update-chatroom', methods=['POST'])
+def update_chatroom():
+    try:
+        sessionId = request.json['sessionId']
+        chatroomId = request.json['chatroomId']
+        content = request.json['content']
+        return updateChatroom(sessionId, chatroomId, content)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
 
-@app.route('/try-stream-output', methods=['POST'])
-def tryStreamOutput():   
-    return minimum_streaming_example()
 
 # @app.route('/get-user', methods=['GET'])
 # def get_user():
