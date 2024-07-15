@@ -116,7 +116,7 @@ def login():
         }
         return response
 
-@app.route('/login-with-spid', methods=['POST'])
+@app.route('/login-with-sid', methods=['POST'])
 def login_sessionId():
     try:
         sessionId = request.json['sessionId']
