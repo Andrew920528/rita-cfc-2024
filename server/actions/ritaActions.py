@@ -21,8 +21,8 @@ from dotenv import load_dotenv
 import os
 import json
 import logging
-from utils.streaming import StreamingStdOutCallbackHandlerYield, generate
-from util import DummyRetriever, logTime
+from server.utils.streaming import StreamingStdOutCallbackHandlerYield, generate
+from server.utils.util import logTime
 
 
 
@@ -34,8 +34,13 @@ from util import DummyRetriever, logTime
 # r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\.env"
 
 
-embedding_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\vector-stores\kang_math_5th_1st_vector_store_with_info"
-dotenv_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\.env"
+# embedding_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\vector-stores\kang_math_5th_1st_vector_store_with_info"
+# dotenv_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\.env"
+
+# Get the directory of the current script
+curr_dir = os.path.dirname(os.path.abspath(__file__))
+embedding_path = os.path.join(curr_dir, '..', 'ai', 'course-prep', 'RAG', 'vector-stores', 'kang_math_5th_1st_vector_store_with_info')
+dotenv_path = os.path.join(curr_dir, '..', 'ai', 'course-prep', 'RAG', '.env')
 
 API_KEY = ''
 URL = ''
@@ -44,21 +49,18 @@ PROJECT_ID = ''
 def initializeSetup():
     global embedding_path, dotenv_path, API_KEY, URL, PROJECT_ID
     load_details()
-    start_time = time.time()
+    
     embedding_model = HuggingFaceEmbeddings(
         model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     )
-    logTime(start_time, "Created embedding model")
+
     # Load FAISS store from disk
     faiss_store = FAISS.load_local(
         embedding_path, embedding_model, allow_dangerous_deserialization=True
     )
-    logTime(start_time, "Created store")
 
     # Create a retriever chain
     retriever = faiss_store.as_retriever()
-    logTime(start_time, "Created embedding retriever")
-    # ================= Things above this should be on init ==================
     return retriever
 
 def load_details():
@@ -170,26 +172,4 @@ def llm_handle_input(input, retriever):
 
     return response
 
-    # return extract_json_as_dict(response)
-    # NOTE to Jim: Alter this part to support streaming.
-    # the problem is that the frontend needs to be able to convert
-    # the stream into a json object. I commented out the part at frontend
-    # where we put the message in chatroom so it doesn't crash.
-    # for now, test with postman and see how long it took to get the first token.
-    # update api docs as well.
-    # when you're done with this, don't forget to implement login-with-sid endpoint
-    # response = qa.run(prompt)
-    # return extract_json_as_dict(response)
 
-def extract_json_as_dict(full_string):
-    # Find the starting and ending points of the JSON portion
-    start_index = full_string.find('{')
-    end_index = full_string.rfind('}') + 1
-
-    # Extract the JSON string
-    json_string = full_string[start_index:end_index]
-
-    # Convert the JSON string to a dictionary
-    json_dict = json.loads(json_string)
-
-    return json_dict

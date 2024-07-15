@@ -1,16 +1,14 @@
 from flask import Flask, Response, request, stream_with_context, jsonify
 from flask_cors import CORS
-from utils.streaming import StreamingStdOutCallbackHandlerYield
-from util import logTime
-from watsonx import getWatsonxResponse
-from databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
-from handle_input import create_prompt, llm_handle_input, initializeSetup
+from server.utils.streaming import StreamingStdOutCallbackHandlerYield
+from server.utils.util import logTime
+from server.actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
+from server.actions.ritaActions import create_prompt, llm_handle_input, initializeSetup
 import time
 import logging
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)
 
 logging.basicConfig(level=logging.INFO)
 
@@ -61,7 +59,6 @@ def message_rita():
         return watsonxRequest
     try:
         llmOutput = llm_handle_input(watsonxRequest['data'], RETRIEVER) # returns rita's reply asdict
-        logTime(start_time, "LLM successfully returned")
         print(llmOutput)
         return llmOutput
     except Exception as e:
@@ -293,26 +290,6 @@ def update_chatroom():
         }
         return response
 
-
-# @app.route('/get-user', methods=['GET'])
-# def get_user():
-#     username = request.args['username']
-#     password = request.args['password']
-#     return getUser(username, password)
-
-# @app.route('/modify-user', methods=['POST'])
-# def modify_user():
-#     username = request.form['username']
-#     password = request.form['password']
-#     updatedUsername = request.form['updatedUsername']
-#     updatedPassword = request.form['updatedPassword']
-#     return modifyUser(username, password, updatedUsername, updatedPassword)
-
-# @app.route('/delete-user', methods=['DELETE'])
-# def delete_user():
-#     username = request.form['username']
-#     password = request.form['password']
-#     return deleteUser(username, password)
 
 
 if __name__ == '__main__':

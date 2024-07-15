@@ -17,7 +17,7 @@ def generate_random_string(length=16):
     return random_string
 
 def getDatabaseDetails():
-    with open('database_key.json') as f:
+    with open('config/database_key.json') as f:
         global host, databaseuser, databasepassword, database, port
         js = json.load(f)
         host = js['host']
@@ -191,7 +191,6 @@ def getUser(username, password):
         return response
 
 def loginUser(username, password):
-
     userResponse = getUser(username, password)
     userId = None
 
@@ -1445,42 +1444,3 @@ def updateChatroom(sessionId, chatoomId, content):
             'data' : str(e)
         }
         return response
-
-# def modifyUser(username, password, updatedUsername, updatedPassword):
-#     getDatabaseDetails()
-#     try:
-#         connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
-#         with connection.cursor() as cursor:
-
-#             # see if there is entry first
-
-#             query = 'SELECT User_ID FROM User_Table WHERE Username=%s AND Pass=%s'
-#             values = (username, password)
-#             cursor.execute(query, values)
-
-#             if len(cursor.fetchall()) == 0:
-#                 connection.close()
-#                 return {'data' : "Account does not exist or Incorrect password!"}
-
-#             # see if updatedUsername already exists
-
-#             query = 'SELECT User_ID FROM User_Table WHERE Username=%s'
-#             values = (updatedUsername)
-#             cursor.execute(query, values)
-
-#             if len(cursor.fetchall()) != 0:
-#                 connection.close()
-#                 return {'data' : "Updated Username exists!"}
-
-#             query = 'UPDATE User_Table SET Username=%s, Pass=%s WHERE Username=%s AND Pass=%s'
-#             values = (updatedUsername, updatedPassword, username, password)
-
-#             cursor.execute(query, values)
-#             connection.commit()
-#             connection.close()   
-#             return {'data' : "Successfully modified account!"}
-    
-#     except Exception as e:
-#         print("Error: {}".format(e))
-#         connection.close()
-#         return {'data' : "Failed to modify account!"}
