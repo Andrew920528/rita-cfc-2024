@@ -1,15 +1,15 @@
 from flask import Flask, Response, request, stream_with_context, jsonify
 from flask_cors import CORS
-from server.utils.streaming import StreamingStdOutCallbackHandlerYield
-from server.utils.util import logTime
-from server.actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
-from server.actions.ritaActions import create_prompt, llm_handle_input, initializeSetup
+from utils.streaming import StreamingStdOutCallbackHandlerYield
+from utils.util import logTime
+from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
+from actions.ritaActions import create_prompt, llm_handle_input, initializeSetup
 import time
 import logging
 from datetime import datetime
 
 app = Flask(__name__)
-
+CORS(app)
 logging.basicConfig(level=logging.INFO)
 
 RETRIEVER = ''
