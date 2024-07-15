@@ -39,8 +39,8 @@ from utils.util import logTime
 
 # Get the directory of the current script
 curr_dir = os.path.dirname(os.path.abspath(__file__))
-embedding_path = os.path.join(curr_dir, '..', 'ai', 'course-prep', 'RAG', 'vector-stores', 'kang_math_5th_1st_vector_store_with_info')
-dotenv_path = os.path.join(curr_dir, '..', 'ai', 'course-prep', 'RAG', '.env')
+embedding_path = os.path.join(curr_dir, '..', '..', 'ai', 'course-prep', 'RAG', 'vector-stores', 'kang_math_5th_1st_vector_store_with_info')
+dotenv_path = os.path.join(curr_dir, '..','..', 'ai', 'course-prep', 'RAG', '.env')
 
 API_KEY = ''
 URL = ''
@@ -136,7 +136,6 @@ def llm_handle_input(input, retriever):
     load_details()
     #Initialize WatsonX LLM Interface
     credentials = Credentials.from_dict({"url": URL, "apikey": API_KEY}) 
-
     params = {
         GenParams.MAX_NEW_TOKENS: 4095,
         GenParams.DECODING_METHOD: DecodingMethods.GREEDY,

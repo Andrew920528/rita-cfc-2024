@@ -29,7 +29,7 @@ def setup_rita():
         RETRIEVER = initializeSetup()
         response = {
         'status' : 'success',
-        'data' : 'Successfully initialized'
+        'data' : 'Successfully initialized rita'
         }
         return response
     except Exception as e:

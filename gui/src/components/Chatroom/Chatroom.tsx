@@ -40,6 +40,7 @@ const Chatroom = ({}: ChatroomProps) => {
   // const [readyToSend, setReadyToSend] = useState(true);
   const [text, setText] = useState("");
   const [ritaError, setRitaError] = useState("");
+
   async function sendMessage(text: string) {
     let newMessage = {
       text: text,
@@ -74,27 +75,51 @@ const Chatroom = ({}: ChatroomProps) => {
       classroomId: classroomId,
     };
 
-    // let r = await apiHandler({
-    //   apiFunction: (s) =>
-    //     messageRitaService(
-    //       {
-    //         ...payload,
-    //       },
-    //       s
-    //     ),
-    //   debug: true,
-    //   identifier: "messageRita",
-    // });
+    try {
+      let response = await messageRitaService({...payload});
+      const reader = response.body?.getReader();
+      let result = "";
+      const decoder = new TextDecoder();
+      let chunks = [];
+      let messageObj = {
+        text: "",
+        sender: "Rita",
+      };
+      dispatch(
+        ChatroomsServices.actions.addMessage({
+          chatroomId: chatroom.id,
+          message: messageObj,
+        })
+      );
+      while (true) {
+        const {done, value} = await reader!.read();
+        if (done) break;
+        let newChunk = decoder.decode(value);
+        result += newChunk;
 
-    // let status = r.status;
-    // if (status === API.ERROR) {
-    //   setRitaError(r.data);
-    //   return;
-    // } else if (r.status === API.ABORTED) {
-    //   return;
-    // }
-    // handleReply(r.data);
+        handleChunk(newChunk);
+        chunks.push(newChunk);
+
+        let messageObj = {
+          text: result,
+          sender: "Rita",
+        };
+
+        dispatch(
+          ChatroomsServices.actions.updateLastMessage({
+            chatroomId: chatroom.id,
+            message: messageObj,
+          })
+        );
+      }
+      console.log(chunks);
+    } catch (error) {
+      console.error(error);
+      return;
+    }
   }
+
+  function handleChunk(chunk: string) {}
 
   const handleReply = (data: any) => {
     let reply = data.reply;

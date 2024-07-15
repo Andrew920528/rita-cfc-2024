@@ -1,8 +1,11 @@
 import queue
+import sys
 from typing import Any, Dict, List, Union
 
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.schema import LLMResult
+
+from utils.util import split_chunk
 
 STOP_ITEM = "[END]"
 """
@@ -17,6 +20,7 @@ class StreamingStdOutCallbackHandlerYield(StreamingStdOutCallbackHandler):
     """
 
     q: queue.Queue
+    buffer: str = ""
     """
     The queue to write the tokens to as they are generated.
     """
@@ -28,6 +32,7 @@ class StreamingStdOutCallbackHandlerYield(StreamingStdOutCallbackHandler):
         """
         super().__init__()
         self.q = q
+        self.buffer = ""
 
     def on_llm_start(
         self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
@@ -35,17 +40,30 @@ class StreamingStdOutCallbackHandlerYield(StreamingStdOutCallbackHandler):
         """Run when LLM starts running."""
         with self.q.mutex:
             self.q.queue.clear()
+            self.buffer = ""
 
     def on_llm_new_token(self, token: str, **kwargs: Any) -> None:
         """Run on new LLM token. Only available when streaming is enabled."""
         # Writes to stdout
-        # sys.stdout.write(token)
+        # sys.stdout.write(token + " || ")
         # sys.stdout.flush()
+        
+        # define token as a "word" separated by spaces
+        
+        self.buffer += token
+        wordList = split_chunk(self.buffer, 10)
+        print(f"wordlist: {wordList}")
+        if len(wordList) > 1:
+            for i in range(len(wordList)-1):
+                self.q.put(wordList[i])
+            self.buffer = wordList[-1]
+        
         # Pass the token to the generator
-        self.q.put(token)
+        # self.q.put(token)
 
     def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
         """Run when LLM ends running."""
+        self.q.put(self.buffer)
         self.q.put(STOP_ITEM)
 
     def on_llm_error(

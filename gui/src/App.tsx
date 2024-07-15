@@ -6,86 +6,37 @@ import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import {useLoginParseState} from "./global/globalActions";
-import {loginWithSidService, useApiHandler} from "./utils/service";
+import {
+  loginWithSidService,
+  setUpRitaService,
+  useApiHandler,
+} from "./utils/service";
 import {API} from "./global/constants";
 import {useAppDispatch, useTypedSelector} from "./store/store";
 import {LoginStatusServices} from "./features/LoginStatusSlice";
 import Redirect from "./pages/Redirect/Redirect";
 import {overrideConsoleWarning} from "./utils/util";
-import {c} from "vite/dist/node/types.d-aGj9QkWt";
 
-overrideConsoleWarning("https://reactflow.dev/error#002"); // weird react flow warning that doesn't apply here
+overrideConsoleWarning("https://reactflow.dev/error#002"); // weird react flow warning that's irrelevant
 
 function App() {
   const loginParseState = useLoginParseState();
   const {apiHandler} = useApiHandler();
+  const {apiHandler: initRitaHandler} = useApiHandler();
   const loginStatus = useTypedSelector((state) => state.LoginStatus);
   const dispatch = useAppDispatch();
-  const [streamData, setStreamData] = useState("");
   const runOnce = useRef<boolean>(false);
   useEffect(() => {
-    return;
     if (runOnce.current) return;
     runOnce.current = true;
-    async function streamGetter() {
-      const BASE_URL_DEV = "http://127.0.0.1:5000";
-
-      const endPointSetup = "/setup-rita";
-      const responseSetup = await fetch(BASE_URL_DEV + endPointSetup, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({}), // Convert data object to JSON string
+    async function initRita() {
+      initRitaHandler({
+        apiFunction: () => setUpRitaService(),
+        debug: true,
+        identifier: "setupRita",
       });
-
-      const endPoint = "/message-rita";
-      const response = await fetch(BASE_URL_DEV + endPoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          prompt: "幫我刪除第三周然後把第二周的教材改成2-1",
-          widget: {
-            id: 1,
-            type: 0,
-            content: {
-              headings: ["週目", "目標", "教材"],
-              rows: [
-                {
-                  週目: 1,
-                  目標: "讓學生能認識多位小數與比較小數",
-                  教材: "1-1, 1-2",
-                },
-                {
-                  週目: 2,
-                  目標: "讓學生學習多位小數的加減及日常應用",
-                  教材: "1-3",
-                },
-                {週目: 3, 目標: "讓學生了解小數與概數", 教材: "1-4"},
-              ],
-            },
-          },
-          lectureId: 1,
-          classroomId: 1,
-        }), // Convert data object to JSON string
-      });
-      const reader = response.body?.getReader();
-      let result = "";
-      const decoder = new TextDecoder();
-      let chunks = [];
-      while (true) {
-        const {done, value} = await reader!.read();
-        if (done) break;
-        let newVal = decoder.decode(value);
-        result += newVal;
-        setStreamData(result);
-        chunks.push(newVal);
-      }
-      console.log(chunks);
     }
-    streamGetter();
+    initRita();
   }, []);
 
   useEffect(() => {
@@ -130,7 +81,6 @@ function App() {
   }, []);
   return (
     <div className="App">
-      <div>{streamData}</div>
       <BrowserRouter>
         <Routes>
           <Route

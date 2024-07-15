@@ -26,7 +26,6 @@ export const useLoginParseState = () => {
   return useCallback(
     async (responseObj: any) => {
       sessionStorage.setItem("sessionId", responseObj.sessionId);
-      console.log(responseObj);
       let user = responseObj.user;
       if (responseObj.user.schedule) {
         responseObj.user.schedule = JSON.parse(user.schedule as string);
