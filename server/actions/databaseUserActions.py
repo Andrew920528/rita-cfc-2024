@@ -27,12 +27,6 @@ def getDatabaseDetails():
     database = os.getenv("DB_NAME")
     port = int(os.getenv("DB_PORT"))
 
-def verifyString(str) :
-    if len(str) < 6:
-        return False
-    if ' ' in str:
-        return False
-    return True
 
 def sessionCheck(sessionId):
     getDatabaseDetails()
@@ -77,8 +71,13 @@ def sessionCheck(sessionId):
         return response
 
 def createUser(username, password, school, alias, occupation, schedule):
+    def verifyString(str) :
+        if len(str) < 6:
+            return False
+        if ' ' in str:
+            return False
+        return True
     getDatabaseDetails()
-
     if not verifyString(username):
         response = { 
             'status' : 'error',

@@ -30,8 +30,9 @@ const Chatroom = ({}: ChatroomProps) => {
   const widgets = useTypedSelector((state) => state.Widgets);
   // api handlers
   const {
-    apiHandler,
+    abortControllerRef,
     loading: waitingForReply,
+    setLoading: setWaitingForReply,
     terminateResponse,
   } = useApiHandler([classroomId]);
 
@@ -42,6 +43,7 @@ const Chatroom = ({}: ChatroomProps) => {
   const [ritaError, setRitaError] = useState("");
 
   async function sendMessage(text: string) {
+    abortControllerRef.current = new AbortController();
     let newMessage = {
       text: text,
       sender: "User",
@@ -76,7 +78,11 @@ const Chatroom = ({}: ChatroomProps) => {
     };
 
     try {
-      let response = await messageRitaService({...payload});
+      setWaitingForReply(true);
+      let response = await messageRitaService(
+        {...payload},
+        abortControllerRef?.current?.signal
+      );
       const reader = response.body?.getReader();
       let result = "";
       const decoder = new TextDecoder();
@@ -99,7 +105,6 @@ const Chatroom = ({}: ChatroomProps) => {
 
         handleChunk(newChunk);
         chunks.push(newChunk);
-
         let messageObj = {
           text: result,
           sender: "Rita",
@@ -115,8 +120,11 @@ const Chatroom = ({}: ChatroomProps) => {
       console.log(chunks);
     } catch (error) {
       console.error(error);
+      setWaitingForReply(false);
       return;
     }
+
+    setWaitingForReply(false);
   }
 
   function handleChunk(chunk: string) {}
