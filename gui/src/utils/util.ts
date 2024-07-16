@@ -56,7 +56,6 @@ export const mimicStreamApi = async function (
 
     // Function to simulate sending chunks asynchronously
     for (let chunk of chunkList) {
-      console.log(signal);
       if (signal?.aborted) {
         throw new DOMException("Aborted", "AbortError");
       }

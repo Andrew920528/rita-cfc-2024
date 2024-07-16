@@ -6,13 +6,13 @@ import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {contentIsOfType, widgetBook} from "../../schema/widget";
 import {ChatMessage as ChatMessageT} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
-import {mimicApi, useCompose} from "../../utils/util";
+import {useCompose} from "../../utils/util";
 import {messageRitaService, useApiHandler} from "../../utils/service";
-import {debug, error} from "console";
-import {EMPTY_ID, API} from "../../global/constants";
+import {EMPTY_ID} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./Chatroom.module.scss";
 import {WidgetsServices} from "../../features/WidgetsSlice";
+import {tags} from "./ChunkDefinitions";
 
 const cx = classNames.bind(styles);
 type ChatroomProps = {};
@@ -56,7 +56,7 @@ const Chatroom = ({}: ChatroomProps) => {
     );
     setText("");
     setRitaError("");
-
+    // Step 1: Formulate payload
     let payload = {
       prompt: text,
       widget:
@@ -77,6 +77,7 @@ const Chatroom = ({}: ChatroomProps) => {
       classroomId: classroomId,
     };
 
+    // Step 2: Send api request and handle chunk by chunk
     try {
       setWaitingForReply(true);
       let response = await messageRitaService(
@@ -85,8 +86,15 @@ const Chatroom = ({}: ChatroomProps) => {
       );
       const reader = response.body?.getReader();
       let result = "";
+
+      let organizer = {
+        currRitaReply: "",
+        currModifyingWidgetId: "",
+        currModifyingWidgetContent: "",
+        currTag: "",
+      };
+
       const decoder = new TextDecoder();
-      let chunks = [];
       let messageObj = {
         text: "",
         sender: "Rita",
@@ -101,51 +109,65 @@ const Chatroom = ({}: ChatroomProps) => {
         const {done, value} = await reader!.read();
         if (done) break;
         let newChunk = decoder.decode(value);
+        // step 3: inspect chunk and parse it accordingly
+        handleChunk(newChunk, organizer);
         result += newChunk;
-
-        handleChunk(newChunk);
-        chunks.push(newChunk);
-        let messageObj = {
-          text: result,
-          sender: "Rita",
-        };
-
-        dispatch(
-          ChatroomsServices.actions.updateLastMessage({
-            chatroomId: chatroom.id,
-            message: messageObj,
-          })
-        );
       }
-      console.log(chunks);
+      // step 4: modify widget if needed
+      handleWidgetModification(organizer);
     } catch (error) {
-      console.error(error);
-      setWaitingForReply(false);
+      if (error instanceof DOMException && error.name === "AbortError") {
+        console.warn(error.message);
+      } else {
+        setRitaError("出現未知的錯誤，請再試一次");
+        console.error(error);
+      }
       return;
+    } finally {
+      setWaitingForReply(false);
     }
-
-    setWaitingForReply(false);
   }
 
-  function handleChunk(chunk: string) {}
+  function handleChunk(chunk: string, organizer: any) {
+    // if chunk is tags
+    if (chunk.trim() in tags) {
+      // tag is opened
+      organizer.currTag = chunk.trim();
+      return;
+    } else if (tags[organizer.currTag] === chunk.trim()) {
+      organizer.currTag = "";
+      return;
+    }
+    // treat any chunk not enclosed by tags (or inbalanced tags) as message
 
-  const handleReply = (data: any) => {
-    let reply = data.reply;
-    let widgetContent = data.content;
-    let widgetId = data.widgetId;
-    let messageObj = {
-      text: reply,
-      sender: "Rita",
-    };
+    if (organizer.currTag === "") {
+      organizer.currRitaReply += chunk;
+      let messageObj = {
+        text: organizer.currRitaReply,
+        sender: "Rita",
+      };
 
-    dispatch(
-      ChatroomsServices.actions.addMessage({
-        chatroomId: chatroom.id,
-        message: messageObj,
-      })
-    );
+      dispatch(
+        ChatroomsServices.actions.updateLastMessage({
+          chatroomId: chatroom.id,
+          message: messageObj,
+        })
+      );
+    } else if (organizer.currTag === "<wCont>") {
+      organizer.currModifyingWidgetContent += chunk.trim();
+    } else if (organizer.currTag === "<wid>") {
+      organizer.currModifyingWidgetId += chunk.trim();
+    }
+  }
 
+  const handleWidgetModification = (organizer: any) => {
+    console.log(organizer.currModifyingWidgetContent);
+    let widgetContent = JSON.parse(organizer.currModifyingWidgetContent);
+    let widgetId = organizer.currModifyingWidgetId;
+    console.log(widgetContent, widgetId);
+    console.log(widgetId === widgets.current, widgets.current);
     if (widgetId === widgets.current && widgetId !== EMPTY_ID) {
+      console.log("first");
       if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {
         return;
       }

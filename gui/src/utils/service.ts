@@ -505,9 +505,8 @@ export function messageRitaService(
 ) {
   if (INDEPENDENT_MODE) {
     const mimicResponse = `Hello, I'm Rita. You are in frontend development mode, where I am not connected to an actual AI
-    <wCont> {goals: ["你好呀"]} </wCont> <wid> dum-username-wid-lxu4el0kwcyyfcov1vq </wid>
+    <wCont> {"goals": ["你好呀"]} </wCont> <wid> dum-username-wid-lxu4el0kwcyyfcov1vq </wid>
     `;
-    console.log(abortSignal);
     return mimicStreamApi(100, mimicResponse, abortSignal);
   }
   const endPoint = "/message-rita";
