@@ -2,7 +2,14 @@
 # pip install ibm-watsonx-ai==1.0.6
 # pip install langchain-ibm==0.1.7
 # conda install conda-forge::langchain=0.2.3
-
+import queue
+import sys
+import threading
+from typing import Any, Dict, List
+from flask import Response
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from datetime import datetime
+import time
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 from ibm_watsonx_ai import Credentials
@@ -13,25 +20,54 @@ from langchain_ibm import WatsonxLLM
 from dotenv import load_dotenv
 import os
 import json
-"""
-Andrew:
-/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/vector-stores/kang_math_5th_1st_vector_store_with_info
-/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/.env
-"""
+import logging
+from utils.streaming import StreamingStdOutCallbackHandlerYield, generate
+from utils.util import logTime
 
-embedding_path = r"/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/vector-stores/kang_math_5th_1st_vector_store_with_info"
-dotenv_path = r"/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/.env"
+
+
+# Andrew:
+# /Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/vector-stores/kang_math_5th_1st_vector_store_with_info
+# /Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/.env
+# Jim:
+# r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\vector-stores\kang_math_5th_1st_vector_store_with_info"
+# r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\.env"
+
+
+# embedding_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\vector-stores\kang_math_5th_1st_vector_store_with_info"
+# dotenv_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\.env"
+
+# Get the directory of the current script
+curr_dir = os.path.dirname(os.path.abspath(__file__))
+embedding_path = os.path.join(curr_dir, '..', '..', 'ai', 'course-prep', 'RAG', 'vector-stores', 'kang_math_5th_1st_vector_store_with_info')
 
 API_KEY = ''
 URL = ''
 PROJECT_ID = ''
 
+def initializeSetup():
+    global embedding_path, dotenv_path, API_KEY, URL, PROJECT_ID
+    load_details()
+    
+    embedding_model = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    )
+
+    # Load FAISS store from disk
+    faiss_store = FAISS.load_local(
+        embedding_path, embedding_model, allow_dangerous_deserialization=True
+    )
+
+    # Create a retriever chain
+    retriever = faiss_store.as_retriever()
+    return retriever
+
 def load_details():
     global embedding_path, dotenv_path, API_KEY, URL, PROJECT_ID
-    load_dotenv(dotenv_path)
-    API_KEY = os.getenv("API_KEY")
-    URL = os.getenv("URL")
-    PROJECT_ID = os.getenv("PROJECT_ID")
+    load_dotenv()
+    API_KEY = os.getenv("WATSONX_API_KEY")
+    URL = os.getenv("WATSONX_URL")
+    PROJECT_ID = os.getenv("WATSONX_PROJECT_ID")
 
 def create_prompt(input):
     global embedding_path, dotenv_path, API_KEY, URL, PROJECT_ID
@@ -92,60 +128,47 @@ def create_prompt(input):
 
     return input_output_instruction + input_str
 
-
-def llm_handle_input(input):
+def llm_handle_input(input, retriever):
+    start_time = time.time()
     global embedding_path, dotenv_path, API_KEY, URL, PROJECT_ID
-    load_details()
     
-    # Word embeddings model
-    embedding_model = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-    )
-
-    # Load FAISS store from disk
-    faiss_store = FAISS.load_local(
-        embedding_path, embedding_model, allow_dangerous_deserialization=True
-    )
-
-    # Create a retriever chain
-    retriever = faiss_store.as_retriever()
-
-    # Initialize WatsonX LLM Interface
-    credentials = Credentials.from_dict({"url": URL, "apikey": API_KEY})
-
+    load_details()
+    #Initialize WatsonX LLM Interface
+    credentials = Credentials.from_dict({"url": URL, "apikey": API_KEY}) 
     params = {
         GenParams.MAX_NEW_TOKENS: 4095,
         GenParams.DECODING_METHOD: DecodingMethods.GREEDY,
         GenParams.REPETITION_PENALTY: 1.0,
-    }
+    }   
 
-    # Initialize the LLM model
-    llm = WatsonxLLM(
-        model_id=ModelTypes.LLAMA_3_70B_INSTRUCT.value,
-        params=params,
-        url=credentials.get("url"),
-        apikey=credentials.get("apikey"),
-        project_id=PROJECT_ID,
-    )
-
-    # Define the QA chain
-    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
+    logTime(start_time, "loaded IBM watsonX credentials")
 
     prompt = create_prompt(input)
-    
-    response = qa.run(prompt)
-    return extract_json_as_dict(response)
+    logTime(start_time, "Generated prompt")
 
-def extract_json_as_dict(full_string):
-    print(full_string)
-    # Find the starting and ending points of the JSON portion
-    start_index = full_string.find('{')
-    end_index = full_string.rfind('}') + 1
+    # TODO: we should be able to init chatbot only once as well
+    def ask_question(callback_fn):
+        # Initialize the LLM model
+        llm = WatsonxLLM(
+            model_id=ModelTypes.LLAMA_3_70B_INSTRUCT.value,
+            params=params,
+            url=credentials.get("url"),
+            apikey=credentials.get("apikey"),
+            streaming=True,
+            project_id=PROJECT_ID,
+            callbacks=[callback_fn],
+        )
+        logTime(start_time, "Created LLM")
+        qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
+        logTime(start_time, "Created QA")
+        return qa.run(prompt)
 
-    # Extract the JSON string
-    json_string = full_string[start_index:end_index]
+    q = queue.Queue()
+    callback_fn = StreamingStdOutCallbackHandlerYield(q)
+    threading.Thread(target=ask_question, args=(callback_fn,)).start()
 
-    # Convert the JSON string to a dictionary
-    json_dict = json.loads(json_string)
+    response = Response(generate(q), content_type='text/plain')
 
-    return json_dict
+    return response
+
+

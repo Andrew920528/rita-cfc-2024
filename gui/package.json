@@ -35,7 +35,8 @@
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest",
+    "gui:indep": "VITE_GUI_INDEPENDENT=true npm run start"
   },
   "devDependencies": {
     "@babel/plugin-transform-private-property-in-object": "^7.24.6",

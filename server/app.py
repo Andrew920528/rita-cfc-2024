@@ -1,31 +1,37 @@
-from flask import Flask, request
+from flask import Flask, Response, request, stream_with_context, jsonify
 from flask_cors import CORS
-from watsonx import getWatsonxResponse
-from databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk
-from handle_input import create_prompt, llm_handle_input
+from utils.streaming import StreamingStdOutCallbackHandlerYield
+from utils.util import logTime
+from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
+from actions.ritaActions import create_prompt, llm_handle_input, initializeSetup
+import time
+import logging
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
+logging.basicConfig(level=logging.INFO)
+
+RETRIEVER = ''
 
 ######################################################################################################## debug
+
 @app.route('/hello', methods=['GET'])
 def get_output():
     return { 'output' : 'hello guys!'}
 
 ######################################################################################################## watsonx
-@app.route('/message-rita', methods=['POST'])
-def message_rita():
-    prompt = request.json['prompt']
-    widget = request.json['widget']
-    lectureId = request.json['lectureId']
-    classroomId = request.json['classroomId']
-    watsonxRequest = getWatsonxRequest(prompt, widget, lectureId, classroomId)
-    # check if output is correct
-    if watsonxRequest['status'] == 'error':
-        return watsonxRequest
-    
-    try:
-        llmOutput = llm_handle_input(watsonxRequest['data']) # returns rita's reply asdict
+
+@app.route('/setup-rita', methods=['POST'])
+def setup_rita():
+    global RETRIEVER
+    try: 
+        RETRIEVER = initializeSetup()
+        response = {
+        'status' : 'success',
+        'data' : 'Successfully initialized rita'
+        }
+        return response
     except Exception as e:
         response = { 
             'status' : 'error',
@@ -33,14 +39,37 @@ def message_rita():
         }
         return response
 
-    # return watsonxResponse
-    response = {
-        'status' : 'success',
-        'data' : llmOutput
-    }
-    return response
+
+@app.route('/message-rita', methods=['POST'])
+def message_rita():
+    global RETRIEVER
+    start_time = time.time()
+    now_formatted = datetime.fromtimestamp(start_time).strftime('%H:%M:%S.%f')[:-3]
+    app.logger.info(f"Recieved request at time = {now_formatted}")
+
+    prompt = request.json['prompt']
+    widget = request.json['widget']
+    lectureId = request.json['lectureId']
+    classroomId = request.json['classroomId']
+    watsonxRequest = getWatsonxRequest(prompt, widget, lectureId, classroomId)
+    
+    logTime(start_time, "Fetched classroom and lecture from the database")
+    # check if output is correct
+    if watsonxRequest['status'] == 'error':
+        return watsonxRequest
+    try:
+        llmOutput = llm_handle_input(watsonxRequest['data'], RETRIEVER) # returns rita's reply asdict
+        print(llmOutput)
+        return llmOutput
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : str(e)
+        }
+        return response
     
 ######################################################################################################## users
+
 @app.route('/create-user', methods=['POST'])
 def create_user():
     try:
@@ -87,6 +116,20 @@ def login():
         }
         return response
 
+@app.route('/login-with-sid', methods=['POST'])
+def login_sessionId():
+    try:
+        sessionId = request.json['sessionId']
+        return loginSessionId(sessionId)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
+
+######################################################################################################## classroom
+
 @app.route('/create-classroom', methods=['POST'])
 def create_classroom():
     try:
@@ -124,6 +167,8 @@ def update_classroom():
             'data' : 'Missing ' + str(e)
         }
         return response
+
+######################################################################################################## lecture
 
 @app.route('/create-lecture', methods=['POST'])
 def create_lecture():
@@ -169,6 +214,8 @@ def delete_lecture():
             'data' : 'Missing ' + str(e)
         }
         return response
+
+######################################################################################################## widget
 
 @app.route('/create-widget', methods=['POST'])
 def create_widget():
@@ -228,25 +275,21 @@ def delete_widget():
         }
         return response
 
-# @app.route('/get-user', methods=['GET'])
-# def get_user():
-#     username = request.args['username']
-#     password = request.args['password']
-#     return getUser(username, password)
+######################################################################################################## chatroom
+@app.route('/update-chatroom', methods=['POST'])
+def update_chatroom():
+    try:
+        sessionId = request.json['sessionId']
+        chatroomId = request.json['chatroomId']
+        content = request.json['content']
+        return updateChatroom(sessionId, chatroomId, content)
+    except Exception as e:
+        response = { 
+            'status' : 'error',
+            'data' : 'Missing ' + str(e)
+        }
+        return response
 
-# @app.route('/modify-user', methods=['POST'])
-# def modify_user():
-#     username = request.form['username']
-#     password = request.form['password']
-#     updatedUsername = request.form['updatedUsername']
-#     updatedPassword = request.form['updatedPassword']
-#     return modifyUser(username, password, updatedUsername, updatedPassword)
-
-# @app.route('/delete-user', methods=['DELETE'])
-# def delete_user():
-#     username = request.form['username']
-#     password = request.form['password']
-#     return deleteUser(username, password)
 
 
 if __name__ == '__main__':
