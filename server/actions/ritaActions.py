@@ -65,10 +65,10 @@ def initializeSetup():
 
 def load_details():
     global embedding_path, dotenv_path, API_KEY, URL, PROJECT_ID
-    load_dotenv(dotenv_path)
-    API_KEY = os.getenv("API_KEY")
-    URL = os.getenv("URL")
-    PROJECT_ID = os.getenv("PROJECT_ID")
+    load_dotenv()
+    API_KEY = os.getenv("WATSONX_API_KEY")
+    URL = os.getenv("WATSONX_URL")
+    PROJECT_ID = os.getenv("WATSONX_PROJECT_ID")
 
 def create_prompt(input):
     global embedding_path, dotenv_path, API_KEY, URL, PROJECT_ID
@@ -147,6 +147,7 @@ def llm_handle_input(input, retriever):
     prompt = create_prompt(input)
     logTime(start_time, "Generated prompt")
 
+    # TODO: we should be able to init chatbot only once as well
     def ask_question(callback_fn):
         # Initialize the LLM model
         llm = WatsonxLLM(
@@ -156,7 +157,7 @@ def llm_handle_input(input, retriever):
             apikey=credentials.get("apikey"),
             streaming=True,
             project_id=PROJECT_ID,
-            callbacks=[callback_fn]
+            callbacks=[callback_fn],
         )
         logTime(start_time, "Created LLM")
         qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)

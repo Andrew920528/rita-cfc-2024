@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 import pymysql
 import json
 from flask import jsonify, request
@@ -17,14 +19,13 @@ def generate_random_string(length=16):
     return random_string
 
 def getDatabaseDetails():
-    with open('config/database_key.json') as f:
-        global host, databaseuser, databasepassword, database, port
-        js = json.load(f)
-        host = js['host']
-        databaseuser = js['databaseuser']
-        databasepassword = js['databasepassword']
-        database = js['database']
-        port=3306
+    global host, databaseuser, databasepassword, database, port
+    load_dotenv()
+    host = os.getenv("DB_HOST")
+    databaseuser = os.getenv("DB_USER")
+    databasepassword = os.getenv("DB_PASSWORD")
+    database = os.getenv("DB_NAME")
+    port = int(os.getenv("DB_PORT"))
 
 def verifyString(str) :
     if len(str) < 6:
