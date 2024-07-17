@@ -96,12 +96,15 @@ def initLLM():
 system_intro = (
 "You are a helpful AI teaching assistant chatbot. Your name is Rita."
 "You are suppose to help the user, who is a teacher, to plan their courses."
-)
+) #TODO: can add more description about what rita is capable of
 
 system_instructions = (
     "Answer the user's questions based on the below context: {context}."
     "If the input is irrelevant, suggest ways that you can help to plan a lesson."
-)
+    "Speak to the user in Chinese."
+) # TODO: The original prompt where you specify output format should go here
+  # TODO: Look into few-shot prompting formating with langchain instead of hard coding them
+
 def llm_stream_response(data, user_prompt, retriever, llm):
     prompt = create_prompt(data, user_prompt) # generate prompt
     chat_history = [] # TODO: Save chat history (or return from gui)
@@ -111,10 +114,20 @@ def llm_stream_response(data, user_prompt, retriever, llm):
         MessagesPlaceholder(variable_name="chat_history"),
         ("user", "{input}"),
         ("system", system_instructions),
-        ("ai", ""), # WHY IS THIS NEEDED? LIKE ITS ACTUALLY NEEDED!! BUT IT'S NOT MENTIONED ANYWHERE ONLINE
+        ("ai", ""), 
         ]) 
-    
-    
+    # NOTE: It is intersteing how adding an empty ai prompt in the end help generating the prompt significantly be
+    # When it is not present, llama tries to auto complete the user's question, 
+    # or just repeat what the system says.
+    # This is just my theory, but adding the ai placeholder in the end enforces conversation order,
+    # which let llama knows it is suppose to speak next as an assistant.
+    # This is interesting because no examples on the internet has this, so I'm not 
+    # sure if there are better practices or drawbacks with this approach.
+    print(prompt_template.invoke({
+        "context": [],
+        "chat_history": [],
+        "input": prompt,
+    }))
     document_chain=create_stuff_documents_chain(llm = llm, prompt = prompt_template)
     
     retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain = document_chain)
