@@ -3,7 +3,7 @@ from flask_cors import CORS
 from utils.streaming import StreamingStdOutCallbackHandlerYield
 from utils.util import logTime
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
-from actions.ritaActions import create_prompt, llm_handle_input, initializeSetup
+from actions.ritaActions import create_prompt, initLLM, llm_stream_response, initRetriever
 import time
 import logging
 from datetime import datetime
@@ -13,6 +13,7 @@ CORS(app)
 logging.basicConfig(level=logging.INFO)
 
 RETRIEVER = ''
+LLM = ''
 
 ######################################################################################################## debug
 
@@ -24,9 +25,10 @@ def get_output():
 
 @app.route('/setup-rita', methods=['POST'])
 def setup_rita():
-    global RETRIEVER
+    global RETRIEVER, LLM
     try: 
-        RETRIEVER = initializeSetup()
+        RETRIEVER = initRetriever()
+        LLM = initLLM()
         response = {
         'status' : 'success',
         'data' : 'Successfully initialized rita'
@@ -42,7 +44,9 @@ def setup_rita():
 
 @app.route('/message-rita', methods=['POST'])
 def message_rita():
-    global RETRIEVER
+    global RETRIEVER, LLM
+    if RETRIEVER == "" or LLM == "":
+        return "<ERROR>"
     start_time = time.time()
     now_formatted = datetime.fromtimestamp(start_time).strftime('%H:%M:%S.%f')[:-3]
     app.logger.info(f"Recieved request at time = {now_formatted}")
@@ -58,10 +62,10 @@ def message_rita():
     if watsonxRequest['status'] == 'error':
         return watsonxRequest
     try:
-        llmOutput = llm_handle_input(watsonxRequest['data'], RETRIEVER) # returns rita's reply asdict
-        print(llmOutput)
+        llmOutput = llm_stream_response(watsonxRequest['data'], prompt, RETRIEVER, LLM) # returns rita's reply asdict
         return llmOutput
     except Exception as e:
+        logging.error("Error: {}".format(e))
         response = { 
             'status' : 'error',
             'data' : str(e)

@@ -55,11 +55,10 @@ class StreamingStdOutCallbackHandlerYield(StreamingStdOutCallbackHandler):
         print(f"wordlist: {wordList}")
         if len(wordList) > 1:
             for i in range(len(wordList)-1):
-                self.q.put(wordList[i])
+                self.q.put(wordList[i]) # Pass the token to the generator
             self.buffer = wordList[-1]
         
-        # Pass the token to the generator
-        # self.q.put(token)
+        
 
     def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
         """Run when LLM ends running."""
