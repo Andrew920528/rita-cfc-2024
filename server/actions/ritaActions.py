@@ -93,25 +93,31 @@ def initLLM():
     return llm
     
 
-system_instructions = (
+system_intro = (
 "You are a helpful AI teaching assistant chatbot. Your name is Rita."
-"Your goal is to help the teacher plan out their courses. You are given teacher's guide and textbooks as context."
-"Answer the user's questions based on the below context: {context}."
-"If the user's input is irrelevant, return a 50 words paragraph about whales."
+"You are suppose to help the user, who is a teacher, to plan their courses."
+)
+
+system_instructions = (
+    "Answer the user's questions based on the below context: {context}."
+    "If the input is irrelevant, suggest ways that you can help to plan a lesson."
 )
 def llm_stream_response(data, user_prompt, retriever, llm):
     prompt = create_prompt(data, user_prompt) # generate prompt
-    print(system_instructions)
+    chat_history = [] # TODO: Save chat history (or return from gui)
+
     prompt_template = ChatPromptTemplate.from_messages([
-        ("system", system_instructions),
+        ("system", system_intro),
         MessagesPlaceholder(variable_name="chat_history"),
-        ("user","{input}")
+        ("user", "{input}"),
+        ("system", system_instructions),
+        ("ai", ""), # WHY IS THIS NEEDED? LIKE ITS ACTUALLY NEEDED!! BUT IT'S NOT MENTIONED ANYWHERE ONLINE
         ]) 
     
     
-    document_chain=create_stuff_documents_chain(llm = llm, prompt = prompt_template, output_parser=StrOutputParser())
+    document_chain=create_stuff_documents_chain(llm = llm, prompt = prompt_template)
     
-    retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain =document_chain)
+    retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain = document_chain)
 
     out = ""
     # for chunk in retrieval_chain.stream({
@@ -125,7 +131,7 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     r = retrieval_chain.invoke({
         "context": [],
         "chat_history": [],
-        "input": user_prompt,
+        "input": prompt,
     })
     pprint(r)
     response = Response(r["answer"], content_type='text/plain')

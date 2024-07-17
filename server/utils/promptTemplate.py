@@ -54,7 +54,7 @@ def create_prompt(data, user_prompt):
 
     Help me generate a output based on my input below:"""
 
-    return input_output_instruction
+    return input_output_instruction + input_str
 
 
 system_instruction = """
