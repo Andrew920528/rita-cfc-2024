@@ -22,7 +22,7 @@ from dotenv import load_dotenv
 import os
 import json
 import logging
-from utils.promptTemplate import create_prompt, rita_prompt_template
+from server.utils.prompt import RitaPromptHandler, create_prompt, rita_prompt_template
 from utils.streaming import StreamHandler
 from utils.util import logTime
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -35,20 +35,11 @@ from langchain.chains.llm import LLMChain
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-# Jim:
-# r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\vector-stores\kang_math_5th_1st_vector_store_with_info"
-# r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\.env"
-# NOTE: above paths should not be relevant anymore, delete if the below paths works for you
-# NOTE: dotenv_path shouldn't be used, since you should now have .env in this directory
-
-# embedding_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\vector-stores\kang_math_5th_1st_vector_store_with_info"
-# dotenv_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\.env"
-
-# Get the directory of the current script
-curr_dir = os.path.dirname(os.path.abspath(__file__))
-embedding_path = os.path.join(curr_dir, '..', '..', 'ai', 'course-prep', 'RAG', 'vector-stores', 'kang_math_5th_1st_vector_store_with_info')
-
-def initRetriever():    
+def initRetriever(): 
+    # Get the absolute path of the embedding path with system independent path selectors
+    curr_dir = os.path.dirname(os.path.abspath(__file__))
+    embedding_path = os.path.join(curr_dir, '..', '..', 'ai', 'course-prep', 'RAG', 'vector-stores', 'kang_math_5th_1st_vector_store_with_info')
+   
     embedding_model = HuggingFaceEmbeddings(
         model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     )
@@ -92,22 +83,20 @@ def initLLM():
     
 
 def llm_stream_response(data, user_prompt, retriever, llm):
-    prompt = create_prompt(data, user_prompt) # generate prompt
-    chat_history = [] # TODO: Save chat history (or return from gui)
     
-    document_chain=create_stuff_documents_chain(llm = llm, prompt = rita_prompt_template())
+    # Generate prompt based on retrieved data and user input
+    promptHandler = RitaPromptHandler(data, user_prompt)
+    prompt = promptHandler.get_prompt()
+    prompt_template = promptHandler.get_template()
     
+    # Chain together components (LLM, prompt, RAG retriever)
+    document_chain=create_stuff_documents_chain(llm = llm, prompt = prompt_template)
     retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain = document_chain)
 
+    # Call the LLM and stream its response
+    rita_reply = retrieval_chain.stream(prompt)
     stream_handler = StreamHandler(queue.Queue())
-    rita_reply = retrieval_chain.stream({
-            "context": [],
-            "chat_history": [],
-            "input": user_prompt
-        })
-    
     threading.Thread(target=stream_handler.output_buffer, args=(rita_reply,)).start()
-    
     response = Response(stream_handler.yield_stream(), content_type='text/plain')
     return response
 
