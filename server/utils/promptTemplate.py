@@ -1,4 +1,39 @@
 import json
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import MessagesPlaceholder
+system_intro = (
+"You are a helpful AI teaching assistant chatbot. Your name is Rita."
+"You are suppose to help the user, who is a teacher, to plan their courses."
+) #TODO: can add more description about what rita is capable of
+
+system_instructions = (
+    "Answer the user's questions based on the below context: {context}."
+    "If the input is irrelevant, suggest ways that you can help to plan a lesson."
+    # "If the user input is Chinese, speak to the user in Chinese." # TODO Language constraints works weidly sometimes
+) # TODO: The original prompt where you specify output format should go here
+  # TODO: Look into few-shot prompting formating with langchain instead of hard coding them
+
+def rita_prompt_template():
+    prompt_template = ChatPromptTemplate.from_messages([
+        ("system", system_intro),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("user", "{input}"),
+        ("system", system_instructions),
+        ("ai", ""), 
+        ])
+    # NOTE: It is intersteing how adding an empty ai prompt in the end help generating the prompt significantly be
+    # When it is not present, llama tries to auto complete the user's question, 
+    # or just repeat what the system says.
+    # This is just my theory, but adding the ai placeholder in the end enforces conversation order,
+    # which let llama knows it is suppose to speak next as an assistant.
+    # This is interesting because no examples on the internet has this, so I'm not 
+    # sure if there are better practices, or will there be drawbacks with this approach.
+
+    return prompt_template
+    
+
+
+
 def create_prompt(data, user_prompt):
     input_str = json.dumps(data, indent=4, ensure_ascii=False)
     input_output_instruction = """

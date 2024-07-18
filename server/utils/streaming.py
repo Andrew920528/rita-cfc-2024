@@ -26,10 +26,9 @@ Example usage:
     response = Response(stream_handler.yield_stream(), content_type='text/plain')
 """
 class StreamHandler:
+    END_TOKEN = "[END]"
     def __init__(self, stream: queue.Queue):
         self.out_stream = stream
-        self.end_stream = False
-
 
     def output_buffer(self, in_stream):
         """format the irredular chunks sent by the llm into tokens defined by the split_chunk function
@@ -49,7 +48,7 @@ class StreamHandler:
                     self.out_stream.put(wordList[i]) # Pass the token to the generator
                 buffer = wordList[-1]
         self.out_stream.put(buffer)
-        self.end_stream = [True]
+        self.out_stream.put(StreamHandler.END_TOKEN)
 
     
     def yield_stream(self):
@@ -59,11 +58,13 @@ class StreamHandler:
             str: chunks of the stream
         """
         while True:
+            
             result: str = self.out_stream.get()
             print(result)
-            if result is None or self.end_stream:
+            if result is None or result == StreamHandler.END_TOKEN:
                 break
             yield result
+            
     
     @staticmethod
     def split_chunk(text: str, max_length : int):

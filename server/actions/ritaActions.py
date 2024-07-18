@@ -22,7 +22,7 @@ from dotenv import load_dotenv
 import os
 import json
 import logging
-from utils.promptTemplate import create_prompt
+from utils.promptTemplate import create_prompt, rita_prompt_template
 from utils.streaming import StreamHandler
 from utils.util import logTime
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -91,38 +91,11 @@ def initLLM():
     return llm
     
 
-system_intro = (
-"You are a helpful AI teaching assistant chatbot. Your name is Rita."
-"You are suppose to help the user, who is a teacher, to plan their courses."
-) #TODO: can add more description about what rita is capable of
-
-system_instructions = (
-    "Answer the user's questions based on the below context: {context}."
-    "If the input is irrelevant, suggest ways that you can help to plan a lesson."
-    # "If the user input is Chinese, speak to the user in Chinese." # TODO Language constraints works weidly sometimes
-) # TODO: The original prompt where you specify output format should go here
-  # TODO: Look into few-shot prompting formating with langchain instead of hard coding them
-
 def llm_stream_response(data, user_prompt, retriever, llm):
     prompt = create_prompt(data, user_prompt) # generate prompt
     chat_history = [] # TODO: Save chat history (or return from gui)
-
-    prompt_template = ChatPromptTemplate.from_messages([
-        ("system", system_intro),
-        MessagesPlaceholder(variable_name="chat_history"),
-        ("user", "{input}"),
-        ("system", system_instructions),
-        ("ai", ""), 
-        ]) 
-    # NOTE: It is intersteing how adding an empty ai prompt in the end help generating the prompt significantly be
-    # When it is not present, llama tries to auto complete the user's question, 
-    # or just repeat what the system says.
-    # This is just my theory, but adding the ai placeholder in the end enforces conversation order,
-    # which let llama knows it is suppose to speak next as an assistant.
-    # This is interesting because no examples on the internet has this, so I'm not 
-    # sure if there are better practices, or will there be drawbacks with this approach.
-
-    document_chain=create_stuff_documents_chain(llm = llm, prompt = prompt_template)
+    
+    document_chain=create_stuff_documents_chain(llm = llm, prompt = rita_prompt_template())
     
     retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain = document_chain)
 
@@ -132,7 +105,6 @@ def llm_stream_response(data, user_prompt, retriever, llm):
             "chat_history": [],
             "input": user_prompt
         })
-    
     
     threading.Thread(target=stream_handler.output_buffer, args=(rita_reply,)).start()
     
