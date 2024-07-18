@@ -44,7 +44,6 @@ class StreamHandler:
             wordList = self.split_chunk(buffer, 10)
             if len(wordList) > 1:
                 for i in range(len(wordList)-1):
-                    # print(wordList[i] + "|")
                     self.out_stream.put(wordList[i]) # Pass the token to the generator
                 buffer = wordList[-1]
         self.out_stream.put(buffer)
@@ -60,7 +59,6 @@ class StreamHandler:
         while True:
             
             result: str = self.out_stream.get()
-            print(result)
             if result is None or result == StreamHandler.END_TOKEN:
                 break
             yield result

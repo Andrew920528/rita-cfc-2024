@@ -1,8 +1,8 @@
-from flask import Flask, Response, request, stream_with_context, jsonify
+from flask import Flask, request
 from flask_cors import CORS
 from utils.util import logTime
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
-from actions.ritaActions import create_prompt, initLLM, llm_stream_response, initRetriever
+from actions.ritaActions import initLLM, llm_stream_response, initRetriever
 import time
 import logging
 from datetime import datetime

@@ -6,19 +6,31 @@ class RitaPromptHandler:
     def __init__(self, data, user_prompt):
         self.data = data # TODO define data to contain what you need
         self.user_prompt = user_prompt
+    def get_prompt(self):
+        return {
+            "context": [],
+            "chat_history": [], # TODO: this should be somehow passed in to data
+            "input": self.user_prompt,
+        }
     
     def get_template(self):
         SYSTEM_INTRO = (
         "You are a helpful AI teaching assistant chatbot. Your name is Rita."
         "You are suppose to help the user, who is a teacher, to plan their courses."
         ) #TODO: can add more description about what rita is capable of
-
+        SYSTEM_BASE_INSTRUCTION = (
+        "Answer the user's questions based on the below context: {context}."
+        "If the input is irrelevant, suggest ways that you can help to plan a lesson."
+        # "If the user input is Chinese, speak to the user in Chinese." # TODO Language constraints works weidly sometimes
+        )
+        extra_instructions = self._get_instructions()
+        
         prompt_template = ChatPromptTemplate.from_messages([
-        ("system", SYSTEM_INTRO),
-        MessagesPlaceholder(variable_name="chat_history"),
-        ("user", "{input}"),
-        ("system", "{system_instructions}"),
-        ("ai", ""), 
+            ("system", SYSTEM_INTRO),
+            MessagesPlaceholder(variable_name="chat_history"),
+            ("user", "{input}"),
+            ("system", SYSTEM_BASE_INSTRUCTION + extra_instructions),
+            ("ai", ""), 
         ])
         # NOTE: It is intersteing how adding an empty ai prompt in the end help generating the prompt significantly be
         # When it is not present, llama tries to auto complete the user's question, 
@@ -29,25 +41,12 @@ class RitaPromptHandler:
         # sure if there are better practices, or will there be drawbacks with this approach.
         return prompt_template
     
-    def get_prompt(self):
-        # TODO create prompt based on data and user_prompt
-        # NOTE: Use helper methods to build the prompt
-        return {
-            "context": [],
-            "chat_history": [],
-            "input": self.user_prompt,
-            "system_instructions": self._get_instructions()
-        }
     
     def _get_instructions(self):
         # TODO: The original prompt where you specify output format should go here
         # TODO: Look into few-shot prompting formating with langchain instead of hard coding them   
-        system_instructions = (
-            "Answer the user's questions based on the below context: {context}."
-            "If the input is irrelevant, suggest ways that you can help to plan a lesson."
-            # "If the user input is Chinese, speak to the user in Chinese." # TODO Language constraints works weidly sometimes
-            )
-        return system_instructions
+        instruction = ""
+        return instruction
 
     def _identify_intent(self):
         pass #TODO: Ellen's function should be here

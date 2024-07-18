@@ -2,7 +2,6 @@
 # pip install ibm-watsonx-ai==1.0.6
 # pip install langchain-ibm==0.1.7
 # conda install conda-forge::langchain=0.2.3
-from pprint import pprint
 import queue
 import sys
 import threading
@@ -20,20 +19,11 @@ from langchain.chains import RetrievalQA
 from langchain_ibm import WatsonxLLM
 from dotenv import load_dotenv
 import os
-import json
-import logging
-from server.utils.prompt import RitaPromptHandler, create_prompt, rita_prompt_template
+from utils.prompt import RitaPromptHandler
 from utils.streaming import StreamHandler
 from utils.util import logTime
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.prompts import MessagesPlaceholder
-from langchain_core.messages import HumanMessage, AIMessage
-from langchain_core.documents import Document
-from langchain.chains.llm import LLMChain
-from langchain_core.prompts import PromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 
 def initRetriever(): 
     # Get the absolute path of the embedding path with system independent path selectors
