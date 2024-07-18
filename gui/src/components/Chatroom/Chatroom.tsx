@@ -84,6 +84,7 @@ const Chatroom = ({}: ChatroomProps) => {
         {...payload},
         abortControllerRef?.current?.signal
       );
+
       const reader = response.body?.getReader();
       let result = "";
 
