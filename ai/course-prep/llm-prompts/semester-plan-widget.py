@@ -866,12 +866,6 @@ semester_plan_widget_operation_generic_info = """
         }
     }
     
-
-
-
-
-
-
     ###
     In this sample input/output, we did the following operations:
     # 
