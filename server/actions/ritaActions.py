@@ -1,14 +1,10 @@
-# pip install langchain-huggingface==0.0.3
-# pip install ibm-watsonx-ai==1.0.6
-# pip install langchain-ibm==0.1.7
-# conda install conda-forge::langchain=0.2.3
+# pip install langchain-huggingface
+# pip install ibm-watsonx-ai
+# pip install langchain-ibm
+# pip install langchain
 import queue
-import sys
 import threading
-from typing import Any, Dict, List
 from flask import Response
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from datetime import datetime
 import time
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
