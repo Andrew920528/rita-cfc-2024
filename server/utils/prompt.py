@@ -1,3 +1,4 @@
+from enum import Enum
 import json
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts import MessagesPlaceholder
@@ -11,11 +12,11 @@ class RitaPromptHandler:
         SYSTEM_INTRO = (
         "You are a helpful AI teaching assistant chatbot. Your name is Rita."
         "You are suppose to help the user, who is a teacher, to plan their courses."
-        ) #TODO: can add more description about what rita is capable of
+        ) #TODO[Edison]: can add more description about what rita is capable of
         SYSTEM_BASE_INSTRUCTION = (
         "Answer the user's questions based on the below context: {context}."
         "If the input is irrelevant, suggest ways that you can help to plan a lesson."
-        # "If the user input is Chinese, speak to the user in Chinese." # TODO Language constraints works weidly sometimes
+        # "If the user input is Chinese, speak to the user in Chinese." # NOTE: Language constraints works weidly sometimes
         )
 
         prompt_template = ChatPromptTemplate.from_messages([
@@ -36,27 +37,38 @@ class RitaPromptHandler:
     
     def get_prompt(self):
         extra_instruction = self._get_instructions()
+        chat_history = self._format_chat_history()
         return {
             "context": [],
-            "chat_history": [], # TODO: this should come from data
+            "chat_history": chat_history,
+            # NOTE: We are explicitly passing in chat_history here, 
+            # instead of relying on langchain's ChatMessageHistory (an automated history manager)
+            # because we already have state management implemented, and complicating
+            # code with langchain dependencies just doesn't seem worth.
             "input": self.user_prompt,
             "extra_instruction": extra_instruction
         }
     def _get_instructions(self):
-        # TODO: The original prompt where you specify output format should go here
-        # TODO: Look into few-shot prompting formating with langchain instead of hard coding them   
+        # TODO[Edison]: The original prompt where you specify output format should go here
+        # TODO[Edison]: Look into few-shot prompting formating with langchain instead of hard coding them
+        # TODO[Edison]: You should be able to identify what instruction to use with self.data.widget.type and self._identify_intent()
         instruction = ""
         return instruction
-
+    
+    def _format_chat_history(self):
+        # TODO: Use the provided data and return a list of message objects
+        return []
+    
     def _identify_intent(self):
-        pass #TODO: Ellen's function should be here
+         #TODO[Ellen]: given self.user_prompt, return the intent (defined below)
+        return Intent.MODIFY
     
+class Intent(Enum): # although this is just T/F, we might have more intents as we scale
+    ASK = 0
+    MODIFY = 1
+       
     
-    
-
-    
-
-# TODO: OLD PROMPT, should be removed
+# TODO[Edison]: This function is not used anymore, take what you need and delete this
 def create_prompt(data, user_prompt):
     input_str = json.dumps(data, indent=4, ensure_ascii=False)
     input_output_instruction = """

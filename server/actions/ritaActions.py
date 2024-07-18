@@ -80,9 +80,9 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     prompt_template = promptHandler.get_template()
     
     # Chain together components (LLM, prompt, RAG retriever)
-    document_chain=create_stuff_documents_chain(llm = llm, prompt = prompt_template)
+    document_chain = create_stuff_documents_chain(llm = llm, prompt = prompt_template)
     retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain = document_chain)
-
+    
     # Call the LLM and stream its response
     rita_reply = retrieval_chain.stream(prompt)
     stream_handler = StreamHandler(queue.Queue())
