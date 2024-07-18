@@ -23,7 +23,7 @@ import os
 import json
 import logging
 from utils.promptTemplate import create_prompt
-from utils.streaming import yield_stream, stream_buffer
+from utils.streaming import StreamHandler
 from utils.util import logTime
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
@@ -126,7 +126,7 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     
     retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain = document_chain)
 
-    stream = queue.Queue()
+    stream_handler = StreamHandler(queue.Queue())
     rita_reply = retrieval_chain.stream({
             "context": [],
             "chat_history": [],
@@ -134,9 +134,9 @@ def llm_stream_response(data, user_prompt, retriever, llm):
         })
     
     
-    threading.Thread(target=stream_buffer, args=(stream,rita_reply)).start()
+    threading.Thread(target=stream_handler.output_buffer, args=(rita_reply,)).start()
     
-    response = Response(yield_stream(stream), content_type='text/plain')
+    response = Response(stream_handler.yield_stream(), content_type='text/plain')
     return response
 
 
