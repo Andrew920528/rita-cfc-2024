@@ -23,7 +23,7 @@ import os
 import json
 import logging
 from utils.promptTemplate import create_prompt
-from utils.streaming import StreamingStdOutCallbackHandlerYield, generate
+from utils.streaming import yield_stream, stream_buffer
 from utils.util import logTime
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
@@ -34,13 +34,12 @@ from langchain_core.documents import Document
 from langchain.chains.llm import LLMChain
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-# Andrew:
-# /Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/vector-stores/kang_math_5th_1st_vector_store_with_info
-# /Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/course-prep/RAG/.env
+
 # Jim:
 # r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\vector-stores\kang_math_5th_1st_vector_store_with_info"
 # r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\.env"
-
+# NOTE: above paths should not be relevant anymore, delete if the below paths works for you
+# NOTE: dotenv_path shouldn't be used, since you should now have .env in this directory
 
 # embedding_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\vector-stores\kang_math_5th_1st_vector_store_with_info"
 # dotenv_path = r"C:\Users\User\Desktop\Code\ibm\rita-cfc-2024\ai\course-prep\RAG\.env"
@@ -88,7 +87,6 @@ def initLLM():
         apikey=credentials.get("apikey"),
         streaming=True,
         project_id=PROJECT_ID,
-        callbacks=[StreamingStdOutCallbackHandlerYield(queue.Queue())], # unnecessary
     )
     return llm
     
@@ -101,7 +99,7 @@ system_intro = (
 system_instructions = (
     "Answer the user's questions based on the below context: {context}."
     "If the input is irrelevant, suggest ways that you can help to plan a lesson."
-    "Speak to the user in Chinese."
+    # "If the user input is Chinese, speak to the user in Chinese." # TODO Language constraints works weidly sometimes
 ) # TODO: The original prompt where you specify output format should go here
   # TODO: Look into few-shot prompting formating with langchain instead of hard coding them
 
@@ -122,32 +120,23 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     # This is just my theory, but adding the ai placeholder in the end enforces conversation order,
     # which let llama knows it is suppose to speak next as an assistant.
     # This is interesting because no examples on the internet has this, so I'm not 
-    # sure if there are better practices or drawbacks with this approach.
-    print(prompt_template.invoke({
-        "context": [],
-        "chat_history": [],
-        "input": prompt,
-    }))
+    # sure if there are better practices, or will there be drawbacks with this approach.
+
     document_chain=create_stuff_documents_chain(llm = llm, prompt = prompt_template)
     
     retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain = document_chain)
 
-    out = ""
-    # for chunk in retrieval_chain.stream({
-    #     "context": [],
-    #     "chat_history": [],
-    #     "input": user_prompt
-    # }):
-    #     print(chunk)
-    #     print("===========")
-    #     out+=str(chunk)
-    r = retrieval_chain.invoke({
-        "context": [],
-        "chat_history": [],
-        "input": prompt,
-    })
-    pprint(r)
-    response = Response(r["answer"], content_type='text/plain')
+    stream = queue.Queue()
+    rita_reply = retrieval_chain.stream({
+            "context": [],
+            "chat_history": [],
+            "input": user_prompt
+        })
+    
+    
+    threading.Thread(target=stream_buffer, args=(stream,rita_reply)).start()
+    
+    response = Response(yield_stream(stream), content_type='text/plain')
     return response
 
 

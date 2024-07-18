@@ -1,96 +1,84 @@
 import queue
-import sys
 from typing import Any, Dict, List, Union
 
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.schema import LLMResult
 
-from utils.util import split_chunk
+import re
 
-STOP_ITEM = "[END]"
+""" This file contains utility functions to stream output from the llm.
+
+Example usage:
+    # define a queue reference to the stream
+    stream = queue.Queue()
+    
+    # invoke the llm to output a stream iterator object
+    rita_reply = retrieval_chain.stream({
+            "context": [],
+            "chat_history": [],
+            "input": user_prompt
+        })
+    
+    # asyncronously formats and puts chunks into the queue
+    threading.Thread(target=stream_buffer, args=(stream,rita_reply)).start()
+    
+    # the response is streamed as the async thread puts chunks into the queue
+    response = Response(yield_stream(stream), content_type='text/plain')
 """
-This is a special item that is used to signal the end of the stream.
-"""
 
+def stream_buffer(out_stream: queue.Queue, in_stream):
+    """format the irredular chunks sent by the llm into tokens defined by the split_chunk function
 
-class StreamingStdOutCallbackHandlerYield(StreamingStdOutCallbackHandler):
+    Args:
+        out_stream (Queue): contains a list of tokens
+        in_stream (Iterator): streamed output of a llm
     """
-    This is a callback handler that yields the tokens as they are generated.
-    For a usage example, see the :func:`generate` function below.
-    """
-
-    q: queue.Queue
-    buffer: str = ""
-    """
-    The queue to write the tokens to as they are generated.
-    """
-
-    def __init__(self, q: queue.Queue) -> None:
-        """
-        Initialize the callback handler.
-        q: The queue to write the tokens to as they are generated.
-        """
-        super().__init__()
-        self.q = q
-        self.buffer = ""
-
-    def on_llm_start(
-        self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
-    ) -> None:
-        """Run when LLM starts running."""
-        with self.q.mutex:
-            self.q.queue.clear()
-            self.buffer = ""
-
-    def on_llm_new_token(self, token: str, **kwargs: Any) -> None:
-        """Run on new LLM token. Only available when streaming is enabled."""
-        # Writes to stdout
-        # sys.stdout.write(token + " || ")
-        # sys.stdout.flush()
-        
-        # define token as a "word" separated by spaces
-        
-        self.buffer += token
-        wordList = split_chunk(self.buffer, 10)
-        print(f"wordlist: {wordList}")
+    buffer = ""
+    for chunk in in_stream:
+        if "answer" not in chunk:
+            continue
+        buffer += chunk["answer"]
+        wordList = split_chunk(buffer, 10)
         if len(wordList) > 1:
             for i in range(len(wordList)-1):
-                self.q.put(wordList[i]) # Pass the token to the generator
-            self.buffer = wordList[-1]
-        
-        
+                print(wordList[i] + "|")
+                out_stream.put(wordList[i]) # Pass the token to the generator
+            buffer = wordList[-1]
 
-    def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
-        """Run when LLM ends running."""
-        self.q.put(self.buffer)
-        self.q.put(STOP_ITEM)
+def split_chunk(text: str, max_length : int):
+    """Splits a string by space, (most) chinese characters, and break up strings longer than max_length
 
-    def on_llm_error(
-        self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
-    ) -> None:
-        """Run when LLM errors."""
-        self.q.put("%s: %s" % (type(error).__name__, str(error)))
-        self.q.put(STOP_ITEM)
+    Args:
+        text (str): text to split
+        max_length (int): max length a single chunk can be
 
-
-def generate(rq: queue.Queue):
+    Returns:
+        list
     """
-    This is a generator that yields the items in the queue until it reaches the stop item.
+    # split by space and (most) chinese characters
+    pattern =  r"(?<=[\s\u4e00-\u9fff])"
+    chunks = re.split(pattern, text)
+    
+    final_chunks = []
+    for segment in chunks:
+        if len(segment) > max_length:
+            # Split the segment into chunks of max_length
+            final_chunks.extend([segment[i:i + max_length] for i in range(0, len(segment), max_length)])
+        else:
+            final_chunks.append(segment)
+    
+    return final_chunks
 
-    Usage example:
-    ```
-    def askQuestion(callback_fn: StreamingStdOutCallbackHandlerYield):
-        llm = OpenAI(streaming=True, callbacks=[callback_fn])
-        return llm(prompt="Write a poem about a tree.")
+def yield_stream(rq: queue.Queue):
+    """yields the stream from the queue until it is emptied
 
-    @app.route("/", methods=["GET"])
-    def generate_output():
-        q = Queue()
-        callback_fn = StreamingStdOutCallbackHandlerYield(q)
-        threading.Thread(target=askQuestion, args=(callback_fn,)).start()
-        return Response(generate(q), mimetype="text/event-stream")
-    ```
+    Args:
+        rq (queue.Queue): the output stream
+
+    Yields:
+        str: chunks of the stream
     """
+    STOP_ITEM = "[END]"
     while True:
         result: str = rq.get()
         if result == STOP_ITEM or result is None:
