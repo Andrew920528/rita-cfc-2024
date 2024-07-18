@@ -1,3 +1,4 @@
+import {sign} from "crypto";
 import {useState} from "react";
 
 export function formatTime(date: Date): string {
@@ -45,6 +46,49 @@ export const mimicApi = (
     });
   });
 
+export const mimicStreamApi = async function (
+  ms: number,
+  responseStr: string,
+  signal?: AbortSignal
+): Promise<Response> {
+  const streamGenerator = async function* () {
+    let chunkList = responseStr.split(/(?=\s)/);
+
+    // Function to simulate sending chunks asynchronously
+    for (let chunk of chunkList) {
+      if (signal?.aborted) {
+        throw new DOMException("Aborted", "AbortError");
+      }
+
+      // Simulate delay between chunks
+      await delay(ms);
+
+      let r = new TextEncoder().encode(chunk);
+      yield r;
+    }
+  };
+
+  const stream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      try {
+        for await (const chunk of streamGenerator()) {
+          controller.enqueue(chunk);
+        }
+        controller.close();
+      } catch (error) {
+        controller.error(error);
+      }
+    },
+  });
+  const response = new Response(stream, {
+    status: 200,
+    statusText: "OK",
+    headers: new Headers({
+      "Content-Type": "application/octet-stream", // Adjust content type as needed
+    }),
+  });
+  return response;
+};
 export function isNumeric(str: string) {
   return /^\d+$/.test(str);
 }

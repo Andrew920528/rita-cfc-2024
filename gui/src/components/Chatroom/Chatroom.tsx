@@ -6,13 +6,13 @@ import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {contentIsOfType, widgetBook} from "../../schema/widget";
 import {ChatMessage as ChatMessageT} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
-import {mimicApi, useCompose} from "../../utils/util";
+import {useCompose} from "../../utils/util";
 import {messageRitaService, useApiHandler} from "../../utils/service";
-import {debug, error} from "console";
-import {EMPTY_ID, API} from "../../global/constants";
+import {EMPTY_ID} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./Chatroom.module.scss";
 import {WidgetsServices} from "../../features/WidgetsSlice";
+import {tags} from "./ChunkDefinitions";
 
 const cx = classNames.bind(styles);
 type ChatroomProps = {};
@@ -30,8 +30,9 @@ const Chatroom = ({}: ChatroomProps) => {
   const widgets = useTypedSelector((state) => state.Widgets);
   // api handlers
   const {
-    apiHandler,
+    abortControllerRef,
     loading: waitingForReply,
+    setLoading: setWaitingForReply,
     terminateResponse,
   } = useApiHandler([classroomId]);
 
@@ -40,7 +41,9 @@ const Chatroom = ({}: ChatroomProps) => {
   // const [readyToSend, setReadyToSend] = useState(true);
   const [text, setText] = useState("");
   const [ritaError, setRitaError] = useState("");
+
   async function sendMessage(text: string) {
+    abortControllerRef.current = new AbortController();
     let newMessage = {
       text: text,
       sender: "User",
@@ -53,7 +56,7 @@ const Chatroom = ({}: ChatroomProps) => {
     );
     setText("");
     setRitaError("");
-
+    // Step 1: Formulate payload
     let payload = {
       prompt: text,
       widget:
@@ -74,44 +77,95 @@ const Chatroom = ({}: ChatroomProps) => {
       classroomId: classroomId,
     };
 
-    let r = await apiHandler({
-      apiFunction: (s) =>
-        messageRitaService(
-          {
-            ...payload,
-          },
-          s
-        ),
-      debug: true,
-      identifier: "messageRita",
-    });
+    // Step 2: Send api request and handle chunk by chunk
+    try {
+      setWaitingForReply(true);
+      let response = await messageRitaService(
+        {...payload},
+        abortControllerRef?.current?.signal
+      );
 
-    let status = r.status;
-    if (status === API.ERROR) {
-      setRitaError(r.data);
+      const reader = response.body?.getReader();
+      let result = "";
+
+      let organizer = {
+        currRitaReply: "",
+        currModifyingWidgetId: "",
+        currModifyingWidgetContent: "",
+        currTag: "",
+      };
+
+      const decoder = new TextDecoder();
+      let messageObj = {
+        text: "",
+        sender: "Rita",
+      };
+      dispatch(
+        ChatroomsServices.actions.addMessage({
+          chatroomId: chatroom.id,
+          message: messageObj,
+        })
+      );
+      while (true) {
+        const {done, value} = await reader!.read();
+        if (done) break;
+        let newChunk = decoder.decode(value);
+        // step 3: inspect chunk and parse it accordingly
+        handleChunk(newChunk, organizer);
+        result += newChunk;
+      }
+      // step 4: modify widget if needed
+      handleWidgetModification(organizer);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        console.warn(error.message);
+      } else {
+        setRitaError("出現未知的錯誤，請再試一次");
+        console.error(error);
+      }
       return;
-    } else if (r.status === API.ABORTED) {
-      return;
+    } finally {
+      setWaitingForReply(false);
     }
-    handleReply(r.data);
   }
 
-  const handleReply = (data: any) => {
-    let reply = data.reply;
-    let widgetContent = data.content;
-    let widgetId = data.widgetId;
-    let messageObj = {
-      text: reply,
-      sender: "Rita",
-    };
+  function handleChunk(chunk: string, organizer: any) {
+    // if chunk is tags
+    if (chunk.trim() in tags) {
+      // tag is opened
+      organizer.currTag = chunk.trim();
+      return;
+    } else if (tags[organizer.currTag] === chunk.trim()) {
+      organizer.currTag = "";
+      return;
+    }
+    // treat any chunk not enclosed by tags (or inbalanced tags) as message
 
-    dispatch(
-      ChatroomsServices.actions.addMessage({
-        chatroomId: chatroom.id,
-        message: messageObj,
-      })
-    );
+    if (organizer.currTag === "") {
+      organizer.currRitaReply += chunk;
+      let messageObj = {
+        text: organizer.currRitaReply,
+        sender: "Rita",
+      };
 
+      dispatch(
+        ChatroomsServices.actions.updateLastMessage({
+          chatroomId: chatroom.id,
+          message: messageObj,
+        })
+      );
+    } else if (organizer.currTag === "<wCont>") {
+      organizer.currModifyingWidgetContent += chunk.trim();
+    } else if (organizer.currTag === "<wid>") {
+      organizer.currModifyingWidgetId += chunk.trim();
+    }
+  }
+
+  const handleWidgetModification = (organizer: any) => {
+    if (organizer.currModifyingWidgetContent === "") return;
+
+    let widgetContent = JSON.parse(organizer.currModifyingWidgetContent);
+    let widgetId = organizer.currModifyingWidgetId;
     if (widgetId === widgets.current && widgetId !== EMPTY_ID) {
       if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {
         return;
