@@ -6,12 +6,6 @@ class RitaPromptHandler:
     def __init__(self, data, user_prompt):
         self.data = data # TODO define data to contain what you need
         self.user_prompt = user_prompt
-    def get_prompt(self):
-        return {
-            "context": [],
-            "chat_history": [], # TODO: this should be somehow passed in to data
-            "input": self.user_prompt,
-        }
     
     def get_template(self):
         SYSTEM_INTRO = (
@@ -23,13 +17,12 @@ class RitaPromptHandler:
         "If the input is irrelevant, suggest ways that you can help to plan a lesson."
         # "If the user input is Chinese, speak to the user in Chinese." # TODO Language constraints works weidly sometimes
         )
-        extra_instructions = self._get_instructions()
-        
+
         prompt_template = ChatPromptTemplate.from_messages([
             ("system", SYSTEM_INTRO),
             MessagesPlaceholder(variable_name="chat_history"),
             ("user", "{input}"),
-            ("system", SYSTEM_BASE_INSTRUCTION + extra_instructions),
+            ("system", SYSTEM_BASE_INSTRUCTION + "{extra_instruction}"),
             ("ai", ""), 
         ])
         # NOTE: It is intersteing how adding an empty ai prompt in the end help generating the prompt significantly be
@@ -41,7 +34,14 @@ class RitaPromptHandler:
         # sure if there are better practices, or will there be drawbacks with this approach.
         return prompt_template
     
-    
+    def get_prompt(self):
+        extra_instruction = self._get_instructions()
+        return {
+            "context": [],
+            "chat_history": [], # TODO: this should come from data
+            "input": self.user_prompt,
+            "extra_instruction": extra_instruction
+        }
     def _get_instructions(self):
         # TODO: The original prompt where you specify output format should go here
         # TODO: Look into few-shot prompting formating with langchain instead of hard coding them   
