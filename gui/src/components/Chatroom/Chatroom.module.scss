@@ -7,8 +7,7 @@
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
-  width: 20rem;
-
+  z-index: 2000;
   .chatroom-header {
     display: flex;
     flex-direction: row;
@@ -26,13 +25,22 @@
         font-size: 20px;
       }
     }
+    .header-btn-group {
+      display: flex;
+      flex-direction: row;
+    }
   }
   .chatroom-content {
     display: flex;
     flex-direction: column;
     height: 24rem;
+    width: 20rem;
     transition: all 0.2s ease-in-out;
     overflow-y: hidden;
+    &.maximized {
+      height: calc(100vh - 5rem);
+      width: calc(100vw - 2rem);
+    }
     &.collapsed {
       height: 0rem;
     }
@@ -40,6 +48,7 @@
     .chatroom-body {
       flex: 1;
       overflow-y: auto;
+      // overflow-x: hidden;
       background-color: #f4f4f4;
       display: flex;
       flex-direction: column;
@@ -58,7 +67,6 @@
   display: flex;
   flex-direction: row;
   align-items: start;
-
   &.ai {
     text-align: start;
     gap: 0.5rem;
@@ -83,5 +91,8 @@
     p {
       font-size: 12px;
     }
+  }
+  .chatroom-message-text {
+    overflow: auto;
   }
 }
