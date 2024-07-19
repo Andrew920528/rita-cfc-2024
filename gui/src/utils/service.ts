@@ -1,11 +1,7 @@
 import {useCallback, useEffect, useRef, useState} from "react";
-import {formatTime, mimicApi} from "./util";
+import {formatTime, mimicApi, mimicStreamApi} from "./util";
 import {API, INDEPENDENT_MODE} from "../global/constants";
 
-import {User} from "../schema/user";
-import {Classroom} from "../schema/classroom";
-import {Widget} from "../schema/widget";
-import {Lecture} from "../schema/lecture";
 import {dummyLoginData} from "./dummy";
 type ResponseData = {
   status: API;
@@ -39,6 +35,7 @@ interface ApiHandlerArgs {
   sideEffect?: (r: ResponseData) => ResponseData;
   debug?: boolean;
   identifier?: string;
+  allowAsync?: boolean;
 }
 interface ApiHandlerResult {
   apiHandler: ({
@@ -46,8 +43,10 @@ interface ApiHandlerResult {
     sideEffect,
     debug,
     identifier,
+    allowAsync,
   }: ApiHandlerArgs) => Promise<ResponseData>;
   loading: boolean;
+  setLoading: (loading: boolean) => void;
   abortControllerRef: React.MutableRefObject<AbortController | null>;
   terminateResponse: () => void;
 }
@@ -77,9 +76,10 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
       sideEffect = (r: ResponseData): ResponseData => r,
       debug = false,
       identifier = "",
+      allowAsync = false,
     }: ApiHandlerArgs) => {
       setLoading(true);
-      if (abortControllerRef.current) {
+      if (!allowAsync && abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
       abortControllerRef.current = new AbortController();
@@ -129,6 +129,7 @@ export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
   return {
     apiHandler,
     loading,
+    setLoading,
     abortControllerRef,
     terminateResponse,
   };
@@ -503,18 +504,10 @@ export function messageRitaService(
   abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
-    const mimicResponse = {
-      reply:
-        "Hello, I'm Rita. You are in frontend development mode, where I am not connected to an actual AI",
-      content: {goals: ["你好呀"]},
-      widgetId: "dum-username-wid-lxu4el0kwcyyfcov1vq",
-    };
-
-    const response = {
-      status: API.SUCCESS,
-      data: mimicResponse,
-    };
-    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+    const mimicResponse = `Hello, I'm Rita. You are in frontend development mode, where I am not connected to an actual AI
+    <wCont> {"goals": ["你好呀"]} </wCont> <wid> dum-username-wid-lxu4el0kwcyyfcov1vq </wid>
+    `;
+    return mimicStreamApi(100, mimicResponse, abortSignal);
   }
   const endPoint = "/message-rita";
   return fetch(BASE_URL_DEV + endPoint, {
@@ -530,4 +523,21 @@ export function messageRitaService(
   });
 }
 
-// TODO: if api all follow this format, consider refactor the functions
+export function setUpRitaService(abortSignal?: AbortSignal) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "Successfully initialized rita",
+    };
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/setup-rita";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({}),
+    signal: abortSignal,
+  });
+}

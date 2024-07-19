@@ -16,6 +16,7 @@ export type PopUpProps = {
   cancel?: boolean;
   footerBtnProps?: IconButtonProps;
   puAction?: () => void;
+  isComposing?: boolean;
 };
 const PopUp = ({
   trigger,
@@ -26,11 +27,13 @@ const PopUp = ({
   cancel,
   footerBtnProps,
   puAction,
+  isComposing,
 }: PopUpProps) => {
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {
       if (event.repeat) return;
       if (trigger && event.key === "Enter" && puAction) {
+        if (isComposing) return;
         puAction();
       }
     };
@@ -42,7 +45,7 @@ const PopUp = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [puAction, trigger]);
+  }, [puAction, trigger, isComposing]);
   if (!trigger) return <></>;
   return (
     <div className={cx("pop-up-wrapper")}>

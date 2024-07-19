@@ -48,6 +48,32 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const [openSubjectEdit, setOpenSubjectEdit] = useState(false);
   const deleteLectureState = useDeleteLecture();
   const {apiHandler, loading, terminateResponse} = useApiHandler();
+  const unsavedWidgets = useTypedSelector((state) => state.Widgets.unsaved);
+  const scheduleChanged = useTypedSelector(
+    (state) => state.User.scheduleChanged
+  );
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      // Prevent the default action
+      event.preventDefault();
+      // Chrome requires returnValue to be set
+
+      // alert("leaving the page");
+    };
+
+    // Add the event listener
+    let shouldAlert =
+      Object.keys(unsavedWidgets).length !== 0 || scheduleChanged;
+
+    if (shouldAlert) {
+      window.addEventListener("beforeunload", handleBeforeUnload);
+    }
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [unsavedWidgets, scheduleChanged]);
   async function deleteLecture(lectureId: string) {
     // to prevent race condition where a new widget is created when a lecture is being deleted
     // even if the server fails to delete the lecture in database,

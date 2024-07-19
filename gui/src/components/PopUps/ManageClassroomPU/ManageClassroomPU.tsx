@@ -10,7 +10,7 @@ import {
   useCreateClassroom,
   useCreateLecture,
 } from "../../../global/globalActions";
-import {generateId, isNumeric} from "../../../utils/util";
+import {generateId, isNumeric, useCompose} from "../../../utils/util";
 import {API, EMPTY_ID} from "../../../global/constants";
 import {
   createClassroomService,
@@ -65,6 +65,8 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   const [gradeError, setGradeError] = useState("");
   const [publisherError, setPublisherError] = useState("");
   const [creditError, setCreditError] = useState("");
+  const {isComposing, handleCompositionStart, handleCompositionEnd} =
+    useCompose();
   // api handler
   const {apiHandler, loading, terminateResponse} = useApiHandler();
 
@@ -260,6 +262,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
         resetForm();
         terminateResponse();
       }}
+      isComposing={isComposing}
     >
       <div className={cx("create-classroom-form")}>
         <div className={cx("ccf-layout-row")}>
@@ -275,6 +278,8 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
               }}
               autoFocus={true}
               ariaLabel="classroom name"
+              onCompositionStart={handleCompositionStart}
+              onCompositionEnd={handleCompositionEnd}
             />
           </div>
           <div>
@@ -323,6 +328,8 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
               }
             }}
             ariaLabel="credit"
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
           />
         </div>
         {subject !== "其他" ? (
@@ -350,6 +357,8 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
               setOtherSubject(e.currentTarget.value);
             }}
             ariaLabel="other subject"
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
           />
         )}
       </div>

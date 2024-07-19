@@ -1,10 +1,11 @@
-import React, {useCallback, useEffect, useMemo, useRef} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import ReactFlow, {
   Background,
   NodeProps,
   Controls,
   NodeChange,
   useReactFlow,
+  useEdges,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
@@ -24,12 +25,16 @@ export default function Flow() {
   const lectures = useTypedSelector((state) => state.Lectures);
   const nodes = useTypedSelector((state) => state.Rf.nodes);
   const widgetDict = useTypedSelector((state) => state.Widgets.dict);
-  const onNodesChange = (changes: NodeChange[]) =>
-    dispatch(RfServices.actions.onNodesChange(changes));
+  const onNodesChange = (props: {
+    changes: NodeChange[];
+    lectureId: string;
+    canvasBound: number;
+  }) => dispatch(RfServices.actions.onNodesChange(props));
   const flowRef = useRef<HTMLDivElement>(null);
   const reactFlow = useReactFlow();
   const ui = useTypedSelector((state) => state.Ui);
   const {createWidget} = useCreateWidgetWithApi();
+
   useEffect(() => {
     const widgetIds = lectures.dict[lectures.current].widgetIds;
     const {x, y, zoom} = reactFlow.getViewport();
@@ -87,7 +92,16 @@ export default function Flow() {
     >
       <ReactFlow
         nodes={nodes}
-        onNodesChange={onNodesChange}
+        onNodesChange={(changes) => {
+          const {x, y, zoom} = reactFlow.getViewport();
+          let canvasBound;
+          if (flowRef.current?.offsetWidth) {
+            canvasBound = (flowRef.current?.offsetWidth - x) / zoom;
+          } else {
+            canvasBound = 0;
+          }
+          onNodesChange({changes, lectureId: lectures.current, canvasBound});
+        }}
         nodeTypes={nodeTypes}
         onPaneClick={(event: React.MouseEvent<Element, MouseEvent>) =>
           deselectWidget(event)

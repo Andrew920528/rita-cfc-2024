@@ -28,6 +28,14 @@ const ChatroomsSlice = createSlice({
         action.payload.message
       );
     },
+    updateLastMessage: (
+      state,
+      action: PayloadAction<{chatroomId: string; message: ChatMessage}>
+    ) => {
+      let lastIndex = state.dict[action.payload.chatroomId].messages.length - 1;
+      state.dict[action.payload.chatroomId].messages[lastIndex] =
+        action.payload.message;
+    },
   },
 });
 

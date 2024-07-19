@@ -4,7 +4,7 @@ import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "../PopUp/PopUp";
 import {useTypedSelector} from "../../../store/store";
 import {useCreateLecture} from "../../../global/globalActions";
-import {generateId} from "../../../utils/util";
+import {generateId, useCompose} from "../../../utils/util";
 import {createLectureService, useApiHandler} from "../../../utils/service";
 import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
@@ -23,7 +23,8 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
   // local states
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState("");
-
+  const {isComposing, handleCompositionStart, handleCompositionEnd} =
+    useCompose();
   function resetForm() {
     setName("");
     setNameError("");
@@ -88,6 +89,7 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
       puAction={async () => {
         await submitForm();
       }}
+      isComposing={isComposing}
     >
       <div className={cx("create-lecture-form")}>
         <div>
@@ -102,6 +104,8 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
             }}
             autoFocus={true}
             ariaLabel="lecture name"
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
           />
         </div>
       </div>

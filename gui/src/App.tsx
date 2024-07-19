@@ -6,20 +6,38 @@ import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import {useLoginParseState} from "./global/globalActions";
-import {loginWithSidService, useApiHandler} from "./utils/service";
+import {
+  loginWithSidService,
+  setUpRitaService,
+  useApiHandler,
+} from "./utils/service";
 import {API} from "./global/constants";
 import {useAppDispatch, useTypedSelector} from "./store/store";
 import {LoginStatusServices} from "./features/LoginStatusSlice";
 import Redirect from "./pages/Redirect/Redirect";
 import {overrideConsoleWarning} from "./utils/util";
 
-overrideConsoleWarning("https://reactflow.dev/error#002"); // weird react flow warning that doesn't apply here
+overrideConsoleWarning("https://reactflow.dev/error#002"); // weird react flow warning that's irrelevant
 
 function App() {
   const loginParseState = useLoginParseState();
   const {apiHandler} = useApiHandler();
+  const {apiHandler: initRitaHandler} = useApiHandler();
   const loginStatus = useTypedSelector((state) => state.LoginStatus);
   const dispatch = useAppDispatch();
+  const runOnce = useRef<boolean>(false);
+  useEffect(() => {
+    if (runOnce.current) return;
+    runOnce.current = true;
+    async function initRita() {
+      initRitaHandler({
+        apiFunction: () => setUpRitaService(),
+        debug: true,
+        identifier: "setupRita",
+      });
+    }
+    initRita();
+  }, []);
 
   useEffect(() => {
     async function loginWithSid() {

@@ -17,11 +17,13 @@ interface RfState {
   nodes: Node[];
   dict: {[id: string]: NodeDimension};
   draggingNodeId: string;
+  innitializedLectures: {[lectureId: string]: boolean};
 }
 const initialState: RfState = {
   nodes: [],
   dict: {},
   draggingNodeId: EMPTY_ID,
+  innitializedLectures: {},
 };
 
 const RfSlice = createSlice({
@@ -45,20 +47,20 @@ const RfSlice = createSlice({
         widgetList.includes(node.id)
       );
 
-      // if a node is not in nodes, add it
+      // don't re-add nodes that is already defined
       let toAdd = widgetList.filter(
         (nodeId) => !newNodes.map((node) => node.id).includes(nodeId)
       );
 
-      // make sure dict contains all nodes
+      // make sure dict contains all nodes, and find available space if the node does not exist
       let temp = newNodes.map((node) => node.id);
       for (let nodeId of toAdd) {
-        let startX = action.payload.topLeftX + 8;
-        let startY = action.payload.topLeftY + 8;
-        let w = widgetBook[widgetDict[nodeId].type].width;
-        let h = widgetBook[widgetDict[nodeId].type].minHeight;
-        let spacing = 8;
         if (!state.dict[nodeId]) {
+          let startX = action.payload.topLeftX + 8;
+          let startY = action.payload.topLeftY + 8;
+          let w = widgetBook[widgetDict[nodeId].type].width;
+          let h = widgetBook[widgetDict[nodeId].type].minHeight;
+          let spacing = 8;
           let {x, y} = findNextAvailableSpace(
             startX,
             startY,
@@ -71,7 +73,7 @@ const RfSlice = createSlice({
           state.dict[nodeId] = {
             x: x,
             y: y,
-            width: w, // TODO define widget sizes
+            width: w,
             height: h,
           };
         }
@@ -86,10 +88,17 @@ const RfSlice = createSlice({
       state.nodes = [...newNodes];
     },
 
-    onNodesChange: (state, action) => {
-      state.nodes = applyNodeChanges(action.payload, state.nodes);
+    onNodesChange: (
+      state,
+      action: PayloadAction<{
+        changes: NodeChange[];
+        lectureId: string;
+        canvasBound: number;
+      }>
+    ) => {
+      state.nodes = applyNodeChanges(action.payload.changes, state.nodes);
       // updates the dict accordingly
-      for (let node of action.payload as NodeChange[]) {
+      for (let node of action.payload.changes) {
         if (node.type === "position" && node.position) {
           state.dict[node.id].x = node.position.x;
           state.dict[node.id].y = node.position.y;
@@ -100,19 +109,15 @@ const RfSlice = createSlice({
           state.dict[node.id].height = node.dimensions.height;
         }
       }
-    },
-    setNodePosition: (
-      state,
-      action: PayloadAction<{id: string; position: {x: number; y: number}}>
-    ) => {
-      state.dict[action.payload.id].x = action.payload.position.x;
-      state.dict[action.payload.id].y = action.payload.position.y;
-      state.nodes.filter((node) => node.id === action.payload.id)[0].position =
-        {
-          ...state.dict[action.payload.id],
-        };
+      // Rerender flow if the first time change is detected
+      if (action.payload.lectureId in state.innitializedLectures) return;
+      // re-render all the nodes
+      rerenderFlow(state, action.payload.canvasBound);
+      state.innitializedLectures[action.payload.lectureId] = true;
     },
 
+    // add node with predefined dimension to dictionary,
+    // which is used for drag + drop creation
     addNode: (
       state,
       action: PayloadAction<{id: string; dimension: NodeDimension}>
@@ -217,5 +222,42 @@ function findNextAvailableSpace(
       x = startX;
       y = rowsList[currRow] + spacing;
     }
+  }
+}
+
+function rerenderFlow(state: RfState, canvasBound: number) {
+  let nodeIds = [...state.nodes].map((node) => node.id);
+
+  // make sure dict contains all nodes, and find available space if the node does not exist
+  let temp = [];
+  for (let nodeId of nodeIds) {
+    let startX = 8;
+    let startY = 8;
+    let w = state.dict[nodeId].width;
+    let h = state.dict[nodeId].height;
+    let spacing = 8;
+    let {x, y} = findNextAvailableSpace(
+      startX,
+      startY,
+      w,
+      h,
+      canvasBound,
+      temp.map((id) => state.dict[id]),
+      spacing
+    );
+    state.dict[nodeId] = {
+      x: x,
+      y: y,
+      width: w,
+      height: h,
+    };
+
+    temp.push(nodeId);
+  }
+
+  for (let node of state.nodes) {
+    let nodeDimension = state.dict[node.id];
+    node.position.x = nodeDimension.x;
+    node.position.y = nodeDimension.y;
   }
 }

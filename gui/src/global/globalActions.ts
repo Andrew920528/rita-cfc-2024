@@ -26,7 +26,6 @@ export const useLoginParseState = () => {
   return useCallback(
     async (responseObj: any) => {
       sessionStorage.setItem("sessionId", responseObj.sessionId);
-
       let user = responseObj.user;
       if (responseObj.user.schedule) {
         responseObj.user.schedule = JSON.parse(user.schedule as string);
@@ -52,9 +51,10 @@ export const useLoginParseState = () => {
           })
         );
       }
+      let numClassrooms = responseObj.user.classroomIds.length;
       let currentClassroom =
-        responseObj.user.classroomIds.length > 0
-          ? responseObj.user.classroomIds[0]
+        numClassrooms > 0
+          ? responseObj.user.classroomIds[numClassrooms - 1]
           : EMPTY_ID;
       let currentChatroom =
         currentClassroom === EMPTY_ID
@@ -286,6 +286,7 @@ export const useCreateWidgetWithApi = () => {
           },
           s
         ),
+      allowAsync: true,
       debug: true,
       identifier: "createWidget",
     });
