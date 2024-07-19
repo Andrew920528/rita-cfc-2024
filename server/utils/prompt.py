@@ -5,8 +5,37 @@ from langchain_core.prompts import MessagesPlaceholder
 from langchain.schema import HumanMessage, AIMessage
 
 class RitaPromptHandler:
+    """Defines the prompt and template for Rita
+
+    Args:
+        data (dict): context data, in the following format:
+            {
+                widget: {
+                    id: string
+                    type: int
+                    content: any
+                }
+                classroom: {
+                    name: string
+                    subject: string
+                    publisher: string
+                    grade: string
+                    plan: int
+                    credits: int
+                }
+                lecture: {
+                    name: string
+                    type: string
+                }
+                chat_history: List({
+                    sender: string
+                    text: string
+                }
+            }
+        user_prompt (str): user prompt
+    """
     def __init__(self, data, user_prompt):
-        self.data = data # TODO define data to contain what you need
+        self.data = data
         self.user_prompt = user_prompt
     
     def get_template(self):
@@ -57,7 +86,6 @@ class RitaPromptHandler:
         return instruction
     
     def _format_chat_history(self):
-        # TODO: Use the provided data and return a list of message objects
         chat_history_raw = self.data["chat_history"]
         chat_history = []
         cutoff = 6 # arbitrary context window to prevent token overload
