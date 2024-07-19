@@ -32,5 +32,6 @@ def classify(query):
         return False
     return True
     
-query = input("")
-print(classify(query))
+testing_query = ["幫我生成數學學習計畫", "你好", "學生第三單元常見錯題", "今天天氣如何", "誰是許彥碩"]
+for query in testing_query:
+    print(classify(query))
