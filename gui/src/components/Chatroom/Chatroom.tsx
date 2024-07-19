@@ -13,6 +13,8 @@ import classNames from "classnames/bind";
 import styles from "./Chatroom.module.scss";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {tags} from "./ChunkDefinitions";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const cx = classNames.bind(styles);
 type ChatroomProps = {};
@@ -282,7 +284,9 @@ const ChatMessage = ({text, sender}: ChatMessageT) => {
           <strong>{text.slice(3)}</strong>
         </p>
       ) : (
-        <p className={cx("chatroom-message-text")}>{text}</p>
+        <div className={cx("chatroom-message-text")}>
+          <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
+        </div>
       )}
     </div>
   );

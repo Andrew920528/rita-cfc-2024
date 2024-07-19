@@ -163,7 +163,7 @@ const SemesterPlanWidget = (props: Props) => {
           icon={<ColumnInsert />}
           mode={"primary"}
           onClick={() => {
-            addColumn(widgetContent, "新しいカラム");
+            addColumn(widgetContent, "新增欄位");
           }}
         />
         <IconButton

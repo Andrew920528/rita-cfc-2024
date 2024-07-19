@@ -46,6 +46,7 @@ class RitaPromptHandler:
         SYSTEM_BASE_INSTRUCTION = (
         "Answer the user's questions based on the below context: {context}. "
         "If the input is irrelevant, suggest ways that you can help to plan a lesson. "
+        "Answer the question with concise sentences."
         # "If the user input is Chinese, speak to the user in Chinese." # NOTE: Language constraints works weidly sometimes
         )
 
