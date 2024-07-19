@@ -3,6 +3,12 @@ export type ChatMessage = {
   sender: string;
 };
 
+export const SENDER = {
+  system: "system",
+  user: "user",
+  ai: "ai",
+};
+
 export type Chatroom = {
   id: string;
   messages: ChatMessage[];

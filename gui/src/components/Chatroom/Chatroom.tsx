@@ -4,7 +4,7 @@ import IconButton from "../ui_components/IconButton/IconButton";
 import {ArrowRight, ChevronDown, ChevronUp, Stop} from "@carbon/icons-react";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {contentIsOfType, widgetBook} from "../../schema/widget";
-import {ChatMessage as ChatMessageT} from "../../schema/chatroom";
+import {ChatMessage as ChatMessageT, SENDER} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {useCompose} from "../../utils/util";
 import {messageRitaService, useApiHandler} from "../../utils/service";
@@ -46,7 +46,7 @@ const Chatroom = ({}: ChatroomProps) => {
     abortControllerRef.current = new AbortController();
     let newMessage = {
       text: text,
-      sender: "User",
+      sender: SENDER.user,
     };
     dispatch(
       ChatroomsServices.actions.addMessage({
@@ -75,6 +75,7 @@ const Chatroom = ({}: ChatroomProps) => {
             },
       lectureId: lecture.id,
       classroomId: classroomId,
+      chatHistory: JSON.parse(JSON.stringify(chatroom.messages)),
     };
 
     // Step 2: Send api request and handle chunk by chunk
@@ -98,8 +99,9 @@ const Chatroom = ({}: ChatroomProps) => {
       const decoder = new TextDecoder();
       let messageObj = {
         text: "",
-        sender: "Rita",
+        sender: SENDER.ai,
       };
+
       dispatch(
         ChatroomsServices.actions.addMessage({
           chatroomId: chatroom.id,
@@ -140,12 +142,11 @@ const Chatroom = ({}: ChatroomProps) => {
       return;
     }
     // treat any chunk not enclosed by tags (or inbalanced tags) as message
-
     if (organizer.currTag === "") {
       organizer.currRitaReply += chunk;
       let messageObj = {
         text: organizer.currRitaReply,
-        sender: "Rita",
+        sender: SENDER.ai,
       };
 
       dispatch(
@@ -163,7 +164,6 @@ const Chatroom = ({}: ChatroomProps) => {
 
   const handleWidgetModification = (organizer: any) => {
     if (organizer.currModifyingWidgetContent === "") return;
-
     let widgetContent = JSON.parse(organizer.currModifyingWidgetContent);
     let widgetId = organizer.currModifyingWidgetId;
     if (widgetId === widgets.current && widgetId !== EMPTY_ID) {
@@ -182,7 +182,7 @@ const Chatroom = ({}: ChatroomProps) => {
 
       let messageObj = {
         text: `更新了${widgetBook[widgets.dict[widgets.current].type].title}`,
-        sender: "System",
+        sender: SENDER.system,
       };
 
       dispatch(
@@ -276,7 +276,7 @@ const ChatMessage = ({text, sender}: ChatMessageT) => {
   return (
     <div className={cx("chatroom-message", sender)}>
       <div className={cx("chat-msg-decor")}></div>
-      {sender === "System" ? (
+      {sender === SENDER.system ? (
         <p className={cx("chatroom-message-text")}>
           {text.slice(0, 3)}
           <strong>{text.slice(3)}</strong>

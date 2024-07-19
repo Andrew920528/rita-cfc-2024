@@ -1330,8 +1330,8 @@ def deleteWidget(sessionId, lectureId, widgetId):
         }
         return response
 
-def getWatsonxRequest(prompt, widgetResponse, lectureId, classroomId):
-
+def getLectureAndClassroom(lectureId, classroomId):
+    # TODO[Jim]: current latency ~2sec, SQL should be optimized
     classroomResponse = getClassroom(classroomId)
 
     if classroomResponse['status'] == 'error':
@@ -1345,8 +1345,6 @@ def getWatsonxRequest(prompt, widgetResponse, lectureId, classroomId):
     response = {
         'status' : 'success',
         'data' : {
-            'prompt' : prompt,
-            'widget' : widgetResponse,
             'classroom' : classroomResponse,
             'lecture' : lectureResponse
         }

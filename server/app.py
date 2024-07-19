@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
 from utils.util import logTime
-from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getWatsonxRequest, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
+from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
 from actions.ritaActions import initLLM, llm_stream_response, initRetriever
 import time
 import logging
@@ -23,7 +23,7 @@ def get_output():
 ######################################################################################################## watsonx
 
 @app.route('/setup-rita', methods=['POST'])
-def setup_rita():
+def setup_rita():   # current thought is this should be on server init, not user init
     global RETRIEVER, LLM
     try: 
         RETRIEVER = initRetriever()
@@ -52,16 +52,20 @@ def message_rita():
 
     prompt = request.json['prompt']
     widget = request.json['widget']
+    chat_history = request.json['chatHistory']
     lectureId = request.json['lectureId']
     classroomId = request.json['classroomId']
-    watsonxRequest = getWatsonxRequest(prompt, widget, lectureId, classroomId)
-    
+    lectureAndClassroomResponse = getLectureAndClassroom(lectureId, classroomId)
     logTime(start_time, "Fetched classroom and lecture from the database")
-    # check if output is correct
-    if watsonxRequest['status'] == 'error':
-        return watsonxRequest
+    # check if lecture and classroom are fetched properly
+    if lectureAndClassroomResponse['status'] == 'error':
+        return lectureAndClassroomResponse
+    
+    watsonxRequest = { **lectureAndClassroomResponse['data'],
+                      'chat_history' : chat_history,
+                      "widget" : widget}
     try:
-        llmOutput = llm_stream_response(watsonxRequest['data'], prompt, RETRIEVER, LLM) # returns rita's reply asdict
+        llmOutput = llm_stream_response(watsonxRequest, prompt, RETRIEVER, LLM) # returns rita's reply asdict
         return llmOutput
     except Exception as e:
         logging.error("Error: {}".format(e))

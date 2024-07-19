@@ -2,6 +2,7 @@ from enum import Enum
 import json
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts import MessagesPlaceholder
+from langchain.schema import HumanMessage, AIMessage
 
 class RitaPromptHandler:
     def __init__(self, data, user_prompt):
@@ -10,12 +11,12 @@ class RitaPromptHandler:
     
     def get_template(self):
         SYSTEM_INTRO = (
-        "You are a helpful AI teaching assistant chatbot. Your name is Rita."
-        "You are suppose to help the user, who is a teacher, to plan their courses."
+        "You are a helpful AI teaching assistant chatbot. Your name is Rita. "
+        "You are suppose to help the user, who is a teacher, to plan their courses. "
         ) #TODO[Edison]: can add more description about what rita is capable of
         SYSTEM_BASE_INSTRUCTION = (
-        "Answer the user's questions based on the below context: {context}."
-        "If the input is irrelevant, suggest ways that you can help to plan a lesson."
+        "Answer the user's questions based on the below context: {context}. "
+        "If the input is irrelevant, suggest ways that you can help to plan a lesson. "
         # "If the user input is Chinese, speak to the user in Chinese." # NOTE: Language constraints works weidly sometimes
         )
 
@@ -57,11 +58,29 @@ class RitaPromptHandler:
     
     def _format_chat_history(self):
         # TODO: Use the provided data and return a list of message objects
-        return []
+        chat_history_raw = self.data["chat_history"]
+        chat_history = []
+        cutoff = 6 # arbitrary context window to prevent token overload
+        for message in chat_history_raw[-cutoff:]:
+            if message["sender"] == "user":
+                chat_history.append(HumanMessage(content=message["text"]))
+            elif message["sender"] == "ai":
+                chat_history.append(AIMessage(content=message["text"]))
+        
+        return chat_history
     
     def _identify_intent(self):
          #TODO[Ellen]: given self.user_prompt, return the intent (defined below)
         return Intent.MODIFY
+    
+    # debugging tools
+    def print_prompt(self):
+        # For debugging. Prints out the actual prompt given to the llm.
+        # can't seem to find a good way to count token in code, 
+        # but this gives good approximation: https://token-counter.app/meta/llama-3
+        
+        print(self.get_template().format(**self.get_prompt()))
+
     
 class Intent(Enum): # although this is just T/F, we might have more intents as we scale
     ASK = 0

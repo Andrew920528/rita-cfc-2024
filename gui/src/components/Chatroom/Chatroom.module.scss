@@ -59,7 +59,7 @@
   flex-direction: row;
   align-items: start;
 
-  &.Rita {
+  &.ai {
     text-align: start;
     gap: 0.5rem;
     .chat-msg-decor {
@@ -68,7 +68,7 @@
       background-color: $primary-color;
     }
   }
-  &.User {
+  &.user {
     text-align: start;
     max-width: 75%;
     background-color: white;
@@ -77,7 +77,7 @@
     border-radius: 12px;
     border-end-end-radius: 4px;
   }
-  &.System {
+  &.system {
     justify-content: center;
     color: #525252;
     p {
