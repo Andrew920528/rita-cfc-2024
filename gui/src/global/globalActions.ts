@@ -15,6 +15,7 @@ import {initSchedule} from "../schema/schedule";
 import {createWidgetService, useApiHandler} from "../utils/service";
 import {RfServices} from "../features/RfSlice";
 import {ApiServices} from "../features/ApiSlice";
+import {toast} from "react-toastify";
 
 /* 
  Functions that requires the use of multiple slices to perform
@@ -293,7 +294,7 @@ export const useCreateWidgetWithApi = () => {
     dispatch(ApiServices.actions.deleteSignal({id: newWidgetId}));
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       // If api fails, delete widget from store
-      // TODO: toast error
+      toast.error("出現錯誤，請重試");
       deleteWidget({lectureId: lectures.current, widgetId: newWidgetId});
       return EMPTY_ID;
     }

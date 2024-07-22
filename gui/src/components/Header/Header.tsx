@@ -36,6 +36,7 @@ import styles from "./Header.module.scss";
 import {LoginStatusServices} from "../../features/LoginStatusSlice";
 import {CircularProgress} from "@mui/material";
 import useAutosave from "../../utils/useAutosave";
+import {toast} from "react-toastify";
 
 const cx = classNames.bind(styles);
 type HeaderProps = {
@@ -226,7 +227,7 @@ const SaveGroup = () => {
         identifier: "updateUserService",
       });
       if (r.status === API.ERROR || r.status === API.ABORTED) {
-        // TODO Failed to save toast
+        toast.error("存檔失敗，請重試");
         return;
       }
       dispatch(UserServices.actions.saveSchedule());
@@ -249,7 +250,7 @@ const SaveGroup = () => {
         identifier: "updateWidgetBulkService",
       });
       if (r.status === API.ERROR || r.status === API.ABORTED) {
-        // TODO Failed to save toast
+        toast.error("存檔失敗，請重試");
         return;
       }
       dispatch(WidgetsServices.actions.saveAll());

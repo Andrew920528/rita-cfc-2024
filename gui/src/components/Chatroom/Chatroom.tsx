@@ -313,7 +313,6 @@ const ChatMessage = ({text, sender}: ChatMessageT) => {
       ) : (
         <div className={cx("chatroom-message-text")}>
           <MarkdownRenderer>{text}</MarkdownRenderer>
-          {text}
         </div>
       )}
     </div>
