@@ -1,7 +1,14 @@
 import React, {useEffect, useRef, useState} from "react";
 import Textbox from "../ui_components/Textbox/Textbox";
 import IconButton from "../ui_components/IconButton/IconButton";
-import {ArrowRight, ChevronDown, ChevronUp, Stop} from "@carbon/icons-react";
+import {
+  ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  Maximize,
+  Minimize,
+  Stop,
+} from "@carbon/icons-react";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {contentIsOfType, widgetBook} from "../../schema/widget";
 import {ChatMessage as ChatMessageT, SENDER} from "../../schema/chatroom";
@@ -13,7 +20,12 @@ import classNames from "classnames/bind";
 import styles from "./Chatroom.module.scss";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {tags} from "./ChunkDefinitions";
-
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
+import {dracula} from "react-syntax-highlighter/dist/cjs/styles/prism";
+import rehypeRaw from "rehype-raw";
+import {MarkdownRenderer} from "./MarkdownRenderer";
 const cx = classNames.bind(styles);
 type ChatroomProps = {};
 const Chatroom = ({}: ChatroomProps) => {
@@ -37,7 +49,13 @@ const Chatroom = ({}: ChatroomProps) => {
   } = useApiHandler([classroomId]);
 
   // ui handlers
+  const INIT_WIDTH = 20 * 16; // 20 rem
+  const INIT_HEIGHT = 24 * 16; // 24 rem
   const [collapsed, setCollapsed] = useState(false);
+  const [maximized, setMaximized] = useState(false);
+  // const dashboardDim = useTypedSelector(
+  //   (state) => state.Ui.dashboardDimensions
+  // );
   // const [readyToSend, setReadyToSend] = useState(true);
   const [text, setText] = useState("");
   const [ritaError, setRitaError] = useState("");
@@ -226,15 +244,26 @@ const Chatroom = ({}: ChatroomProps) => {
               : ""}
           </p>
         </div>
-        <IconButton
-          mode={"ghost"}
-          icon={collapsed ? <ChevronUp /> : <ChevronDown />}
-          onClick={() => {
-            setCollapsed(!collapsed);
-          }}
-        />
+        <div className={cx("header-btn-group")}>
+          <IconButton
+            mode={"ghost"}
+            icon={maximized ? <Minimize /> : <Maximize />}
+            onClick={() => {
+              if (collapsed) setCollapsed(false);
+              setMaximized(!maximized);
+            }}
+          />
+          <IconButton
+            mode={"ghost"}
+            icon={collapsed ? <ChevronUp /> : <ChevronDown />}
+            onClick={() => {
+              if (maximized) setMaximized(false);
+              setCollapsed(!collapsed);
+            }}
+          />
+        </div>
       </div>
-      <div className={cx("chatroom-content", {collapsed: collapsed})}>
+      <div className={cx("chatroom-content", {collapsed, maximized})}>
         <ChatroomBody
           messages={chatroom.messages}
           loading={waitingForReply}
@@ -282,7 +311,9 @@ const ChatMessage = ({text, sender}: ChatMessageT) => {
           <strong>{text.slice(3)}</strong>
         </p>
       ) : (
-        <p className={cx("chatroom-message-text")}>{text}</p>
+        <div className={cx("chatroom-message-text")}>
+          <MarkdownRenderer>{text}</MarkdownRenderer>
+        </div>
       )}
     </div>
   );

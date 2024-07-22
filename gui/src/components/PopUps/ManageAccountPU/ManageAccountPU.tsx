@@ -9,6 +9,7 @@ import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./ManageAccountPU.module.scss";
 import {useCompose} from "../../../utils/util";
+import {toast} from "react-toastify";
 
 const cx = classNames.bind(styles);
 type ManageAccountPUProps = {};
@@ -71,7 +72,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
     });
 
     if (r.status === API.ERROR || r.status === API.ABORTED) {
-      // TODO: toast error: not saved
+      toast.error("存檔失敗，請重試");
       return;
     }
 

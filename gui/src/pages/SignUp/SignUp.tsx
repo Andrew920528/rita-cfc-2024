@@ -8,6 +8,7 @@ import {API} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./SignUp.module.scss";
 import {initSchedule} from "../../schema/schedule";
+import {toast} from "react-toastify";
 
 const cx = classNames.bind(styles);
 const SignUp = () => {
@@ -117,7 +118,7 @@ const SignUp = () => {
       // failed to create user
       return;
     }
-    // TODO toast account created, please log in
+    toast.success("註冊成功，請登入");
     reset();
     navigate("/login");
   }

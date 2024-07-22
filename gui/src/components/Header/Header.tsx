@@ -35,6 +35,8 @@ import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
 import {LoginStatusServices} from "../../features/LoginStatusSlice";
 import {CircularProgress} from "@mui/material";
+import useAutosave from "../../utils/useAutosave";
+import {toast} from "react-toastify";
 
 const cx = classNames.bind(styles);
 type HeaderProps = {
@@ -52,6 +54,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const scheduleChanged = useTypedSelector(
     (state) => state.User.scheduleChanged
   );
+
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       // Prevent the default action
@@ -205,6 +208,9 @@ const SaveGroup = () => {
   );
   const widgetDict = useTypedSelector((state) => state.Widgets.dict);
   const {apiHandler, loading} = useApiHandler();
+  useAutosave(() => {
+    saveAll();
+  }, 30 * 1000);
   const saveAll = async () => {
     let r;
     if (scheduleChanged) {
@@ -221,7 +227,7 @@ const SaveGroup = () => {
         identifier: "updateUserService",
       });
       if (r.status === API.ERROR || r.status === API.ABORTED) {
-        // TODO Failed to save toast
+        toast.error("存檔失敗，請重試");
         return;
       }
       dispatch(UserServices.actions.saveSchedule());
@@ -244,7 +250,7 @@ const SaveGroup = () => {
         identifier: "updateWidgetBulkService",
       });
       if (r.status === API.ERROR || r.status === API.ABORTED) {
-        // TODO Failed to save toast
+        toast.error("存檔失敗，請重試");
         return;
       }
       dispatch(WidgetsServices.actions.saveAll());

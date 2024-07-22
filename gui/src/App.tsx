@@ -1,5 +1,4 @@
 import {ReactNode, useEffect, useRef, useState} from "react";
-import "./style/main.scss";
 // import {tryTrySee} from "./utils/service";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
@@ -16,7 +15,9 @@ import {useAppDispatch, useTypedSelector} from "./store/store";
 import {LoginStatusServices} from "./features/LoginStatusSlice";
 import Redirect from "./pages/Redirect/Redirect";
 import {overrideConsoleWarning} from "./utils/util";
-
+import {ToastContainer, toast} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./style/main.scss";
 overrideConsoleWarning("https://reactflow.dev/error#002"); // weird react flow warning that's irrelevant
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
   const loginStatus = useTypedSelector((state) => state.LoginStatus);
   const dispatch = useAppDispatch();
   const runOnce = useRef<boolean>(false);
+
   useEffect(() => {
     if (runOnce.current) return;
     runOnce.current = true;
@@ -65,7 +67,7 @@ function App() {
       }
       if (r.status === API.ERROR) {
         // if an error actually occurs, we need to navigate to the login page
-        // TODO Toast automatic login failed
+        toast.error("您已被自動登出，請重新登入");
         dispatch(LoginStatusServices.actions.setLoading(false));
         return;
       }
@@ -79,8 +81,10 @@ function App() {
       loginWithSid();
     }
   }, []);
+
   return (
     <div className="App">
+      <ToastContainer theme="light" />
       <BrowserRouter>
         <Routes>
           <Route
