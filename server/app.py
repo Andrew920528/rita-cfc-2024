@@ -6,7 +6,7 @@ from utils.LlmTester import LlmTester
 from utils.word_docs import convert_to_pdf, send_docx
 from utils.util import logTime
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
-from actions.ritaActions import initLLM, llm_stream_response, initRetriever
+from actions.ritaActions import initLLM, llm_stream_response, initRetriever, translate
 import time
 import logging
 from datetime import datetime
@@ -118,6 +118,22 @@ def message_rita():
             'data': str(e)
         }
         return response
+
+
+@app.route('/translate', methods=['POST'])
+def translate():
+    text = request.json['text']
+    try:
+        return translate(text)
+    except Exception as e:
+        logging.error("Error: {}".format(e))
+        response = {
+            'status': 'error',
+            'data': str(e)
+        }
+        return response
+
+# users
 
 
 @app.route('/create-user', methods=['POST'])

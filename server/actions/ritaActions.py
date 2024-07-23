@@ -170,3 +170,8 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     response = Response(stream_handler.yield_stream(),
                         content_type="application/json")
     return response
+
+
+def translate(text):
+    return {'status': 'success',
+            'data': "中文字"}

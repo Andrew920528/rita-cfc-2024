@@ -16,9 +16,16 @@ import {useCompose} from "../../utils/util";
 import classNames from "classnames/bind";
 import styles from "./Chatroom.module.scss";
 import {WidgetsServices} from "../../features/WidgetsSlice";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
+import {dracula} from "react-syntax-highlighter/dist/cjs/styles/prism";
+import rehypeRaw from "rehype-raw";
 import {MarkdownRenderer} from "./MarkdownRenderer";
 import {useMessageRita} from "./useMessageRita";
 import {CircularProgress} from "@mui/material";
+import {translateService, useApiHandler} from "../../utils/service";
+import {API} from "../../global/constants";
 const cx = classNames.bind(styles);
 type ChatroomProps = {};
 const Chatroom = ({}: ChatroomProps) => {
@@ -121,15 +128,59 @@ const Chatroom = ({}: ChatroomProps) => {
 
 export default React.memo(Chatroom);
 
-const ChatMessage = ({text, sender}: ChatMessageT) => {
+const ChatMessage = ({text, sender, completed}: ChatMessageT) => {
+  const [translated, setTranslated] = useState(false);
+  const [translatedText, setTranslatedText] = useState("");
+  const {apiHandler, loading, terminateResponse} = useApiHandler();
+  async function translate() {
+    setTranslated(!translated);
+    if (loading) {
+      terminateResponse();
+      return;
+    }
+    if (translatedText !== "") return;
+
+    let r = await apiHandler({
+      apiFunction: (s) => translateService({text}, s),
+      debug: true,
+      identifier: "translate",
+    });
+
+    if (r.status === API.ERROR || r.status === API.ABORTED) {
+      return;
+    }
+    setTranslatedText(r.data);
+  }
   return (
     <div className={cx("chatroom-message", sender)}>
-      <div className={cx("chat-msg-decor")}></div>
       {sender === SENDER.system ? (
         <p className={cx("chatroom-message-text")}>
           {text.slice(0, 3)}
           <strong>{text.slice(3)}</strong>
         </p>
+      ) : sender === SENDER.ai ? (
+        <>
+          <div className={cx("chat-msg-decor")} />
+          <div className={cx("chatroom-message-text")}>
+            <MarkdownRenderer>
+              {translated ? (loading ? text : translatedText) : text}
+            </MarkdownRenderer>
+            <p
+              className={cx("--label", "jelly")}
+              onClick={() => {
+                console.log("translate");
+                translate();
+              }}
+            >
+              {completed &&
+                (translated
+                  ? loading
+                    ? "翻譯中(取消)"
+                    : "顯示原文"
+                  : "翻譯蒟蒻")}
+            </p>
+          </div>
+        </>
       ) : (
         <div className={cx("chatroom-message-text")}>
           <MarkdownRenderer>{text}</MarkdownRenderer>
