@@ -3,7 +3,8 @@ import {Catalog, Close} from "@carbon/icons-react";
 import IconButton from "../../ui_components/IconButton/IconButton";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
-import {WidgetType, widgetBook} from "../../../schema/widget";
+import {WidgetType} from "../../../schema/widget/widget";
+import {widgetBook} from "../../../schema/widget/widgetFactory";
 import SemesterGoalWidget from "../SemesterGoalWidget/SemesterGoalWidget";
 import SemesterPlanWidget from "../SemesterPlanWidget/SemesterPlanWidget";
 import NoteWidget from "../NoteWidget/NoteWidget";
@@ -68,8 +69,8 @@ const WidgetFrame = ({selected, widgetId}: WidgetFrameProps) => {
     dispatch(ApiServices.actions.deleteSignal({id: widgetId}));
   }
   const widgetType = widgets.dict[widgetId].type;
-  const title = widgetBook[widgetType].title;
-  const icon = widgetBook[widgetType].icon;
+  const title = widgetBook(widgetType).title;
+  const icon = widgetBook(widgetType).icon;
 
   // handle animation
   const [isExiting, setIsExiting] = useState(false);
@@ -82,9 +83,9 @@ const WidgetFrame = ({selected, widgetId}: WidgetFrameProps) => {
         entering: !isExiting,
       })}
       style={{
-        width: widgetBook[widgetType].width,
-        minHeight: widgetBook[widgetType].minHeight,
-        maxHeight: widgetBook[widgetType].maxHeight,
+        width: widgetBook(widgetType).width,
+        minHeight: widgetBook(widgetType).minHeight,
+        maxHeight: widgetBook(widgetType).maxHeight,
       }}
       onClick={() => {
         dispatch(WidgetsServices.actions.setCurrent(widgetId));
@@ -113,16 +114,16 @@ const WidgetFrame = ({selected, widgetId}: WidgetFrameProps) => {
 };
 
 export const WidgetFrameGhost = ({widgetType}: {widgetType: WidgetType}) => {
-  const title = widgetBook[widgetType].title;
-  const icon = widgetBook[widgetType].icon;
+  const title = widgetBook(widgetType).title;
+  const icon = widgetBook(widgetType).icon;
 
   return (
     <div
       className={cx("widget-frame")}
       style={{
-        width: widgetBook[widgetType].width,
-        minHeight: widgetBook[widgetType].minHeight,
-        maxHeight: widgetBook[widgetType].maxHeight,
+        width: widgetBook(widgetType).width,
+        minHeight: widgetBook(widgetType).minHeight,
+        maxHeight: widgetBook(widgetType).maxHeight,
       }}
     >
       <div className={cx("wf-heading")}>
