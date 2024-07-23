@@ -9,8 +9,8 @@ import {
   Minimize,
   Stop,
 } from "@carbon/icons-react";
-import {useTypedSelector} from "../../store/store";
-import {widgetBook} from "../../schema/widget";
+import {useAppDispatch, useTypedSelector} from "../../store/store";
+import {contentIsOfType, widgetBook} from "../../schema/widget/widgetFactory";
 import {ChatMessage as ChatMessageT, SENDER} from "../../schema/chatroom";
 import {useCompose} from "../../utils/util";
 import classNames from "classnames/bind";
@@ -58,7 +58,7 @@ const Chatroom = ({}: ChatroomProps) => {
           <p className={cx("rita")}>Rita</p>
           <p>
             {widgets.dict[widgets.current]
-              ? widgetBook[widgets.dict[widgets.current].type].title
+              ? widgetBook(widgets.dict[widgets.current].type).title
               : ""}
           </p>
         </div>

@@ -1,5 +1,5 @@
 import {PayloadAction, createSlice, current} from "@reduxjs/toolkit";
-import {Widget, Widgets} from "../schema/widget";
+import {Widget, Widgets} from "../schema/widget/widget";
 import {EMPTY_ID} from "../global/constants";
 
 const initialState: Widgets = {
