@@ -87,3 +87,6 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     return response
 
 
+def translate(text):
+    return {'status' : 'success',
+            'data' : "中文字"}

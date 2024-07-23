@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from utils.util import logTime
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
-from actions.ritaActions import initLLM, llm_stream_response, initRetriever
+from actions.ritaActions import initLLM, llm_stream_response, initRetriever, translate
 import time
 import logging
 from datetime import datetime
@@ -67,6 +67,18 @@ def message_rita():
     try:
         llmOutput = llm_stream_response(watsonxRequest, prompt, RETRIEVER, LLM) # returns rita's reply asdict
         return llmOutput
+    except Exception as e:
+        logging.error("Error: {}".format(e))
+        response = { 
+            'status' : 'error',
+            'data' : str(e)
+        }
+        return response
+@app.route('/translate', methods=['POST'])
+def translate():
+    text = request.json['text']
+    try:
+        return translate(text)
     except Exception as e:
         logging.error("Error: {}".format(e))
         response = { 

@@ -541,3 +541,30 @@ export function setUpRitaService(abortSignal?: AbortSignal) {
     signal: abortSignal,
   });
 }
+
+export function translateService(
+  payload: {
+    text: string;
+  },
+  abortSignal?: AbortSignal
+) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "翻譯後的中文字",
+    };
+    return mimicApi(5000, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/translate";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
+    signal: abortSignal,
+  });
+}
