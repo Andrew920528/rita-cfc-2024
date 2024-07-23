@@ -1,5 +1,6 @@
 from flask import Flask, request
 from flask_cors import CORS
+from utils.word_docs import download_file
 from utils.util import logTime
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
 from actions.ritaActions import initLLM, llm_stream_response, initRetriever
@@ -19,6 +20,11 @@ LLM = ''
 @app.route('/hello', methods=['GET'])
 def get_output():
     return { 'output' : 'hello guys!'}
+
+@app.route('/test-send-file', methods=['GET'])
+def get_file():
+    return download_file()
+    # return { 'output' : 'hello guys!'}
 
 ######################################################################################################## watsonx
 
