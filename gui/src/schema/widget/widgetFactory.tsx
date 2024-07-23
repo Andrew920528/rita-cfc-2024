@@ -3,12 +3,14 @@ import {ScheduleWidgetMaker} from "./scheduleWidgetContent";
 import {SemesterPlanWidgetMaker} from "./semesterPlanWidgetContent";
 import {WidgetType, Widget} from "./widget";
 import {SemesterGoalWidgetMaker} from "./semesterGoalWidgetContent";
+import {WorksheetWidgetMaker} from "./worksheetWidgetContent";
 
 const factory = {
   [WidgetType.SemesterGoal]: new SemesterGoalWidgetMaker(),
   [WidgetType.SemesterPlan]: new SemesterPlanWidgetMaker(),
   [WidgetType.Note]: new NoteWidgetMaker(),
   [WidgetType.Schedule]: new ScheduleWidgetMaker(),
+  [WidgetType.Worksheet]: new WorksheetWidgetMaker(),
 };
 
 export function initWidget(id: string, type: WidgetType): Widget {

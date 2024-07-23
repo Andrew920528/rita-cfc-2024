@@ -1,0 +1,76 @@
+@use "../../../style/abstract/index" as *;
+.worksheet-widget {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.worksheet-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: start;
+  .title {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .decor {
+    min-width: 3px;
+    height: 1.5rem;
+    background-color: $primary-color;
+  }
+  .example {
+    font-style: italic;
+  }
+  .status {
+    align-self: center;
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+$dot-size: 2px;
+$dot-color: #333;
+$animation-duration: 1.8s;
+$dot-spacing: 0.2rem;
+$jump-height: -5px;
+@keyframes jump {
+  0%,
+  40%,
+  100% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY($jump-height);
+  }
+}
+
+.ideating-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .ideating-dot {
+    width: $dot-size;
+    height: $dot-size;
+    background-color: $dot-color;
+    border-radius: 50%;
+    margin: 0 $dot-spacing;
+    animation: jump $animation-duration ease-in-out infinite;
+
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}

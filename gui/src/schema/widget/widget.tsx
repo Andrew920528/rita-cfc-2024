@@ -3,6 +3,7 @@ import {NoteWidgetContent} from "./noteWidgetContent";
 import {SemesterPlanWidgetContent} from "./semesterPlanWidgetContent";
 import {ScheduleWidgetContent} from "./scheduleWidgetContent";
 import {ReactNode} from "react";
+import {WorksheetWidgetContent} from "./worksheetWidgetContent";
 
 /**
  * This file defines types and classes related to widgets
@@ -17,13 +18,15 @@ export enum WidgetType {
   SemesterPlan,
   Note,
   Schedule,
+  Worksheet,
 }
 
 export type WidgetContent =
   | SemesterGoalWidgetContent
   | SemesterPlanWidgetContent
   | NoteWidgetContent
-  | ScheduleWidgetContent;
+  | ScheduleWidgetContent
+  | WorksheetWidgetContent;
 
 // ========= Widget definitions =========
 export type Widget = {

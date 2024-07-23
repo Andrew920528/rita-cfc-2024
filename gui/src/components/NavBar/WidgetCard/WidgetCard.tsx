@@ -3,11 +3,7 @@ import {Information, Add} from "@carbon/icons-react";
 import {ReactElement, useCallback, useEffect, useRef, useState} from "react";
 import {WidgetType} from "../../../schema/widget/widget";
 
-import {
-  useCreateWidget,
-  useCreateWidgetWithApi,
-  useDeleteWidget,
-} from "../../../global/globalActions";
+import {useCreateWidgetWithApi} from "../../../global/globalActions";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import IconButton from "../../ui_components/IconButton/IconButton";
 import classNames from "classnames/bind";

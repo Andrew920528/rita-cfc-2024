@@ -16,6 +16,7 @@ import classNames from "classnames/bind";
 import styles from "./WidgetFrame.module.scss";
 import {delay} from "../../../utils/util";
 import {ApiServices} from "../../../features/ApiSlice";
+import WorksheetWidget from "../WorksheetWidget/WorksheetWidget";
 
 const cx = classNames.bind(styles);
 const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
@@ -28,6 +29,8 @@ const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
       return <ScheduleWidget wid={widgetId} />;
     case WidgetType.Note:
       return <NoteWidget wid={widgetId} />;
+    case WidgetType.Worksheet:
+      return <WorksheetWidget wid={widgetId} />;
     default:
       return null;
   }
