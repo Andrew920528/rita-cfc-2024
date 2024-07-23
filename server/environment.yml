@@ -25,10 +25,14 @@ dependencies:
   - zlib
   - pymysql
   - conda-forge::langchain=0.2.3
+  - python-docx
 prefix: C:\Users\User\anaconda3\envs\rita
+
 # pip install langchain-cohere
 # pip install Flask-SSE
 # pip install langchain-huggingface
 # pip install ibm-watsonx-ai
 # pip install langchain-ibm
 # pip install langchain
+#pip install docx2pdf
+
