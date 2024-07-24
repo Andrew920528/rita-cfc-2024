@@ -2,9 +2,9 @@ import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import {useTypedSelector} from "../store/store";
 
 interface UiState {
-  loadingWidgets: {[key: string]: boolean};
-  dragOffset: {x: number; y: number};
-  dragOver: boolean;
+  loadingWidgets: {[key: string]: boolean}; // for displaying widget skeleton
+  dragOffset: {x: number; y: number}; // for widget card dragging
+  dragOver: boolean; // for styling and logic when dragging widget card over dashboard, which metigate buggy html default drag api
 }
 const initialState: UiState = {
   loadingWidgets: {},
@@ -13,7 +13,7 @@ const initialState: UiState = {
 };
 
 const UiSlice = createSlice({
-  name: "UiSlice", //must be unique for every slice. convention is to put the same as file name
+  name: "UiSlice",
   initialState,
   reducers: {
     setLoadingWidgets: (

@@ -15,6 +15,7 @@ import {ChatMessage as ChatMessageT, SENDER} from "../../schema/chatroom";
 import {useCompose} from "../../utils/util";
 import classNames from "classnames/bind";
 import styles from "./Chatroom.module.scss";
+import {WidgetsServices} from "../../features/WidgetsSlice";
 import {MarkdownRenderer} from "./MarkdownRenderer";
 import {useMessageRita} from "./useMessageRita";
 import {CircularProgress} from "@mui/material";

@@ -520,3 +520,38 @@ export function messageRitaService(
     signal: abortSignal,
   });
 }
+
+export function setUpRitaService(abortSignal?: AbortSignal) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "Successfully initialized rita",
+    };
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/setup-rita";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({}),
+    signal: abortSignal,
+  });
+}
+
+/// Worksheet APIs
+export function getWordDocService(abortSignal?: AbortSignal) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "Successfully retrieved word doc", // TODO: dummy word doc at front-end
+    };
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/send-word-doc";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "GET",
+    signal: abortSignal,
+  });
+}
