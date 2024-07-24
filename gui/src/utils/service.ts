@@ -566,7 +566,7 @@ export function translateService(
       status: API.SUCCESS,
       data: "翻譯後的中文字",
     };
-    return mimicApi(5000, JSON.parse(JSON.stringify(response)), abortSignal);
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/translate";
   return fetch(BASE_URL_DEV + endPoint, {
