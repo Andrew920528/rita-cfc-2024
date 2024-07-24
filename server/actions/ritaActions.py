@@ -88,5 +88,7 @@ def llm_stream_response(data, user_prompt, retriever, llm):
 
 
 def translate(text):
+    # TODO: Implement translate action. This can possibly be chained with the llm as a tool
+    # but we will separate the task for now.
     return {'status' : 'success',
             'data' : "中文字"}
