@@ -24,6 +24,7 @@ def convert_to_pdf():
             pdf_path = os.path.join(temp_dir, 'your_document.pdf')
             # pypandoc.convert_file(doc_path, 'pdf', outputfile=pdf_path)
             convert(doc_path, pdf_path)
+            # TODO: maybe try spire.doc
             print(pdf_path)
             response = send_file(pdf_path, as_attachment=True)
 
