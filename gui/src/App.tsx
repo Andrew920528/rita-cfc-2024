@@ -18,8 +18,6 @@ import {overrideConsoleWarning} from "./utils/util";
 import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./style/main.scss";
-import FileDownload from "./components/widgets/WorksheetWidget/FileDownload";
-import PdfPreview from "./components/widgets/WorksheetWidget/PdfPreview";
 overrideConsoleWarning("https://reactflow.dev/error#002"); // weird react flow warning that's irrelevant
 
 function App() {
@@ -86,8 +84,6 @@ function App() {
 
   return (
     <div className="App">
-      <FileDownload />
-      <PdfPreview />
       <ToastContainer theme="light" />
       <BrowserRouter>
         <Routes>

@@ -10,7 +10,7 @@ import re
 
 Example usage:
     # define a stream handler object
-    stream_handler = StreamHandler(queue.Queue())
+    stream_handler = StreamHandler()
     
     # invoke the llm to output a stream iterator object
     rita_reply = retrieval_chain.stream({
@@ -27,8 +27,8 @@ Example usage:
 """
 class StreamHandler:
     END_TOKEN = "[END]"
-    def __init__(self, stream: queue.Queue):
-        self.out_stream = stream
+    def __init__(self):
+        self.out_stream = queue.Queue()
 
     def output_buffer(self, in_stream):
         """format the irredular chunks sent by the llm into tokens defined by the split_chunk function

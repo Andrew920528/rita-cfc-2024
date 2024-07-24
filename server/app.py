@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask_cors import CORS
-from utils.word_docs import convert_to_pdf, download_file
+from utils.word_docs import convert_to_pdf, send_docx
 from utils.util import logTime
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
 from actions.ritaActions import initLLM, llm_stream_response, initRetriever
@@ -21,14 +21,22 @@ LLM = ''
 def get_output():
     return { 'output' : 'hello guys!'}
 
-@app.route('/test-send-file', methods=['GET'])
+@app.route('/send-word-doc', methods=['GET'])
 def get_file():
-    return download_file()
-    # return { 'output' : 'hello guys!'}
+    try:
+        file = send_docx()
+        return file
+    except Exception as e:
+        response = {
+            'status' : 'error',
+            'data' : str(e)
+        }
+    return response
+
 @app.route('/test-get-pdf', methods=['GET'])
 def get_pdf():
     return convert_to_pdf()
-    # return { 'output' : 'hello guys!'}
+
 
 ######################################################################################################## watsonx
 

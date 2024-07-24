@@ -3,6 +3,9 @@ import classNames from "classnames/bind";
 import styles from "./WorksheetWidget.module.scss";
 import {Skeleton} from "@mui/material";
 import {useWidgetLoading} from "../../../features/UiSlice";
+import FileDownload from "./FileDownload";
+import PdfPreview from "./PdfPreview";
+import {useTypedSelector} from "../../../store/store";
 
 const cx = classNames.bind(styles);
 type Props = {
@@ -10,24 +13,37 @@ type Props = {
 };
 
 const WorksheetWidget = (props: Props) => {
-  const loading = useWidgetLoading(props.wid);
-  const [doc, setDoc] = useState<boolean>(false);
-  const [ideating, setIdeating] = useState<boolean>(true);
-  return loading ? (
+  const widgetLoading = useWidgetLoading(props.wid);
+  const [previewReady, setPreviewReady] = useState<boolean>(false);
+  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
+  const currWidget = useTypedSelector((state) => state.Widgets.current);
+  return widgetLoading ? (
     <WorksheetSkeleton />
   ) : (
     <div className={cx("worksheet-widget")}>
-      {doc ? (
+      <button
+        onClick={() => {
+          setPreviewReady(!previewReady);
+        }}
+      >
+        Toggle to debug
+      </button>
+      {previewReady ? (
         <WorkSheetPreview />
       ) : (
-        <WorksheetPlaceholder ideating={ideating} />
+        <WorksheetPlaceholder ideating={props.wid === currWidget} />
       )}
     </div>
   );
 };
 
 const WorkSheetPreview = () => {
-  return <div className={cx("worksheet-preview")}></div>;
+  return (
+    <div className={cx("worksheet-preview")}>
+      <PdfPreview />
+      <FileDownload />
+    </div>
+  );
 };
 
 const WorksheetPlaceholder = (props: {ideating: boolean}) => {
@@ -52,7 +68,7 @@ const WorksheetPlaceholder = (props: {ideating: boolean}) => {
           討論中 <IdeatingDots />
         </div>
       ) : (
-        <div className={cx("status", "--label")}>討論未開始</div>
+        <div className={cx("status", "--label")}>討論已暫停</div>
       )}
     </div>
   );

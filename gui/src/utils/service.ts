@@ -541,3 +541,19 @@ export function setUpRitaService(abortSignal?: AbortSignal) {
     signal: abortSignal,
   });
 }
+
+/// Worksheet APIs
+export function getWordDocService(abortSignal?: AbortSignal) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "Successfully retrieved word doc", // TODO: dummy word doc at front-end
+    };
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/send-word-doc";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "GET",
+    signal: abortSignal,
+  });
+}
