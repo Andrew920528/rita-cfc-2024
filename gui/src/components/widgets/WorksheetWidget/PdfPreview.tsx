@@ -14,9 +14,9 @@ const PdfPreview = () => {
     const fetchPdf = async () => {
       try {
         const response = await fetch("http://127.0.0.1:5000/test-get-pdf");
-        // const blob = await response.blob();
-        // const url = URL.createObjectURL(blob);
-        // setPdfUrl(url);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        setPdfUrl(url);
       } catch (error) {
         console.error("Error fetching PDF:", error);
       }
@@ -27,12 +27,12 @@ const PdfPreview = () => {
   return (
     <div>
       <p>預覽</p>
-      {/* {pdfUrl && (
+      {pdfUrl && (
         // <Document file={pdfUrl}>
         //   <Page />
         // </Document>
         <iframe title="pdf" src={pdfUrl} width="100%" height="100%"></iframe>
-      )} */}
+      )}
     </div>
   );
 };

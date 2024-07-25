@@ -35,5 +35,4 @@ prefix: C:\Users\User\anaconda3\envs\rita
 # pip install ibm-watsonx-ai
 # pip install langchain-ibm
 # pip install langchain
-#pip install docx2pdf
 
