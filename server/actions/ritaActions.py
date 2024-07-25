@@ -83,7 +83,7 @@ def llm_stream_response(data, user_prompt, retriever, llm):
 
     # Call the LLM and stream its response
     rita_reply = retrieval_chain.stream(prompt)
-    stream_handler = StreamHandler(queue.Queue())
+    stream_handler = StreamHandler()
     threading.Thread(target=stream_handler.output_buffer, args=(rita_reply,)).start()
     response = Response(stream_handler.yield_stream(), content_type='text/plain')
     return response

@@ -20,6 +20,7 @@
 - 7/15 12:04 | Super wierd bugs detected today. Chrome somehow "cached" cors error and have to delete cache to resolve it. Schedule content's string is unexpectedly trimmed.
 - 7/16 16:28 | Compare to what we had last Friday, the api speed for message rita is significantly faster. This is due to removing unnecessary initialization code from the function code + streaming the response so the first token can be immediately sent back. While optimization can definitely still be done (I think we can easily trim off another 2-3 seconds), this is a good enough improvement for v2. For the rest of this week, we should focus on making Rita smarter, and think of more scenarios to use the widgets
 - 7/18 17:47 | Mainly reading api & refactoring code today. Heavily relying on a package does require a lot of time making sure we are following good practice to maintain scalability. Also, it takes time understanding all the concepts and figure out the functions. Looking back, many struggles I encountered this week are really simple concepts, but the process of understanding them is no small feat. Really have to appreciate Edison's work on taking the first step in this wild wild west. He definitely cleared the trees so I can pave the road. The main ai "pipeline" is completed, thus I will be closing down the ai_pipeline branch, and start implementing memory.
+- 7/24 18:42 | Converting docx to pdf, and trying to come up with the entire worksheet pipeline is very challenging. I hope things get easier without having to compromise functionality.
 
 ## Backlog
 

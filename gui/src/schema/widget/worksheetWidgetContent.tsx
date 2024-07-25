@@ -17,7 +17,7 @@ export class WorksheetWidgetMaker extends WidgetMaker<WorksheetWidgetContent> {
       hint: "製作學習單",
       icon: <Document />,
       type: WidgetType.Worksheet,
-      width: 300,
+      width: 400,
       minHeight: 300,
       maxHeight: 500,
     };

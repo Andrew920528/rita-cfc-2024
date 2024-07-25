@@ -1,19 +1,16 @@
 // TEMP FILE TODO: refactor
 import React from "react";
+import {getWordDocService} from "../../../utils/service";
+import IconButton from "../../ui_components/IconButton/IconButton";
+import {Download} from "@carbon/icons-react";
 
 const FileDownload = () => {
   const downloadFile = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/test-send-file", {
-        method: "GET",
-      });
-
-      console.log(response);
-
+      const response = await getWordDocService();
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-
       const blob = await response.blob();
       const url = window.URL.createObjectURL(new Blob([blob]));
       const link = document.createElement("a");
@@ -23,13 +20,21 @@ const FileDownload = () => {
       link.click();
       link.parentNode?.removeChild(link);
     } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
+      console.error("Error:", error);
+      return;
     }
   };
 
   return (
     <div>
-      <button onClick={downloadFile}>Download File</button>
+      <IconButton
+        onClick={() => {
+          downloadFile();
+        }}
+        mode={"primary"}
+        icon={<Download />}
+        text="Download File as .docx"
+      />
     </div>
   );
 };
