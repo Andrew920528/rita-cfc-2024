@@ -2,7 +2,6 @@ from flask import send_file, jsonify
 import os
 import tempfile
 import pypandoc
-from docx2pdf import convert
 def send_docx():
     # The path to your Word document
     doc_path = 'worksheet_tmp/Rita Test document.docx'
@@ -17,15 +16,15 @@ def send_docx():
 
 def convert_to_pdf():
     doc_path = 'worksheet_tmp/Rita Test document.docx'
-    print(doc_path)
     if os.path.exists(doc_path):
         try:
             temp_dir = tempfile.mkdtemp()
             pdf_path = os.path.join(temp_dir, 'your_document.pdf')
-            # pypandoc.convert_file(doc_path, 'pdf', outputfile=pdf_path)
-            convert(doc_path, pdf_path)
-            # TODO: maybe try spire.doc
-            print(pdf_path)
+            # NOTE Server needs to install latex engine for file conversion
+            # basictex is a minimal tool for conversion
+            # brew install --cask basictex
+            # ^ works on mac, not sure about windows LOL 
+            pypandoc.convert_file(doc_path, 'pdf', outputfile=pdf_path)
             response = send_file(pdf_path, as_attachment=True)
 
             try:
@@ -40,4 +39,3 @@ def convert_to_pdf():
             return str(e)
     else:
         return jsonify({"error": "File not found"}), 404
-

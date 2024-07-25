@@ -28,4 +28,3 @@ dependencies:
   - python-docx
   - pypandoc
 prefix: C:\Users\User\anaconda3\envs\rita
-#pip install docx2pdf
