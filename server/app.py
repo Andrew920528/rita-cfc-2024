@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from utils.util import logTime
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
-from actions.ritaActions import initLLM, llm_stream_response, initRetriever, translate
+from actions.ritaActions import initLLM, llm_stream_response, initRetriever, translateText
 import time
 import logging
 from datetime import datetime
@@ -78,7 +78,7 @@ def message_rita():
 def translate():
     text = request.json['text']
     try:
-        return translate(text)
+        return translateText(text)
     except Exception as e:
         logging.error("Error: {}".format(e))
         response = { 

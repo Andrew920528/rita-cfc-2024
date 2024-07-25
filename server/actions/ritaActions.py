@@ -2,6 +2,7 @@
 # pip install ibm-watsonx-ai
 # pip install langchain-ibm
 # pip install langchain
+# pip install googletrans==3.1.0a0
 import queue
 import threading
 from flask import Response
@@ -20,6 +21,7 @@ from utils.streaming import StreamHandler
 from utils.util import logTime
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
+from googletrans import Translator
 
 def initRetriever(): 
     # Get the absolute path of the embedding path with system independent path selectors
@@ -87,8 +89,11 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     return response
 
 
-def translate(text):
-    # TODO: Implement translate action. This can possibly be chained with the llm as a tool
-    # but we will separate the task for now.
-    return {'status' : 'success',
-            'data' : "中文字"}
+def translateText(text):
+    translator = Translator()
+    translatedText = translator.translate(text, src='en', dest='zh-tw').text
+
+    return {
+        'status' : 'success',
+        'data' : translatedText
+    }
