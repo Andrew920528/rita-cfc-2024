@@ -295,7 +295,6 @@ export const useCreateWidgetWithApi = () => {
     dispatch(ApiServices.actions.deleteSignal({id: newWidgetId}));
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       // If api fails, delete widget from store
-      toast.error("出現錯誤，請重試");
       deleteWidget({lectureId: lectures.current, widgetId: newWidgetId});
       return EMPTY_ID;
     }
