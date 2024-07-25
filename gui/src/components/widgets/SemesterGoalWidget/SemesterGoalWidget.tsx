@@ -2,11 +2,8 @@ import React, {useEffect, useState} from "react";
 import TextArea from "../../ui_components/TextArea/TextArea";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
-import {
-  WidgetType,
-  Widget,
-  SemesterGoalWidgetContent,
-} from "../../../schema/widget";
+import {WidgetType, Widget} from "../../../schema/widget/widget";
+import {SemesterGoalWidgetContent} from "../../../schema/widget/semesterGoalWidgetContent";
 import {Skeleton} from "@mui/material";
 import {useWidgetLoading} from "../../../features/UiSlice";
 

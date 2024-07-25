@@ -25,4 +25,6 @@ dependencies:
   - zlib
   - pymysql
   - conda-forge::langchain=0.2.3
+  - python-docx
 prefix: C:\Users\User\anaconda3\envs\rita
+#pip install docx2pdf

@@ -5,7 +5,8 @@ import {LecturesServices} from "../features/LectureSlice";
 import {WidgetsServices} from "../features/WidgetsSlice";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {generateId, mimicApi} from "../utils/util";
-import {WidgetType, initWidget, widgetBook} from "../schema/widget";
+import {WidgetType} from "../schema/widget/widget";
+import {initWidget, widgetBook} from "../schema/widget/widgetFactory";
 import {Chatroom} from "../schema/chatroom";
 import {Lecture} from "../schema/lecture";
 import {Classroom} from "../schema/classroom";
@@ -231,8 +232,8 @@ export const useCreateWidget = () => {
             dimension: {
               x: args.position.x,
               y: args.position.y,
-              width: widgetBook[args.widgetType].width,
-              height: widgetBook[args.widgetType].minHeight,
+              width: widgetBook(args.widgetType).width,
+              height: widgetBook(args.widgetType).minHeight,
             },
           })
         );

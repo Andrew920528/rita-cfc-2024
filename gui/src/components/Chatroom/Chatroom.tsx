@@ -10,7 +10,7 @@ import {
   Stop,
 } from "@carbon/icons-react";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {contentIsOfType, widgetBook} from "../../schema/widget";
+import {contentIsOfType, widgetBook} from "../../schema/widget/widgetFactory";
 import {ChatMessage as ChatMessageT, SENDER} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {useCompose} from "../../utils/util";
@@ -218,7 +218,7 @@ const Chatroom = ({}: ChatroomProps) => {
       );
 
       let messageObj = {
-        text: `更新了${widgetBook[widgets.dict[widgets.current].type].title}`,
+        text: `更新了${widgetBook(widgets.dict[widgets.current].type).title}`,
         sender: SENDER.system,
         completed: true,
       };
@@ -260,7 +260,7 @@ const Chatroom = ({}: ChatroomProps) => {
           <p className={cx("rita")}>Rita</p>
           <p>
             {widgets.dict[widgets.current]
-              ? widgetBook[widgets.dict[widgets.current].type].title
+              ? widgetBook(widgets.dict[widgets.current].type).title
               : ""}
           </p>
         </div>
