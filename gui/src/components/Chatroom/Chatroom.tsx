@@ -88,7 +88,7 @@ const Chatroom = ({}: ChatroomProps) => {
               id: widgets.current,
               type: widgets.dict[widgets.current].type,
               content: JSON.parse(
-                JSON.stringify(widgets.dict[widgets.current])
+                JSON.stringify(widgets.dict[widgets.current].content)
               ),
             },
       lectureId: lecture.id,
@@ -105,7 +105,6 @@ const Chatroom = ({}: ChatroomProps) => {
       );
 
       const reader = response.body?.getReader();
-      let result = "";
 
       let organizer = {
         currRitaReply: "",
@@ -132,8 +131,8 @@ const Chatroom = ({}: ChatroomProps) => {
         let newChunk = decoder.decode(value);
         // step 3: inspect chunk and parse it accordingly
         handleChunk(newChunk, organizer);
-        result += newChunk;
       }
+      console.log(organizer);
       // step 4: modify widget if needed
       handleWidgetModification(organizer);
     } catch (error) {
@@ -174,7 +173,7 @@ const Chatroom = ({}: ChatroomProps) => {
         })
       );
     } else if (organizer.currTag === "<wCont>") {
-      organizer.currModifyingWidgetContent += chunk.trim();
+      organizer.currModifyingWidgetContent += chunk;
     } else if (organizer.currTag === "<wid>") {
       organizer.currModifyingWidgetId += chunk.trim();
     }

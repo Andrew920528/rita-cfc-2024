@@ -6,7 +6,7 @@ from langchain.schema import LLMResult
 
 import re
 
-""" RitaOutputParser is a custom parser that formats the output of an LLM.
+""" RitaStreamHandler is a custom parser that formats the output of an LLM.
 
 Example usage:
     # define a stream handler object
@@ -25,7 +25,7 @@ Example usage:
     # the response is streamed as the async thread puts chunks into the queue
     response = Response(stream_handler.yield_stream(), content_type='text/plain')
 """
-class RitaOutputParser:
+class RitaStreamHandler:
     END_TOKEN = "[END]"
     def __init__(self):
         self.out_stream = queue.Queue()
@@ -49,7 +49,7 @@ class RitaOutputParser:
                     self.out_stream.put(wordList[i]) # Pass the token to the generator
                 buffer = wordList[-1]
         self.out_stream.put(buffer)
-        self.out_stream.put(RitaOutputParser.END_TOKEN)
+        self.out_stream.put(RitaStreamHandler.END_TOKEN)
 
     
     def yield_stream(self):
@@ -60,7 +60,7 @@ class RitaOutputParser:
         """
         while True:
             result: str = self.out_stream.get()
-            if result is None or result == RitaOutputParser.END_TOKEN:
+            if result is None or result == RitaStreamHandler.END_TOKEN:
                 break
             yield result
             

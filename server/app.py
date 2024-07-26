@@ -45,7 +45,7 @@ def setup_rita():   # current thought is this should be on server init, not user
 def message_rita():
     global RETRIEVER, LLM
     if RETRIEVER == "" or LLM == "":
-        return "<ERROR>"
+        return "<error>"
     start_time = time.time()
     now_formatted = datetime.fromtimestamp(start_time).strftime('%H:%M:%S.%f')[:-3]
     app.logger.info(f"Recieved request at time = {now_formatted}")

@@ -52,14 +52,26 @@ class RitaPromptHandler:
         "Answer the question with concise sentences." # decrease unnecessary token
         )
         FORMAT_INSTRUCTION = (
-            "Please format the input to be in the following format:",
-            ""
+            """
+            Your answer will contain two parts. 
+            The first part is the string response to the user.
+            The second part is formatted text will directly changes the frontend widgets.
+            Widgets are refered to a tool the user has access to for course planning.
+            You will be given a widget_id with id {widget_id}. The widget is formatted as 
+            {widget_content}. You are expected to modify this content based on the user's question.
+            You should format your response by surrounding widget_id and widget_content within tags.
+            The tags are <wid> and <wCont>.
+            For example, you should respond like this:
+            {{response to the user}} <wid> {{widget id}} </wid> <wCont> {{widget content}} </wCont>
+            where things inside <wid> tag is the given widget id and <wCont> is a stringified json object
+            that has the same format as the given widget content. The tags should be have a space before and after, e.g ' <wid> '.
+            """ # TODO: the second part should be completely ommited if the prompt is irrelevant. Perhaps we need a second agent.
         )
         messages = [
             ("system", SYSTEM_INTRO),
             MessagesPlaceholder(variable_name="chat_history"),
             ("user", "{input}"),
-            ("system", SYSTEM_BASE_INSTRUCTION + "{extra_instruction}"),
+            ("system", SYSTEM_BASE_INSTRUCTION + FORMAT_INSTRUCTION + "{extra_instruction}"),
             ("ai", ""), 
         ]
         prompt_template = ChatPromptTemplate.from_messages(messages)
@@ -76,6 +88,7 @@ class RitaPromptHandler:
     def get_prompt(self):
         extra_instruction = self._get_instructions()
         chat_history = self._format_chat_history()
+        
         return {
             "context": [],
             "chat_history": chat_history,
@@ -84,7 +97,9 @@ class RitaPromptHandler:
             # because we already have state management implemented, and complicating
             # code with langchain dependencies just doesn't seem worth.
             "input": self.user_prompt,
-            "extra_instruction": extra_instruction
+            "extra_instruction": extra_instruction,
+            "widget_id": self.data["widget"]["id"],
+            "widget_content": json.dumps(self.data["widget"]["content"]),
         }
     def _get_instructions(self):
         # TODO[Edison]: The original prompt where you specify output format should go here

@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 import os
 from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY
 from utils.RitaPromptHandler import RitaPromptHandler
-from utils.RitaOutputParser import RitaOutputParser
+from utils.RitaStreamHandler import RitaStreamHandler
 from utils.util import logTime
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
@@ -84,9 +84,9 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     rita_reply = retrieval_chain.stream(prompt)
     
     # Parse the streamed response
-    output_parser = RitaOutputParser()
-    threading.Thread(target=output_parser.output_buffer, args=(rita_reply,)).start()
-    response = Response(output_parser.yield_stream(), content_type='text/plain')
+    stream_handler = RitaStreamHandler()
+    threading.Thread(target=stream_handler.output_buffer, args=(rita_reply,)).start()
+    response = Response(stream_handler.yield_stream(), content_type='text/plain')
     return response
 
 
