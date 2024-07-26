@@ -2,6 +2,7 @@
 # pip install ibm-watsonx-ai
 # pip install langchain-ibm
 # pip install langchain
+from datetime import datetime
 import queue
 import threading
 from flask import Response
@@ -36,6 +37,7 @@ def initRetriever():
     faiss_store = FAISS.load_local(
         embedding_path, embedding_model, allow_dangerous_deserialization=True
     )
+    
 
     # Create a retriever chain
     retriever = faiss_store.as_retriever()
@@ -71,7 +73,9 @@ def initLLM():
     
 
 def llm_stream_response(data, user_prompt, retriever, llm):
-    
+    start_time = time.time()
+    now_formatted = datetime.fromtimestamp(start_time).strftime('%H:%M:%S.%f')[:-3]
+    print(f"Start llm process at time = {now_formatted}")
     # Generate prompt based on retrieved data and user input
     promptHandler = RitaPromptHandler(data, user_prompt)
     prompt = promptHandler.get_prompt()
@@ -80,10 +84,12 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     # Chain together components (LLM, prompt, RAG retriever)
     document_chain = create_stuff_documents_chain(llm = llm, prompt = prompt_template)
     retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain = document_chain)
-
+    docs = retriever.invoke(user_prompt)
+    print(docs)
+    logTime(start_time, "Retrieved with user_prompt")
     # Call the LLM and stream its response
     rita_reply = retrieval_chain.stream(prompt)
-    
+    logTime(start_time, "Retrieved with pipeline")
     # Parse the streamed response
     stream_handler = RitaStreamHandler()
     threading.Thread(target=stream_handler.output_buffer, args=(rita_reply,)).start()

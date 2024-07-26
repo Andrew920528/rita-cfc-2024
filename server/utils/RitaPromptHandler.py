@@ -48,6 +48,7 @@ class RitaPromptHandler:
         ) #TODO[Edison]: can add more description about what rita is capable of
         SYSTEM_BASE_INSTRUCTION = (
         "Answer the user's questions based on the below context: {context}. "
+        "The context is given in markdown format. It is a teacher's guide, which covers course content and methodologies."
         "If the input is irrelevant, suggest ways that you can help to plan a lesson. "
         "Answer the question with concise sentences." # decrease unnecessary token
         )
