@@ -26,3 +26,4 @@ dependencies:
   - pymysql
   - conda-forge::langchain=0.2.3
 prefix: C:\Users\User\anaconda3\envs\rita
+# pip install langchain-cohere

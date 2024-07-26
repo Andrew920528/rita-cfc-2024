@@ -21,16 +21,17 @@ from utils.RitaStreamHandler import RitaStreamHandler
 from utils.util import logTime
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
+from langchain_cohere import CohereEmbeddings
 
 def initRetriever(): 
     # Get the absolute path of the embedding path with system independent path selectors
     curr_dir = os.path.dirname(os.path.abspath(__file__))
-    embedding_path = os.path.join(curr_dir, '..', '..', 'ai', 'course-prep', 'RAG', 'vector-stores', 'kang_math_editted_vector_store')
+    embedding_path = os.path.join(curr_dir, '..', '..', 'ai', 'course-prep', 'RAG', 'vector-stores', 'test_vector_store')
    
-    embedding_model = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-    )
-
+    # embedding_model = HuggingFaceEmbeddings(
+    #     model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    # )
+    embedding_model = CohereEmbeddings(cohere_api_key="dBKmEAHnk6iFoBI26VsZGYR56lJ638CmzZcOUJeg")
     # Load FAISS store from disk
     faiss_store = FAISS.load_local(
         embedding_path, embedding_model, allow_dangerous_deserialization=True
