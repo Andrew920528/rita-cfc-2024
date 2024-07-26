@@ -19,10 +19,8 @@ overrideConsoleWarning("https://reactflow.dev/error#002"); // weird react flow w
 function App() {
   const loginParseState = useLoginParseState();
   const {apiHandler} = useApiHandler();
-  const {apiHandler: initRitaHandler} = useApiHandler();
   const loginStatus = useTypedSelector((state) => state.LoginStatus);
   const dispatch = useAppDispatch();
-  const runOnce = useRef<boolean>(false);
 
   useEffect(() => {
     async function loginWithSid() {
