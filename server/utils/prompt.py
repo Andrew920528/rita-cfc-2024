@@ -5,70 +5,81 @@ from langchain_core.prompts import MessagesPlaceholder
 
 class RitaPromptHandler:
     def __init__(self, data, user_prompt):
-        self.data = data # TODO define data to contain what you need
+        self.data = data  # TODO define data to contain what you need
         self.user_prompt = user_prompt
-    
+
     def get_template(self):
         SYSTEM_INTRO = (
-        "You are a helpful AI teaching assistant chatbot. Your name is Rita."
-        "You are suppose to help the user, who is a teacher, to plan their courses."
-        ) #TODO[Edison]: can add more description about what rita is capable of
+            "You are a helpful AI teaching assistant chatbot. Your name is Rita."
+            "You are suppose to help the user, who is a teacher, to plan their courses."
+            "Below is the history of the conversation so far:"
+        )  # TODO[Edison]: can add more description about what rita is capable of
+
         SYSTEM_BASE_INSTRUCTION = (
-        "Answer the user's questions based on the below context: {context}."
-        "If the input is irrelevant, suggest ways that you can help to plan a lesson."
-        # "If the user input is Chinese, speak to the user in Chinese." # NOTE: Language constraints works weidly sometimes
+            "Answer the user's questions above based on the context below:"
+            "{context}."
+            "If the user's input is irrelevant, suggest other ways that you can help to plan a lesson."
+            # "If the user input is Chinese, speak to the user in Chinese."
+            # NOTE: Language constraints works weirdly sometimes
         )
 
-        prompt_template = ChatPromptTemplate.from_messages([
-            ("system", SYSTEM_INTRO),
-            MessagesPlaceholder(variable_name="chat_history"),
-            ("user", "{input}"),
-            ("system", SYSTEM_BASE_INSTRUCTION + "{extra_instruction}"),
-            ("ai", ""), 
-        ])
-        # NOTE: It is intersteing how adding an empty ai prompt in the end help generating the prompt significantly be
-        # When it is not present, llama tries to auto complete the user's question, 
+        prompt_template = ChatPromptTemplate.from_messages(
+            [
+                ("system", SYSTEM_INTRO),
+                MessagesPlaceholder(variable_name="chat_history"),
+                ("user", "{input}"),
+                ("system", SYSTEM_BASE_INSTRUCTION + "{extra_instruction}"),
+                ("ai", ""),
+            ]
+        )
+        # NOTE: It is interesting how adding an empty ai prompt in the end help generating the prompt significantly be
+        # When it is not present, llama tries to auto complete the user's question,
         # or just repeat what the system says.
         # This is just my theory, but adding the ai placeholder in the end enforces conversation order,
         # which let llama knows it is suppose to speak next as an assistant.
-        # This is interesting because no examples on the internet has this, so I'm not 
+        # This is interesting because no examples on the internet has this, so I'm not
         # sure if there are better practices, or will there be drawbacks with this approach.
         return prompt_template
-    
-    def get_prompt(self):
-        extra_instruction = self._get_instructions()
+
+    def get_prompt(self, extra_instruction):
+        # extra_instruction = self._get_instructions()
         chat_history = self._format_chat_history()
         return {
             "context": [],
-            "chat_history": chat_history,
-            # NOTE: We are explicitly passing in chat_history here, 
+            "chat_history": chat_history, # chat_history is a list for now, can use FireStore later
+            # NOTE: We are explicitly passing in chat_history here,
             # instead of relying on langchain's ChatMessageHistory (an automated history manager)
             # because we already have state management implemented, and complicating
             # code with langchain dependencies just doesn't seem worth.
-            "input": self.user_prompt,
-            "extra_instruction": extra_instruction
+            "input": self.user_prompt,  # user's input
+            "extra_instruction": extra_instruction,
         }
+
+    # DON'T NEED THIS FUNCTION ANYMORE
     def _get_instructions(self):
         # TODO[Edison]: The original prompt where you specify output format should go here
-        # TODO[Edison]: Look into few-shot prompting formating with langchain instead of hard coding them
+        # TODO[Edison]: Look into few-shot prompting formatting with langchain instead of hard coding them
         # TODO[Edison]: You should be able to identify what instruction to use with self.data.widget.type and self._identify_intent()
+
         instruction = ""
         return instruction
-    
+
     def _format_chat_history(self):
         # TODO: Use the provided data and return a list of message objects
         return []
-    
+
+    # DON'T NEED THIS FUNCTION ANYMORE
     def _identify_intent(self):
-         #TODO[Ellen]: given self.user_prompt, return the intent (defined below)
+        # TODO[Ellen]: given self.user_prompt, return the intent (defined below)
         return Intent.MODIFY
-    
-class Intent(Enum): # although this is just T/F, we might have more intents as we scale
+
+# DON'T NEED THIS ENUM ANYMORE
+class Intent(Enum):  # although this is just T/F, we might have more intents as we scale
     ASK = 0
     MODIFY = 1
-       
-    
+
 # TODO[Edison]: This function is not used anymore, take what you need and delete this
+# DON'T NEED THIS FUNCTION ANYMORE
 def create_prompt(data, user_prompt):
     input_str = json.dumps(data, indent=4, ensure_ascii=False)
     input_output_instruction = """
