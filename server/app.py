@@ -14,6 +14,11 @@ logging.basicConfig(level=logging.INFO)
 RETRIEVER = ''
 LLM = ''
 
+def initialize():
+    global RETRIEVER, LLM
+    RETRIEVER = initRetriever()
+    LLM = initLLM()
+initialize()
 ######################################################################################################## debug
 
 @app.route('/hello', methods=['GET'])
@@ -21,26 +26,6 @@ def get_output():
     return { 'output' : 'hello guys!'}
 
 ######################################################################################################## watsonx
-
-@app.route('/setup-rita', methods=['POST'])
-def setup_rita():   # current thought is this should be on server init, not user init
-    global RETRIEVER, LLM
-    try: 
-        RETRIEVER = initRetriever()
-        LLM = initLLM()
-        response = {
-        'status' : 'success',
-        'data' : 'Successfully initialized rita'
-        }
-        return response
-    except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
-        }
-        return response
-
-
 @app.route('/message-rita', methods=['POST'])
 def message_rita():
     global RETRIEVER, LLM
