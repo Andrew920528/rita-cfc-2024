@@ -182,7 +182,13 @@ const Chatroom = ({}: ChatroomProps) => {
 
   const handleWidgetModification = (organizer: any) => {
     if (organizer.currModifyingWidgetContent === "") return;
-    let widgetContent = JSON.parse(organizer.currModifyingWidgetContent);
+    let widgetContent;
+    try {
+      widgetContent = JSON.parse(organizer.currModifyingWidgetContent);
+    } catch (error) {
+      console.error(error);
+      return;
+    }
     let widgetId = organizer.currModifyingWidgetId;
     if (widgetId === widgets.current && widgetId !== EMPTY_ID) {
       if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {

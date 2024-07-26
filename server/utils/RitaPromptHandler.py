@@ -3,6 +3,9 @@ import json
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts import MessagesPlaceholder
 from langchain.schema import HumanMessage, AIMessage
+from langchain_core.pydantic_v1 import BaseModel, Field, validator
+from langchain_core.output_parsers import JsonOutputParser
+from config.llm_param import MEMORY_CUTOFF
 
 class RitaPromptHandler:
     """Defines the prompt and template for Rita
@@ -46,17 +49,21 @@ class RitaPromptHandler:
         SYSTEM_BASE_INSTRUCTION = (
         "Answer the user's questions based on the below context: {context}. "
         "If the input is irrelevant, suggest ways that you can help to plan a lesson. "
-        "Answer the question with concise sentences."
-        # "If the user input is Chinese, speak to the user in Chinese." # NOTE: Language constraints works weidly sometimes
+        "Answer the question with concise sentences." # decrease unnecessary token
         )
-
-        prompt_template = ChatPromptTemplate.from_messages([
+        FORMAT_INSTRUCTION = (
+            "Please format the input to be in the following format:",
+            ""
+        )
+        messages = [
             ("system", SYSTEM_INTRO),
             MessagesPlaceholder(variable_name="chat_history"),
             ("user", "{input}"),
             ("system", SYSTEM_BASE_INSTRUCTION + "{extra_instruction}"),
             ("ai", ""), 
-        ])
+        ]
+        prompt_template = ChatPromptTemplate.from_messages(messages)
+        
         # NOTE: It is intersteing how adding an empty ai prompt in the end help generating the prompt significantly be
         # When it is not present, llama tries to auto complete the user's question, 
         # or just repeat what the system says.
@@ -89,7 +96,7 @@ class RitaPromptHandler:
     def _format_chat_history(self):
         chat_history_raw = self.data["chat_history"]
         chat_history = []
-        cutoff = 6 # arbitrary context window to prevent token overload
+        cutoff = MEMORY_CUTOFF
         for message in chat_history_raw[-cutoff:]:
             if message["sender"] == "user":
                 chat_history.append(HumanMessage(content=message["text"]))
@@ -107,8 +114,9 @@ class RitaPromptHandler:
         # For debugging. Prints out the actual prompt given to the llm.
         # can't seem to find a good way to count token in code, 
         # but this gives good approximation: https://token-counter.app/meta/llama-3
-        
-        print(self.get_template().format(**self.get_prompt()))
+        formatted = self.get_template().format(**self.get_prompt())
+        print("Formatted prompt:")
+        print(formatted)
 
     
 class Intent(Enum): # although this is just T/F, we might have more intents as we scale

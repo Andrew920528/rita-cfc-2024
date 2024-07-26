@@ -6,11 +6,11 @@ from langchain.schema import LLMResult
 
 import re
 
-""" StreamHander is a utility class that helps to stream output from the llm.
+""" RitaOutputParser is a custom parser that formats the output of an LLM.
 
 Example usage:
     # define a stream handler object
-    stream_handler = StreamHandler(queue.Queue())
+    stream_handler = StreamHandler()
     
     # invoke the llm to output a stream iterator object
     rita_reply = retrieval_chain.stream({
@@ -25,10 +25,10 @@ Example usage:
     # the response is streamed as the async thread puts chunks into the queue
     response = Response(stream_handler.yield_stream(), content_type='text/plain')
 """
-class StreamHandler:
+class RitaOutputParser:
     END_TOKEN = "[END]"
-    def __init__(self, stream: queue.Queue):
-        self.out_stream = stream
+    def __init__(self):
+        self.out_stream = queue.Queue()
 
     def output_buffer(self, in_stream):
         """format the irredular chunks sent by the llm into tokens defined by the split_chunk function
@@ -49,7 +49,7 @@ class StreamHandler:
                     self.out_stream.put(wordList[i]) # Pass the token to the generator
                 buffer = wordList[-1]
         self.out_stream.put(buffer)
-        self.out_stream.put(StreamHandler.END_TOKEN)
+        self.out_stream.put(RitaOutputParser.END_TOKEN)
 
     
     def yield_stream(self):
@@ -59,9 +59,8 @@ class StreamHandler:
             str: chunks of the stream
         """
         while True:
-            
             result: str = self.out_stream.get()
-            if result is None or result == StreamHandler.END_TOKEN:
+            if result is None or result == RitaOutputParser.END_TOKEN:
                 break
             yield result
             

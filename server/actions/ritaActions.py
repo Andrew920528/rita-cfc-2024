@@ -15,8 +15,9 @@ from langchain.chains import RetrievalQA
 from langchain_ibm import WatsonxLLM
 from dotenv import load_dotenv
 import os
-from utils.prompt import RitaPromptHandler
-from utils.streaming import StreamHandler
+from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY
+from utils.RitaPromptHandler import RitaPromptHandler
+from utils.RitaOutputParser import RitaOutputParser
 from utils.util import logTime
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
@@ -49,9 +50,9 @@ def initLLM():
     #Initialize WatsonX LLM Interface
     credentials = Credentials.from_dict({"url": URL, "apikey": API_KEY}) 
     params = {
-        GenParams.MAX_NEW_TOKENS: 4095,
+        GenParams.MAX_NEW_TOKENS: MAX_NEW_TOKENS,
         GenParams.DECODING_METHOD: DecodingMethods.GREEDY,
-        GenParams.REPETITION_PENALTY: 1.1, # TODO this should prob be in config file
+        GenParams.REPETITION_PENALTY: REPETITION_PENALTY,
     }   
 
     logTime(start_time, "loaded IBM watsonX credentials")
@@ -81,9 +82,11 @@ def llm_stream_response(data, user_prompt, retriever, llm):
 
     # Call the LLM and stream its response
     rita_reply = retrieval_chain.stream(prompt)
-    stream_handler = StreamHandler(queue.Queue())
-    threading.Thread(target=stream_handler.output_buffer, args=(rita_reply,)).start()
-    response = Response(stream_handler.yield_stream(), content_type='text/plain')
+    
+    # Parse the streamed response
+    output_parser = RitaOutputParser()
+    threading.Thread(target=output_parser.output_buffer, args=(rita_reply,)).start()
+    response = Response(output_parser.yield_stream(), content_type='text/plain')
     return response
 
 
