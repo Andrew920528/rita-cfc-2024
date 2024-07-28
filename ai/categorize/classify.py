@@ -10,7 +10,7 @@ question_type = [ # sentence / keyword
     "學習重點",
     "生成範例題目",
     "常見題型",
-    "幫我在這個計畫的第一周及第三周後裡面安插第一次和第二次段考s"
+    "幫我在這個計畫的第一周及第三周後裡面安插第一次和第二次段考"
 ] #list[str]
 model_name = 'uer/sbert-base-chinese-nli'
 tokenizer = AutoTokenizer.from_pretrained(model_name)

@@ -38,7 +38,7 @@ semester_plan_widget_prompts = SemesterPlanWidgetPrompts()
 def initRetriever():
     # Get the absolute path of the embedding path with system independent path selectors
     curr_dir = os.path.dirname(os.path.abspath(__file__))
-    embedding_path = os.path.join(curr_dir, '..', '..', 'ai', 'course-prep', 'RAG', 'vector-stores', 'test_vector_store')
+    embedding_path = os.path.join(curr_dir, '..', '..', 'ai', 'rag', 'vector-stores', 'test_vector_store')
    
     # embedding_model = HuggingFaceEmbeddings(
     #     model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
