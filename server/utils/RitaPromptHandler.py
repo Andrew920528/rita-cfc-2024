@@ -103,7 +103,6 @@ class RitaPromptHandler:
             "widget_content": json.dumps(self.data["widget"]["content"]),
         }
 
-    # DON'T NEED THIS FUNCTION ANYMORE
     def _get_instructions(self):
         # TODO[Edison]: The original prompt where you specify output format should go here
         # TODO[Edison]: Look into few-shot prompting formatting with langchain instead of hard coding them

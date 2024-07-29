@@ -43,7 +43,7 @@ def initRetriever():
     # embedding_model = HuggingFaceEmbeddings(
     #     model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     # )
-    embedding_model = CohereEmbeddings(cohere_api_key="dBKmEAHnk6iFoBI26VsZGYR56lJ638CmzZcOUJeg")
+    embedding_model = CohereEmbeddings(cohere_api_key="dBKmEAHnk6iFoBI26VsZGYR56lJ638CmzZcOUJeg", model="embed-multilingual-v3.0")
     # Load FAISS store from disk
     faiss_store = FAISS.load_local(
         embedding_path, embedding_model, allow_dangerous_deserialization=True
@@ -92,86 +92,86 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     promptHandler = RitaPromptHandler(data, user_prompt)
 
     # Define the modify vs non-modify classification template
-    classification_template = ChatPromptTemplate.from_messages(
-        [
-            (
-                "system",
-                """
-                ###
-                You are a helpful assistant in an app that helps a teacher with course planning.
-                Your name is Rita.
-                This app contains some widgets in table formats that you could modify following the user's input.
-                However, the user's input might not always be relevant to modifying the widgets.
-                ###
-                Some key words might be relevant to modifying the widgets are:
-                add, delete, insert, alter, change, modify, update, edit, remove, replace, adjust, revise, amend, correct, fix, improve, enhance, refine, fill, complete
-                """
-            ),
-            (
-                "human",
-                """Classify whether this user input is relevant to interacting the widgets or not, simply and strictly return "modify" or "non-modify": 
-                {user_input}.
-                """
-            ),
-        ]
-    )
+    # classification_template = ChatPromptTemplate.from_messages(
+    #     [
+    #         (
+    #             "system",
+    #             """
+    #             ###
+    #             You are a helpful assistant in an app that helps a teacher with course planning.
+    #             Your name is Rita.
+    #             This app contains some widgets in table formats that you could modify following the user's input.
+    #             However, the user's input might not always be relevant to modifying the widgets.
+    #             ###
+    #             Some key words might be relevant to modifying the widgets are:
+    #             add, delete, insert, alter, change, modify, update, edit, remove, replace, adjust, revise, amend, correct, fix, improve, enhance, refine, fill, complete
+    #             """
+    #         ),
+    #         (
+    #             "human",
+    #             """Classify whether this user input is relevant to interacting the widgets or not, simply and strictly return "modify" or "non-modify": 
+    #             {user_input}.
+    #             """
+    #         ),
+    #     ]
+    # )
 
-    # for testing purposes
-    def semester_plan_modify(x):
-         print(f"Semester Plan Modify's x: {x}")
-         print(x)
-         return semester_plan_widget_prompts.modify_improved_by_gpt | llm | StrOutputParser()
+    # # for testing purposes
+    # def semester_plan_modify(x):
+    #      print(f"Semester Plan Modify's x: {x}")
+    #      print(x)
+    #      return semester_plan_widget_prompts.modify_improved_by_gpt | llm | StrOutputParser()
 
-    def semester_plan_non_modify(x):
-         print(f"Semester Plan Non-Modify's x: {x}")
-         print(x)
-         return semester_plan_widget_prompts.non_modify_improved_by_gpt | llm | StrOutputParser()
+    # def semester_plan_non_modify(x):
+    #      print(f"Semester Plan Non-Modify's x: {x}")
+    #      print(x)
+    #      return semester_plan_widget_prompts.non_modify_improved_by_gpt | llm | StrOutputParser()
 
-    # instruction = None  # instruction specific to the widget type and modify/non-modify
-    branches = None
+    # # instruction = None  # instruction specific to the widget type and modify/non-modify
+    # branches = None
 
-    if data["widget"]["type"] == -1:
-        # user is currently not using widget functionalities
-        # in "instruction", add relevant info on Rita's functionalities?
-        instruction = """
-        You are a helpful AI assistant within an app that assist a teacher in course planning.
-        Your name is Rita.
-        """
-    else:
+    # if data["widget"]["type"] == -1:
+    #     # user is currently not using widget functionalities
+    #     # in "instruction", add relevant info on Rita's functionalities?
+    #     instruction = """
+    #     You are a helpful AI assistant within an app that assist a teacher in course planning.
+    #     Your name is Rita.
+    #     """
+    # else:
         # user is currently using widget functionalities
-        if data["widget"]["type"] == 0:  # SemesterGoal
-            # branches is a list of (condition, Runnable) tuples
-            branches = RunnableBranch(
-                (lambda x: "modify" in x, semester_goal_widget_prompts.modify_improved_by_gpt | llm | StrOutputParser()),
-                (lambda x: "non-modify" in x, semester_goal_widget_prompts.non_modify_improved_by_gpt | llm | StrOutputParser()),
-                # semester_goal_widget_prompts.cannot_classified_prompt | llm | StrOutputParser()
-            )
-        if data["widget"]["type"] == 1:  # SemesterPlan
-            branches = RunnableBranch(
-                (lambda x: "modify" in x, semester_plan_modify),
-                (lambda x: "non-modify" in x, semester_plan_non_modify),
-                # (lambda x: "modify" in x, semester_plan_widget_prompts.modify_improved_by_gpt | llm | StrOutputParser()),
-                # (lambda x: "non-modify" in x, semester_plan_widget_prompts.non_modify_improved_by_gpt | llm | StrOutputParser()),
-                semester_plan_widget_prompts.cannot_classified_prompt | llm | StrOutputParser()
-            )
-        if data["widget"]["type"] == 2:  # Note
-            branches = RunnableBranch(
-                (lambda x: "modify" in x, note_widget_prompts.modify_improved_by_gpt | llm | StrOutputParser()),
-                (lambda x: "non-modify" in x, note_widget_prompts.non_modify_improved_by_gpt | llm | StrOutputParser()),
-                note_widget_prompts.cannot_classified_prompt | llm | StrOutputParser()
-            )
-        if data["widget"]["type"] == 3:  # Schedule
-            branches = RunnableBranch(
-                (lambda x: "modify" in x, schedule_widget_prompts.modify_improved_by_gpt | llm | StrOutputParser()),
-                (lambda x: "non-modify" in x, schedule_widget_prompts.non_modify_improved_by_gpt | llm | StrOutputParser()),
-                schedule_widget_prompts.cannot_classified_prompt | llm | StrOutputParser()
-            )
+        # if data["widget"]["type"] == 0:  # SemesterGoal
+        #     # branches is a list of (condition, Runnable) tuples
+        #     branches = RunnableBranch(
+        #         (lambda x: "modify" in x, semester_goal_widget_prompts.modify_improved_by_gpt | llm | StrOutputParser()),
+        #         (lambda x: "non-modify" in x, semester_goal_widget_prompts.non_modify_improved_by_gpt | llm | StrOutputParser()),
+        #         # semester_goal_widget_prompts.cannot_classified_prompt | llm | StrOutputParser()
+        #     )
+        # if data["widget"]["type"] == 1:  # SemesterPlan
+        #     branches = RunnableBranch(
+        #         (lambda x: "modify" in x, semester_plan_modify),
+        #         (lambda x: "non-modify" in x, semester_plan_non_modify),
+        #         # (lambda x: "modify" in x, semester_plan_widget_prompts.modify_improved_by_gpt | llm | StrOutputParser()),
+        #         # (lambda x: "non-modify" in x, semester_plan_widget_prompts.non_modify_improved_by_gpt | llm | StrOutputParser()),
+        #         semester_plan_widget_prompts.cannot_classified_prompt | llm | StrOutputParser()
+        #     )
+        # if data["widget"]["type"] == 2:  # Note
+        #     branches = RunnableBranch(
+        #         (lambda x: "modify" in x, note_widget_prompts.modify_improved_by_gpt | llm | StrOutputParser()),
+        #         (lambda x: "non-modify" in x, note_widget_prompts.non_modify_improved_by_gpt | llm | StrOutputParser()),
+        #         note_widget_prompts.cannot_classified_prompt | llm | StrOutputParser()
+        #     )
+        # if data["widget"]["type"] == 3:  # Schedule
+        #     branches = RunnableBranch(
+        #         (lambda x: "modify" in x, schedule_widget_prompts.modify_improved_by_gpt | llm | StrOutputParser()),
+        #         (lambda x: "non-modify" in x, schedule_widget_prompts.non_modify_improved_by_gpt | llm | StrOutputParser()),
+        #         schedule_widget_prompts.cannot_classified_prompt | llm | StrOutputParser()
+        #     )
 
 
-        # pipeline of determining widget type, then determining modify/non-modify, then creating the instruction prompt
-        instruction = classification_template | llm | StrOutputParser() | branches
+        # # pipeline of determining widget type, then determining modify/non-modify, then creating the instruction prompt
+        # instruction = classification_template | llm | StrOutputParser() | branches
 
-    prompt = promptHandler.get_prompt(instruction)
+    prompt = promptHandler.get_prompt("")
     prompt_template = promptHandler.get_template()
 
     # Chain together components (LLM, prompt, RAG retriever)
