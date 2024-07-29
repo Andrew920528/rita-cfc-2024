@@ -6,6 +6,19 @@ from langchain.schema import HumanMessage, AIMessage
 from langchain_core.pydantic_v1 import BaseModel, Field, validator
 from langchain_core.output_parsers import JsonOutputParser
 from config.llm_param import MEMORY_CUTOFF
+from utils.widget_prompts import WidgetPrompts
+from enum import Enum
+import json
+from click import prompt
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import MessagesPlaceholder
+from langchain.schema import HumanMessage, AIMessage
+from utils.widget_prompts import WidgetPrompts
+from langchain.schema.runnable import RunnableBranch
+from langchain.schema.output_parser import StrOutputParser
+
+# Initialize widget prompts
+widget_prompts = WidgetPrompts()
 
 class RitaPromptHandler:
     """Defines the prompt and template for Rita
@@ -37,9 +50,10 @@ class RitaPromptHandler:
             }
         user_prompt (str): user prompt
     """
-    def __init__(self, data, user_prompt):
+    def __init__(self, data, user_prompt, llm):
         self.data = data
         self.user_prompt = user_prompt
+        self.llm = llm
 
     def get_template(self):
         SYSTEM_INTRO = (
@@ -86,8 +100,8 @@ class RitaPromptHandler:
         # sure if there are better practices, or will there be drawbacks with this approach.
         return prompt_template
 
-    def get_prompt(self, extra_instruction):
-        # extra_instruction = self._get_instructions()
+    def get_prompt(self):
+        extra_instruction = self._get_instructions()
         chat_history = self._format_chat_history()
         
         return {
@@ -108,7 +122,29 @@ class RitaPromptHandler:
         # TODO[Edison]: Look into few-shot prompting formatting with langchain instead of hard coding them
         # TODO[Edison]: You should be able to identify what instruction to use with self.data.widget.type and self._identify_intent()
 
-        instruction = ""
+
+        if self.data["widget"]["type"] == -1:
+            # user is currently not using widget functionalities
+            # in "instruction", add relevant info on Rita's functionalities?
+            instruction = """
+            You are a helpful AI assistant within an app that assist a teacher in course planning.
+            Your name is Rita.
+            """
+        else:
+            # user is currently using widget functionalities
+            widget_type = self.data["widget"]["type"]
+            llm = self.llm
+
+            branches = RunnableBranch(
+                (lambda x: "modify" in x, widget_prompts.getWidgetPrompt(widget_type, can_classified=True, to_modify=True) | llm | StrOutputParser()),
+                (lambda x: "non-modify" in x, widget_prompts.getWidgetPrompt(widget_type, can_classified=True, to_modify=False) | llm | StrOutputParser()),
+                # If cannot be classified, go to fall-through
+                widget_prompts.getWidgetPrompt(widget_type, can_classified=False, to_modify=True) | llm | StrOutputParser()
+            )
+
+            # pipeline of determining widget type, then determining modify/non-modify, then creating the instruction prompt
+            instruction = widget_prompts.getClassificationTemplate() | llm | StrOutputParser() | branches
+
         return instruction
 
     def _format_chat_history(self):
