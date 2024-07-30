@@ -7,14 +7,13 @@ from langchain_core.pydantic_v1 import BaseModel, Field, validator
 from langchain_core.output_parsers import JsonOutputParser
 from config.llm_param import MEMORY_CUTOFF
 from utils.util import format_chat_history
-from utils.widget_prompts import Intents, WidgetPrompts
-from enum import Enum
+from utils.widget_prompts.WidgetPromptSelector import Intents, WidgetPromptSelector
 import json
 from click import prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts import MessagesPlaceholder
 from langchain.schema import HumanMessage, AIMessage
-from utils.widget_prompts import WidgetPrompts
+from utils.widget_prompts.WidgetPromptSelector import WidgetPromptSelector
 from langchain.schema.runnable import RunnableBranch
 from langchain.schema.output_parser import StrOutputParser
 
@@ -66,28 +65,12 @@ class RitaPromptHandler:
             "If the input is irrelevant, suggest ways that you can help to plan a lesson. "
             "Answer the question with concise sentences."  # decrease unnecessary token
         )
-        FORMAT_INSTRUCTION = (
-            """
-            Your answer will contain two parts. 
-            The first part is the string response to the user.
-            The second part is formatted text will directly changes the frontend widgets.
-            Widgets are refered to a tool the user has access to for course planning.
-            You will be given a widget_id with id {widget_id}. The widget is formatted as 
-            {widget_content}. You are expected to modify this content based on the user's question.
-            You should format your response by surrounding widget_id and widget_content within tags.
-            The tags are <wid> and <wCont>.
-            For example, you should respond like this:
-            {{response to the user}} <wid> {{widget id}} </wid> <wCont> {{widget content}} </wCont>
-            where things inside <wid> tag is the given widget id and <wCont> is a stringified json object
-            that has the same format as the given widget content. The tags should be have a space before and after, e.g ' <wid> '.
-            """  # TODO: the second part should be completely ommited if the prompt is irrelevant. Perhaps we need a second agent.
-        )
+
         messages = [
             ("system", SYSTEM_INTRO),
             MessagesPlaceholder(variable_name="chat_history"),
             ("user", "{input}"),
-            ("system", SYSTEM_BASE_INSTRUCTION +
-             FORMAT_INSTRUCTION + "{extra_instruction}"),
+            ("system", SYSTEM_BASE_INSTRUCTION + "{extra_instruction}"),
             ("ai", ""),
         ]
         prompt_template = ChatPromptTemplate.from_messages(messages)
@@ -102,7 +85,7 @@ class RitaPromptHandler:
         return prompt_template
 
     def get_prompt(self):
-        extra_instruction = self._get_instructions()
+        extra_instruction = ""  # self._get_extra_instructions()
         chat_history = format_chat_history(self.data["chat_history"])
 
         return {
@@ -114,19 +97,38 @@ class RitaPromptHandler:
             "widget_content": json.dumps(self.data["widget"]["content"]),
         }
 
-    def _get_instructions(self):
+    def _get_extra_instructions(self):
+        FORMAT_INSTRUCTION = (
+            """
+            Your answer will contain two parts. 
+            The first part is the string response to the user.
+            The second part is formatted text will directly changes the frontend widgets.
+            Widgets are refered to a tool the user has access to for course planning.
+            You will be given a widget_id with id {widget_id}. The widget is formatted as 
+            {widget_content}. You are expected to modify this content based on the user's question.
+            You should format your response by surrounding widget_id and widget_content within tags.
+            The tags are <wid> and <wCont>.
+            For example, you should respond like this:
+            {{response to the user}} <wid> {{widget id}} </wid> <wCont> {{widget content}} </wCont>
+            where things inside <wid> tag is the given widget id and <wCont> is a stringified json object
+            that has the same format as the given widget content. The tags should be have a space before and after, e.g ' <wid> '.
+            """  # TODO: This should be in widget_prompts
+        )
         intent = self.intent
         type = self.data["widget"]["type"]
 
         if intent == Intents.NONE:
             return ""
-
-        # Initialize widget prompts
-        instruction = WidgetPrompts.getWidgetPrompt(
-            widget_type=type, intent=intent)
-        return instruction
+        if intent == Intents.MODIFY:
+            instruction = FORMAT_INSTRUCTION
+            instruction += WidgetPromptSelector.getWidgetPrompt(
+                widget_type=type, intent=intent)
+            return instruction
+        if intent == Intents.ASK:  # Low key this is not needed
+            return ""
 
     # debugging tools
+
     def print_prompt(self):
         # For debugging. Prints out the actual prompt given to the llm.
         # This gives good approximation of token usage: https://token-counter.app/meta/llama-3

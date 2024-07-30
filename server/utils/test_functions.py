@@ -1,7 +1,8 @@
-from widget_prompts import WidgetPrompts
+from server.utils.widget_prompts.WidgetPromptSelector import WidgetPromptSelector
 from langchain.schema.output_parser import StrOutputParser
 
-widget_prompts = WidgetPrompts()
+widget_prompts = WidgetPromptSelector()
+
 
 class TestFunctions:
     def __init__(self, llm):
