@@ -40,7 +40,7 @@ class RitaStreamHandler:
         for chunk in in_stream:
             if "answer" not in chunk:
                 #debug
-                print (chunk)
+                # print (chunk)
                 continue
             buffer += chunk["answer"]
             wordList = self.split_chunk(buffer, 10)

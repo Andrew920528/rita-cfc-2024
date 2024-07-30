@@ -20,6 +20,7 @@ from langchain_ibm import WatsonxLLM
 from dotenv import load_dotenv
 import os
 from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY
+from utils.IntentClassifier import IntentClassifier
 from utils.RitaPromptHandler import RitaPromptHandler
 from utils.RitaStreamHandler import RitaStreamHandler
 from utils.util import logTime
@@ -81,6 +82,13 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     start_time = time.time()
     now_formatted = datetime.fromtimestamp(start_time).strftime('%H:%M:%S.%f')[:-3]
     print(f"Start llm process at time = {now_formatted}")
+    
+    
+    # classify intent
+    intent_classifier = IntentClassifier(llm)
+    intent = intent_classifier.get_intent(user_prompt)
+    print(intent)
+    
     # Generate prompt based on retrieved data and user input
     promptHandler = RitaPromptHandler(data, user_prompt, llm)
 
@@ -92,7 +100,7 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     document_chain = create_stuff_documents_chain(llm = llm, prompt = prompt_template)
     retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain = document_chain)
     docs = retriever.invoke(user_prompt)
-    print(docs)
+    # print(docs)
     logTime(start_time, "Retrieved with user_prompt")
     # Call the LLM and stream its response
 

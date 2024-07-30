@@ -101,16 +101,12 @@ class RitaPromptHandler:
         return prompt_template
 
     def get_prompt(self):
-        extra_instruction = self._get_instructions()
+        extra_instruction = "" # self._get_instructions()
         chat_history = self._format_chat_history()
         
         return {
             "context": [],
-            "chat_history": chat_history, # chat_history is a list for now, can use FireStore later
-            # NOTE: We are explicitly passing in chat_history here,
-            # instead of relying on langchain's ChatMessageHistory (an automated history manager)
-            # because we already have state management implemented, and complicating
-            # code with langchain dependencies just doesn't seem worth.
+            "chat_history": chat_history,
             "input": self.user_prompt,
             "extra_instruction": extra_instruction,
             "widget_id": self.data["widget"]["id"],
@@ -118,11 +114,6 @@ class RitaPromptHandler:
         }
 
     def _get_instructions(self):
-        # TODO[Edison]: The original prompt where you specify output format should go here
-        # TODO[Edison]: Look into few-shot prompting formatting with langchain instead of hard coding them
-        # TODO[Edison]: You should be able to identify what instruction to use with self.data.widget.type and self._identify_intent()
-
-
         if self.data["widget"]["type"] == -1:
             # user is currently not using widget functionalities
             # in "instruction", add relevant info on Rita's functionalities?
@@ -165,8 +156,7 @@ class RitaPromptHandler:
     # debugging tools
     def print_prompt(self):
         # For debugging. Prints out the actual prompt given to the llm.
-        # can't seem to find a good way to count token in code, 
-        # but this gives good approximation: https://token-counter.app/meta/llama-3
+        # This gives good approximation of token usage: https://token-counter.app/meta/llama-3
         formatted = self.get_template().format(**self.get_prompt())
         print("Formatted prompt:")
         print(formatted)
