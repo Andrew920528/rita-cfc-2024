@@ -5,13 +5,15 @@ from langchain_core.output_parsers import PydanticOutputParser
 from typing import Literal
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts import MessagesPlaceholder
-from langchain.schema import SystemMessage
+from langchain.schema import AIMessage, HumanMessage
 from langchain_core.prompts.chat import SystemMessagePromptTemplate
+from config.llm_param import MEMORY_CUTOFF
+from utils.util import format_chat_history
 class IntentClassifier:
     def __init__(self, llm) -> None:
         self.llm = llm # llm used for intent classification
         
-    def get_intent(self, user_prompt):
+    def get_intent(self, user_prompt, data):
         CLASSIFY_INSTRUCTION = (
             "You are a classification assistant for determining user's intent. "
             "From the above conversation, determine the intent of the user as either 'Ask', 'Modify', or 'None'. "
@@ -39,8 +41,10 @@ class IntentClassifier:
         chat_prompt = ChatPromptTemplate.from_messages(messages)
         
         chain =  chat_prompt | self.llm | self.get_parser()
+        
+        chat_history = format_chat_history(data["chat_history"])
         try:
-            output = chain.invoke({"user_input": user_prompt, "chat_history": []})
+            output = chain.invoke({"user_input": user_prompt, "chat_history": chat_history})
             intent = output.intent
         except Exception as e:
             print(e)
@@ -54,3 +58,5 @@ class IntentClassifier:
             
         parser = PydanticOutputParser(pydantic_object=Intent)
         return parser
+    
+    

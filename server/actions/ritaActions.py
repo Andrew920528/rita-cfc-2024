@@ -83,14 +83,13 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     now_formatted = datetime.fromtimestamp(start_time).strftime('%H:%M:%S.%f')[:-3]
     print(f"Start llm process at time = {now_formatted}")
     
-    
     # classify intent
     intent_classifier = IntentClassifier(llm)
-    intent = intent_classifier.get_intent(user_prompt)
-    print(intent)
+    intent = intent_classifier.get_intent(user_prompt, data)
+    print("Intent:", intent)
     
     # Generate prompt based on retrieved data and user input
-    promptHandler = RitaPromptHandler(data, user_prompt, llm)
+    promptHandler = RitaPromptHandler(data, user_prompt, intent)
 
     # prompt = promptHandler.get_prompt("")
     prompt = promptHandler.get_prompt()
@@ -101,9 +100,9 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain = document_chain)
     docs = retriever.invoke(user_prompt)
     # print(docs)
+    
     logTime(start_time, "Retrieved with user_prompt")
     # Call the LLM and stream its response
-
     rita_reply = retrieval_chain.stream(prompt)
     logTime(start_time, "Retrieved with pipeline")
     # Parse the streamed response

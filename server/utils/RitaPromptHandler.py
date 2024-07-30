@@ -6,6 +6,7 @@ from langchain.schema import HumanMessage, AIMessage
 from langchain_core.pydantic_v1 import BaseModel, Field, validator
 from langchain_core.output_parsers import JsonOutputParser
 from config.llm_param import MEMORY_CUTOFF
+from utils.util import format_chat_history
 from utils.widget_prompts import WidgetPrompts
 from enum import Enum
 import json
@@ -50,16 +51,16 @@ class RitaPromptHandler:
             }
         user_prompt (str): user prompt
     """
-    def __init__(self, data, user_prompt, llm):
+    def __init__(self, data, user_prompt, intent):
         self.data = data
         self.user_prompt = user_prompt
-        self.llm = llm
+        self.intent = intent
 
     def get_template(self):
         SYSTEM_INTRO = (
         "You are a helpful AI teaching assistant chatbot. Your name is Rita. "
         "You are suppose to help the user, who is a teacher, to plan their courses. "
-        ) #TODO[Edison]: can add more description about what rita is capable of
+        ) 
         SYSTEM_BASE_INSTRUCTION = (
         "Answer the user's questions based on the below context: {context}. "
         "The context is given in markdown format. It is a teacher's guide, which covers course content and methodologies."
@@ -102,7 +103,7 @@ class RitaPromptHandler:
 
     def get_prompt(self):
         extra_instruction = "" # self._get_instructions()
-        chat_history = self._format_chat_history()
+        chat_history = format_chat_history(self.data["chat_history"])
         
         return {
             "context": [],
@@ -115,43 +116,13 @@ class RitaPromptHandler:
 
     def _get_instructions(self):
         if self.data["widget"]["type"] == -1:
-            # user is currently not using widget functionalities
-            # in "instruction", add relevant info on Rita's functionalities?
-            instruction = """
-            You are a helpful AI assistant within an app that assist a teacher in course planning.
-            Your name is Rita.
-            """
-        else:
-            # user is currently using widget functionalities
-            widget_type = self.data["widget"]["type"]
-            llm = self.llm
-
-            branches = RunnableBranch(
-                (lambda x: "modify" in x, widget_prompts.getWidgetPrompt(widget_type, can_classified=True, to_modify=True) | llm | StrOutputParser()),
-                (lambda x: "non-modify" in x, widget_prompts.getWidgetPrompt(widget_type, can_classified=True, to_modify=False) | llm | StrOutputParser()),
-                # If cannot be classified, go to fall-through
-                widget_prompts.getWidgetPrompt(widget_type, can_classified=False, to_modify=True) | llm | StrOutputParser()
-            )
-
-            # pipeline of determining widget type, then determining modify/non-modify, then creating the instruction prompt
-            instruction = widget_prompts.getClassificationTemplate() | llm | StrOutputParser() | branches
-
+            return "" # no widget selected, no extra instruction needed
+        
+        instruction = widget_prompts.getWidgetPrompt(self.intent, self.data["widget"]["type"])
         return instruction
 
-    def _format_chat_history(self):
-        chat_history_raw = self.data["chat_history"]
-        chat_history = []
-        cutoff = MEMORY_CUTOFF
-        for message in chat_history_raw[-cutoff:]:
-            if message["sender"] == "user":
-                chat_history.append(HumanMessage(content=message["text"]))
-            elif message["sender"] == "ai":
-                chat_history.append(AIMessage(content=message["text"]))
-        
-        return chat_history
     
-    def _identify_intent(self):
-        return Intent.MODIFY
+    
     
     # debugging tools
     def print_prompt(self):
@@ -160,8 +131,3 @@ class RitaPromptHandler:
         formatted = self.get_template().format(**self.get_prompt())
         print("Formatted prompt:")
         print(formatted)
-
-    
-class Intent(Enum): # although this is just T/F, we might have more intents as we scale
-    ASK = 0
-    MODIFY = 1
