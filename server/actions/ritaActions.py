@@ -32,18 +32,20 @@ from langchain_cohere import CohereEmbeddings
 def initRetriever():
     # Get the absolute path of the embedding path with system independent path selectors
     curr_dir = os.path.dirname(os.path.abspath(__file__))
-    embedding_path = os.path.join(curr_dir, '..', '..', 'ai', 'rag', 'vector-stores', 'test_vector_store')
-   
+    embedding_path = os.path.join(
+        curr_dir, '..', '..', 'ai', 'rag', 'vector-stores', 'test_vector_store')
+
     # embedding_model = HuggingFaceEmbeddings(
     #     model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     # )
     COHERE_KEY = os.getenv("COHERE_KEY")
-    embedding_model = CohereEmbeddings(cohere_api_key=COHERE_KEY, model="embed-multilingual-v3.0")
+    embedding_model = CohereEmbeddings(
+        cohere_api_key=COHERE_KEY, model="embed-multilingual-v3.0")
     # Load FAISS store from disk
     faiss_store = FAISS.load_local(
         embedding_path, embedding_model, allow_dangerous_deserialization=True
     )
-    
+
     # Create a retriever chain
     retriever = faiss_store.as_retriever()
     return retriever
@@ -62,7 +64,7 @@ def initLLM():
         GenParams.MAX_NEW_TOKENS: MAX_NEW_TOKENS,
         GenParams.DECODING_METHOD: DecodingMethods.GREEDY,
         GenParams.REPETITION_PENALTY: REPETITION_PENALTY,
-    }   
+    }
 
     logTime(start_time, "loaded IBM watsonX credentials")
 
@@ -80,14 +82,15 @@ def initLLM():
 
 def llm_stream_response(data, user_prompt, retriever, llm):
     start_time = time.time()
-    now_formatted = datetime.fromtimestamp(start_time).strftime('%H:%M:%S.%f')[:-3]
+    now_formatted = datetime.fromtimestamp(
+        start_time).strftime('%H:%M:%S.%f')[:-3]
     print(f"Start llm process at time = {now_formatted}")
-    
+
     # classify intent
     intent_classifier = IntentClassifier(llm)
     intent = intent_classifier.get_intent(user_prompt, data)
     print("Intent:", intent)
-    
+
     # Generate prompt based on retrieved data and user input
     promptHandler = RitaPromptHandler(data, user_prompt, intent)
 
@@ -96,17 +99,21 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     prompt_template = promptHandler.get_template()
 
     # Chain together components (LLM, prompt, RAG retriever)
-    document_chain = create_stuff_documents_chain(llm = llm, prompt = prompt_template)
-    retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain = document_chain)
+    document_chain = create_stuff_documents_chain(
+        llm=llm, prompt=prompt_template)
+    retrieval_chain = create_retrieval_chain(
+        retriever=retriever, combine_docs_chain=document_chain)
     docs = retriever.invoke(user_prompt)
     # print(docs)
-    
+
     logTime(start_time, "Retrieved with user_prompt")
     # Call the LLM and stream its response
     rita_reply = retrieval_chain.stream(prompt)
     logTime(start_time, "Retrieved with pipeline")
     # Parse the streamed response
     stream_handler = RitaStreamHandler()
-    threading.Thread(target=stream_handler.output_buffer, args=(rita_reply,)).start()
-    response = Response(stream_handler.yield_stream(), content_type="text/plain")
+    threading.Thread(target=stream_handler.output_buffer,
+                     args=(rita_reply,)).start()
+    response = Response(stream_handler.yield_stream(),
+                        content_type="text/plain")
     return response

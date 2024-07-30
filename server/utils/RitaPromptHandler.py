@@ -7,7 +7,7 @@ from langchain_core.pydantic_v1 import BaseModel, Field, validator
 from langchain_core.output_parsers import JsonOutputParser
 from config.llm_param import MEMORY_CUTOFF
 from utils.util import format_chat_history
-from utils.widget_prompts import WidgetPrompts
+from utils.widget_prompts import Intents, WidgetPrompts
 from enum import Enum
 import json
 from click import prompt
@@ -18,8 +18,6 @@ from utils.widget_prompts import WidgetPrompts
 from langchain.schema.runnable import RunnableBranch
 from langchain.schema.output_parser import StrOutputParser
 
-# Initialize widget prompts
-widget_prompts = WidgetPrompts()
 
 class RitaPromptHandler:
     """Defines the prompt and template for Rita
@@ -51,6 +49,7 @@ class RitaPromptHandler:
             }
         user_prompt (str): user prompt
     """
+
     def __init__(self, data, user_prompt, intent):
         self.data = data
         self.user_prompt = user_prompt
@@ -58,14 +57,14 @@ class RitaPromptHandler:
 
     def get_template(self):
         SYSTEM_INTRO = (
-        "You are a helpful AI teaching assistant chatbot. Your name is Rita. "
-        "You are suppose to help the user, who is a teacher, to plan their courses. "
-        ) 
+            "You are a helpful AI teaching assistant chatbot. Your name is Rita. "
+            "You are suppose to help the user, who is a teacher, to plan their courses. "
+        )
         SYSTEM_BASE_INSTRUCTION = (
-        "Answer the user's questions based on the below context: {context}. "
-        "The context is given in markdown format. It is a teacher's guide, which covers course content and methodologies."
-        "If the input is irrelevant, suggest ways that you can help to plan a lesson. "
-        "Answer the question with concise sentences." # decrease unnecessary token
+            "Answer the user's questions based on the below context: {context}. "
+            "The context is given in markdown format. It is a teacher's guide, which covers course content and methodologies."
+            "If the input is irrelevant, suggest ways that you can help to plan a lesson. "
+            "Answer the question with concise sentences."  # decrease unnecessary token
         )
         FORMAT_INSTRUCTION = (
             """
@@ -81,19 +80,20 @@ class RitaPromptHandler:
             {{response to the user}} <wid> {{widget id}} </wid> <wCont> {{widget content}} </wCont>
             where things inside <wid> tag is the given widget id and <wCont> is a stringified json object
             that has the same format as the given widget content. The tags should be have a space before and after, e.g ' <wid> '.
-            """ # TODO: the second part should be completely ommited if the prompt is irrelevant. Perhaps we need a second agent.
+            """  # TODO: the second part should be completely ommited if the prompt is irrelevant. Perhaps we need a second agent.
         )
         messages = [
             ("system", SYSTEM_INTRO),
             MessagesPlaceholder(variable_name="chat_history"),
             ("user", "{input}"),
-            ("system", SYSTEM_BASE_INSTRUCTION + FORMAT_INSTRUCTION + "{extra_instruction}"),
-            ("ai", ""), 
+            ("system", SYSTEM_BASE_INSTRUCTION +
+             FORMAT_INSTRUCTION + "{extra_instruction}"),
+            ("ai", ""),
         ]
         prompt_template = ChatPromptTemplate.from_messages(messages)
-        
+
         # NOTE: It is intersteing how adding an empty ai prompt in the end help generating the prompt significantly be
-        # When it is not present, llama tries to auto complete the user's question, 
+        # When it is not present, llama tries to auto complete the user's question,
         # or just repeat what the system says.
         # This is just my theory, but adding the ai placeholder in the end enforces conversation order,
         # which let llama knows it is suppose to speak next as an assistant.
@@ -102,9 +102,9 @@ class RitaPromptHandler:
         return prompt_template
 
     def get_prompt(self):
-        extra_instruction = "" # self._get_instructions()
+        extra_instruction = self._get_instructions()
         chat_history = format_chat_history(self.data["chat_history"])
-        
+
         return {
             "context": [],
             "chat_history": chat_history,
@@ -115,15 +115,17 @@ class RitaPromptHandler:
         }
 
     def _get_instructions(self):
-        if self.data["widget"]["type"] == -1:
-            return "" # no widget selected, no extra instruction needed
-        
-        instruction = widget_prompts.getWidgetPrompt(self.intent, self.data["widget"]["type"])
+        intent = self.intent
+        type = self.data["widget"]["type"]
+
+        if intent == Intents.NONE:
+            return ""
+
+        # Initialize widget prompts
+        instruction = WidgetPrompts.getWidgetPrompt(
+            widget_type=type, intent=intent)
         return instruction
 
-    
-    
-    
     # debugging tools
     def print_prompt(self):
         # For debugging. Prints out the actual prompt given to the llm.
