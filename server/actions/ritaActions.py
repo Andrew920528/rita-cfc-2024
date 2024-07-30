@@ -36,15 +36,15 @@ def initRetriever():
     # embedding_model = HuggingFaceEmbeddings(
     #     model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     # )
-    embedding_model = CohereEmbeddings(cohere_api_key="dBKmEAHnk6iFoBI26VsZGYR56lJ638CmzZcOUJeg", model="embed-multilingual-v3.0")
+    COHERE_KEY = os.getenv("COHERE_KEY")
+    embedding_model = CohereEmbeddings(cohere_api_key=COHERE_KEY, model="embed-multilingual-v3.0")
     # Load FAISS store from disk
     faiss_store = FAISS.load_local(
         embedding_path, embedding_model, allow_dangerous_deserialization=True
     )
     
-
     # Create a retriever chain
-    retriever = faiss_store.as_retriever()  # can specify parameters but default is fine
+    retriever = faiss_store.as_retriever()
     return retriever
 
 
