@@ -98,6 +98,8 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     prompt = promptHandler.get_prompt()
     prompt_template = promptHandler.get_template()
 
+    promptHandler.print_prompt()
+
     # Chain together components (LLM, prompt, RAG retriever)
     document_chain = create_stuff_documents_chain(
         llm=llm, prompt=prompt_template)

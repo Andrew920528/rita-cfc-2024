@@ -16,6 +16,8 @@ from langchain.schema import HumanMessage, AIMessage
 from utils.widget_prompts.WidgetPromptSelector import WidgetPromptSelector
 from langchain.schema.runnable import RunnableBranch
 from langchain.schema.output_parser import StrOutputParser
+from langchain_core.prompts.prompt import PromptTemplate
+from langchain_core.prompts.chat import SystemMessagePromptTemplate
 
 
 class RitaPromptHandler:
@@ -71,6 +73,7 @@ class RitaPromptHandler:
             MessagesPlaceholder(variable_name="chat_history"),
             ("user", "{input}"),
             ("system", SYSTEM_BASE_INSTRUCTION + "{extra_instruction}"),
+            # SystemMessagePromptTemplate(prompt=self._get_extra_instructions()),
             ("ai", ""),
         ]
         prompt_template = ChatPromptTemplate.from_messages(messages)
@@ -98,6 +101,14 @@ class RitaPromptHandler:
         }
 
     def _get_extra_instructions(self):
+        intent = self.intent
+        type = self.data["widget"]["type"]
+
+        # if intent == Intents.NONE:
+        #     return ""
+        # if intent == Intents.ASK:  # Low key this is not needed
+        #     return ""
+
         FORMAT_INSTRUCTION = (
             """
             Your answer will contain two parts. 
@@ -114,18 +125,36 @@ class RitaPromptHandler:
             that has the same format as the given widget content. The tags should be have a space before and after, e.g ' <wid> '.
             """  # TODO: This should be in widget_prompts
         )
-        intent = self.intent
-        type = self.data["widget"]["type"]
 
-        if intent == Intents.NONE:
-            return ""
-        if intent == Intents.MODIFY:
-            instruction = FORMAT_INSTRUCTION
-            instruction += WidgetPromptSelector.getWidgetPrompt(
-                widget_type=type, intent=intent)
-            return instruction
-        if intent == Intents.ASK:  # Low key this is not needed
-            return ""
+        FORMAT_INSTRUCTION = (
+            "{format_instructions}"
+        )
+
+        class RitaOutputFormat(BaseModel):
+            content: str = Field(
+                "Response to the user"
+            )
+            widget_id: str = Field(description="the widget id to modify")
+            widget_content: dict = Field(
+                description="the modified widget content")
+        parser = JsonOutputParser(pydantic_object=RitaOutputFormat)
+        format_instruction = parser.get_format_instructions()
+        return format_instruction
+        # print(format_instruction)
+        # output_template = PromptTemplate(
+        #     template=FORMAT_INSTRUCTION,
+        #     partial_variables={"format_instructions": format_instruction},
+        # )
+
+        # return output_template
+
+        # SystemMessagePromptTemplate(prompt=output_template),
+
+        # if intent == Intents.MODIFY:
+        #     instruction = FORMAT_INSTRUCTION
+        #     # instruction += WidgetPromptSelector.getWidgetPrompt(
+        #     #     widget_type=type, intent=intent)
+        #     return instruction
 
     # debugging tools
 
