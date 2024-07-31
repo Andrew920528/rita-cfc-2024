@@ -1,31 +1,22 @@
-# pip install langchain-huggingface
-# pip install ibm-watsonx-ai
-# pip install langchain-ibm
-# pip install langchain
-
-from datetime import datetime
 import queue
+from flask_sse import sse
+from datetime import datetime
 import threading
 from flask import Response
 import time
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from ibm_watsonx_ai import Credentials
 from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
 from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes, DecodingMethods
-from langchain.schema.runnable import RunnableBranch
-from langchain.schema.output_parser import StrOutputParser
-from langchain.prompts import ChatPromptTemplate
 from langchain_ibm import WatsonxLLM
 from dotenv import load_dotenv
 import os
 from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY
-from utils.IntentClassifier import IntentClassifier
-from utils.RitaPromptHandler import RitaPromptHandler
+from agents.Rita import Rita
+from agents.IntentClassifier import IntentClassifier
+from agents.WidgetModifier import WidgetModifier
 from utils.RitaStreamHandler import RitaStreamHandler
 from utils.util import logTime
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.chains.retrieval import create_retrieval_chain
 from langchain_cohere import CohereEmbeddings
 
 
@@ -35,10 +26,10 @@ def initRetriever():
     embedding_path = os.path.join(
         curr_dir, '..', '..', 'ai', 'rag', 'vector-stores', 'test_vector_store')
 
-    # embedding_model = HuggingFaceEmbeddings(
-    #     model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-    # )
+    env_path = os.path.join(os.path.dirname(curr_dir), '.env')
+    load_dotenv(dotenv_path=env_path)
     COHERE_KEY = os.getenv("COHERE_KEY")
+
     embedding_model = CohereEmbeddings(
         cohere_api_key=COHERE_KEY, model="embed-multilingual-v3.0")
     # Load FAISS store from disk
@@ -80,42 +71,74 @@ def initLLM():
     return llm
 
 
-def llm_stream_response(data, user_prompt, retriever, llm):
-    start_time = time.time()
-    now_formatted = datetime.fromtimestamp(
-        start_time).strftime('%H:%M:%S.%f')[:-3]
-    print(f"Start llm process at time = {now_formatted}")
+def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
+    """
+    https://www.figma.com/design/xiYG1qIDmu9S1KSapuJQb9/Rita-%7C-CFC-2024?node-id=350-1636&t=BZfXxoQSRUG081uy-0
+    data (dict): context data, in the following format:
+        {
+            widget: {
+                id: string
+                type: int
+                content: any
+            }
+            classroom: {
+                name: string
+                subject: string
+                publisher: string
+                grade: string
+                plan: int
+                credits: int
+            }
+            lecture: {
+                name: string
+                type: string
+            }
+            chat_history: List({
+                sender: string
+                text: string
+            }
+        }
+    """
+    if debug:
+        start_time = time.time()
+        now_formatted = datetime.fromtimestamp(
+            start_time).strftime('%H:%M:%S.%f')[:-3]
+        print(f"Start llm process at time = {now_formatted}")
+    response_queue = queue.Queue()
+    stream_handler = RitaStreamHandler(response_queue)
+    # Agent 1: Response to the user
+    ritaAgent = Rita(llm=llm, retriever=retriever)
+    rita_reply = ritaAgent.stream(user_prompt, data)
+    if debug:
+        logTime(start_time, "First token entered")
 
-    # classify intent
+    t = threading.Thread(target=stream_handler.output_buffer,
+                         args=(rita_reply,))
+    t.start()
+
+    def generate():
+        while True:
+            # Wait for the complete response to be put in the queue
+            complete_response = response_queue.get()
+            # Process with Mr. W
+            print(complete_response)
+            result = "YEAH"
+            yield f"data: {result}\n\n"
+
+    return Response(generate(), content_type='text/event-stream')
+
+    # Agent 2: Determine user's intent
     intent_classifier = IntentClassifier(llm)
-    intent = intent_classifier.get_intent(user_prompt, data)
-    print("Intent:", intent)
+    intent = intent_classifier.invoke(user_prompt, data)
+    if debug:
+        logTime(start_time, f"Intent: {intent}")
 
-    # Generate prompt based on retrieved data and user input
-    promptHandler = RitaPromptHandler(data, user_prompt, intent)
+    # Agent 3: Modify widget if needed
+    widget_modifier = WidgetModifier(llm)
+    print(rita_reply)
+    modified_widget = widget_modifier.invoke(
+        user_prompt, data, intent, rita_reply)
 
-    # prompt = promptHandler.get_prompt("")
-    prompt = promptHandler.get_prompt()
-    prompt_template = promptHandler.get_template()
-
-    promptHandler.print_prompt()
-
-    # Chain together components (LLM, prompt, RAG retriever)
-    document_chain = create_stuff_documents_chain(
-        llm=llm, prompt=prompt_template)
-    retrieval_chain = create_retrieval_chain(
-        retriever=retriever, combine_docs_chain=document_chain)
-    docs = retriever.invoke(user_prompt)
-    # print(docs)
-
-    logTime(start_time, "Retrieved with user_prompt")
-    # Call the LLM and stream its response
-    rita_reply = retrieval_chain.stream(prompt)
-    logTime(start_time, "Retrieved with pipeline")
-    # Parse the streamed response
-    stream_handler = RitaStreamHandler()
-    threading.Thread(target=stream_handler.output_buffer,
-                     args=(rita_reply,)).start()
     response = Response(stream_handler.yield_stream(),
                         content_type="text/plain")
     return response

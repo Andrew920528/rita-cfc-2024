@@ -9,11 +9,29 @@ from langchain.schema import AIMessage, HumanMessage
 from langchain_core.prompts.chat import SystemMessagePromptTemplate
 from config.llm_param import MEMORY_CUTOFF
 from utils.util import format_chat_history
+
+
 class IntentClassifier:
     def __init__(self, llm) -> None:
-        self.llm = llm # llm used for intent classification
-        
-    def get_intent(self, user_prompt, data):
+        self.llm = llm  # llm used for intent classification
+
+    def invoke(self, user_prompt, data):
+        chain = self._get_runnable()
+        prompt = self._get_prompt(user_prompt, data)
+        try:
+            output = chain.invoke(prompt)
+            intent = output.intent
+        except Exception as e:
+            print(e)
+            intent = "None"
+        return intent
+
+    def _get_runnable(self):
+        chat_prompt = self._get_tempate()
+        chain = chat_prompt | self.llm | self._get_parser()
+        return chain
+
+    def _get_tempate(self):
         CLASSIFY_INSTRUCTION = (
             "You are a classification assistant for determining user's intent. "
             "From the above conversation, determine the intent of the user as either 'Ask', 'Modify', or 'None'. "
@@ -25,9 +43,9 @@ class IntentClassifier:
             "add, delete, insert, alter, change, modify, update, edit, remove, replace, adjust, revise, amend, correct, fix, improve, enhance, refine, fill, complete"
             "{format_instructions}"
         )
-        
-        format_instruction = self.get_parser().get_format_instructions()
-        
+
+        format_instruction = self._get_parser().get_format_instructions()
+
         intent_classifier_template = PromptTemplate(
             template=CLASSIFY_INSTRUCTION,
             partial_variables={"format_instructions": format_instruction},
@@ -36,27 +54,19 @@ class IntentClassifier:
             MessagesPlaceholder(variable_name="chat_history"),
             ("user", "{user_input}"),
             SystemMessagePromptTemplate(prompt=intent_classifier_template),
-            ("ai", ""), 
+            ("ai", ""),
         ]
         chat_prompt = ChatPromptTemplate.from_messages(messages)
-        
-        chain =  chat_prompt | self.llm | self.get_parser()
-        
-        chat_history = format_chat_history(data["chat_history"])
-        try:
-            output = chain.invoke({"user_input": user_prompt, "chat_history": chat_history})
-            intent = output.intent
-        except Exception as e:
-            print(e)
-            intent = "None"
-        return intent
+        return chat_prompt
 
-    
-    def get_parser(self):
+    def _get_prompt(self, user_prompt, data):
+        chat_history = format_chat_history(data["chat_history"])
+        return {"user_input": user_prompt, "chat_history": chat_history}
+
+    def _get_parser(self):
         class Intent(BaseModel):
-            intent: Literal["Ask", "Modify", "None"] = Field(description="the user's intent")
-            
+            intent: Literal["Ask", "Modify", "None"] = Field(
+                description="the user's intent")
+
         parser = PydanticOutputParser(pydantic_object=Intent)
         return parser
-    
-    

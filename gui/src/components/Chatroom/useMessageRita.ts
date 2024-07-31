@@ -69,6 +69,21 @@ export const useMessageRita = () => {
     // Step 2: Send api request and handle chunk by chunk
     try {
       setWaitingForReply(true);
+
+      // const eventSource = new EventSource('http://127.0.0.1:5000/message-rita');
+
+      // eventSource.onmessage = (event) => {
+      //     console.log(event.data)
+      // };
+
+      // eventSource.onerror = (err) => {
+      //     console.error('EventSource failed:', err);
+      //     eventSource.close();
+      // };
+
+
+      // return
+
       let response = await messageRitaService(
         {...payload},
         abortControllerRef?.current?.signal

@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Union
 
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.schema import LLMResult
-
+from flask_sse import sse
 import re
 
 """ RitaStreamHandler is a custom parser that formats the output of an LLM.
@@ -25,10 +25,14 @@ Example usage:
     # the response is streamed as the async thread puts chunks into the queue
     response = Response(stream_handler.yield_stream(), content_type='text/plain')
 """
+
+
 class RitaStreamHandler:
     END_TOKEN = "[END]"
-    def __init__(self):
+
+    def __init__(self, complete_queue):
         self.out_stream = queue.Queue()
+        self.complete_queue = complete_queue
 
     def output_buffer(self, in_stream):
         """format the irredular chunks sent by the llm into tokens defined by the split_chunk function
@@ -37,21 +41,26 @@ class RitaStreamHandler:
             in_stream (Iterator): streamed output of a llm
         """
         buffer = ""
+        total = ""
         for chunk in in_stream:
             if "answer" not in chunk:
-                #debug
+                # debug
                 # print (chunk)
                 continue
+            total += chunk["answer"]
             buffer += chunk["answer"]
             wordList = self.split_chunk(buffer, 10)
             if len(wordList) > 1:
                 for i in range(len(wordList)-1):
-                    self.out_stream.put(wordList[i]) # Pass the token to the generator
+                    # Pass the token to the generator
+                    self.out_stream.put(wordList[i])
+                    # sse.publish({"message": wordList[i]}, type='message')
                 buffer = wordList[-1]
+
         self.out_stream.put(buffer)
         self.out_stream.put(RitaStreamHandler.END_TOKEN)
+        self.complete_queue.put(total)
 
-    
     def yield_stream(self):
         """yields the stream from the queue until it is emptied
 
@@ -63,10 +72,9 @@ class RitaStreamHandler:
             if result is None or result == RitaStreamHandler.END_TOKEN:
                 break
             yield result
-            
-    
+
     @staticmethod
-    def split_chunk(text: str, max_length : int):
+    def split_chunk(text: str, max_length: int):
         """Splits a string by space, (most) chinese characters, and break up strings longer than max_length
 
         Args:
@@ -77,15 +85,16 @@ class RitaStreamHandler:
             list
         """
         # split by space and (most) chinese characters
-        pattern =  r"(?<=[\s\u4e00-\u9fff])"
+        pattern = r"(?<=[\s\u4e00-\u9fff])"
         chunks = re.split(pattern, text)
-        
+
         final_chunks = []
         for segment in chunks:
-            
+
             if len(segment) > max_length:
                 # Split the segment into chunks of max_length
-                final_chunks.extend([segment[i:i + max_length] for i in range(0, len(segment), max_length)])
+                final_chunks.extend([segment[i:i + max_length]
+                                    for i in range(0, len(segment), max_length)])
             else:
                 final_chunks.append(segment)
         return final_chunks
