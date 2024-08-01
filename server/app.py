@@ -39,7 +39,7 @@ def message_rita():
     app.logger.info(f"Recieved request at time = {now_formatted}")
 
     prompt = request.json['prompt']
-    ################  NOTE: UNCOMMENT FOR PRODUCTION ###################
+    ################  NOTE: Comment out this section if want to test without db ###################
     # widget = request.json['widget']
     # chat_history = request.json['chatHistory']
     # lectureId = request.json['lectureId']
@@ -64,7 +64,7 @@ def message_rita():
     #     json.dump(watsonxRequest, f, ensure_ascii=False)
     # ==========================================================================
 
-    ########### FOR_TEST_ONLY, REMOVE FOR PRODUCTION ############
+    ########### NOTE: Test code, should be removed for production  ############
     current_dir = os.path.dirname(os.path.abspath(__file__))
     example = "15:58:29.877.json"
     file_path = os.path.join(current_dir, "..", "ai",
@@ -72,7 +72,7 @@ def message_rita():
     # Open the file and load its content as a Python object
     with open(file_path, 'r') as file:
         watsonxRequest = json.load(file)
-    ######################################
+    ###########################################################################
     try:
         # returns rita's reply asdict
         llmOutput = llm_stream_response(watsonxRequest, prompt, RETRIEVER, LLM)

@@ -8,10 +8,11 @@ from langchain_core.prompts import MessagesPlaceholder
 from langchain.schema import AIMessage, HumanMessage
 from langchain_core.prompts.chat import SystemMessagePromptTemplate
 from config.llm_param import MEMORY_CUTOFF
+from utils.widget_prompts.WidgetPromptSelector import WidgetTypes
 from utils.util import format_chat_history
 from langchain_core.output_parsers import StrOutputParser
 import json
-from typing import List
+from typing import List, Dict
 from langchain_core.output_parsers import JsonOutputParser
 
 
@@ -20,7 +21,7 @@ class WidgetModifier:
         self.llm = llm  # llm used for intent classification
 
     def invoke(self, user_prompt, data, intent, reply):
-        chain = self._get_runnable()
+        chain = self._get_runnable(data["widget"]["type"])
         print(reply)
         prompt = self._get_prompt(user_prompt, data, reply)
         output = chain.invoke(prompt)
@@ -32,8 +33,8 @@ class WidgetModifier:
 
         return json.dumps(output)
 
-    def _get_runnable(self):
-        chat_prompt = self._get_tempate()
+    def _get_runnable(self, widget_type):
+        chat_prompt = self._get_tempate(widget_type)
         chain = chat_prompt | self.llm | self._get_parser()
         return chain
 
@@ -74,9 +75,27 @@ class WidgetModifier:
                   "widget_id": widget_id, "widget_content": widget_content, "reply": reply}
         return prompt
 
-    def _get_parser(self):
+    def _get_parser(self, widget_type):
         class Goals(BaseModel):
             goals: List[str] = Field(
                 description="List of goals students should achieve")
-        parser = JsonOutputParser(pydantic_object=Goals)
+
+        class Note(BaseModel):
+            note: str = Field(
+                description="Any notes the teachers want to write down.")
+
+        class SemesterPlan(BaseModel):
+            headings: List[str] = Field(
+                description="column headings for the semester plan, such as Week, Task, etc.")
+            rows: List[Dict[str, str]] = Field(
+                description="rows for the semester plan, such as {{'Week': 'Week 1', 'Task': 'Task 1'}}. Each key of the dictionary should match the headings")
+
+        if widget_type == WidgetTypes.SEMESTER_GOAL:
+            parser = JsonOutputParser(pydantic_object=Goals)
+        elif widget_type == WidgetTypes.SEMESTER_PLAN:
+            parser = JsonOutputParser(pydantic_object=SemesterPlan)
+        elif widget_type == WidgetTypes.NOTE:
+            parser = JsonOutputParser(pydantic_object=Note)
+        else:
+            parser = StrOutputParser()
         return parser
