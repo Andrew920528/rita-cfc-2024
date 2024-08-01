@@ -93,10 +93,12 @@ export const useMessageRita = () => {
         currRitaReply: "",
       };
       let buffer: string[] = [];
+      let total = [];
       while (true) {
         const {done, value} = await reader!.read();
         if (done) break;
         let newChunk = decoder.decode(value);
+        total.push(newChunk);
         extractCompleteChunk(newChunk, buffer);
         while (true) {
           let l = buffer.shift();
@@ -131,7 +133,17 @@ export const useMessageRita = () => {
   }
 
   function handleChunk(chunk: string, organizer: any) {
-    let streamObject = JSON.parse(chunk);
+    console.log(chunk);
+    let streamObject;
+    try {
+      streamObject = JSON.parse(chunk);
+    } catch (error) {
+      console.error(
+        "Error happened when parsing chunk:" + chunk + "\n" + error
+      );
+      return;
+    }
+
     let agent = streamObject.agent;
     let data = streamObject.data;
 
@@ -149,19 +161,13 @@ export const useMessageRita = () => {
         })
       );
     } else if (agent === "Widget Modifier") {
-      try {
-        let modify_widget_data = JSON.parse(data);
-        handleWidgetModification(modify_widget_data);
-      } catch (error) {
-        console.log("Error happened when dealing with chunk:" + chunk);
-        console.log("Attempted to parse data but failed:" + data);
-        console.error(error);
-      }
+      handleWidgetModification(data);
     }
   }
 
   function handleWidgetModification(modify_widget_data: any) {
     let widgetId = modify_widget_data.widgetId;
+
     if (
       !widgetId ||
       widgetId === "" ||
@@ -170,13 +176,7 @@ export const useMessageRita = () => {
     ) {
       return;
     }
-    let widgetContent;
-    try {
-      widgetContent = JSON.parse(modify_widget_data.widgetContent);
-    } catch (error) {
-      console.error(error);
-      return;
-    }
+    let widgetContent = modify_widget_data.widgetContent;
 
     if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {
       return;

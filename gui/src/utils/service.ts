@@ -2,7 +2,7 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import {formatTime, mimicApi, mimicStreamApi} from "./util";
 import {API, INDEPENDENT_MODE} from "../global/constants";
 
-import {dummyLoginData} from "./dummy";
+import {dummyLoginData, dummyRitaResponse} from "./dummy";
 type ResponseData = {
   status: API;
   data: any;
@@ -498,18 +498,16 @@ export function messageRitaService(
       type: number;
       content: string;
     };
-    lectureId: string
+    lectureId: string;
     classroomId: string;
   },
   abortSignal?: AbortSignal
 ) {
   // TODO Uncomment for production
-  // if (INDEPENDENT_MODE) {
-  //   const mimicResponse = `Hello, I'm Rita. You are in frontend development mode, where I am not connected to an actual AI
-  //   <wCont> {"goals": ["你好呀"]} </wCont> <wid> dum-username-wid-lxu4el0kwcyyfcov1vq </wid>
-  //   `;
-  //   return mimicStreamApi(100, mimicResponse, abortSignal);
-  // }
+  if (INDEPENDENT_MODE) {
+    const mimicResponse = dummyRitaResponse;
+    return mimicStreamApi(50, mimicResponse, abortSignal);
+  }
   const endPoint = "/message-rita";
   return fetch(BASE_URL_DEV + endPoint, {
     method: "POST",

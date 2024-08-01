@@ -36,6 +36,7 @@ class WidgetModifier:
             You are given a widget_id with id {widget_id}. The widget is formatted as 
             {widget_content}. You are expected to modify this content based on the user's interaction with Rita.
             No extra text should be provided.
+            The output should be in JSON string format, the same format specidied in widget_content
             """  # TODO: This should be in widget_prompts
         )
 
