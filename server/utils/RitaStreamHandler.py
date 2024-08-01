@@ -40,34 +40,6 @@ class RitaStreamHandler:
 
     def __init__(self, out_stream):
         self.out_stream = out_stream
-        self.rita_response_done = False
-        self.rita_response = ""
-
-    def llm_stream_buffer(self, in_stream):
-        """format the irredular chunks sent by the llm into tokens defined by the split_chunk function
-
-        Args:
-            in_stream (Iterator): streamed output of a llm
-        """
-        buffer = ""
-
-        for chunk in in_stream:
-
-            if "answer" not in chunk:
-                continue
-            self.out_stream.put(stream_json("Rita", chunk["answer"]))
-            self.rita_response += chunk["answer"]
-            # wordList = self.split_chunk(buffer, 10)
-            # if len(wordList) > 1:
-            #     for i in range(len(wordList)-1):
-            #         # Pass the token to the generator
-            #         output_chunk = stream_json("Rita", wordList[i])
-            #         self.out_stream.put(output_chunk)
-            #         # sse.publish({"message": wordList[i]}, type='message')
-            #     buffer = wordList[-1]
-        output_chunk = stream_json("Rita", buffer)
-        self.out_stream.put(output_chunk)
-        self.rita_response_done = True
 
     def end_stream(self):
         self.out_stream.put(RitaStreamHandler.END_TOKEN)
@@ -87,29 +59,3 @@ class RitaStreamHandler:
             if result is None or result == RitaStreamHandler.END_TOKEN:
                 break
             yield result + delimiter
-
-    @staticmethod
-    def split_chunk(text: str, max_length: int):
-        """Splits a string by space, (most) chinese characters, and break up strings longer than max_length
-
-        Args:
-            text (str): text to split
-            max_length (int): max length a single chunk can be
-
-        Returns:
-            list
-        """
-        # split by space and (most) chinese characters
-        pattern = r"(?<=[\s\u4e00-\u9fff])"
-        chunks = re.split(pattern, text)
-
-        final_chunks = []
-        for segment in chunks:
-
-            if len(segment) > max_length:
-                # Split the segment into chunks of max_length
-                final_chunks.extend([segment[i:i + max_length]
-                                    for i in range(0, len(segment), max_length)])
-            else:
-                final_chunks.append(segment)
-        return final_chunks

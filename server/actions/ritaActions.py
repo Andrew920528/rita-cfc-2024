@@ -109,15 +109,29 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
     response_queue = queue.Queue()
     stream_handler = RitaStreamHandler(response_queue)
     # Agent 1: Response to the user
-    ritaAgent = Rita(llm=llm, retriever=retriever)
-    rita_reply = ritaAgent.stream(user_prompt, data)
-    if debug:
-        logTime(start_time, "First token entered")
+    rita_agent = Rita(llm=llm, retriever=retriever)
 
-    t = threading.Thread(target=stream_handler.llm_stream_buffer,
-                         args=(rita_reply,))
+    complete_rita_response = ""
+    rita_response_done = False
+
+    def run_rita_agent():
+        nonlocal rita_response_done
+        nonlocal complete_rita_response
+        in_stream = rita_agent.stream(user_prompt, data)
+        for chunk in in_stream:
+
+            if "answer" not in chunk:
+                continue
+            stream_handler.add_to_stream(
+                agent="Rita", data=chunk["answer"])
+            complete_rita_response += chunk["answer"]
+
+        rita_response_done = True
+    t = threading.Thread(target=run_rita_agent)
     t.start()
 
+    if debug:
+        logTime(start_time, "First token entered")
     # Agent 2: Determine user's intent
     intent_classifier = IntentClassifier(llm)
     intent = intent_classifier.invoke(user_prompt, data)
@@ -127,11 +141,14 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
     # Agent 3: Modify widget if needed
 
     def run_widget_modifier():
-        while not stream_handler.rita_response_done:
+        nonlocal complete_rita_response
+        nonlocal complete_rita_response
+
+        while not rita_response_done:
             time.sleep(0.1)
         widget_modifier = WidgetModifier(llm)
 
-        rita_reply = stream_handler.rita_response
+        rita_reply = complete_rita_response
         print("reply", rita_reply)
         print("intent", intent)
         modified_widget = widget_modifier.invoke(
