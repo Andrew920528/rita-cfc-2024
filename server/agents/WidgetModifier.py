@@ -8,7 +8,7 @@ from langchain_core.prompts import MessagesPlaceholder
 from langchain.schema import AIMessage, HumanMessage
 from langchain_core.prompts.chat import SystemMessagePromptTemplate
 from config.llm_param import MEMORY_CUTOFF
-from utils.widget_prompts.WidgetPromptSelector import WidgetTypes
+from utils.widget_prompts.WidgetPromptSelector import Intents, WidgetTypes
 from utils.util import format_chat_history
 from langchain_core.output_parsers import StrOutputParser
 import json
@@ -21,8 +21,11 @@ class WidgetModifier:
         self.llm = llm  # llm used for intent classification
 
     def invoke(self, user_prompt, data, intent, reply):
-        chain = self._get_runnable(data["widget"]["type"])
-        print(reply)
+        type = data["widget"]["type"]
+        if type not in WidgetTypes.values():
+            return ""
+
+        chain = self._get_runnable(type)
         prompt = self._get_prompt(user_prompt, data, reply)
         output = chain.invoke(prompt)
 
@@ -35,10 +38,10 @@ class WidgetModifier:
 
     def _get_runnable(self, widget_type):
         chat_prompt = self._get_tempate(widget_type)
-        chain = chat_prompt | self.llm | self._get_parser()
+        chain = chat_prompt | self.llm | self._get_parser(widget_type)
         return chain
 
-    def _get_tempate(self):
+    def _get_tempate(self, widget_type):
         FORMAT_INSTRUCTION = (
             """
             You are part of a team of teaching assistants whose goal is to help teachers prepare for courses.
@@ -49,9 +52,11 @@ class WidgetModifier:
             You should build upon the current widget based on the result of the above conversation.
             {format_instructions}
             You shouldn't response with any additional text.
-            """  # TODO: This should be in widget_prompts
+            """
         )
-        format_instruction = self._get_parser().get_format_instructions()
+
+        format_instruction = self._get_parser(
+            widget_type).get_format_instructions()
         print(format_instruction)
         intent_classifier_template = PromptTemplate(
             template=FORMAT_INSTRUCTION,
@@ -97,5 +102,6 @@ class WidgetModifier:
         elif widget_type == WidgetTypes.NOTE:
             parser = JsonOutputParser(pydantic_object=Note)
         else:
-            parser = StrOutputParser()
+            # Provided widget cannot be modified
+            parser = JsonOutputParser(pydantic_object=Goals)
         return parser

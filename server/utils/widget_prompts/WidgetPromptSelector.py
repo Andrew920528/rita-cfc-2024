@@ -8,13 +8,21 @@ class Intents():
     MODIFY = "Modify"
     NONE = "None"
 
+    @classmethod
+    def values(cls):
+        return list(vars(cls).values())
 
-class WidgetTypes():
-    FALLTHROUGH = -1
+
+class WidgetTypes():  # only includes the widgets that can be modified
+    # FALLTHROUGH = -1
     SEMESTER_GOAL = 0
     SEMESTER_PLAN = 1
     NOTE = 2
-    SCHEDULE = 3
+    # SCHEDULE = 3
+
+    @classmethod
+    def values(cls):
+        return list(vars(cls).values())
 
 
 class WidgetPromptSelector():
