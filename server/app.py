@@ -45,29 +45,39 @@ def message_rita():
     app.logger.info(f"Recieved request at time = {now_formatted}")
 
     prompt = request.json['prompt']
-    widget = request.json['widget']
-    chat_history = request.json['chatHistory']
-    lectureId = request.json['lectureId']
-    classroomId = request.json['classroomId']
-    lectureAndClassroomResponse = getLectureAndClassroom(
-        lectureId, classroomId)
-    logTime(start_time, "Fetched classroom and lecture from the database")
-    # check if lecture and classroom are fetched properly
-    if lectureAndClassroomResponse['status'] == 'error':
-        return lectureAndClassroomResponse
+    ################  NOTE: BELOW IS COMMENTED OUT ONLY FOR TESTING ###################
+    # widget = request.json['widget']
+    # chat_history = request.json['chatHistory']
+    # lectureId = request.json['lectureId']
+    # classroomId = request.json['classroomId']
 
-    watsonxRequest = {**lectureAndClassroomResponse['data'],
-                      'chat_history': chat_history,
-                      "widget": widget}
+    # lectureAndClassroomResponse = getLectureAndClassroom(
+    #     lectureId, classroomId)
+    # logTime(start_time, "Fetched classroom and lecture from the database")
+    # # check if lecture and classroom are fetched properly
+    # if lectureAndClassroomResponse['status'] == 'error':
+    #     return lectureAndClassroomResponse
+
+    # watsonxRequest = {**lectureAndClassroomResponse['data'],
+    #                   'chat_history': chat_history,
+    #                   "widget": widget}
 
     # ================= Save the retrieved data as an example ==================
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(current_dir, "..", "ai", "agents",
-                        "data_examples", f"{now_formatted}.json")
-    with open(path, 'w') as f:
-        json.dump(watsonxRequest, f, ensure_ascii=False)
+    # path = os.path.join(current_dir, "..", "ai", "agents",
+    #                     "data_examples", f"{now_formatted}.json")
+    # with open(path, 'w') as f:
+    #     json.dump(watsonxRequest, f, ensure_ascii=False)
     # ==========================================================================
 
+    ########### FOR_TEST_ONLY ############
+    example = "15:58:29.877.json"
+    file_path = os.path.join(current_dir, "..", "ai",
+                             "agents", "data_examples", example)
+    # Open the file and load its content as a Python object
+    with open(file_path, 'r') as file:
+        watsonxRequest = json.load(file)
+    ######################################
     try:
         # returns rita's reply asdict
         llmOutput = llm_stream_response(watsonxRequest, prompt, RETRIEVER, LLM)

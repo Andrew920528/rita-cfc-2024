@@ -18,6 +18,7 @@ from agents.WidgetModifier import WidgetModifier
 from utils.RitaStreamHandler import RitaStreamHandler
 from utils.util import logTime
 from langchain_cohere import CohereEmbeddings
+import json
 
 
 def initRetriever():
@@ -99,6 +100,7 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
             }
         }
     """
+
     if debug:
         start_time = time.time()
         now_formatted = datetime.fromtimestamp(
@@ -112,20 +114,9 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
     if debug:
         logTime(start_time, "First token entered")
 
-    t = threading.Thread(target=stream_handler.output_buffer,
+    t = threading.Thread(target=stream_handler.llm_stream_buffer,
                          args=(rita_reply,))
     t.start()
-
-    def generate():
-        while True:
-            # Wait for the complete response to be put in the queue
-            complete_response = response_queue.get()
-            # Process with Mr. W
-            print(complete_response)
-            result = "YEAH"
-            yield f"data: {result}\n\n"
-
-    return Response(generate(), content_type='text/event-stream')
 
     # Agent 2: Determine user's intent
     intent_classifier = IntentClassifier(llm)
@@ -134,10 +125,21 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
         logTime(start_time, f"Intent: {intent}")
 
     # Agent 3: Modify widget if needed
-    widget_modifier = WidgetModifier(llm)
-    print(rita_reply)
-    modified_widget = widget_modifier.invoke(
-        user_prompt, data, intent, rita_reply)
+
+    def run_widget_modifier():
+        while not stream_handler.rita_response_done:
+            time.sleep(0.1)
+        widget_modifier = WidgetModifier(llm)
+        print("reply", rita_reply)
+        print("intent", intent)
+        modified_widget = widget_modifier.invoke(
+            user_prompt, data, intent, rita_reply)
+        print("modified", modified_widget)
+        stream_handler.add_to_stream(modified_widget)
+        stream_handler.end_stream()
+
+    t2 = threading.Thread(target=run_widget_modifier)
+    t2.start()
 
     response = Response(stream_handler.yield_stream(),
                         content_type="text/plain")

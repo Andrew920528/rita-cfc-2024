@@ -28,13 +28,15 @@ Example usage:
 
 
 class RitaStreamHandler:
+    PAUSE_TOKEN = "[PAUSE]"
     END_TOKEN = "[END]"
 
     def __init__(self, complete_queue):
         self.out_stream = queue.Queue()
         self.complete_queue = complete_queue
+        self.rita_response_done = False
 
-    def output_buffer(self, in_stream):
+    def llm_stream_buffer(self, in_stream):
         """format the irredular chunks sent by the llm into tokens defined by the split_chunk function
 
         Args:
@@ -58,8 +60,15 @@ class RitaStreamHandler:
                 buffer = wordList[-1]
 
         self.out_stream.put(buffer)
-        self.out_stream.put(RitaStreamHandler.END_TOKEN)
+        self.out_stream.put(RitaStreamHandler.PAUSE_TOKEN)
         self.complete_queue.put(total)
+        self.rita_response_done = True
+
+    def end_stream(self):
+        self.out_stream.put(RitaStreamHandler.END_TOKEN)
+
+    def add_to_stream(self, new_token: str):
+        self.out_stream.put(new_token)
 
     def yield_stream(self):
         """yields the stream from the queue until it is emptied
@@ -71,6 +80,7 @@ class RitaStreamHandler:
             result: str = self.out_stream.get()
             if result is None or result == RitaStreamHandler.END_TOKEN:
                 break
+            print(result)
             yield result
 
     @staticmethod
