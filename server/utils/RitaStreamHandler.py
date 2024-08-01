@@ -38,9 +38,10 @@ def stream_json(agent, data):
 class RitaStreamHandler:
     END_TOKEN = "[END]"
 
-    def __init__(self, complete_queue):
-        self.out_stream = queue.Queue()
+    def __init__(self, out_stream):
+        self.out_stream = out_stream
         self.rita_response_done = False
+        self.rita_response = ""
 
     def llm_stream_buffer(self, in_stream):
         """format the irredular chunks sent by the llm into tokens defined by the split_chunk function
@@ -55,7 +56,7 @@ class RitaStreamHandler:
             if "answer" not in chunk:
                 continue
             self.out_stream.put(stream_json("Rita", chunk["answer"]))
-            # buffer += chunk["answer"]
+            self.rita_response += chunk["answer"]
             # wordList = self.split_chunk(buffer, 10)
             # if len(wordList) > 1:
             #     for i in range(len(wordList)-1):
@@ -85,7 +86,6 @@ class RitaStreamHandler:
             result: str = self.out_stream.get()
             if result is None or result == RitaStreamHandler.END_TOKEN:
                 break
-            print(result)
             yield result + delimiter
 
     @staticmethod

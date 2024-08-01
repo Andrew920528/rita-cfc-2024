@@ -130,6 +130,8 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
         while not stream_handler.rita_response_done:
             time.sleep(0.1)
         widget_modifier = WidgetModifier(llm)
+
+        rita_reply = stream_handler.rita_response
         print("reply", rita_reply)
         print("intent", intent)
         modified_widget = widget_modifier.invoke(

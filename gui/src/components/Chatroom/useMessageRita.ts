@@ -133,7 +133,6 @@ export const useMessageRita = () => {
   }
 
   function handleChunk(chunk: string, organizer: any) {
-    console.log(chunk);
     let streamObject;
     try {
       streamObject = JSON.parse(chunk);
@@ -179,6 +178,10 @@ export const useMessageRita = () => {
     let widgetContent = modify_widget_data.widgetContent;
 
     if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {
+      console.warn(
+        "Attempted to modify widget with wrong content format",
+        widgetContent
+      );
       return;
     }
     dispatch(
