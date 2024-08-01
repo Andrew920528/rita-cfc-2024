@@ -2,7 +2,6 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts import MessagesPlaceholder
-from utils.RitaStreamHandler import RitaStreamHandler
 from utils.util import format_chat_history
 import json
 
