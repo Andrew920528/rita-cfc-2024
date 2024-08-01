@@ -37,5 +37,5 @@ class Worksheet:
         with self.doc.create(MatchTabularEnvironment()) as environment:
             environment.append(NoEscape(str))
 
-    def printDoc(self):
-        self.doc.generate_pdf(self.title, compiler='xelatex', clean=True,  clean_tex=False)
+    def generatePDF(self):
+        self.doc.generate_pdf(self.title, compiler='xelatex', clean=True, clean_tex=False)
