@@ -3,7 +3,6 @@ import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {messageRitaService, useApiHandler} from "../../utils/service";
 import {SENDER} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
-import {tags} from "./ChunkDefinitions";
 import {contentIsOfType, widgetBook} from "../../schema/widget";
 import {EMPTY_ID} from "../../global/constants";
 import {WidgetsServices} from "../../features/WidgetsSlice";
@@ -70,33 +69,12 @@ export const useMessageRita = () => {
     try {
       setWaitingForReply(true);
 
-      // const eventSource = new EventSource('http://127.0.0.1:5000/message-rita');
-
-      // eventSource.onmessage = (event) => {
-      //     console.log(event.data)
-      // };
-
-      // eventSource.onerror = (err) => {
-      //     console.error('EventSource failed:', err);
-      //     eventSource.close();
-      // };
-
-
-      // return
-
       let response = await messageRitaService(
         {...payload},
         abortControllerRef?.current?.signal
       );
 
       const reader = response.body?.getReader();
-
-      let organizer = {
-        currRitaReply: "",
-        currModifyingWidgetId: "",
-        currModifyingWidgetContent: "",
-        currTag: "",
-      };
 
       const decoder = new TextDecoder();
       let messageObj = {
@@ -110,16 +88,22 @@ export const useMessageRita = () => {
           message: messageObj,
         })
       );
+
+      let organizer = {
+        currRitaReply: "",
+      };
+      let buffer: string[] = [];
       while (true) {
         const {done, value} = await reader!.read();
         if (done) break;
         let newChunk = decoder.decode(value);
-        // step 3: inspect chunk and parse it accordingly
-        handleChunk(newChunk, organizer);
+        extractCompleteChunk(newChunk, buffer);
+        while (true) {
+          let l = buffer.shift();
+          if (!l) break;
+          handleChunk(l, organizer);
+        }
       }
-      console.log(organizer);
-      // step 4: modify widget if needed
-      handleWidgetModification(organizer);
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
         console.warn(error.message);
@@ -133,19 +117,26 @@ export const useMessageRita = () => {
     }
   }
 
-  function handleChunk(chunk: string, organizer: any) {
-    // if chunk is tags
-    if (chunk.trim() in tags) {
-      // tag is opened
-      organizer.currTag = chunk.trim();
-      return;
-    } else if (tags[organizer.currTag] === chunk.trim()) {
-      organizer.currTag = "";
-      return;
+  function extractCompleteChunk(newChunk: string, buffer: string[]) {
+    // There are cases where, multiple chunks are read the same time.
+    // We need to ensure one chunk is read at a time
+    const delimiter = "|T|";
+    let newChunks = newChunk.split(delimiter);
+
+    for (let chunk of newChunks) {
+      if (chunk === "") continue;
+      buffer.push(chunk);
     }
-    // treat any chunk not enclosed by tags (or inbalanced tags) as message
-    if (organizer.currTag === "") {
-      organizer.currRitaReply += chunk;
+    return buffer;
+  }
+
+  function handleChunk(chunk: string, organizer: any) {
+    let streamObject = JSON.parse(chunk);
+    let agent = streamObject.agent;
+    let data = streamObject.data;
+
+    if (agent === "Rita") {
+      organizer.currRitaReply += data;
       let messageObj = {
         text: organizer.currRitaReply,
         sender: SENDER.ai,
@@ -157,49 +148,60 @@ export const useMessageRita = () => {
           message: messageObj,
         })
       );
-    } else if (organizer.currTag === "<wCont>") {
-      organizer.currModifyingWidgetContent += chunk;
-    } else if (organizer.currTag === "<wid>") {
-      organizer.currModifyingWidgetId += chunk.trim();
+    } else if (agent === "Widget Modifier") {
+      try {
+        let modify_widget_data = JSON.parse(data);
+        handleWidgetModification(modify_widget_data);
+      } catch (error) {
+        console.log("Error happened when dealing with chunk:" + chunk);
+        console.log("Attempted to parse data but failed:" + data);
+        console.error(error);
+      }
     }
   }
 
-  function handleWidgetModification(organizer: any) {
-    if (organizer.currModifyingWidgetContent === "") return;
+  function handleWidgetModification(modify_widget_data: any) {
+    let widgetId = modify_widget_data.widgetId;
+    if (
+      !widgetId ||
+      widgetId === "" ||
+      widgetId !== widgets.current ||
+      widgetId === EMPTY_ID
+    ) {
+      return;
+    }
     let widgetContent;
     try {
-      widgetContent = JSON.parse(organizer.currModifyingWidgetContent);
+      widgetContent = JSON.parse(modify_widget_data.widgetContent);
     } catch (error) {
       console.error(error);
       return;
     }
-    let widgetId = organizer.currModifyingWidgetId;
-    if (widgetId === widgets.current && widgetId !== EMPTY_ID) {
-      if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {
-        return;
-      }
-      dispatch(
-        WidgetsServices.actions.updateWidget({
-          newWidget: {
-            id: widgetId,
-            type: widgets.dict[widgets.current].type,
-            content: widgetContent,
-          },
-        })
-      );
 
-      let messageObj = {
-        text: `更新了${widgetBook[widgets.dict[widgets.current].type].title}`,
-        sender: SENDER.system,
-      };
-
-      dispatch(
-        ChatroomsServices.actions.addMessage({
-          chatroomId: chatroom.id,
-          message: messageObj,
-        })
-      );
+    if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {
+      return;
     }
+    dispatch(
+      WidgetsServices.actions.updateWidget({
+        newWidget: {
+          id: widgetId,
+          type: widgets.dict[widgets.current].type,
+          content: widgetContent,
+        },
+      })
+    );
+
+    let messageObj = {
+      text: `更新了${widgetBook[widgets.dict[widgets.current].type].title}`,
+      sender: SENDER.system,
+    };
+
+    dispatch(
+      ChatroomsServices.actions.addMessage({
+        chatroomId: chatroom.id,
+        message: messageObj,
+      })
+    );
   }
 
   return {sendMessage, waitingForReply, terminateResponse};

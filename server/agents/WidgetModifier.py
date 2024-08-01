@@ -35,12 +35,6 @@ class WidgetModifier:
             The above is the conversation between user and another agent, "Rita".
             You are given a widget_id with id {widget_id}. The widget is formatted as 
             {widget_content}. You are expected to modify this content based on the user's interaction with Rita.
-            You should format your response by surrounding widget_id and widget_content within tags.
-            The tags are <wid> and <wCont>.
-            For example, you should respond like this:
-            {{response to the user}} <wid> {{widget id}} </wid> <wCont> {{widget content}} </wCont>
-            where things inside <wid> tag is the given widget id and <wCont> is a stringified json object
-            that has the same format as the given widget content. The tags should be have a space before and after, e.g ' <wid> '.
             No extra text should be provided.
             """  # TODO: This should be in widget_prompts
         )

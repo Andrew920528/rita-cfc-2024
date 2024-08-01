@@ -5,7 +5,7 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.schema import LLMResult
 from flask_sse import sse
 import re
-
+import json
 """ RitaStreamHandler is a custom parser that formats the output of an LLM.
 
 Example usage:
@@ -27,13 +27,19 @@ Example usage:
 """
 
 
+def stream_json(agent, data):
+    obj = {
+        "agent": agent,
+        "data": data
+    }
+    return json.dumps(obj)
+
+
 class RitaStreamHandler:
-    PAUSE_TOKEN = "[PAUSE]"
     END_TOKEN = "[END]"
 
     def __init__(self, complete_queue):
         self.out_stream = queue.Queue()
-        self.complete_queue = complete_queue
         self.rita_response_done = False
 
     def llm_stream_buffer(self, in_stream):
@@ -43,32 +49,30 @@ class RitaStreamHandler:
             in_stream (Iterator): streamed output of a llm
         """
         buffer = ""
-        total = ""
-        for chunk in in_stream:
-            if "answer" not in chunk:
-                # debug
-                # print (chunk)
-                continue
-            total += chunk["answer"]
-            buffer += chunk["answer"]
-            wordList = self.split_chunk(buffer, 10)
-            if len(wordList) > 1:
-                for i in range(len(wordList)-1):
-                    # Pass the token to the generator
-                    self.out_stream.put(wordList[i])
-                    # sse.publish({"message": wordList[i]}, type='message')
-                buffer = wordList[-1]
 
-        self.out_stream.put(buffer)
-        self.out_stream.put(RitaStreamHandler.PAUSE_TOKEN)
-        self.complete_queue.put(total)
+        for chunk in in_stream:
+
+            if "answer" not in chunk:
+                continue
+            self.out_stream.put(stream_json("Rita", chunk["answer"]))
+            # buffer += chunk["answer"]
+            # wordList = self.split_chunk(buffer, 10)
+            # if len(wordList) > 1:
+            #     for i in range(len(wordList)-1):
+            #         # Pass the token to the generator
+            #         output_chunk = stream_json("Rita", wordList[i])
+            #         self.out_stream.put(output_chunk)
+            #         # sse.publish({"message": wordList[i]}, type='message')
+            #     buffer = wordList[-1]
+        output_chunk = stream_json("Rita", buffer)
+        self.out_stream.put(output_chunk)
         self.rita_response_done = True
 
     def end_stream(self):
         self.out_stream.put(RitaStreamHandler.END_TOKEN)
 
-    def add_to_stream(self, new_token: str):
-        self.out_stream.put(new_token)
+    def add_to_stream(self, agent: str, data: str, ):
+        self.out_stream.put(stream_json(agent, data))
 
     def yield_stream(self):
         """yields the stream from the queue until it is emptied
@@ -76,12 +80,13 @@ class RitaStreamHandler:
         Yields:
             str: chunks of the stream
         """
+        delimiter = "|T|"
         while True:
             result: str = self.out_stream.get()
             if result is None or result == RitaStreamHandler.END_TOKEN:
                 break
             print(result)
-            yield result
+            yield result + delimiter
 
     @staticmethod
     def split_chunk(text: str, max_length: int):

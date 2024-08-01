@@ -22,15 +22,9 @@ def initialize():
     LLM = initLLM()
 
 
-initialize()
-# debug
-
-
 @app.route('/hello', methods=['GET'])
 def get_output():
     return {'output': 'hello guys!'}
-
-# watsonx
 
 
 @app.route('/message-rita', methods=['POST'])
@@ -45,7 +39,7 @@ def message_rita():
     app.logger.info(f"Recieved request at time = {now_formatted}")
 
     prompt = request.json['prompt']
-    ################  NOTE: BELOW IS COMMENTED OUT ONLY FOR TESTING ###################
+    ################  NOTE: UNCOMMENT FOR PRODUCTION ###################
     # widget = request.json['widget']
     # chat_history = request.json['chatHistory']
     # lectureId = request.json['lectureId']
@@ -63,14 +57,15 @@ def message_rita():
     #                   "widget": widget}
 
     # ================= Save the retrieved data as an example ==================
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # current_dir = os.path.dirname(os.path.abspath(__file__))
     # path = os.path.join(current_dir, "..", "ai", "agents",
     #                     "data_examples", f"{now_formatted}.json")
     # with open(path, 'w') as f:
     #     json.dump(watsonxRequest, f, ensure_ascii=False)
     # ==========================================================================
 
-    ########### FOR_TEST_ONLY ############
+    ########### FOR_TEST_ONLY, REMOVE FOR PRODUCTION ############
+    current_dir = os.path.dirname(os.path.abspath(__file__))
     example = "15:58:29.877.json"
     file_path = os.path.join(current_dir, "..", "ai",
                              "agents", "data_examples", example)
@@ -328,5 +323,6 @@ def update_chatroom():
         return response
 
 
+initialize()
 if __name__ == '__main__':
     app.run(port=5000)

@@ -135,12 +135,13 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
         modified_widget = widget_modifier.invoke(
             user_prompt, data, intent, rita_reply)
         print("modified", modified_widget)
-        stream_handler.add_to_stream(modified_widget)
+        stream_handler.add_to_stream(
+            agent="Widget Modifier", data=modified_widget)
         stream_handler.end_stream()
 
     t2 = threading.Thread(target=run_widget_modifier)
     t2.start()
 
     response = Response(stream_handler.yield_stream(),
-                        content_type="text/plain")
+                        content_type="application/json")
     return response
