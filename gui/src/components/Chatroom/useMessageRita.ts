@@ -1,4 +1,4 @@
-import {Dispatch, SetStateAction, useCallback} from "react";
+import {Dispatch, SetStateAction, useCallback, useState} from "react";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {messageRitaService, useApiHandler} from "../../utils/service";
 import {SENDER} from "../../schema/chatroom";
@@ -25,6 +25,8 @@ export const useMessageRita = () => {
     setLoading: setWaitingForReply,
     terminateResponse,
   } = useApiHandler([classroomId]);
+
+  const [constructingWidget, setConstructingWidget] = useState(false);
   async function sendMessage(
     text: string,
     setText: Dispatch<SetStateAction<string>>,
@@ -160,7 +162,12 @@ export const useMessageRita = () => {
         })
       );
     } else if (agent === "Widget Modifier") {
+      if (data === "WIDGET_MODIFIER_STARTED") {
+        setConstructingWidget(true);
+        return;
+      }
       handleWidgetModification(data);
+      setConstructingWidget(false);
     }
   }
 
@@ -218,5 +225,5 @@ export const useMessageRita = () => {
     );
   }
 
-  return {sendMessage, waitingForReply, terminateResponse};
+  return {sendMessage, waitingForReply, constructingWidget, terminateResponse};
 };

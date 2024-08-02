@@ -153,7 +153,8 @@ def llm_stream_response(data, user_prompt, retriever, llm):
         while not rita_response_done:
             time.sleep(0.1)
         widget_modifier = WidgetModifier(llm, verbose=WID_VERBOSE)
-
+        stream_handler.add_to_stream(
+            agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
         modified_widget = widget_modifier.invoke(
             user_prompt, data, intent, complete_rita_response)
         time_logger.log_latency(

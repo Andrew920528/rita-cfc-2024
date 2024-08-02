@@ -503,11 +503,10 @@ export function messageRitaService(
   },
   abortSignal?: AbortSignal
 ) {
-  // TODO Uncomment for production
-  // if (INDEPENDENT_MODE) {
-  //   const mimicResponse = dummyRitaResponse;
-  //   return mimicStreamApi(50, mimicResponse, abortSignal);
-  // }
+  if (INDEPENDENT_MODE) {
+    const mimicResponse = dummyRitaResponse;
+    return mimicStreamApi(50, mimicResponse, abortSignal);
+  }
   const endPoint = "/message-rita";
   return fetch(BASE_URL_DEV + endPoint, {
     method: "POST",

@@ -25,7 +25,7 @@ const Chatroom = ({}: ChatroomProps) => {
     (state) => state.Chatrooms.dict[state.Chatrooms.current]
   );
   const widgets = useTypedSelector((state) => state.Widgets);
-  const {sendMessage, waitingForReply, terminateResponse} = useMessageRita();
+  const {sendMessage, waitingForReply, constructingWidget, terminateResponse} = useMessageRita();
 
   // ui handlers
   const [collapsed, setCollapsed] = useState(false);
@@ -82,6 +82,7 @@ const Chatroom = ({}: ChatroomProps) => {
       <div className={cx("chatroom-content", {collapsed, maximized})}>
         <ChatroomBody
           messages={chatroom.messages}
+          constructingWidget={constructingWidget}
           loading={waitingForReply}
           ritaError={ritaError}
         />
@@ -138,9 +139,10 @@ const ChatMessage = ({text, sender}: ChatMessageT) => {
 type ChatroomBodyProps = {
   messages: ChatMessageT[];
   loading: boolean;
+  constructingWidget: boolean;
   ritaError: string;
 };
-const ChatroomBody = ({messages, loading, ritaError}: ChatroomBodyProps) => {
+const ChatroomBody = ({messages, loading, constructingWidget, ritaError}: ChatroomBodyProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const scrollToBottom = () => {
@@ -150,12 +152,14 @@ const ChatroomBody = ({messages, loading, ritaError}: ChatroomBodyProps) => {
     };
     scrollToBottom();
   }, [messages, loading]);
+
   return (
     <div className={cx("chatroom-body")} ref={scrollRef}>
       {messages.map((message, index) => {
         return <ChatMessage {...message} key={index} />;
       })}
-      {loading && <p className={cx("--label")}>回覆中，請稍等</p>}
+      {loading && !constructingWidget && <p className={cx("--label")}>回覆中，請稍等</p>}
+      {loading && constructingWidget && <p className={cx("--label")}>正在編輯工具內容</p>}
       {ritaError && (
         <p className={cx("--label", "--error")}>出了點問題。請再試一次。</p>
       )}
