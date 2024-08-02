@@ -9,21 +9,26 @@ from langchain.schema import AIMessage, HumanMessage
 from langchain_core.prompts.chat import SystemMessagePromptTemplate
 from config.llm_param import MEMORY_CUTOFF
 from utils.util import format_chat_history
+from utils.LlmTester import LlmTester
 
 
 class IntentClassifier:
-    def __init__(self, llm) -> None:
+    def __init__(self, llm, verbose=False) -> None:
         self.llm = llm  # llm used for intent classification
+        self.logger = LlmTester(name="Intent Classifier", on=verbose)
 
     def invoke(self, user_prompt, data):
         chain = self._get_runnable()
         prompt = self._get_prompt(user_prompt, data)
+        self.logger.log(f"Prompt: {prompt}")
         try:
             output = chain.invoke(prompt)
+            self.logger.log(f"Output of intent classifier: {output}")
             intent = output.intent
         except Exception as e:
             print(e)
             intent = "None"
+        self.logger.log(f"Output: {intent}")
         return intent
 
     def _get_runnable(self):
@@ -42,6 +47,7 @@ class IntentClassifier:
             "Some key words might be relevant to modifying the widgets are:"
             "add, delete, insert, alter, change, modify, update, edit, remove, replace, adjust, revise, amend, correct, fix, improve, enhance, refine, fill, complete"
             "{format_instructions}"
+            "The output should solely contain a json object, with no additional text."
         )
 
         format_instruction = self._get_parser().get_format_instructions()

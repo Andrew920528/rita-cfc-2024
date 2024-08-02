@@ -165,6 +165,16 @@ export const useMessageRita = () => {
   }
 
   function handleWidgetModification(modify_widget_data: any) {
+    if (widgets.current === EMPTY_ID) return;
+
+    try {
+      modify_widget_data = JSON.parse(modify_widget_data);
+      console.log("modify_widget_data", modify_widget_data);
+    } catch (error) {
+      console.error("Failed to parse modify_widget_data" + error);
+      return;
+    }
+
     let widgetId = modify_widget_data.widgetId;
 
     if (
@@ -173,6 +183,7 @@ export const useMessageRita = () => {
       widgetId !== widgets.current ||
       widgetId === EMPTY_ID
     ) {
+      console.warn("Could not modify widget with id", widgetId);
       return;
     }
     let widgetContent = modify_widget_data.widgetContent;

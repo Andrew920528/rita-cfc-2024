@@ -72,7 +72,7 @@ def initLLM():
     return llm
 
 
-def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
+def llm_stream_response(data, user_prompt, retriever, llm):
     """
     https://www.figma.com/design/xiYG1qIDmu9S1KSapuJQb9/Rita-%7C-CFC-2024?node-id=350-1636&t=BZfXxoQSRUG081uy-0
     data (dict): context data, in the following format:
@@ -100,15 +100,19 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
             }
         }
     """
-    LOG_TIME = True
+    LOG_OUTPUT = True   # Enable to log time and output of the entire process
+    # Enable to log detail output of each agent
+    RITA_VERBOSE = True
+    INTENT_VERBOSE = True
+    WID_VERBOSE = True
 
-    time_logger = LlmTester(name="llm process", on=LOG_TIME)
+    time_logger = LlmTester(name="llm process", on=LOG_OUTPUT)
     time_logger.log_start_timer("Start llm process")
 
     response_queue = queue.Queue()
     stream_handler = RitaStreamHandler(response_queue)
     # Agent 1: Response to the user
-    rita_agent = Rita(llm=llm, retriever=retriever)
+    rita_agent = Rita(llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
 
     complete_rita_response = ""
     rita_response_done = False
@@ -117,24 +121,28 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
         nonlocal rita_response_done
         nonlocal complete_rita_response
         in_stream = rita_agent.stream(user_prompt, data)
-        for chunk in in_stream:
+        retriever_tester = LlmTester(
+            name="retriever tester", on=RITA_VERBOSE)
 
+        for chunk in in_stream:
             if "answer" not in chunk:
+                retriever_tester.log(chunk)
                 continue
             stream_handler.add_to_stream(
                 agent="Rita", data=chunk["answer"])
             complete_rita_response += chunk["answer"]
-
+        time_logger.log_latency(
+            f"Rita reply completed.{complete_rita_response}")
         rita_response_done = True
     t = threading.Thread(target=run_rita_agent)
     t.start()
 
-    time_logger.log_time("First token entered")
+    time_logger.log_latency("First token entered")
     # Agent 2: Determine user's intent
-    intent_classifier = IntentClassifier(llm)
+    intent_classifier = IntentClassifier(llm, verbose=INTENT_VERBOSE)
     intent = intent_classifier.invoke(user_prompt, data)
 
-    time_logger.log_time(f"Finished detecting intent: {intent}")
+    time_logger.log_latency(f"Finished detecting intent.")
 
     # Agent 3: Modify widget if needed
     def run_widget_modifier():
@@ -143,17 +151,16 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
 
         while not rita_response_done:
             time.sleep(0.1)
-        widget_modifier = WidgetModifier(llm)
+        widget_modifier = WidgetModifier(llm, verbose=WID_VERBOSE)
 
-        rita_reply = complete_rita_response
-        time_logger.log_time(f"Rita reply completed: {rita_reply}")
         modified_widget = widget_modifier.invoke(
-            user_prompt, data, intent, rita_reply)
-        time_logger.log_time(f"Modified widget generated: {modified_widget}")
+            user_prompt, data, intent, complete_rita_response)
+        time_logger.log_latency(
+            f"Modified widget generated.")
         stream_handler.add_to_stream(
             agent="Widget Modifier", data=modified_widget)
         stream_handler.end_stream()
-        time_logger.log_time("Stream completed")
+        time_logger.log_latency("Stream completed")
 
     t2 = threading.Thread(target=run_widget_modifier)
     t2.start()

@@ -16,11 +16,13 @@ from langchain_core.output_parsers import StrOutputParser
 import json
 from typing import List, Dict
 from langchain_core.output_parsers import JsonOutputParser
+from utils.LlmTester import LlmTester
 
 
 class WidgetModifier:
-    def __init__(self, llm) -> None:
+    def __init__(self, llm, verbose=False) -> None:
         self.llm = llm  # llm used for intent classification
+        self.logger = LlmTester(name="Widget Modifier", on=verbose)
 
     def invoke(self, user_prompt, data, intent, reply):
         type = data["widget"]["type"]
@@ -29,12 +31,14 @@ class WidgetModifier:
 
         chain = self._get_runnable(type)
         prompt = self._get_prompt(user_prompt, data, reply)
+        self.logger.log(f"Prompt: {prompt}")
         output = chain.invoke(prompt)
 
         output = {
             "widgetId": data["widget"]["id"],
             "widgetContent": output
         }
+        self.logger.log(f"Output: {output}")
 
         return json.dumps(output)
 

@@ -38,10 +38,11 @@ def message_rita():
         return response
 
     prompt = request.json['prompt']
-    ################  NOTE: Comment out this section if want to test without db ###################
+
+    ##########################  Test Controllers ##############################
     # enable if want to test without db, run frontend in indep mode and commented out the dummy api call
-    DB_INDEPENDENT = True
-    SAVE_EXAMPLE = False  # will only save example if DB_INDEPENDENT is False
+    DB_INDEPENDENT = False
+    SAVE_EXAMPLE = True  # will only save example if DB_INDEPENDENT is False
     LOAD_EXAMPLE = True  # will only load example if DB_INDEPENDENT is True
 
     fetch_db_tester = LlmTester(
@@ -55,7 +56,7 @@ def message_rita():
 
         lectureAndClassroomResponse = getLectureAndClassroom(
             lectureId, classroomId)
-        fetch_db_tester.log_time(
+        fetch_db_tester.log_latency(
             "Fetched classroom and lecture from the database")
         # check if lecture and classroom are fetched properly
         if lectureAndClassroomResponse['status'] == 'error':
@@ -66,8 +67,9 @@ def message_rita():
                           "widget": widget}
         return watsonxRequest
     watsonxRequest = fetch_db_tester.execute(organize_context)
-
-    ##########################  Test Controllers ##############################
+    if "status" in watsonxRequest and watsonxRequest['status'] == 'error':
+        return watsonxRequest
+    ###########################################################################
     # Enable to save example test cases
     llm_tester = LlmTester(name="saves example",
                            on=not DB_INDEPENDENT and SAVE_EXAMPLE)
@@ -77,7 +79,9 @@ def message_rita():
     llm_tester = LlmTester(name="get example data",
                            on=DB_INDEPENDENT and LOAD_EXAMPLE)
     example = "15:58:29.877"
-    watsonxRequest = llm_tester.get_example_data(example)
+    exampleRequest = llm_tester.get_example_data(example)
+    if exampleRequest:
+        watsonxRequest = exampleRequest
     ###########################################################################
 
     try:

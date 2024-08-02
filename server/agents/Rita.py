@@ -2,18 +2,22 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts import MessagesPlaceholder
+from utils.LlmTester import LlmTester
 from utils.util import format_chat_history
 import json
 
 
 class Rita:
-    def __init__(self, llm, retriever) -> None:
+    def __init__(self, llm, retriever, verbose=False) -> None:
         self.llm = llm
         self.retriever = retriever
+        self.logger = LlmTester(name="Rita", on=verbose)
 
     def stream(self, user_prompt, data):
         prompt = self._get_prompt(user_prompt, data)
+        self.logger.log(f"Prompt: {prompt}")
         in_stream = self._get_runnable().stream(prompt)
+
         return in_stream
 
     def _get_runnable(self):
