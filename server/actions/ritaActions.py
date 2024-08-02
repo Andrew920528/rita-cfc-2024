@@ -15,8 +15,8 @@ from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY
 from agents.Rita import Rita
 from agents.IntentClassifier import IntentClassifier
 from agents.WidgetModifier import WidgetModifier
+from utils.LlmTester import LlmTester
 from utils.RitaStreamHandler import RitaStreamHandler
-from utils.util import logTime
 from langchain_cohere import CohereEmbeddings
 import json
 
@@ -44,7 +44,8 @@ def initRetriever():
 
 
 def initLLM():
-    start_time = time.time()
+    tester = LlmTester(name="init ibm watsonX", on=True)
+
     load_dotenv()
     API_KEY = os.getenv("WATSONX_API_KEY")
     URL = os.getenv("WATSONX_URL")
@@ -57,8 +58,7 @@ def initLLM():
         GenParams.DECODING_METHOD: DecodingMethods.GREEDY,
         GenParams.REPETITION_PENALTY: REPETITION_PENALTY,
     }
-
-    logTime(start_time, "loaded IBM watsonX credentials")
+    tester.log_start_timer("loaded IBM watsonX credentials")
 
     # Initialize the LLM model
     llm = WatsonxLLM(
@@ -100,12 +100,11 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
             }
         }
     """
+    LOG_TIME = True
 
-    if debug:
-        start_time = time.time()
-        now_formatted = datetime.fromtimestamp(
-            start_time).strftime('%H:%M:%S.%f')[:-3]
-        print(f"Start llm process at time = {now_formatted}")
+    time_logger = LlmTester(name="llm process", on=LOG_TIME)
+    time_logger.log_start_timer("Start llm process")
+
     response_queue = queue.Queue()
     stream_handler = RitaStreamHandler(response_queue)
     # Agent 1: Response to the user
@@ -130,16 +129,14 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
     t = threading.Thread(target=run_rita_agent)
     t.start()
 
-    if debug:
-        logTime(start_time, "First token entered")
+    time_logger.log_time("First token entered")
     # Agent 2: Determine user's intent
     intent_classifier = IntentClassifier(llm)
     intent = intent_classifier.invoke(user_prompt, data)
-    if debug:
-        logTime(start_time, f"Intent: {intent}")
+
+    time_logger.log_time(f"Finished detecting intent: {intent}")
 
     # Agent 3: Modify widget if needed
-
     def run_widget_modifier():
         nonlocal complete_rita_response
         nonlocal complete_rita_response
@@ -149,14 +146,14 @@ def llm_stream_response(data, user_prompt, retriever, llm, debug=True):
         widget_modifier = WidgetModifier(llm)
 
         rita_reply = complete_rita_response
-        print("reply", rita_reply)
-        print("intent", intent)
+        time_logger.log_time(f"Rita reply completed: {rita_reply}")
         modified_widget = widget_modifier.invoke(
             user_prompt, data, intent, rita_reply)
-        print("modified", modified_widget)
+        time_logger.log_time(f"Modified widget generated: {modified_widget}")
         stream_handler.add_to_stream(
             agent="Widget Modifier", data=modified_widget)
         stream_handler.end_stream()
+        time_logger.log_time("Stream completed")
 
     t2 = threading.Thread(target=run_widget_modifier)
     t2.start()

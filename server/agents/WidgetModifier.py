@@ -59,7 +59,7 @@ class WidgetModifier:
 
         format_instruction = self._get_parser(
             widget_type).get_format_instructions()
-        print(format_instruction)
+
         intent_classifier_template = PromptTemplate(
             template=FORMAT_INSTRUCTION,
             partial_variables={"format_instructions": format_instruction},

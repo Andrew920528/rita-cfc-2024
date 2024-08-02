@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask_cors import CORS
-from utils.util import logTime
+from utils.LlmTester import LlmTester
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
 from actions.ritaActions import initLLM, llm_stream_response, initRetriever
 import time
@@ -31,50 +31,56 @@ def get_output():
 def message_rita():
     global RETRIEVER, LLM
     if RETRIEVER == "" or LLM == "":
-        return "<error>"
-
-    start_time = time.time()
-    now_formatted = datetime.fromtimestamp(
-        start_time).strftime('%H:%M:%S.%f')[:-3]
-    app.logger.info(f"Recieved request at time = {now_formatted}")
+        response = {
+            'status': 'error',
+            'data': "LLM or retriever is not initialized"
+        }
+        return response
 
     prompt = request.json['prompt']
     ################  NOTE: Comment out this section if want to test without db ###################
-    # widget = request.json['widget']
-    # chat_history = request.json['chatHistory']
-    # lectureId = request.json['lectureId']
-    # classroomId = request.json['classroomId']
+    # enable if want to test without db, run frontend in indep mode and commented out the dummy api call
+    DB_INDEPENDENT = True
+    SAVE_EXAMPLE = False  # will only save example if DB_INDEPENDENT is False
+    LOAD_EXAMPLE = True  # will only load example if DB_INDEPENDENT is True
 
-    # lectureAndClassroomResponse = getLectureAndClassroom(
-    #     lectureId, classroomId)
-    # logTime(start_time, "Fetched classroom and lecture from the database")
-    # # check if lecture and classroom are fetched properly
-    # if lectureAndClassroomResponse['status'] == 'error':
-    #     return lectureAndClassroomResponse
+    fetch_db_tester = LlmTester(
+        name="use db to gather context info", on=not DB_INDEPENDENT)
 
-    # watsonxRequest = {**lectureAndClassroomResponse['data'],
-    #                   'chat_history': chat_history,
-    #                   "widget": widget}
+    def organize_context():
+        widget = request.json['widget']
+        chat_history = request.json['chatHistory']
+        lectureId = request.json['lectureId']
+        classroomId = request.json['classroomId']
 
-    # ================= Save the retrieved data as an example ==================
-    # current_dir = os.path.dirname(os.path.abspath(__file__))
-    # path = os.path.join(current_dir, "..", "ai", "agents",
-    #                     "data_examples", f"{now_formatted}.json")
-    # with open(path, 'w') as f:
-    #     json.dump(watsonxRequest, f, ensure_ascii=False)
-    # ==========================================================================
+        lectureAndClassroomResponse = getLectureAndClassroom(
+            lectureId, classroomId)
+        fetch_db_tester.log_time(
+            "Fetched classroom and lecture from the database")
+        # check if lecture and classroom are fetched properly
+        if lectureAndClassroomResponse['status'] == 'error':
+            return lectureAndClassroomResponse
 
-    ########### NOTE: Test code, should be removed for production  ############
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    example = "15:58:29.877.json"
-    file_path = os.path.join(current_dir, "..", "ai",
-                             "agents", "data_examples", example)
-    # Open the file and load its content as a Python object
-    with open(file_path, 'r') as file:
-        watsonxRequest = json.load(file)
+        watsonxRequest = {**lectureAndClassroomResponse['data'],
+                          'chat_history': chat_history,
+                          "widget": widget}
+        return watsonxRequest
+    watsonxRequest = fetch_db_tester.execute(organize_context)
+
+    ##########################  Test Controllers ##############################
+    # Enable to save example test cases
+    llm_tester = LlmTester(name="saves example",
+                           on=not DB_INDEPENDENT and SAVE_EXAMPLE)
+    llm_tester.save_example_data(watsonxRequest=watsonxRequest)
     ###########################################################################
+    # Enable if want to test without db
+    llm_tester = LlmTester(name="get example data",
+                           on=DB_INDEPENDENT and LOAD_EXAMPLE)
+    example = "15:58:29.877"
+    watsonxRequest = llm_tester.get_example_data(example)
+    ###########################################################################
+
     try:
-        # returns rita's reply asdict
         llmOutput = llm_stream_response(watsonxRequest, prompt, RETRIEVER, LLM)
         return llmOutput
     except Exception as e:
@@ -84,8 +90,6 @@ def message_rita():
             'data': str(e)
         }
         return response
-
-# users
 
 
 @app.route('/create-user', methods=['POST'])
