@@ -1,0 +1,53 @@
+{
+    "classroom": {
+        "status": "success",
+        "data": {
+            "name": "7/17",
+            "subject": "數學",
+            "publisher": "康軒",
+            "grade": "六上",
+            "plan": 0,
+            "credits": 3
+        }
+    },
+    "lecture": {
+        "status": "success",
+        "data": {
+            "name": "學期規劃",
+            "type": 0
+        }
+    },
+    "chat_history": [
+        {
+            "text": "5958",
+            "sender": "user"
+        },
+        {
+            "text": " Hi! I'm Rita, your helpful AI teaching assistant chatbot. How can I assist you today? Do you have any specific questions about planning a lesson or would you like me to suggest some topics from the provided course content?",
+            "sender": "ai"
+        },
+        {
+            "text": "更新了筆記",
+            "sender": "system"
+        },
+        {
+            "text": "clean up this widget",
+            "sender": "user"
+        },
+        {
+            "text": " I see that you want me to \"clean up\" this widget. However, it seems like there's no specific task or question related to planning a lesson. If you'd like, I can help you break down the content into smaller chunks or suggest ways to organize your lesson plans. Please let me know how I can assist you better!",
+            "sender": "ai"
+        },
+        {
+            "text": "更新了筆記",
+            "sender": "system"
+        }
+    ],
+    "widget": {
+        "id": "AndrewHsu-wid-lzcapi2x34x5hptw9s",
+        "type": 0,
+        "content": {
+            "goals": []
+        }
+    }
+}

@@ -100,11 +100,13 @@ def llm_stream_response(data, user_prompt, retriever, llm):
             }
         }
     """
+    ##########################  Logging Controllers #############################
     LOG_OUTPUT = True   # Enable to log time and output of the entire process
     # Enable to log detail output of each agent
-    RITA_VERBOSE = True
-    INTENT_VERBOSE = True
-    WID_VERBOSE = True
+    RITA_VERBOSE = False
+    INTENT_VERBOSE = False
+    WID_VERBOSE = False
+    #############################################################################
 
     time_logger = LlmTester(name="llm process", on=LOG_OUTPUT)
     time_logger.log_start_timer("Start llm process")
@@ -113,7 +115,6 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     stream_handler = RitaStreamHandler(response_queue)
     # Agent 1: Response to the user
     rita_agent = Rita(llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
-
     complete_rita_response = ""
     rita_response_done = False
 

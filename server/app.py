@@ -40,10 +40,12 @@ def message_rita():
     prompt = request.json['prompt']
 
     ##########################  Test Controllers ##############################
-    # enable if want to test without db, run frontend in indep mode and commented out the dummy api call
-    DB_INDEPENDENT = False
-    SAVE_EXAMPLE = True  # will only save example if DB_INDEPENDENT is False
-    LOAD_EXAMPLE = True  # will only load example if DB_INDEPENDENT is True
+    # Enable if want to test without db, run frontend in indep mode and commented out the dummy api call
+    DB_INDEPENDENT = False  # Should be False on production.
+    # Will only save example if DB_INDEPENDENT is False
+    SAVE_EXAMPLE = False  # Should be False on production.
+    # Will only load example if DB_INDEPENDENT is True
+    LOAD_EXAMPLE = True  # Should be False on production.
 
     fetch_db_tester = LlmTester(
         name="use db to gather context info", on=not DB_INDEPENDENT)

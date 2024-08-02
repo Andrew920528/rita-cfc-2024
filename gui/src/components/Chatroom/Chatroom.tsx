@@ -33,11 +33,6 @@ const Chatroom = ({}: ChatroomProps) => {
   const [text, setText] = useState("");
   const [ritaError, setRitaError] = useState("");
 
-  useEffect(() => {
-    setRitaError("");
-    setText("");
-  }, [widgets.current]);
-
   const handleKeyDown = async (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
