@@ -1,4 +1,4 @@
-from pylatex import Document, Command, Package
+from pylatex import Document, Command, Package, LineBreak
 from pylatex.base_classes import Environment
 from pylatex.utils import NoEscape
 
@@ -21,14 +21,15 @@ class Worksheet:
     def addMatching(self, pairs):
         self.doc.append(NoEscape(r'\newcounter{matchleft}'))
         self.doc.append(NoEscape(r'\newcounter{matchright}'))
-        self.doc.append(NoEscape(r'''\newenvironment{matchtabular}{%
+        self.doc.append(NoEscape(
+        r"""\newenvironment{matchtabular}{%
             \setcounter{matchleft}{0}%
             \setcounter{matchright}{0}%
             \tabularx{\textwidth}{%
                 >{\leavevmode\hbox to 1.5em{\stepcounter{matchleft}\arabic{matchleft}.}}X%
                 >{\leavevmode\hbox to 1.5em{\stepcounter{matchright}\alph{matchright})}}X%
             }%
-        }{\endtabularx}'''))
+        }{\endtabularx}"""))
                 
         str = ""
         for left, right in pairs:
@@ -36,6 +37,15 @@ class Worksheet:
         
         with self.doc.create(MatchTabularEnvironment()) as environment:
             environment.append(NoEscape(str))
+        self.doc.append(LineBreak())
+    
+    def addTextBox(self, text):
+        self.doc.append(NoEscape(r"""\noindent\fbox{%
+            \parbox{\textwidth}{%
+                """ + text + """
+            }%
+        }"""))
+        self.doc.append(LineBreak())
 
     def generatePDF(self):
         self.doc.generate_pdf(self.title, compiler='xelatex', clean=True, clean_tex=False)
