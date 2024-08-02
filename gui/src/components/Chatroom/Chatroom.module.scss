@@ -55,6 +55,13 @@
       gap: 1rem;
       padding: 1rem;
       scroll-behavior: smooth;
+      .loading-message{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
     }
     .chatroom-footer {
       display: flex;
