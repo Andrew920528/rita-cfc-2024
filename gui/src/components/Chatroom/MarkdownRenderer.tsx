@@ -19,7 +19,7 @@ export function MarkdownRenderer({children: markdown}: MarkdownRendererProps) {
         code({node, inline, className, children, ...props}: any) {
           const match = /language-(\w+)/.exec(className || "");
 
-          return true ? (
+          return (
             <SyntaxHighlighter
               style={dracula}
               PreTag="div"
@@ -28,10 +28,6 @@ export function MarkdownRenderer({children: markdown}: MarkdownRendererProps) {
             >
               {String(children).replace(/\n$/, "")}
             </SyntaxHighlighter>
-          ) : (
-            <code className={className} {...props}>
-              {children}
-            </code>
           );
         },
       }}

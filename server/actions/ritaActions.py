@@ -1,35 +1,38 @@
-# pip install langchain-huggingface
-# pip install ibm-watsonx-ai
-# pip install langchain-ibm
-# pip install langchain
 import queue
+from flask_sse import sse
+from datetime import datetime
 import threading
 from flask import Response
 import time
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from ibm_watsonx_ai import Credentials
 from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
 from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes, DecodingMethods
-from langchain.chains import RetrievalQA
 from langchain_ibm import WatsonxLLM
 from dotenv import load_dotenv
 import os
-from utils.prompt import RitaPromptHandler
-from utils.streaming import StreamHandler
-from utils.util import logTime
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.chains.retrieval import create_retrieval_chain
+from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY
+from agents.Rita import Rita
+from agents.IntentClassifier import IntentClassifier
+from agents.WidgetModifier import WidgetModifier
+from utils.LlmTester import LlmTester
+from utils.RitaStreamHandler import RitaStreamHandler
+from langchain_cohere import CohereEmbeddings
+import json
 
-def initRetriever(): 
+
+def initRetriever():
     # Get the absolute path of the embedding path with system independent path selectors
     curr_dir = os.path.dirname(os.path.abspath(__file__))
-    embedding_path = os.path.join(curr_dir, '..', '..', 'ai', 'course-prep', 'RAG', 'vector-stores', 'kang_math_5th_1st_vector_store_with_info')
-   
-    embedding_model = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-    )
+    embedding_path = os.path.join(
+        curr_dir, '..', '..', 'ai', 'rag', 'vector-stores', 'test_vector_store')
 
+    env_path = os.path.join(os.path.dirname(curr_dir), '.env')
+    load_dotenv(dotenv_path=env_path)
+    COHERE_KEY = os.getenv("COHERE_KEY")
+
+    embedding_model = CohereEmbeddings(
+        cohere_api_key=COHERE_KEY, model="embed-multilingual-v3.0")
     # Load FAISS store from disk
     faiss_store = FAISS.load_local(
         embedding_path, embedding_model, allow_dangerous_deserialization=True
@@ -39,22 +42,23 @@ def initRetriever():
     retriever = faiss_store.as_retriever()
     return retriever
 
+
 def initLLM():
-    start_time = time.time()
+    tester = LlmTester(name="init ibm watsonX", on=True)
+
     load_dotenv()
     API_KEY = os.getenv("WATSONX_API_KEY")
     URL = os.getenv("WATSONX_URL")
     PROJECT_ID = os.getenv("WATSONX_PROJECT_ID")
 
-    #Initialize WatsonX LLM Interface
-    credentials = Credentials.from_dict({"url": URL, "apikey": API_KEY}) 
+    # Initialize WatsonX LLM Interface
+    credentials = Credentials.from_dict({"url": URL, "apikey": API_KEY})
     params = {
-        GenParams.MAX_NEW_TOKENS: 4095,
+        GenParams.MAX_NEW_TOKENS: MAX_NEW_TOKENS,
         GenParams.DECODING_METHOD: DecodingMethods.GREEDY,
-        GenParams.REPETITION_PENALTY: 1.1, # TODO this should prob be in config file
-    }   
-
-    logTime(start_time, "loaded IBM watsonX credentials")
+        GenParams.REPETITION_PENALTY: REPETITION_PENALTY,
+    }
+    tester.log_start_timer("loaded IBM watsonX credentials")
 
     # Initialize the LLM model
     llm = WatsonxLLM(
@@ -66,24 +70,103 @@ def initLLM():
         project_id=PROJECT_ID,
     )
     return llm
-    
+
 
 def llm_stream_response(data, user_prompt, retriever, llm):
-    
-    # Generate prompt based on retrieved data and user input
-    promptHandler = RitaPromptHandler(data, user_prompt)
-    prompt = promptHandler.get_prompt()
-    prompt_template = promptHandler.get_template()
-    
-    # Chain together components (LLM, prompt, RAG retriever)
-    document_chain = create_stuff_documents_chain(llm = llm, prompt = prompt_template)
-    retrieval_chain = create_retrieval_chain(retriever = retriever, combine_docs_chain = document_chain)
+    """
+    https://www.figma.com/design/xiYG1qIDmu9S1KSapuJQb9/Rita-%7C-CFC-2024?node-id=350-1636&t=BZfXxoQSRUG081uy-0
+    data (dict): context data, in the following format:
+        {
+            widget: {
+                id: string
+                type: int
+                content: any
+            }
+            classroom: {
+                name: string
+                subject: string
+                publisher: string
+                grade: string
+                plan: int
+                credits: int
+            }
+            lecture: {
+                name: string
+                type: string
+            }
+            chat_history: List({
+                sender: string
+                text: string
+            }
+        }
+    """
+    ##########################  Logging Controllers #############################
+    LOG_OUTPUT = True   # Enable to log time and output of the entire process
+    # Enable to log detail output of each agent
+    RITA_VERBOSE = False
+    INTENT_VERBOSE = False
+    WID_VERBOSE = False
+    #############################################################################
 
-    # Call the LLM and stream its response
-    rita_reply = retrieval_chain.stream(prompt)
-    stream_handler = StreamHandler(queue.Queue())
-    threading.Thread(target=stream_handler.output_buffer, args=(rita_reply,)).start()
-    response = Response(stream_handler.yield_stream(), content_type='text/plain')
+    time_logger = LlmTester(name="llm process", on=LOG_OUTPUT)
+    time_logger.log_start_timer("Start llm process")
+
+    response_queue = queue.Queue()
+    stream_handler = RitaStreamHandler(response_queue)
+    # Agent 1: Response to the user
+    rita_agent = Rita(llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
+    complete_rita_response = ""
+    rita_response_done = False
+
+    def run_rita_agent():
+        nonlocal rita_response_done
+        nonlocal complete_rita_response
+        in_stream = rita_agent.stream(user_prompt, data)
+        retriever_tester = LlmTester(
+            name="retriever tester", on=RITA_VERBOSE)
+
+        for chunk in in_stream:
+            if "answer" not in chunk:
+                retriever_tester.log(chunk)
+                continue
+            stream_handler.add_to_stream(
+                agent="Rita", data=chunk["answer"])
+            complete_rita_response += chunk["answer"]
+        time_logger.log_latency(
+            f"Rita reply completed.{complete_rita_response}")
+        rita_response_done = True
+    t = threading.Thread(target=run_rita_agent)
+    t.start()
+
+    time_logger.log_latency("First token entered")
+    # Agent 2: Determine user's intent
+    intent_classifier = IntentClassifier(llm, verbose=INTENT_VERBOSE)
+    intent = intent_classifier.invoke(user_prompt, data)
+
+    time_logger.log_latency(f"Finished detecting intent.")
+
+    # Agent 3: Modify widget if needed
+    def run_widget_modifier():
+        nonlocal complete_rita_response
+        nonlocal complete_rita_response
+
+        while not rita_response_done:
+            time.sleep(0.1)
+        widget_modifier = WidgetModifier(llm, verbose=WID_VERBOSE)
+        stream_handler.add_to_stream(
+            agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
+        modified_widget = widget_modifier.invoke(
+            user_prompt, data, intent, complete_rita_response)
+        time_logger.log_latency(
+            f"Modified widget generated.")
+        stream_handler.add_to_stream(
+            agent="Widget Modifier", data=modified_widget)
+        stream_handler.end_stream()
+        time_logger.log_latency("Stream completed")
+
+    t2 = threading.Thread(target=run_widget_modifier)
+    t2.start()
+
+    response = Response(stream_handler.yield_stream(),
+                        content_type="application/json")
     return response
-
-
