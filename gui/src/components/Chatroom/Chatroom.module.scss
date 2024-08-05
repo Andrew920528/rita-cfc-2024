@@ -102,4 +102,11 @@
   .chatroom-message-text {
     overflow: auto;
   }
+  .jelly {
+    text-decoration: underline;
+    display: inline-block;
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }

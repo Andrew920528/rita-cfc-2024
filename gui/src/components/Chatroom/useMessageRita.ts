@@ -3,7 +3,7 @@ import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {messageRitaService, useApiHandler} from "../../utils/service";
 import {SENDER} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
-import {contentIsOfType, widgetBook} from "../../schema/widget";
+import {contentIsOfType, widgetBook} from "../../schema/widget/widgetFactory";
 import {EMPTY_ID} from "../../global/constants";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 
@@ -36,6 +36,7 @@ export const useMessageRita = () => {
     let newMessage = {
       text: text,
       sender: SENDER.user,
+      completed: true,
     };
     dispatch(
       ChatroomsServices.actions.addMessage({
@@ -82,6 +83,7 @@ export const useMessageRita = () => {
       let messageObj = {
         text: "",
         sender: SENDER.ai,
+        completed: false,
       };
 
       dispatch(
@@ -153,6 +155,7 @@ export const useMessageRita = () => {
       let messageObj = {
         text: organizer.currRitaReply,
         sender: SENDER.ai,
+        completed: false,
       };
 
       dispatch(
@@ -163,6 +166,18 @@ export const useMessageRita = () => {
       );
     } else if (agent === "Widget Modifier") {
       if (data === "WIDGET_MODIFIER_STARTED") {
+        let messageObj = {
+          text: organizer.currRitaReply,
+          sender: SENDER.ai,
+          completed: true, // sets completed to true
+        };
+
+        dispatch(
+          ChatroomsServices.actions.updateLastMessage({
+            chatroomId: chatroom.id,
+            message: messageObj,
+          })
+        );
         setConstructingWidget(true);
         return;
       }
@@ -213,8 +228,9 @@ export const useMessageRita = () => {
     );
 
     let messageObj = {
-      text: `更新了${widgetBook[widgets.dict[widgets.current].type].title}`,
+      text: `更新了${widgetBook(widgets.dict[widgets.current].type).title}`,
       sender: SENDER.system,
+      completed: true,
     };
 
     dispatch(

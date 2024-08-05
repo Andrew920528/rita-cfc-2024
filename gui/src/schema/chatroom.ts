@@ -1,6 +1,7 @@
 export type ChatMessage = {
   text: string;
   sender: string;
+  completed: boolean;
 };
 
 export const SENDER = {

@@ -1,8 +1,11 @@
 from flask import Flask, request
 from flask_cors import CORS
+
+from utils.word_docs import convert_to_pdf, send_docx
 from utils.LlmTester import LlmTester
+from utils.word_docs import convert_to_pdf, send_docx
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
-from actions.ritaActions import initLLM, llm_stream_response, initRetriever
+from actions.ritaActions import initLLM, llm_stream_response, initRetriever, translateText
 import time
 import logging
 from datetime import datetime
@@ -25,6 +28,24 @@ def initialize():
 @app.route('/hello', methods=['GET'])
 def get_output():
     return {'output': 'hello guys!'}
+
+
+@app.route('/send-word-doc', methods=['GET'])
+def get_file():
+    try:
+        file = send_docx()
+        return file
+    except Exception as e:
+        response = {
+            'status': 'error',
+            'data': str(e)
+        }
+    return response
+
+
+@app.route('/test-get-pdf', methods=['GET'])
+def get_pdf():
+    return convert_to_pdf()
 
 
 @app.route('/message-rita', methods=['POST'])
@@ -96,6 +117,22 @@ def message_rita():
             'data': str(e)
         }
         return response
+
+
+@app.route('/translate', methods=['POST'])
+def translate():
+    text = request.json['text']
+    try:
+        return translateText(text)
+    except Exception as e:
+        logging.error("Error: {}".format(e))
+        response = {
+            'status': 'error',
+            'data': str(e)
+        }
+        return response
+
+# users
 
 
 @app.route('/create-user', methods=['POST'])

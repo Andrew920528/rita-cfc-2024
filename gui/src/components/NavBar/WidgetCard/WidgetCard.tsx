@@ -1,22 +1,15 @@
 import {Information, Add} from "@carbon/icons-react";
 
 import {ReactElement, useCallback, useEffect, useRef, useState} from "react";
-import {API, EMPTY_ID} from "../../../global/constants";
-import {WidgetType, initWidget, widgetBook} from "../../../schema/widget";
-import {
-  useCreateWidget,
-  useCreateWidgetWithApi,
-  useDeleteWidget,
-} from "../../../global/globalActions";
+import {WidgetType} from "../../../schema/widget/widget";
+
+import {useCreateWidgetWithApi} from "../../../global/globalActions";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
-import {useApiHandler, createWidgetService} from "../../../utils/service";
-import {delay, generateId} from "../../../utils/util";
 import IconButton from "../../ui_components/IconButton/IconButton";
 import classNames from "classnames/bind";
 import styles from "./WidgetCard.module.scss";
 import {WidgetFrameGhost} from "../../widgets/WidgetFrame/WidgetFrame";
 import {UiServices} from "../../../features/UiSlice";
-import {RfServices} from "../../../features/RfSlice";
 
 const cx = classNames.bind(styles);
 

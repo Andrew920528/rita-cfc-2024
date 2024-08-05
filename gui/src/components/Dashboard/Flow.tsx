@@ -13,7 +13,6 @@ import WidgetFrame from "../widgets/WidgetFrame/WidgetFrame";
 import {RfServices} from "../../features/RfSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {EMPTY_ID} from "../../global/constants";
-import {WidgetType, widgetBook} from "../../schema/widget";
 import {useCreateWidgetWithApi} from "../../global/globalActions";
 import {UiServices} from "../../features/UiSlice";
 
