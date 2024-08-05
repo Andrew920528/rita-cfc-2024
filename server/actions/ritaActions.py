@@ -26,10 +26,9 @@ from utils.RitaStreamHandler import RitaStreamHandler
 from langchain_cohere import CohereEmbeddings
 import json
 
-from utils.util import logTime
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
-from googletrans import Translator
+# from googletrans import Translator
 
 
 def initRetriever():
@@ -184,10 +183,10 @@ def llm_stream_response(data, user_prompt, retriever, llm):
 
 
 def translateText(text):
-    translator = Translator()
-    translatedText = translator.translate(text, src='en', dest='zh-tw').text
+    # translator = Translator()
+    # translatedText = translator.translate(text, src='en', dest='zh-tw').text
 
     return {
         'status': 'success',
-        'data': translatedText
+        'data': "Need to find a dependency alternative"  # translatedText
     }

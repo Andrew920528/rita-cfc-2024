@@ -166,6 +166,18 @@ export const useMessageRita = () => {
       );
     } else if (agent === "Widget Modifier") {
       if (data === "WIDGET_MODIFIER_STARTED") {
+        let messageObj = {
+          text: organizer.currRitaReply,
+          sender: SENDER.ai,
+          completed: true, // sets completed to true
+        };
+
+        dispatch(
+          ChatroomsServices.actions.updateLastMessage({
+            chatroomId: chatroom.id,
+            message: messageObj,
+          })
+        );
         setConstructingWidget(true);
         return;
       }

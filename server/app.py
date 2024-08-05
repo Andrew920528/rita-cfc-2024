@@ -1,10 +1,9 @@
 from flask import Flask, request
 from flask_cors import CORS
 
-from utils.word_docs import convert_to_pdf, download_file
+from utils.word_docs import convert_to_pdf, send_docx
 from utils.LlmTester import LlmTester
 from utils.word_docs import convert_to_pdf, send_docx
-from utils.util import logTime
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
 from actions.ritaActions import initLLM, llm_stream_response, initRetriever, translateText
 import time
