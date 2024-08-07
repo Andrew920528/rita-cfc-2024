@@ -1,6 +1,11 @@
+# pip install docx2pdf
+from docx2pdf import convert
+import pythoncom
 from flask import send_file, jsonify
 import os
 import tempfile
+from docx import Document
+
 import pypandoc
 def send_docx():
     # The path to your Word document
@@ -39,3 +44,23 @@ def convert_to_pdf():
             return str(e)
     else:
         return jsonify({"error": "File not found"}), 404
+
+def docxToPdfFunction(docxPath, pdfPath):
+    # worksheet_tmp/Rita Test document.docx, worksheet_tmp/Rita Test document.pdf
+    pythoncom.CoInitialize()
+    convert(docxPath, pdfPath)
+
+def createBlankDocx(widgetId):
+    documentName = "worksheet_tmp/" + widgetId + ".docx"
+    document = Document()
+    document.save(documentName)
+    return documentName
+
+def sendDocument(documentPath):
+
+    if documentPath[-5:] == ".docx":
+        return send_file(documentPath, as_attachment=True, download_name='your_document.docx')
+    elif documentPath[-4:] == ".pdf":
+        return send_file(documentPath, as_attachment=True, download_name='your_document.pdf')
+    else:
+        return ""
