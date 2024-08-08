@@ -19,8 +19,14 @@ const SemesterGoalWidget = (props: Props) => {
   );
   function editSemesterGoal(textAreaValue: string) {
     let goalList = textAreaValue.split("\n");
+    let processedGoalList: string[] = [];
+    for (let goal of goalList) {
+      goal = goal.replace("- ", "");
+      processedGoalList.push(goal);
+    }
+
     let newSemesterGoal: SemesterGoalWidgetContent = {
-      goals: goalList,
+      goals: processedGoalList,
     };
     const newWidget: Widget = {
       id: props.wid,
@@ -35,9 +41,15 @@ const SemesterGoalWidget = (props: Props) => {
   }
 
   useEffect(() => {
-    setDisplayGoals(
-      (widget.content as SemesterGoalWidgetContent).goals.join("\n")
-    );
+    let displayString = "";
+    console.log((widget.content as SemesterGoalWidgetContent).goals);
+    for (let goal of (widget.content as SemesterGoalWidgetContent).goals) {
+      displayString += (goal.length > 0 ? "- " : "") + goal + "\n";
+    }
+    displayString = displayString.replace(/\n$/, "");
+
+    console.log(displayString);
+    setDisplayGoals(displayString);
   }, [widget]);
   const loading = useWidgetLoading(props.wid);
   return !loading ? (
