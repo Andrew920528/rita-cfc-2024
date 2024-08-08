@@ -1,0 +1,28 @@
+@use "../../../style/abstract/index" as *;
+.chip {
+  border-radius: 50px;
+  outline: solid #e0e0e0 1px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  gap: 0.25rem;
+  background-color: white;
+  &:hover {
+    outline: solid #cacaca 1px;
+    background-color: #e8e8e8;
+    cursor: pointer;
+  }
+  p {
+    // background-color: red;
+  }
+  .chip-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    // background-color: $primary-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

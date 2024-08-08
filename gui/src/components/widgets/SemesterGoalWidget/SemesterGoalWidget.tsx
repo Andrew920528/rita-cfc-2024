@@ -42,13 +42,10 @@ const SemesterGoalWidget = (props: Props) => {
 
   useEffect(() => {
     let displayString = "";
-    console.log((widget.content as SemesterGoalWidgetContent).goals);
     for (let goal of (widget.content as SemesterGoalWidgetContent).goals) {
       displayString += (goal.length > 0 ? "- " : "") + goal + "\n";
     }
     displayString = displayString.replace(/\n$/, "");
-
-    console.log(displayString);
     setDisplayGoals(displayString);
   }, [widget]);
   const loading = useWidgetLoading(props.wid);

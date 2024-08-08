@@ -3,11 +3,15 @@ import Textbox from "../ui_components/Textbox/Textbox";
 import IconButton from "../ui_components/IconButton/IconButton";
 import {
   ArrowRight,
+  Catalog,
   ChevronDown,
   ChevronUp,
+  Idea,
   Maximize,
   Minimize,
+  ResultDraft,
   Stop,
+  VideoPlayer,
 } from "@carbon/icons-react";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {contentIsOfType, widgetBook} from "../../schema/widget/widgetFactory";
@@ -26,6 +30,7 @@ import {useMessageRita} from "./useMessageRita";
 import {CircularProgress} from "@mui/material";
 import {translateService, useApiHandler} from "../../utils/service";
 import {API} from "../../global/constants";
+import Chip from "../ui_components/Chip/Chip";
 const cx = classNames.bind(styles);
 type ChatroomProps = {};
 const Chatroom = ({}: ChatroomProps) => {
@@ -34,15 +39,18 @@ const Chatroom = ({}: ChatroomProps) => {
     (state) => state.Chatrooms.dict[state.Chatrooms.current]
   );
   const widgets = useTypedSelector((state) => state.Widgets);
-  const {sendMessage, waitingForReply, constructingWidget, terminateResponse} =
-    useMessageRita();
+  const {
+    sendMessage,
+    waitingForReply,
+    constructingWidget,
+    terminateResponse,
+    ritaError,
+  } = useMessageRita();
 
   // ui handlers
   const [collapsed, setCollapsed] = useState(false);
   const [maximized, setMaximized] = useState(false);
   const [text, setText] = useState("");
-  const [ritaError, setRitaError] = useState("");
-
   const handleKeyDown = async (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
@@ -51,7 +59,8 @@ const Chatroom = ({}: ChatroomProps) => {
       if (waitingForReply) return;
       if (isComposing) return;
       if (text.trim() === "") return;
-      await sendMessage(text, setText, setRitaError);
+      setText("");
+      await sendMessage(text);
     }
   };
 
@@ -95,6 +104,8 @@ const Chatroom = ({}: ChatroomProps) => {
           constructingWidget={constructingWidget}
           loading={waitingForReply}
           ritaError={ritaError}
+          sendMessage={sendMessage}
+          setText={setText}
         />
         <div className={cx("chatroom-footer")}>
           <Textbox
@@ -115,7 +126,8 @@ const Chatroom = ({}: ChatroomProps) => {
               if (waitingForReply) {
                 terminateResponse();
               } else {
-                await sendMessage(text, setText, setRitaError);
+                setText("");
+                await sendMessage(text);
               }
             }}
             disabled={text.trim() === "" && !waitingForReply}
@@ -195,12 +207,16 @@ type ChatroomBodyProps = {
   loading: boolean;
   constructingWidget: boolean;
   ritaError: string;
+  setText: (text: string) => void;
+  sendMessage: any;
 };
 const ChatroomBody = ({
   messages,
   loading,
   constructingWidget,
   ritaError,
+  setText,
+  sendMessage,
 }: ChatroomBodyProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -229,6 +245,37 @@ const ChatroomBody = ({
   };
   return (
     <div className={cx("chatroom-body")} ref={scrollRef}>
+      {messages.length === 0 && (
+        <div className={cx("empty-chatroom-placeholder")}>
+          您好，請問我能怎麼協助您？
+          <div className={cx("chips")}>
+            <Chip
+              text="尋找第二單元的相關影片"
+              icon={<VideoPlayer />}
+              iconColor="#B60071"
+              onClick={async () => {
+                await sendMessage("尋找第二單元的相關影片");
+              }}
+            />
+            <Chip
+              text="生成十六週的教學計畫草稿"
+              icon={<ResultDraft />}
+              iconColor="#478CCF"
+              onClick={async () => {
+                await sendMessage("生成十六週的教學計畫草稿");
+              }}
+            />
+            <Chip
+              text="給我第一章課程活動的點子"
+              icon={<Idea />}
+              iconColor="#FFB200"
+              onClick={async () => {
+                await sendMessage("給我第一章課程活動的點子");
+              }}
+            />
+          </div>
+        </div>
+      )}
       {messages.map((message, index) => {
         return <ChatMessage {...message} key={index} />;
       })}
