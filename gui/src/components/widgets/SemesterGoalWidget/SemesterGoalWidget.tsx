@@ -59,7 +59,7 @@ const SemesterGoalWidget = (props: Props) => {
         editSemesterGoal(e.currentTarget.value);
         setDisplayGoals(e.currentTarget.value);
       }}
-      placeholder="輸入本學期的學習重點，並用 enter 分隔不同項目"
+      placeholder="輸入本學期的學習重點，並用 enter ⏎ 分隔不同項目"
     />
   ) : (
     <SemesterGoalSkeleton />
