@@ -26,12 +26,9 @@ export const useMessageRita = () => {
     terminateResponse,
   } = useApiHandler([classroomId]);
 
+  const [ritaError, setRitaError] = useState("");
   const [constructingWidget, setConstructingWidget] = useState(false);
-  async function sendMessage(
-    text: string,
-    setText: Dispatch<SetStateAction<string>>,
-    setRitaError: Dispatch<SetStateAction<string>>
-  ) {
+  async function sendMessage(text: string) {
     abortControllerRef.current = new AbortController();
     let newMessage = {
       text: text,
@@ -44,7 +41,6 @@ export const useMessageRita = () => {
         message: newMessage,
       })
     );
-    setText("");
     setRitaError("");
     // Step 1: Formulate payload
     let payload = {
@@ -199,15 +195,15 @@ export const useMessageRita = () => {
 
     let widgetId = modify_widget_data.widgetId;
 
-    if (
-      !widgetId ||
-      widgetId === "" ||
-      widgetId !== widgets.current ||
-      widgetId === EMPTY_ID
-    ) {
-      console.warn("Could not modify widget with id", widgetId);
-      return;
-    }
+    // if (
+    //   !widgetId ||
+    //   widgetId === "" ||
+    //   widgetId !== widgets.current ||
+    //   widgetId === EMPTY_ID
+    // ) {
+    //   console.warn("Could not modify widget with id", widgetId);
+    //   return;
+    // }
     let widgetContent = modify_widget_data.widgetContent;
 
     if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {
@@ -241,5 +237,11 @@ export const useMessageRita = () => {
     );
   }
 
-  return {sendMessage, waitingForReply, constructingWidget, terminateResponse};
+  return {
+    sendMessage,
+    waitingForReply,
+    constructingWidget,
+    terminateResponse,
+    ritaError,
+  };
 };

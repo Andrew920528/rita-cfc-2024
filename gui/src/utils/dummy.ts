@@ -182,7 +182,6 @@ export const dummyLoginData: any = {
   lecturesDict: lectures.dict,
   widgetDict: widgets.dict,
 };
-
 export const dummyRitaResponse = [
   '{"agent": "Rita", "data": "**NOTE: This is in independent mode.**\\n\\n"}|T|',
   '{"agent": "Rita", "data": " H"}|T|',
@@ -237,5 +236,6 @@ export const dummyRitaResponse = [
   '{"agent": "Rita", "data": "n"}|T|',
   '{"agent": "Rita", "data": "?"}|T|',
   '{"agent": "Rita", "data": ""}|T|',
-  '{"agent": "Widget Modifier", "data": {"widgetId":"dum-username-wid-lxu4el0kwcyyfcov1vq","widgetContent":{"goals":["你好"]}}}|T|',
+  '{"agent": "Widget Modifier", "data": "WIDGET_MODIFIER_STARTED"}|T|',
+  `{"agent": "Widget Modifier", "data": "{\\"widgetId\\": \\"dum-username-wid-lxu4el0kwcyyfcov1vq\\",\\"widgetContent\\": {\\"goals\\": [\\"你好\\"]}}"}|T|`,
 ];

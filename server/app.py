@@ -90,7 +90,7 @@ def message_rita():
                           "widget": widget}
         return watsonxRequest
     watsonxRequest = fetch_db_tester.execute(organize_context)
-    if "status" in watsonxRequest and watsonxRequest['status'] == 'error':
+    if watsonxRequest and "status" in watsonxRequest and watsonxRequest['status'] == 'error':
         return watsonxRequest
     ###########################################################################
     # Enable to save example test cases
@@ -101,7 +101,7 @@ def message_rita():
     # Enable if want to test without db
     llm_tester = LlmTester(name="get example data",
                            on=DB_INDEPENDENT and LOAD_EXAMPLE)
-    example = "15:58:29.877"
+    example = "test_semester_goal"
     exampleRequest = llm_tester.get_example_data(example)
     if exampleRequest:
         watsonxRequest = exampleRequest

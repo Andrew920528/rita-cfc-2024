@@ -19,8 +19,14 @@ const SemesterGoalWidget = (props: Props) => {
   );
   function editSemesterGoal(textAreaValue: string) {
     let goalList = textAreaValue.split("\n");
+    let processedGoalList: string[] = [];
+    for (let goal of goalList) {
+      goal = goal.replace("- ", "");
+      processedGoalList.push(goal);
+    }
+
     let newSemesterGoal: SemesterGoalWidgetContent = {
-      goals: goalList,
+      goals: processedGoalList,
     };
     const newWidget: Widget = {
       id: props.wid,
@@ -35,9 +41,12 @@ const SemesterGoalWidget = (props: Props) => {
   }
 
   useEffect(() => {
-    setDisplayGoals(
-      (widget.content as SemesterGoalWidgetContent).goals.join("\n")
-    );
+    let displayString = "";
+    for (let goal of (widget.content as SemesterGoalWidgetContent).goals) {
+      displayString += (goal.length > 0 ? "- " : "") + goal + "\n";
+    }
+    displayString = displayString.replace(/\n$/, "");
+    setDisplayGoals(displayString);
   }, [widget]);
   const loading = useWidgetLoading(props.wid);
   return !loading ? (
@@ -47,7 +56,7 @@ const SemesterGoalWidget = (props: Props) => {
         editSemesterGoal(e.currentTarget.value);
         setDisplayGoals(e.currentTarget.value);
       }}
-      placeholder="輸入本學期的學習重點，並用 enter 分隔不同項目"
+      placeholder="輸入本學期的學習重點，並用 enter ⏎ 分隔不同項目"
     />
   ) : (
     <SemesterGoalSkeleton />

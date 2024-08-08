@@ -35,7 +35,8 @@ export class SemesterPlanWidgetMaker extends WidgetMaker<SemesterPlanWidgetConte
       hint: "製作學期進度",
       icon: <Plan />,
       type: WidgetType.SemesterPlan,
-      width: 700,
+      minWidth: 700,
+      maxWidth: 2000,
       minHeight: 300,
       maxHeight: 800,
     };

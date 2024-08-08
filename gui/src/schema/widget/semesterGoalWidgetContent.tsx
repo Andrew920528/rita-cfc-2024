@@ -28,7 +28,8 @@ export class SemesterGoalWidgetMaker extends WidgetMaker<SemesterGoalWidgetConte
       hint: "列出學習重點",
       icon: <CertificateCheck />,
       type: WidgetType.SemesterGoal,
-      width: 300,
+      minWidth: 300,
+      maxWidth: 600,
       minHeight: 200,
       maxHeight: 500,
     };
