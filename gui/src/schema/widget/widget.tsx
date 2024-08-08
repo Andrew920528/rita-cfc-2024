@@ -45,7 +45,8 @@ export type widgetUiBook = {
   hint: string;
   icon: ReactNode;
   type: WidgetType;
-  width: number;
+  minWidth: number;
+  maxWidth: number;
   minHeight: number;
   maxHeight: number;
 };

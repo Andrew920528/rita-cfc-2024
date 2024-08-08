@@ -17,7 +17,8 @@ export class ScheduleWidgetMaker extends WidgetMaker<ScheduleWidgetContent> {
       hint: "瀏覽每週課表",
       icon: <Alarm />,
       type: WidgetType.Schedule,
-      width: 300,
+      minWidth: 400,
+      maxWidth: 2000,
       minHeight: 300,
       maxHeight: 500,
     };

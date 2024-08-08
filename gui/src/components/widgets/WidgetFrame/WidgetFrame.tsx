@@ -86,7 +86,8 @@ const WidgetFrame = ({selected, widgetId}: WidgetFrameProps) => {
         entering: !isExiting,
       })}
       style={{
-        width: widgetBook(widgetType).width,
+        minWidth: widgetBook(widgetType).minWidth,
+        maxWidth: widgetBook(widgetType).maxWidth,
         minHeight: widgetBook(widgetType).minHeight,
         maxHeight: widgetBook(widgetType).maxHeight,
       }}
@@ -124,7 +125,8 @@ export const WidgetFrameGhost = ({widgetType}: {widgetType: WidgetType}) => {
     <div
       className={cx("widget-frame")}
       style={{
-        width: widgetBook(widgetType).width,
+        minWidth: widgetBook(widgetType).minWidth,
+        maxWidth: widgetBook(widgetType).maxWidth,
         minHeight: widgetBook(widgetType).minHeight,
         maxHeight: widgetBook(widgetType).maxHeight,
       }}

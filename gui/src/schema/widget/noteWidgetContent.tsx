@@ -23,7 +23,8 @@ export class NoteWidgetMaker extends WidgetMaker<NoteWidgetContent> {
       hint: "快速整理想法",
       icon: <Catalog />,
       type: WidgetType.Note,
-      width: 300,
+      minWidth: 300,
+      maxWidth: 600,
       minHeight: 200,
       maxHeight: 500,
     };
