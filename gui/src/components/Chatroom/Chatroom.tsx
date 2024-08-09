@@ -180,7 +180,6 @@ const ChatMessage = ({text, sender, completed}: ChatMessageT) => {
             <p
               className={cx("--label", "jelly")}
               onClick={() => {
-                console.log("translate");
                 translate();
               }}
             >

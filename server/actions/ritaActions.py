@@ -183,9 +183,12 @@ def llm_stream_response(data, user_prompt, retriever, llm):
 
 def translateText(text):
     translator = Translator(from_lang="en", to_lang="zh-TW")
-    translation = translator.translate(text)
+    complete_translation = ""
+    for i in range(0, len(text), 499):
+        chunk = text[i:i+499]
+        complete_translation += translator.translate(chunk)
 
     return {
         'status': 'success',
-        'data': translation
+        'data': complete_translation
     }
