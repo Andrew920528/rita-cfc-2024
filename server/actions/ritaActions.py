@@ -1,9 +1,8 @@
-
 # pip install langchain-huggingface
 # pip install ibm-watsonx-ai
 # pip install langchain-ibm
 # pip install langchain
-# pip install googletrans==3.1.0a0
+# pip install translate
 import queue
 from flask_sse import sse
 from datetime import datetime
@@ -28,7 +27,7 @@ import json
 
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
-# from googletrans import Translator
+from translate import Translator
 
 
 def initRetriever():
@@ -183,10 +182,10 @@ def llm_stream_response(data, user_prompt, retriever, llm):
 
 
 def translateText(text):
-    # translator = Translator()
-    # translatedText = translator.translate(text, src='en', dest='zh-tw').text
+    translator = Translator(from_lang="en", to_lang="zh-TW")
+    translation = translator.translate(text)
 
     return {
         'status': 'success',
-        'data': "Need to find a dependency alternative"  # translatedText
+        'data': translation
     }

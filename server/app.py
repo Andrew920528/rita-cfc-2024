@@ -1,9 +1,8 @@
 from flask import Flask, request
 from flask_cors import CORS
 
-from utils.word_docs import convert_to_pdf, send_docx
+from utils.word_docs import convert_to_pdf, send_docx, docxToPdfFunction, createBlankDocx, sendDocument
 from utils.LlmTester import LlmTester
-from utils.word_docs import convert_to_pdf, send_docx
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
 from actions.ritaActions import initLLM, llm_stream_response, initRetriever, translateText
 import time
@@ -353,8 +352,6 @@ def delete_widget():
         return response
 
 # chatroom
-
-
 @app.route('/update-chatroom', methods=['POST'])
 def update_chatroom():
     try:
@@ -369,6 +366,50 @@ def update_chatroom():
         }
         return response
 
+# documents
+@app.route('/docxToPdf', methods=['POST'])
+def docxToPdf():
+    try:
+        docxPath = request.json['docxPath']
+        pdfPath = request.json['pdfPath']
+        docxToPdfFunction(docxPath, pdfPath)
+        response = {
+            'status': 'success',
+            'data': 'success'
+        }
+        return response
+    except Exception as e:
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
+        }
+        return response
+
+@app.route('/create-blank', methods=['POST'])
+def createBlank():
+    try:
+        widgetId = request.json['widgetId']
+        documentName = createBlankDocx(widgetId)
+        response = {
+            'status': 'success',
+            'data': documentName
+        }
+        return response
+    except Exception as e:
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
+        }
+        return response
+
+@app.route('/send-file', methods=['POST'])
+def sendFile():
+    try:
+        documentPath = request.json['documentPath']
+        document = sendDocument(documentPath)
+        return document
+    except Exception as e:
+        return ""
 
 initialize()
 if __name__ == '__main__':
