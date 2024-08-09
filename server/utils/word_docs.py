@@ -1,12 +1,14 @@
 # pip install docx2pdf
 from docx2pdf import convert
-import pythoncom
+# import pythoncom
 from flask import send_file, jsonify
 import os
 import tempfile
 from docx import Document
 
 import pypandoc
+
+
 def send_docx():
     # The path to your Word document
     doc_path = 'worksheet_tmp/Rita Test document.docx'
@@ -28,7 +30,7 @@ def convert_to_pdf():
             # NOTE Server needs to install latex engine for file conversion
             # basictex is a minimal tool for conversion
             # brew install --cask basictex
-            # ^ works on mac, not sure about windows LOL 
+            # ^ works on mac, not sure about windows LOL
             pypandoc.convert_file(doc_path, 'pdf', outputfile=pdf_path)
             response = send_file(pdf_path, as_attachment=True)
 
@@ -45,16 +47,20 @@ def convert_to_pdf():
     else:
         return jsonify({"error": "File not found"}), 404
 
+
 def docxToPdfFunction(docxPath, pdfPath):
     # worksheet_tmp/Rita Test document.docx, worksheet_tmp/Rita Test document.pdf
-    pythoncom.CoInitialize()
-    convert(docxPath, pdfPath)
+    # pythoncom.CoInitialize()
+    # convert(docxPath, pdfPath)
+    pass
+
 
 def createBlankDocx(widgetId):
     documentName = "worksheet_tmp/" + widgetId + ".docx"
     document = Document()
     document.save(documentName)
     return documentName
+
 
 def sendDocument(documentPath):
 
