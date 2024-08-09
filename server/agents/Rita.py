@@ -36,6 +36,12 @@ class Rita:
         SYSTEM_BASE_INSTRUCTION = (
             "Answer the user's questions based on the below context: {context}. "
             "The context is given in markdown format. It is a teacher's guide, which covers course content and methodologies."
+
+            "Also, information about the current course includes:"
+            "Subject: {subject}"
+            "Grade: {grade}"
+            "Credits: {credits}."
+
             "If the input is irrelevant, suggest ways that you can help to plan a lesson. "
             "Answer the question with concise sentences."  # decrease unnecessary token
         )
@@ -60,11 +66,14 @@ class Rita:
 
     def _get_prompt(self, user_prompt, data):
         chat_history = format_chat_history(data["chat_history"])
-
+        
         return {
             "context": [],
             "chat_history": chat_history,
             "input": user_prompt,
-            "widget_id": data["widget"]["id"],
-            "widget_content": json.dumps(data["widget"]["content"]),
+            "subject": data["classroom"]["data"]["subject"],
+            "grade": data["classroom"]["data"]["grade"],
+            "credits": data["classroom"]["data"]["credits"],
+            # "widget_id": data["widget"]["id"],
+            # "widget_content": json.dumps(data["widget"]["content"]),
         }
