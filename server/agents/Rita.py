@@ -43,7 +43,7 @@ class Rita:
             "Number of classes per week: {credits}."
 
             "If the input is irrelevant, suggest ways that you can help to plan a lesson. "
-            "Answer the question with concise sentences."  # decrease unnecessary token
+            # "Answer the question with concise sentences."  # decrease unnecessary token
         )
 
         messages = [

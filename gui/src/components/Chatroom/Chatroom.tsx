@@ -254,7 +254,7 @@ const ChatroomBody = ({
               icon={<VideoPlayer />}
               iconColor="#B60071"
               onClick={async () => {
-                await sendMessage("尋找第二單元的相關影片");
+                await sendMessage("尋找並列出第二單元每個章節的教學影片");
               }}
             />
             <Chip
@@ -262,7 +262,9 @@ const ChatroomBody = ({
               icon={<ResultDraft />}
               iconColor="#478CCF"
               onClick={async () => {
-                await sendMessage("生成十六週的教學計畫草稿");
+                await sendMessage(
+                  "生成十六週的教學計畫草稿，包含每週每堂課需要涵蓋的內容"
+                );
               }}
             />
             <Chip
@@ -270,7 +272,7 @@ const ChatroomBody = ({
               icon={<Idea />}
               iconColor="#FFB200"
               onClick={async () => {
-                await sendMessage("給我第一章課程活動的點子");
+                await sendMessage("推薦我1-1單元引導學生認識小數的課程活動");
               }}
             />
           </div>
