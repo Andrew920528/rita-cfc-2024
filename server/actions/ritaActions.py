@@ -2,31 +2,32 @@
 # pip install ibm-watsonx-ai
 # pip install langchain-ibm
 # pip install langchain
-
-from datetime import datetime
+# pip install translate
 import queue
+from flask_sse import sse
+from datetime import datetime
 import threading
 from flask import Response
 import time
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from ibm_watsonx_ai import Credentials
 from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
 from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes, DecodingMethods
-from langchain.schema.runnable import RunnableBranch
-from langchain.schema.output_parser import StrOutputParser
-from langchain.prompts import ChatPromptTemplate
 from langchain_ibm import WatsonxLLM
 from dotenv import load_dotenv
 import os
 from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY
-from utils.IntentClassifier import IntentClassifier
-from utils.RitaPromptHandler import RitaPromptHandler
+from agents.Rita import Rita
+from agents.IntentClassifier import IntentClassifier
+from agents.WidgetModifier import WidgetModifier
+from utils.LlmTester import LlmTester
 from utils.RitaStreamHandler import RitaStreamHandler
-from utils.util import logTime
+from langchain_cohere import CohereEmbeddings
+import json
+
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
-from langchain_cohere import CohereEmbeddings
+from translate import Translator
 
 
 def initRetriever():
@@ -35,10 +36,10 @@ def initRetriever():
     embedding_path = os.path.join(
         curr_dir, '..', '..', 'ai', 'rag', 'vector-stores', 'test_vector_store')
 
-    # embedding_model = HuggingFaceEmbeddings(
-    #     model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-    # )
+    env_path = os.path.join(os.path.dirname(curr_dir), '.env')
+    load_dotenv(dotenv_path=env_path)
     COHERE_KEY = os.getenv("COHERE_KEY")
+
     embedding_model = CohereEmbeddings(
         cohere_api_key=COHERE_KEY, model="embed-multilingual-v3.0")
     # Load FAISS store from disk
@@ -52,7 +53,8 @@ def initRetriever():
 
 
 def initLLM():
-    start_time = time.time()
+    tester = LlmTester(name="init ibm watsonX", on=True)
+
     load_dotenv()
     API_KEY = os.getenv("WATSONX_API_KEY")
     URL = os.getenv("WATSONX_URL")
@@ -65,8 +67,7 @@ def initLLM():
         GenParams.DECODING_METHOD: DecodingMethods.GREEDY,
         GenParams.REPETITION_PENALTY: REPETITION_PENALTY,
     }
-
-    logTime(start_time, "loaded IBM watsonX credentials")
+    tester.log_start_timer("loaded IBM watsonX credentials")
 
     # Initialize the LLM model
     llm = WatsonxLLM(
@@ -81,39 +82,117 @@ def initLLM():
 
 
 def llm_stream_response(data, user_prompt, retriever, llm):
-    start_time = time.time()
-    now_formatted = datetime.fromtimestamp(
-        start_time).strftime('%H:%M:%S.%f')[:-3]
-    print(f"Start llm process at time = {now_formatted}")
+    """
+    https://www.figma.com/design/xiYG1qIDmu9S1KSapuJQb9/Rita-%7C-CFC-2024?node-id=350-1636&t=BZfXxoQSRUG081uy-0
+    data (dict): context data, in the following format:
+        {
+            widget: {
+                id: string
+                type: int
+                content: any
+            }
+            classroom: {
+                name: string
+                subject: string
+                publisher: string
+                grade: string
+                plan: int
+                credits: int
+            }
+            lecture: {
+                name: string
+                type: string
+            }
+            chat_history: List({
+                sender: string
+                text: string
+            }
+        }
+    """
+    ##########################  Logging Controllers #############################
+    LOG_OUTPUT = True   # Enable to log time and output of the entire process
+    # Enable to log detail output of each agent
+    RITA_VERBOSE = False
+    INTENT_VERBOSE = True
+    WID_VERBOSE = False
+    #############################################################################
 
-    # classify intent
-    intent_classifier = IntentClassifier(llm)
-    intent = intent_classifier.get_intent(user_prompt, data)
-    print("Intent:", intent)
+    time_logger = LlmTester(name="llm process", on=LOG_OUTPUT)
+    time_logger.log_start_timer("Start llm process")
 
-    # Generate prompt based on retrieved data and user input
-    promptHandler = RitaPromptHandler(data, user_prompt, intent)
+    response_queue = queue.Queue()
+    stream_handler = RitaStreamHandler(response_queue)
+    # Agent 1: Response to the user
+    rita_agent = Rita(llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
+    complete_rita_response = ""
+    rita_response_done = False
 
-    # prompt = promptHandler.get_prompt("")
-    prompt = promptHandler.get_prompt()
-    prompt_template = promptHandler.get_template()
+    def run_rita_agent():
+        nonlocal rita_response_done
+        nonlocal complete_rita_response
+        in_stream = rita_agent.stream(user_prompt, data)
+        retriever_tester = LlmTester(
+            name="retriever tester", on=RITA_VERBOSE)
 
-    # Chain together components (LLM, prompt, RAG retriever)
-    document_chain = create_stuff_documents_chain(
-        llm=llm, prompt=prompt_template)
-    retrieval_chain = create_retrieval_chain(
-        retriever=retriever, combine_docs_chain=document_chain)
-    docs = retriever.invoke(user_prompt)
-    # print(docs)
+        for chunk in in_stream:
+            if "answer" not in chunk:
+                retriever_tester.log(chunk)
+                continue
+            stream_handler.add_to_stream(
+                agent="Rita", data=chunk["answer"])
+            complete_rita_response += chunk["answer"]
+        time_logger.log_latency(
+            f"Rita reply completed.{complete_rita_response}")
+        rita_response_done = True
+    t = threading.Thread(target=run_rita_agent)
+    t.start()
 
-    logTime(start_time, "Retrieved with user_prompt")
-    # Call the LLM and stream its response
-    rita_reply = retrieval_chain.stream(prompt)
-    logTime(start_time, "Retrieved with pipeline")
-    # Parse the streamed response
-    stream_handler = RitaStreamHandler()
-    threading.Thread(target=stream_handler.output_buffer,
-                     args=(rita_reply,)).start()
+    time_logger.log_latency("First token entered")
+
+    def run_widget_modifier():
+        nonlocal complete_rita_response
+        nonlocal complete_rita_response
+
+        while not rita_response_done:
+            time.sleep(0.1)
+
+        # Agent 2: Determine user's intent
+        intent_classifier = IntentClassifier(llm, verbose=INTENT_VERBOSE)
+        intent = intent_classifier.invoke(
+            user_prompt, data, complete_rita_response)
+
+        time_logger.log_latency(f"Finished detecting intent.")
+
+        # Agent 3: Modify widget if needed
+        widget_modifier = WidgetModifier(llm, verbose=WID_VERBOSE)
+        stream_handler.add_to_stream(
+            agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
+        modified_widget = widget_modifier.invoke(
+            user_prompt, data, intent, complete_rita_response)
+        time_logger.log_latency(
+            f"Modified widget generated.")
+        stream_handler.add_to_stream(
+            agent="Widget Modifier", data=modified_widget)
+        stream_handler.end_stream()
+        time_logger.log_latency("Stream completed")
+
+    t2 = threading.Thread(target=run_widget_modifier)
+    t2.start()
+
     response = Response(stream_handler.yield_stream(),
-                        content_type="text/plain")
+                        content_type="application/json")
     return response
+
+
+def translateText(text):
+    translator = Translator(from_lang="en", to_lang="zh-TW")
+    complete_translation = ""
+    max_token_length = 450
+    for i in range(0, len(text), max_token_length):
+        chunk = text[i:i+max_token_length]
+        complete_translation += translator.translate(chunk)
+
+    return {
+        'status': 'success',
+        'data': complete_translation
+    }

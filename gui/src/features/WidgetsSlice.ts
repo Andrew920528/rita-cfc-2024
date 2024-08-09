@@ -1,5 +1,5 @@
 import {PayloadAction, createSlice, current} from "@reduxjs/toolkit";
-import {Widget, Widgets} from "../schema/widget";
+import {Widget, Widgets} from "../schema/widget/widget";
 import {EMPTY_ID} from "../global/constants";
 
 const initialState: Widgets = {
@@ -61,6 +61,6 @@ export const WidgetsServices = {
   actions: WidgetsSlice.actions,
 };
 
-//This is stored in the main store
+// This is stored in the main store
 const WidgetsReducer = WidgetsSlice.reducer;
 export default WidgetsReducer;

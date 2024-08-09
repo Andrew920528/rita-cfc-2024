@@ -1,10 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
-import {
-  SemesterPlanWidgetContent,
-  Widget,
-  WidgetType,
-} from "../../../schema/widget";
+import {Widget, WidgetType} from "../../../schema/widget/widget";
+import {SemesterPlanWidgetContent} from "../../../schema/widget/semesterPlanWidgetContent";
 import Table from "../../ui_components/Table/Table";
 import Textbox from "../../ui_components/Textbox/Textbox";
 import IconButton from "../../ui_components/IconButton/IconButton";

@@ -3,7 +3,8 @@ import {Node, NodeChange, applyNodeChanges} from "reactflow";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import classNames from "classnames/bind";
 import styles from "../components/widgets/WidgetFrame/WidgetFrame.module.scss";
-import {Widget, widgetBook} from "../schema/widget";
+import {Widget} from "../schema/widget/widget";
+import {widgetBook} from "../schema/widget/widgetFactory";
 import {EMPTY_ID} from "../global/constants";
 
 const cx = classNames.bind(styles);
@@ -58,8 +59,8 @@ const RfSlice = createSlice({
         if (!state.dict[nodeId]) {
           let startX = action.payload.topLeftX + 8;
           let startY = action.payload.topLeftY + 8;
-          let w = widgetBook[widgetDict[nodeId].type].width;
-          let h = widgetBook[widgetDict[nodeId].type].minHeight;
+          let w = widgetBook(widgetDict[nodeId].type).width;
+          let h = widgetBook(widgetDict[nodeId].type).minHeight;
           let spacing = 8;
           let {x, y} = findNextAvailableSpace(
             startX,

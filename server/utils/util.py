@@ -5,13 +5,8 @@ from langchain.schema import AIMessage, HumanMessage
 from config.llm_param import MEMORY_CUTOFF
 # Set up a module-specific logger
 logger = logging.getLogger(__name__)
-def logTime(start_time, description):
-    latency = time.time() - start_time
-    now_formatted = datetime.fromtimestamp(time.time()).strftime('%H:%M:%S.%f')[:-3]
-    latency_formatted = datetime.fromtimestamp(latency).strftime('%S.%f')[:-3]
-    logger.info(f"Time = {now_formatted}, time passed = {latency_formatted} | {description}")
-    
-    
+
+
 def format_chat_history(messages):
     chat_history = []
     cutoff = MEMORY_CUTOFF
@@ -20,5 +15,5 @@ def format_chat_history(messages):
             chat_history.append(HumanMessage(content=message["text"]))
         elif message["sender"] == "ai":
             chat_history.append(AIMessage(content=message["text"]))
-    
+
     return chat_history
