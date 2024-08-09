@@ -8,6 +8,7 @@ from langchain_core.prompts import MessagesPlaceholder
 from langchain.schema import AIMessage, HumanMessage
 from langchain_core.prompts.chat import SystemMessagePromptTemplate
 from config.llm_param import MEMORY_CUTOFF
+from utils.widget_prompts.WidgetPromptSelector import WidgetTypes
 from utils.util import format_chat_history
 from utils.LlmTester import LlmTester
 
@@ -17,9 +18,9 @@ class IntentClassifier:
         self.llm = llm  # llm used for intent classification
         self.logger = LlmTester(name="Intent Classifier", on=verbose)
 
-    def invoke(self, user_prompt, data):
+    def invoke(self, user_prompt, data, reply):
         chain = self._get_runnable()
-        prompt = self._get_prompt(user_prompt, data)
+        prompt = self._get_prompt(user_prompt, data, reply)
         self.logger.log(f"Prompt: {prompt}")
         try:
             output = chain.invoke(prompt)
@@ -38,12 +39,14 @@ class IntentClassifier:
 
     def _get_tempate(self):
         CLASSIFY_INSTRUCTION = (
-            "You are a classification assistant for determining user's intent. "
-            "From the above conversation, determine the intent of the user as either 'Ask', 'Modify', or 'None'. "
+            "You are a classification assistant for determining what's the best course of action to help the user with preparing a lesson. "
+            "From the above conversation, determine the action as 'Modify', or 'None'. "
             "In this context, a 'widget' is referred to as a tool in the app."
             "The user can ask for a widget to be modified, or simply ask a question that might or might not be related to a widget."
             "Given the conversation, classify the intent into one of the following categories: "
-            "Ask, Modify, or None."
+            "Modify or None."
+            "The current widget involves {widget_purpose}. "
+            "The action is 'Modify' when the conversation contains information to modify the widget. "
             "Some key words might be relevant to modifying the widgets are:"
             "add, delete, insert, alter, change, modify, update, edit, remove, replace, adjust, revise, amend, correct, fix, improve, enhance, refine, fill, complete"
             "{format_instructions}"
@@ -59,15 +62,17 @@ class IntentClassifier:
         messages = [
             MessagesPlaceholder(variable_name="chat_history"),
             ("user", "{user_input}"),
+            ("ai", "{reply}"),
             SystemMessagePromptTemplate(prompt=intent_classifier_template),
             ("ai", ""),
         ]
         chat_prompt = ChatPromptTemplate.from_messages(messages)
         return chat_prompt
 
-    def _get_prompt(self, user_prompt, data):
+    def _get_prompt(self, user_prompt, data, reply):
         chat_history = format_chat_history(data["chat_history"])
-        return {"user_input": user_prompt, "chat_history": chat_history}
+        widget_purpose = WidgetTypes.getPrompt(data["widget"]["type"])
+        return {"user_input": user_prompt, "chat_history": chat_history, "reply": reply, "widget_purpose": widget_purpose}
 
     def _get_parser(self):
         class Intent(BaseModel):

@@ -30,7 +30,7 @@ class Rita:
 
     def _get_template(self):
         SYSTEM_INTRO = (
-            "You are a helpful AI teaching assistant chatbot. Your name is Rita. "
+            "You are a helpful AI teaching assistant chatbot. "
             "You are suppose to help the user, who is a teacher, to plan their courses. "
         )
         SYSTEM_BASE_INSTRUCTION = (

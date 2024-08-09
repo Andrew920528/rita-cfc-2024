@@ -36,7 +36,7 @@ export class SemesterPlanWidgetMaker extends WidgetMaker<SemesterPlanWidgetConte
       icon: <Plan />,
       type: WidgetType.SemesterPlan,
       minWidth: 700,
-      maxWidth: 2000,
+      maxWidth: 5000,
       minHeight: 300,
       maxHeight: 800,
     };

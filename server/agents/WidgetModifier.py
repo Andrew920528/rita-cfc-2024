@@ -55,7 +55,8 @@ class WidgetModifier:
             Your job is to modify the content of these widgets based on the user's interaction with another agent, "Rita".
             The above is the conversation between user and Rita.
             The user's current widget looks like this: {widget_content}.
-            You should build upon the current widget based on the result of the above conversation.
+            "The current widget involves {widget_purpose}. "
+            You should build upon the current widget based on the relevant result of the above conversation.
             {format_instructions}
             You shouldn't response with any additional text.
             """
@@ -82,8 +83,9 @@ class WidgetModifier:
         chat_history = format_chat_history(data["chat_history"])
         widget_id = data["widget"]["id"]
         widget_content = json.dumps(data["widget"]["content"])
+        widget_purpose = WidgetTypes.getPrompt(data["widget"]["type"])
         prompt = {"user_input": user_prompt, "chat_history": chat_history,
-                  "widget_id": widget_id, "widget_content": widget_content, "reply": reply}
+                  "widget_id": widget_id, "widget_content": widget_content, "reply": reply, "widget_purpose": widget_purpose}
         return prompt
 
     def _get_parser(self, widget_type):

@@ -113,7 +113,7 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     LOG_OUTPUT = True   # Enable to log time and output of the entire process
     # Enable to log detail output of each agent
     RITA_VERBOSE = False
-    INTENT_VERBOSE = False
+    INTENT_VERBOSE = True
     WID_VERBOSE = False
     #############################################################################
 
@@ -148,19 +148,22 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     t.start()
 
     time_logger.log_latency("First token entered")
-    # Agent 2: Determine user's intent
-    intent_classifier = IntentClassifier(llm, verbose=INTENT_VERBOSE)
-    intent = intent_classifier.invoke(user_prompt, data)
 
-    time_logger.log_latency(f"Finished detecting intent.")
-
-    # Agent 3: Modify widget if needed
     def run_widget_modifier():
         nonlocal complete_rita_response
         nonlocal complete_rita_response
 
         while not rita_response_done:
             time.sleep(0.1)
+
+        # Agent 2: Determine user's intent
+        intent_classifier = IntentClassifier(llm, verbose=INTENT_VERBOSE)
+        intent = intent_classifier.invoke(
+            user_prompt, data, complete_rita_response)
+
+        time_logger.log_latency(f"Finished detecting intent.")
+
+        # Agent 3: Modify widget if needed
         widget_modifier = WidgetModifier(llm, verbose=WID_VERBOSE)
         stream_handler.add_to_stream(
             agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
