@@ -1,6 +1,8 @@
 from pylatex import Document, Command, Package, LineBreak, Section, Subsection
 from pylatex.base_classes import Environment, Arguments
 from pylatex.utils import NoEscape
+from pdf2docx import Converter
+import os.path
 
 class MatchTabularEnvironment(Environment):
     _latex_name = "matchtabular"
@@ -62,3 +64,12 @@ class Worksheet:
     
     def generatePDF(self):
         self.doc.generate_pdf(self.title, compiler='xelatex', clean=True, clean_tex=False)
+    
+    def generateDoc(self):
+        pdfPath = "./" + self.title + ".pdf"
+        docxPath = "./" + self.title + ".docx"
+        
+        self.generatePDF()
+        cv = Converter(pdfPath)
+        cv.convert(docxPath, start=0, end=None)
+        cv.close()
