@@ -2,7 +2,7 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import {formatTime, mimicApi, mimicStreamApi} from "./util";
 import {API, INDEPENDENT_MODE} from "../global/constants";
 
-import {dummyLoginData} from "./dummy";
+import {dummyLoginData, dummyRitaResponse} from "./dummy";
 type ResponseData = {
   status: API;
   data: any;
@@ -504,12 +504,71 @@ export function messageRitaService(
   abortSignal?: AbortSignal
 ) {
   if (INDEPENDENT_MODE) {
-    const mimicResponse = `Hello, I'm Rita. You are in frontend development mode, where I am not connected to an actual AI
-    <wCont> {"goals": ["你好呀"]} </wCont> <wid> dum-username-wid-lxu4el0kwcyyfcov1vq </wid>
-    `;
-    return mimicStreamApi(100, mimicResponse, abortSignal);
+    const mimicResponse = dummyRitaResponse;
+    return mimicStreamApi(50, mimicResponse, abortSignal);
   }
   const endPoint = "/message-rita";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: sessionStorage.getItem("sessionId"),
+      ...payload,
+    }), // Convert data object to JSON string
+    signal: abortSignal,
+  });
+}
+
+export function setUpRitaService(abortSignal?: AbortSignal) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "Successfully initialized rita",
+    };
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/setup-rita";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({}),
+    signal: abortSignal,
+  });
+}
+
+/// Worksheet APIs
+export function getWordDocService(abortSignal?: AbortSignal) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "Successfully retrieved word doc", // TODO: dummy word doc at front-end
+    };
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/send-word-doc";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "GET",
+    signal: abortSignal,
+  });
+}
+export function translateService(
+  payload: {
+    text: string;
+  },
+  abortSignal?: AbortSignal
+) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "翻譯後的中文字",
+    };
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/translate";
   return fetch(BASE_URL_DEV + endPoint, {
     method: "POST",
     headers: {

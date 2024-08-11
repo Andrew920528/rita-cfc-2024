@@ -1,12 +1,15 @@
 from flask import Flask, request
 from flask_cors import CORS
-from utils.util import logTime
+
+from utils.word_docs import convert_to_pdf, send_docx, docxToPdfFunction, createBlankDocx, sendDocument
+from utils.LlmTester import LlmTester
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
-from actions.ritaActions import initLLM, llm_stream_response, initRetriever
+from actions.ritaActions import initLLM, llm_stream_response, initRetriever, translateText
 import time
 import logging
 from datetime import datetime
-
+import json
+import os
 app = Flask(__name__)
 CORS(app)
 logging.basicConfig(level=logging.INFO)
@@ -14,53 +17,122 @@ logging.basicConfig(level=logging.INFO)
 RETRIEVER = ''
 LLM = ''
 
+
 def initialize():
     global RETRIEVER, LLM
     RETRIEVER = initRetriever()
     LLM = initLLM()
-initialize()
-######################################################################################################## debug
+
 
 @app.route('/hello', methods=['GET'])
 def get_output():
-    return { 'output' : 'hello guys!'}
+    return {'output': 'hello guys!'}
 
-######################################################################################################## watsonx
+
+@app.route('/send-word-doc', methods=['GET'])
+def get_file():
+    try:
+        file = send_docx()
+        return file
+    except Exception as e:
+        response = {
+            'status': 'error',
+            'data': str(e)
+        }
+    return response
+
+
+@app.route('/test-get-pdf', methods=['GET'])
+def get_pdf():
+    return convert_to_pdf()
+
+
 @app.route('/message-rita', methods=['POST'])
 def message_rita():
     global RETRIEVER, LLM
     if RETRIEVER == "" or LLM == "":
-        return "<error>"
-    start_time = time.time()
-    now_formatted = datetime.fromtimestamp(start_time).strftime('%H:%M:%S.%f')[:-3]
-    app.logger.info(f"Recieved request at time = {now_formatted}")
+        response = {
+            'status': 'error',
+            'data': "LLM or retriever is not initialized"
+        }
+        return response
 
     prompt = request.json['prompt']
-    widget = request.json['widget']
-    chat_history = request.json['chatHistory']
-    lectureId = request.json['lectureId']
-    classroomId = request.json['classroomId']
-    lectureAndClassroomResponse = getLectureAndClassroom(lectureId, classroomId)
-    logTime(start_time, "Fetched classroom and lecture from the database")
-    # check if lecture and classroom are fetched properly
-    if lectureAndClassroomResponse['status'] == 'error':
-        return lectureAndClassroomResponse
-    
-    watsonxRequest = { **lectureAndClassroomResponse['data'],
-                      'chat_history' : chat_history,
-                      "widget" : widget}
+
+    ##########################  Test Controllers ##############################
+    # Enable if want to test without db, run frontend in indep mode and commented out the dummy api call
+    DB_INDEPENDENT = False  # Should be False on production.
+    # Will only save example if DB_INDEPENDENT is False
+    SAVE_EXAMPLE = False  # Should be False on production.
+    # Will only load example if DB_INDEPENDENT is True
+    LOAD_EXAMPLE = True  # Should be False on production.
+
+    fetch_db_tester = LlmTester(
+        name="use db to gather context info", on=not DB_INDEPENDENT)
+
+    def organize_context():
+        widget = request.json['widget']
+        chat_history = request.json['chatHistory']
+        lectureId = request.json['lectureId']
+        classroomId = request.json['classroomId']
+
+        lectureAndClassroomResponse = getLectureAndClassroom(
+            lectureId, classroomId)
+        fetch_db_tester.log_latency(
+            "Fetched classroom and lecture from the database")
+        # check if lecture and classroom are fetched properly
+        if lectureAndClassroomResponse['status'] == 'error':
+            return lectureAndClassroomResponse
+
+        watsonxRequest = {**lectureAndClassroomResponse['data'],
+                          'chat_history': chat_history,
+                          "widget": widget}
+        return watsonxRequest
+    watsonxRequest = fetch_db_tester.execute(organize_context)
+    if watsonxRequest and "status" in watsonxRequest and watsonxRequest['status'] == 'error':
+        return watsonxRequest
+    ###########################################################################
+    # Enable to save example test cases
+    llm_tester = LlmTester(name="saves example",
+                           on=not DB_INDEPENDENT and SAVE_EXAMPLE)
+    llm_tester.save_example_data(watsonxRequest=watsonxRequest)
+    ###########################################################################
+    # Enable if want to test without db
+    llm_tester = LlmTester(name="get example data",
+                           on=DB_INDEPENDENT and LOAD_EXAMPLE)
+    example = "test_semester_goal"
+    exampleRequest = llm_tester.get_example_data(example)
+    if exampleRequest:
+        watsonxRequest = exampleRequest
+    ###########################################################################
+
     try:
-        llmOutput = llm_stream_response(watsonxRequest, prompt, RETRIEVER, LLM) # returns rita's reply asdict
+        llmOutput = llm_stream_response(watsonxRequest, prompt, RETRIEVER, LLM)
         return llmOutput
     except Exception as e:
         logging.error("Error: {}".format(e))
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
-    
-######################################################################################################## users
+
+
+@app.route('/translate', methods=['POST'])
+def translate():
+    text = request.json['text']
+    try:
+        return translateText(text)
+    except Exception as e:
+        logging.error("Error: {}".format(e))
+        response = {
+            'status': 'error',
+            'data': str(e)
+        }
+        return response
+
+# users
+
 
 @app.route('/create-user', methods=['POST'])
 def create_user():
@@ -73,11 +145,12 @@ def create_user():
         schedule = request.json.get('schedule', None)
         return createUser(username, password, school, alias, occupation, schedule)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
+
 
 @app.route('/update-user', methods=['POST'])
 def update_user():
@@ -89,11 +162,12 @@ def update_user():
         schedule = request.json.get('schedule', None)
         return updateUser(sessionId, alias, school, occupation, schedule)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -102,11 +176,12 @@ def login():
         password = request.json['password']
         return loginUser(username, password)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
+
 
 @app.route('/login-with-sid', methods=['POST'])
 def login_sessionId():
@@ -114,13 +189,14 @@ def login_sessionId():
         sessionId = request.json['sessionId']
         return loginSessionId(sessionId)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
 
-######################################################################################################## classroom
+# classroom
+
 
 @app.route('/create-classroom', methods=['POST'])
 def create_classroom():
@@ -135,11 +211,12 @@ def create_classroom():
         credit = request.json.get('credits', None)
         return createClassroom(sessionId, classroomId, classroomName, subject, publisher, grade, plan, credit)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
+
 
 @app.route('/update-classroom', methods=['POST'])
 def update_classroom():
@@ -154,13 +231,14 @@ def update_classroom():
         credit = request.json.get('credits', None)
         return updateClassroom(sessionId, classroomId, classroomName, subject, publisher, grade, plan, credit)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
 
-######################################################################################################## lecture
+# lecture
+
 
 @app.route('/create-lecture', methods=['POST'])
 def create_lecture():
@@ -172,11 +250,12 @@ def create_lecture():
         type = request.json['type']
         return createLecture(sessionId, classroomId, lectureId, name, type)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
+
 
 @app.route('/update-lecture', methods=['POST'])
 def update_lecture():
@@ -187,11 +266,12 @@ def update_lecture():
         type = request.json.get('type', None)
         return updateLecture(sessionId, lectureId, name, type)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
+
 
 @app.route('/delete-lecture', methods=['DELETE'])
 def delete_lecture():
@@ -201,13 +281,14 @@ def delete_lecture():
         lectureId = request.json['lectureId']
         return deleteLecture(sessionId, classroomId, lectureId)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
 
-######################################################################################################## widget
+# widget
+
 
 @app.route('/create-widget', methods=['POST'])
 def create_widget():
@@ -219,11 +300,12 @@ def create_widget():
         content = request.json['content']
         return createWidget(sessionId, lectureId, widgetId, type, content)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
+
 
 @app.route('/update-widget', methods=['POST'])
 def update_widget():
@@ -233,11 +315,12 @@ def update_widget():
         content = request.json['content']
         return updateWidget(sessionId, widgetId, content)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
+
 
 @app.route('/update-widget-bulk', methods=['POST'])
 def update_widget_bulk():
@@ -247,11 +330,12 @@ def update_widget_bulk():
         contents = request.json['contents']
         return updateWidgetBulk(sessionId, widgetIds, contents)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
+
 
 @app.route('/delete-widget', methods=['DELETE'])
 def delete_widget():
@@ -261,13 +345,13 @@ def delete_widget():
         widgetId = request.json['widgetId']
         return deleteWidget(sessionId, lectureId, widgetId)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
 
-######################################################################################################## chatroom
+# chatroom
 @app.route('/update-chatroom', methods=['POST'])
 def update_chatroom():
     try:
@@ -276,13 +360,57 @@ def update_chatroom():
         content = request.json['content']
         return updateChatroom(sessionId, chatroomId, content)
     except Exception as e:
-        response = { 
-            'status' : 'error',
-            'data' : 'Missing ' + str(e)
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
         }
         return response
 
+# documents
+@app.route('/docxToPdf', methods=['POST'])
+def docxToPdf():
+    try:
+        docxPath = request.json['docxPath']
+        pdfPath = request.json['pdfPath']
+        docxToPdfFunction(docxPath, pdfPath)
+        response = {
+            'status': 'success',
+            'data': 'success'
+        }
+        return response
+    except Exception as e:
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
+        }
+        return response
 
+@app.route('/create-blank', methods=['POST'])
+def createBlank():
+    try:
+        widgetId = request.json['widgetId']
+        documentName = createBlankDocx(widgetId)
+        response = {
+            'status': 'success',
+            'data': documentName
+        }
+        return response
+    except Exception as e:
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
+        }
+        return response
 
+@app.route('/send-file', methods=['POST'])
+def sendFile():
+    try:
+        documentPath = request.json['documentPath']
+        document = sendDocument(documentPath)
+        return document
+    except Exception as e:
+        return ""
+
+initialize()
 if __name__ == '__main__':
     app.run(port=5000)

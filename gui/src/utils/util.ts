@@ -48,12 +48,10 @@ export const mimicApi = (
 
 export const mimicStreamApi = async function (
   ms: number,
-  responseStr: string,
+  chunkList: string[],
   signal?: AbortSignal
 ): Promise<Response> {
   const streamGenerator = async function* () {
-    let chunkList = responseStr.split(/(?=\s)/);
-
     // Function to simulate sending chunks asynchronously
     for (let chunk of chunkList) {
       if (signal?.aborted) {

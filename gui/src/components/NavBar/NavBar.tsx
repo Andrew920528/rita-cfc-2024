@@ -5,7 +5,8 @@ import ManageClassroomPU from "../PopUps/ManageClassroomPU/ManageClassroomPU";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {LecturesServices} from "../../features/LectureSlice";
-import {WidgetType, initWidget, widgetBook} from "../../schema/widget";
+import {WidgetType} from "../../schema/widget/widget";
+import {initWidget, widgetBook} from "../../schema/widget/widgetFactory";
 import {useCreateWidget} from "../../global/globalActions";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {API, EMPTY_ID} from "../../global/constants";
@@ -124,15 +125,20 @@ const NavBar = () => {
         </div>
         {lectures.current !== EMPTY_ID && (
           <div className={cx("nav-stack")}>
-            {Object.values(widgetBook).map((w) => (
-              <WidgetCard
-                key={w.title}
-                title={w.title}
-                hint={w.hint}
-                icon={w.icon}
-                widgetType={w.type}
-              />
-            ))}
+            {Object.values(WidgetType)
+              .filter((key) => !isNaN(Number(key)))
+              .map((type) => {
+                let w = widgetBook(type as WidgetType);
+                return (
+                  <WidgetCard
+                    key={w.title}
+                    title={w.title}
+                    hint={w.hint}
+                    icon={w.icon}
+                    widgetType={w.type}
+                  />
+                );
+              })}
           </div>
         )}
       </div>
