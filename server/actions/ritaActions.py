@@ -3,6 +3,7 @@
 # pip install langchain-ibm
 # pip install langchain
 # pip install translate
+# pip install -U deep-translator
 import queue
 from flask_sse import sse
 from datetime import datetime
@@ -24,11 +25,11 @@ from utils.LlmTester import LlmTester
 from utils.RitaStreamHandler import RitaStreamHandler
 from langchain_cohere import CohereEmbeddings
 import json
+import re
 
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
-from translate import Translator
-
+from deep_translator import GoogleTranslator
 
 def initRetriever():
     # Get the absolute path of the embedding path with system independent path selectors
@@ -183,16 +184,44 @@ def llm_stream_response(data, user_prompt, retriever, llm):
                         content_type="application/json")
     return response
 
+def split_text(text, max_chars=5000):
+    chunks = []
+    current_chunk = ""
+    
+    # Split the text into sentences (ends with . ! ?)
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    
+    for sentence in sentences:
+        if len(current_chunk) + len(sentence) < max_chars:
+            current_chunk += sentence + " "
+        else:
+            # If adding this sentence exceeds the limit, store the current chunk
+            chunks.append(current_chunk.strip())
+            current_chunk = sentence + " "
+    
+    # Add the last chunk if it's not empty
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+    
+    return chunks
 
 def translateText(text):
-    translator = Translator(from_lang="en", to_lang="zh-TW")
-    complete_translation = ""
-    max_token_length = 450
-    for i in range(0, len(text), max_token_length):
-        chunk = text[i:i+max_token_length]
-        complete_translation += translator.translate(chunk)
+    try:
+        translator = GoogleTranslator(source='en', target='zh-TW')
+        completeTranslation = ""
+        chunks = split_text(text)
 
-    return {
-        'status': 'success',
-        'data': complete_translation
-    }
+        for textChunk in chunks:
+            completeTranslation += translator.translate(textChunk)
+
+        return {
+            'status': 'success',
+            'data': completeTranslation
+        }
+
+    except Exception as e:
+        response = {
+            'status': 'error',
+            'data': str(e)
+        }
+        return response
