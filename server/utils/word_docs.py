@@ -1,6 +1,6 @@
 # pip install docx2pdf
 from docx2pdf import convert
-import pythoncom
+# import pythoncom
 from flask import send_file, jsonify
 import os
 import tempfile
@@ -8,6 +8,7 @@ from docx import Document
 
 import pypandoc
 import platform
+
 
 def send_docx():
     # The path to your Word document
@@ -46,20 +47,26 @@ def convert_to_pdf(docxPath, pdfPath):
     else:
         return jsonify({"error": "File not found"}), 404
 
-# fixme - OS dependent code
-# This works for windows, not sure if it will branch to mac. Please test it. 
+# FIXME (JIM) - OS dependent code
+# This works for windows, not sure if it will branch to mac. Please test it.
 # If it works, then conver_to_pdf can be combined in here.
+# NOTE (ANDREW)
+# Unfortunately python gives runtime error because the package is not found. Mac can't seems to install pythoncom:
+# https://stackoverflow.com/questions/4145079/importerror-no-module-named-pythoncom
+
+
 def docxToPdfFunction(docxPath, pdfPath):
 
     # mac
     if platform.system() == 'Darwin':
-        convert_to_pdf('worksheet_tmp/Rita Test document.docx', 'worksheet_tmp/your_document.pdf')
+        convert_to_pdf('worksheet_tmp/Rita Test document.docx',
+                       'worksheet_tmp/your_document.pdf')
     # windows
     else:
         try:
             # worksheet_tmp/Rita Test document.docx, worksheet_tmp/Rita Test document.pdf
-            pythoncom.CoInitialize()
-            convert(docxPath, pdfPath)
+            # pythoncom.CoInitialize()
+            # convert(docxPath, pdfPath)
             response = {
                 'status': 'success',
                 'data': pdfPath
