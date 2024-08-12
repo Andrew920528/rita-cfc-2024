@@ -1,6 +1,5 @@
 from langchain.prompts import ChatPromptTemplate
 from enum import Enum
-from utils.widget_prompts.semester_plan_prompts import *
 
 
 class Intents():
