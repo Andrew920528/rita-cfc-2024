@@ -44,7 +44,9 @@ def get_file():
 
 @app.route('/test-get-pdf', methods=['GET'])
 def get_pdf():
-    return convert_to_pdf()
+    return docxToPdfFunction("worksheet_tmp/Rita Test document.docx", "worksheet_tmp/Rita Test document.pdf")
+    # if docxToPdfFunction does not branch for mac, then use convert_to_pdf with mac.
+    # return convert_to_pdf()
 
 
 @app.route('/message-rita', methods=['POST'])
