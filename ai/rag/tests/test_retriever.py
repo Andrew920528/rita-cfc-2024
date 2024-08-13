@@ -1,6 +1,7 @@
-from langchain_community.vectorstores import FAISS
 import time
 import os
+
+
 def test_retriever(retriever, query, retrieved_docs_path, print_docs=True):
     start_time = time.time()
     docs = retriever.invoke(query)
@@ -18,4 +19,3 @@ def test_retriever(retriever, query, retrieved_docs_path, print_docs=True):
     elapsed_time = end_time - start_time
     print(f"Elapsed time: {elapsed_time:.2f} seconds")
     return docs
-        

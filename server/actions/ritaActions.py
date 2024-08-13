@@ -31,6 +31,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from deep_translator import GoogleTranslator
 
+
 def initRetriever():
     # Get the absolute path of the embedding path with system independent path selectors
     curr_dir = os.path.dirname(os.path.abspath(__file__))
@@ -49,7 +50,7 @@ def initRetriever():
     )
 
     # Create a retriever chain
-    retriever = faiss_store.as_retriever()
+    retriever = faiss_store.as_retriever(search_kwargs={"k": 3})
     return retriever
 
 
@@ -113,8 +114,8 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     ##########################  Logging Controllers #############################
     LOG_OUTPUT = True   # Enable to log time and output of the entire process
     # Enable to log detail output of each agent
-    RITA_VERBOSE = False
-    INTENT_VERBOSE = True
+    RITA_VERBOSE = True
+    INTENT_VERBOSE = False
     WID_VERBOSE = False
     #############################################################################
 
@@ -184,13 +185,14 @@ def llm_stream_response(data, user_prompt, retriever, llm):
                         content_type="application/json")
     return response
 
+
 def split_text(text, max_chars=5000):
     chunks = []
     current_chunk = ""
-    
+
     # Split the text into sentences (ends with . ! ?)
     sentences = re.split(r'(?<=[.!?])\s+', text)
-    
+
     for sentence in sentences:
         if len(current_chunk) + len(sentence) < max_chars:
             current_chunk += sentence + " "
@@ -198,12 +200,13 @@ def split_text(text, max_chars=5000):
             # If adding this sentence exceeds the limit, store the current chunk
             chunks.append(current_chunk.strip())
             current_chunk = sentence + " "
-    
+
     # Add the last chunk if it's not empty
     if current_chunk:
         chunks.append(current_chunk.strip())
-    
+
     return chunks
+
 
 def translateText(text):
     try:

@@ -262,7 +262,7 @@ const ChatroomBody = ({
               iconColor="#478CCF"
               onClick={async () => {
                 await sendMessage(
-                  "生成十六週的教學計畫草稿，包含每週每堂課需要涵蓋的內容"
+                  "生成十六週的學期進度，包含每週每堂課需要涵蓋的內容"
                 );
               }}
             />
