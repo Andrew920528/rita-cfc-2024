@@ -57,7 +57,9 @@ class Rita:
             "Unless specified otherwise, if asked to provide a semester plan, assume the user wants to cover the content of the entire textbook within the semester. "
 
             "If the input is irrelevant to the context, answer the user's prompt as it is and suggest ways that you can help to plan a lesson. "
-            "Use proper markdown formatting for list items. Bold important contents appropriately."
+            "Use proper markdown formatting for list items. "
+
+            "Bold important contents appropriately."
         )
 
         messages = [
