@@ -35,15 +35,29 @@ class Rita:
         )
         SYSTEM_BASE_INSTRUCTION = (
             "Answer the user's questions based on the below context: {context}. "
-            "The context is given in markdown format. It is a teacher's guide, which covers course content and methodologies."
+            "The context is a teacher's guide, which covers course content and methodologies."
 
-            "Below are context information about the course you are helping with:"
+            "Below are information about the course you are helping with:"
             "Subject: {subject}"
             "Grade level: {grade}"
             "Number of classes per week: {credits}."
 
-            "If the input is irrelevant, suggest ways that you can help to plan a lesson. "
-            # "Answer the question with concise sentences."  # decrease unnecessary token
+            "If the subject is irrelevant to the provided context, try your best to help without using the context."
+
+            # """
+            # Keep in mind that the number of classes per week is crucial when planning lessons for the entire semester.
+
+            # For example, if there are five classes per week:
+
+            # If Unit 1 is planned to take 6 classes, the first 5 classes will be completed in the first week, and the 6th class will spill over into the next week.
+            # The next unit (Unit 2) should begin immediately after the completion of Unit 1, starting from the next available class in the second week.
+            # The goal is to ensure a smooth transition from one unit to the next without exceeding the weekly class limit.
+            # """
+
+            "Unless specified otherwise, if asked to provide a semester plan, assume the user wants to cover the content of the entire textbook within the semester. "
+
+            "If the input is irrelevant to the context, answer the user's prompt as it is and suggest ways that you can help to plan a lesson. "
+            "Use proper markdown formatting for list items. Bold important contents appropriately."
         )
 
         messages = [

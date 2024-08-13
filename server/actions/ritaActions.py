@@ -17,7 +17,7 @@ from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes, DecodingMet
 from langchain_ibm import WatsonxLLM
 from dotenv import load_dotenv
 import os
-from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY
+from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY, TOP_K, TOP_P, TEMPERATURE
 from agents.Rita import Rita
 from agents.IntentClassifier import IntentClassifier
 from agents.WidgetModifier import WidgetModifier
@@ -36,7 +36,7 @@ def initRetriever():
     # Get the absolute path of the embedding path with system independent path selectors
     curr_dir = os.path.dirname(os.path.abspath(__file__))
     embedding_path = os.path.join(
-        curr_dir, '..', '..', 'ai', 'rag', 'vector-stores', 'test_vector_store')
+        curr_dir, '..', '..', 'ai', 'rag', 'vector-stores', 'json_only_vs')
 
     env_path = os.path.join(os.path.dirname(curr_dir), '.env')
     load_dotenv(dotenv_path=env_path)
@@ -68,7 +68,11 @@ def initLLM():
         GenParams.MAX_NEW_TOKENS: MAX_NEW_TOKENS,
         GenParams.DECODING_METHOD: DecodingMethods.GREEDY,
         GenParams.REPETITION_PENALTY: REPETITION_PENALTY,
+        GenParams.TEMPERATURE: TEMPERATURE,
+        GenParams.TOP_P: TOP_P,
+        GenParams.TOP_K: TOP_K,
     }
+
     tester.log_start_timer("loaded IBM watsonX credentials")
 
     # Initialize the LLM model
