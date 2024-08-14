@@ -232,7 +232,7 @@ export const useCreateWidget = () => {
             dimension: {
               x: args.position.x,
               y: args.position.y,
-              width: widgetBook(args.widgetType).width,
+              width: widgetBook(args.widgetType).minWidth,
               height: widgetBook(args.widgetType).minHeight,
             },
           })

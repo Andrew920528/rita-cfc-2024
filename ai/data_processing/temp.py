@@ -140,7 +140,7 @@ def add_tag_to_videos():
             file.write(content)
 
 
-add_tag_to_videos()
+# add_tag_to_videos()
 
 
 def remove_tagged_lines():
