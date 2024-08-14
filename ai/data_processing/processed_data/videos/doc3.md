@@ -1,26 +1,41 @@
-# 康軒數學五年級上學期教學影片 education video
-第二單元 chapter 2 chapter two
-## 【五上】第二單元 因數與公因數
+第四單元 chapter 4 chapter four
+# 康軒數學五年級上學期教學影片 education video 影片 媒體 章節影片
+## 【五上】第四單元 擴分、約分和通分
 
-【前導】倍數問題:
-https://www.junyiacademy.org/article/b528d6d0becf414e8682b73853020b14
+### 4-1 擴分
 
-### 2-1 整除
+【觀念】認識擴分:
+https://www.junyiacademy.org/article/3d599fb7df794b66b96b466073f08138
+【解題】找出 3/4 的等值分數:
+https://www.junyiacademy.org/article/2bee7037d19c4d20a89645de07e660e0
 
-【觀念】認識整除：20 個玩具兵可以平分成 2 堆嗎:
-https://www.junyiacademy.org/article/e51430ba3e5e4217b44869de5046684c
-【基礎】整除:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/e/menzs5ba
+### 4-2 約分:
 
-### 2-2 因數
+【觀念】認識約分:
+https://www.junyiacademy.org/article/57bf652c90184e74bb6ed9f6e4873723
+【解題】20/28 是七分之幾:
+https://www.junyiacademy.org/article/a34d58378dd44de4901a0aaab6b28c9c
 
-【觀念】認識因數： 12 個小朋友可以平分成幾組:
-https://www.junyiacademy.org/article/c7e3186da6e44a23ab88d28b955de2dd
-【解題】找出 16 的因數:
-https://www.junyiacademy.org/article/ece385933b8646ecaaaa82583c9e313e
-【基礎】找出一個數的因數:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/e/m3ayb-aa
-【觀念】利用乘法找因數（03:12）:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/v/mNdaiixtGbY
-【基礎】利用乘法找因數:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/e/menzs5bb
+### 4-3 通分和分數的大小比較:
+
+【觀念】認識通分:
+https://www.junyiacademy.org/article/a5e8bd4a3aa6442e926594d1be2b25f9
+【解題】7/9 和 10/12 哪個比較大:
+https://www.junyiacademy.org/article/6dbf186771a04b44b8ee824942bd1a1d
+【解題】9/4 和 10/6 哪個比較大:
+https://www.junyiacademy.org/article/20bd43e5e0a246d7a6e5440483cb4bef
+【解題】比較異分母帶分數的大小:
+https://www.junyiacademy.org/article/3cc773d0e2bb4d248f524877fc28ba5a
+
+### 4-4 用分數表示整數相除的結果:
+
+【解題】用除法算式紀錄，並用真分數表示除的結果 1:
+https://www.junyiacademy.org/article/70c08df6679a44f4b7729cee14d0103f
+【解題】用除法算式紀錄，並用真分數表示除的結果 2:
+https://www.junyiacademy.org/article/0eb3f4a15066480b97d86536068c352e
+【解題】用除法算式紀錄，並用真分數表示除的結果 3:
+https://www.junyiacademy.org/article/a8dd9c69a2634cd08a6cec610bf95fac
+【解題】用除法算式紀錄，並用帶分數表示除的結果 1:
+https://www.junyiacademy.org/article/72fdc88881b54e339bc2e09b833d7799
+【解題】用除法算式紀錄，並用帶分數表示除的結果 2:
+https://www.junyiacademy.org/article/045d35e64dba45d79b63c87c58e7b238

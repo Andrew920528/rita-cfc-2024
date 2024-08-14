@@ -19,26 +19,18 @@ https://www.junyiacademy.org/article/2de5ebdb4ea4437db5433c19ae5f85dc
 https://www.junyiacademy.org/article/6c92404d5f1244b884cd55ad91b8caea
 【解題】將 1.3468 記在定位板上，並認識萬分位:
 https://www.junyiacademy.org/article/f123801f5aee411a9559b1d7841dd600
-【基礎】多位小數:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c01_y112/e/mencs5cb
 
 ### 1-2 小數的大小比較:
 
 【解題】利用定位板比較各數字的大小:
 https://www.junyiacademy.org/article/19cd7721253f4838a2bcac258640c9d5
-【基礎】多位小數的比較:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c01_y112/e/mencs5cc
 
 ### 1-3 多位小數的加減:
 
 【解題】利用直式計算 0.632 + 4.068:
 https://www.junyiacademy.org/article/83a12b84f99345bc83eea37572837b48
-【基礎】多位小數的加法:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c01_y112/e/mencs5cf
 【解題】利用直式計算 0.801 - 0.1023:
 https://www.junyiacademy.org/article/29d111b3977f4697a49fc46c19aa7302
-【基礎】多位小數的減法:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c01_y112/e/mencs5cg
 
 ### 1-4 小數取概數:
 
@@ -48,8 +40,6 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c01_y112/v/VYyW9IwtyJc
 【解題】小數用四捨五入取概數的練習題（04:41）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c01_y112/v/vv-Ox005jaI
-【基礎】小數的四捨五入:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c01_y112/e/mencs5dc
 
 ## 【五上】第二單元 因數與公因數
 
@@ -60,8 +50,6 @@ https://www.junyiacademy.org/article/b528d6d0becf414e8682b73853020b14
 
 【觀念】認識整除：20 個玩具兵可以平分成 2 堆嗎:
 https://www.junyiacademy.org/article/e51430ba3e5e4217b44869de5046684c
-【基礎】整除:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/e/menzs5ba
 
 ### 2-2 因數
 
@@ -69,29 +57,19 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/article/c7e3186da6e44a23ab88d28b955de2dd
 【解題】找出 16 的因數:
 https://www.junyiacademy.org/article/ece385933b8646ecaaaa82583c9e313e
-【基礎】找出一個數的因數:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/e/m3ayb-aa
 【觀念】利用乘法找因數（03:12）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/v/mNdaiixtGbY
-【基礎】利用乘法找因數:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/e/menzs5bb
 
 ### 2-3 公因數和最大公因數
 
 【觀念】認識公因數及最大公因數: 找出 12 與 18 的公因數及最大公因數:
 https://www.junyiacademy.org/article/28b252fb54ab4d948f4b585bf058cbec
-【基礎】認識公因數:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/e/m3ayb-ba
-【基礎】找出最大公因數:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/e/menzs5ce
 【解題】公因數的應用題型 1（03:29）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/v/3PCVgXFOEpA
 【解題】公因數的應用題型 2（04:01）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/v/mplCcsLT8-E
 【解題】公因數的應用題型 3（03:40）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/v/xF32Sh_MyqE
-【基礎】公因數的應用問題:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/e/m3ayb-bc
 【解題】最大公因數題型 1：分裝兩種不同數量的物品（05:39）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/v/Qo7s9UfPctE
 【解題】最大公因數題型 2：大長方形切割成小正方形（05:48）:
@@ -103,16 +81,12 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 
 ### 3-1 倍數:
 
-【一般】認識倍數:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c03_y112/e/m3ayb-ac
 【解題】找出 80 與 100 之間 7 的倍數:
 https://www.junyiacademy.org/article/9a57227222874147a0764f32ae335d22
 【解題】找出最接近 500 但小於 500 的 15 的倍數:
 https://www.junyiacademy.org/article/cbf26989a58e40dc849ee0dcc3f843a0
 【解題】找出 580 與 650 之間最大與最小的 15 的倍數:
 https://www.junyiacademy.org/article/835db1407f9a4fc7af2d67805a7e8dcf
-【一般】倍數的應用:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c03_y112/e/menzs5bc
 
 ### 3-2 判別 2、5、10 的倍數
 
@@ -122,8 +96,6 @@ https://www.junyiacademy.org/article/5a69b71c8c1647b1825dffc7f4878d64
 https://www.junyiacademy.org/article/c6ba3e1af7434ed79645ef333e350ac4
 【觀念】判別 10 的倍數:
 https://www.junyiacademy.org/article/566b40e3af87494fa3d5fd10d940c14f
-【一般】判別 2、3、5、10 的倍數:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c03_y112/e/menzs5bd
 
 ### 3-3 公倍數和最小公倍數
 
@@ -139,12 +111,8 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c03_y112/v/Bd20UEJUFpU
 【解題】尋找公倍數比較快的方法 2（02:07）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c03_y112/v/86PCd9WI5Dg
-【基礎】認識公倍數:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c03_y112/e/m3ayb-bd
 【觀念】什麼是最小公倍數？（03:05）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c03_y112/v/1Ft1E8U5iA0
-【基礎】最小公倍數 1:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c03_y112/e/menzs5cd
 【解題】公倍數的應用題型 1（02:21）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c03_y112/v/SdxuPOxwOoA
 【挑戰】公倍數的應用問題:
@@ -158,10 +126,6 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/article/3d599fb7df794b66b96b466073f08138
 【解題】找出 3/4 的等值分數:
 https://www.junyiacademy.org/article/2bee7037d19c4d20a89645de07e660e0
-【基礎】擴分和等值分數 1:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c04_y112/e/menfs5ad
-【基礎】擴分和等值分數 2:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c04_y112/e/menfs5aa
 
 ### 4-2 約分:
 
@@ -169,8 +133,6 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/article/57bf652c90184e74bb6ed9f6e4873723
 【解題】20/28 是七分之幾:
 https://www.junyiacademy.org/article/a34d58378dd44de4901a0aaab6b28c9c
-【基礎】約分和等值分數 1:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c04_y112/e/menfs5ab
 
 ### 4-3 通分和分數的大小比較:
 
@@ -182,10 +144,6 @@ https://www.junyiacademy.org/article/6dbf186771a04b44b8ee824942bd1a1d
 https://www.junyiacademy.org/article/20bd43e5e0a246d7a6e5440483cb4bef
 【解題】比較異分母帶分數的大小:
 https://www.junyiacademy.org/article/3cc773d0e2bb4d248f524877fc28ba5a
-【基礎】通分和異分母分數的大小比較 1:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c04_y112/e/menfs5ac
-【基礎】異分母分數的大小比較:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c04_y112/e/n-m5ach4-4a
 
 ### 4-4 用分數表示整數相除的結果:
 
@@ -195,27 +153,14 @@ https://www.junyiacademy.org/article/70c08df6679a44f4b7729cee14d0103f
 https://www.junyiacademy.org/article/0eb3f4a15066480b97d86536068c352e
 【解題】用除法算式紀錄，並用真分數表示除的結果 3:
 https://www.junyiacademy.org/article/a8dd9c69a2634cd08a6cec610bf95fac
-【基礎】整數相除的結果是真分數:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c04_y112/e/menfs4da
 【解題】用除法算式紀錄，並用帶分數表示除的結果 1:
 https://www.junyiacademy.org/article/72fdc88881b54e339bc2e09b833d7799
 【解題】用除法算式紀錄，並用帶分數表示除的結果 2:
 https://www.junyiacademy.org/article/045d35e64dba45d79b63c87c58e7b238
-【基礎】整數相除的結果是假分數或帶分數:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c04_y112/e/menfs4db
-【基礎】整數相除分裝情境:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c04_y112/e/menfs4dc
-【一般】整數相除的應用:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c04_y112/e/menfs4dd
 
 ## 【五上】第五單元 多邊形與扇形
 
 ### 5-1 多邊形
-
-【基礎】多邊形:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/e/mesfl5ac
-【基礎】正多邊形:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/e/mesfl5ad
 
 ### 5-2 三角形的邊長關係
 
@@ -229,8 +174,6 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/v/kUayGW3-298
 【解題】三角形任意兩邊和必定大於第三邊練習題 3（05:01）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/v/O41-F7kSnXI
-【基礎】三角形邊長的規則:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/e/mesfl5aa
 
 ### 5-3 三角形和四邊形的內角和
 
@@ -248,14 +191,10 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/v/8s7F1zRa-wY
 【解題】等腰三角形底角計算:
 https://www.junyiacademy.org/article/f71a8973c29745489a01448f49b7da9e
-【基礎】三角形的內角和:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/e/mesfl5ab
 【解題】平行四邊形兩雙對邊一樣長，兩雙對角一樣大:
 https://www.junyiacademy.org/article/fa4f4cde5e994544abd1cb8bca83b990
 【解題】將平行四邊形沿著一條對角線剪開:
 https://www.junyiacademy.org/article/a0e356b6ce8e4571a3baa17d5c0593d8
-【基礎】四邊形、五邊形的內角和:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/e/mesfl5af
 
 ### 5-4 扇形與圓心角:
 
@@ -263,8 +202,6 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/v/6oCihKIQxhs
 【觀念】扇形各部位的名稱（02:20）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/v/Td3lodPrI24
-【基礎】認識扇形 1:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/e/mesfl5ba
 【觀念】圓心角的定義（01:17）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/v/EB2H9AcrGy4
 【解題】求圓心角 1（01:01）:
@@ -277,16 +214,10 @@ https://www.junyiacademy.org/article/826ba0a9bc4a40b982929a43e5396aa5
 https://www.junyiacademy.org/article/78ae1dfb26c447c095e57d300a1979ca
 【解題】1/8 圓的扇形的圓心角:
 https://www.junyiacademy.org/article/e544e773e05f4b9199fb5db0d31bdeab
-【基礎】認識圓心角:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/e/mesfl5bb
 【解題】圓心角 60° 的扇形是幾分之幾圓:
 https://www.junyiacademy.org/article/a892c039b966491185862ae2be2b7355
 【解題】畫出圓心角是 120° 的扇形:
 https://www.junyiacademy.org/article/75804e9911be45718e44b4c2e518f2e3
-【基礎】認識 1/2 圓、1/3 圓、1/4 圓、1/6 圓:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/e/n-m5bch3-3a
-【基礎】扇形的應用:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c05_y112/e/n-m5bch3-5a
 
 ## 【五上】第六單元 異分母分數的加減
 
@@ -301,10 +232,6 @@ https://www.junyiacademy.org/article/e01acd0300d84bc6a283b080534d96a0
 https://www.junyiacademy.org/article/f749f9a8e78f4f4d8946f9e089d42124
 【解題】異分母分數的加法：帶分數 + 假分數:
 https://www.junyiacademy.org/article/ba9e6ce1e8e94e56b5490be788617671
-【基礎】異分母加法計算:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c06_y112/e/n-m5ach6-1a
-【基礎】異分母加法的應用:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c06_y112/e/n-m5ach6-1b
 
 ### 6-2 異分母分數的減法
 
@@ -316,10 +243,6 @@ https://www.junyiacademy.org/article/902e78d2c1ec45d5a4e8c4a54bdff083
 https://www.junyiacademy.org/article/1690ff75db1b44c58cbd43d1abdc9fbc
 【解題】異分母分數的減法：假分數 – 帶分數:
 https://www.junyiacademy.org/article/2c7a7faf7b4643f18d2c4aa2b1115720
-【基礎】異分母減法計算:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c06_y112/e/n-m5ach6-2a
-【基礎】異分母減法的應用:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c06_y112/e/n-m5ach6-2b
 
 ### 6-3 分數的應用
 
@@ -327,8 +250,6 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/article/3a3b64d55e384d21b2bbf1427b8e9d97
 【解題】1/12 要加上哪兩個分數會等於 1:
 https://www.junyiacademy.org/article/02bd937e2cb146c89bbb90b8ebfbeced
-【基礎】分數的應用:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c06_y112/e/n-m5ach6-3a
 
 ## 【五上】第七單元 線對稱圖形
 
@@ -338,15 +259,11 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/article/3616ea9c10a34f1eb80c252e8fe592b0
 【解題】找出線對稱圖形有幾條對稱軸:
 https://www.junyiacademy.org/article/211a27fbab6f42f9810358aa35079761
-【基礎】認識線對稱圖形及對稱軸:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c07_y112/e/mesfl5da
 
 ### 7-2 對稱點、對稱邊和對稱角
 
 【觀念】認識對稱點、對稱邊和對稱角:
 https://www.junyiacademy.org/article/b29c7cc6bb7f4977b04ca4714affa326
-【基礎】對稱點、對稱邊和對稱角 2:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c07_y112/e/mesfl5db
 
 ### 7-3 繪製線對稱圖形
 
@@ -356,13 +273,8 @@ https://www.junyiacademy.org/article/7eb095ca440d4259b33874881e816d2c
 https://www.junyiacademy.org/article/9cd2d7a76a154bb6965dcb957cb1aa48
 【解題】在釘點紙上畫出線對稱圖形的另一半:
 https://www.junyiacademy.org/article/dbc5b67815454bf78cfed9f602e1436a
-【基礎】畫出線對稱圖形:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c07_y112/e/n-m5ach5-3a
 
 ### 7-4 線對稱圖形的應用
-
-【基礎】剪出線對稱圖形:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c07_y112/e/n-m5ach5-4a
 
 ## 【五上】第八單元 整數四則運算
 
@@ -377,10 +289,6 @@ https://www.junyiacademy.org/article/9972232d895f4440b55f1924a5ebde05
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c08_y112/v/5SDR87mdt1I
 【例題】連續除法的計算順序變更 2（01:42）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c08_y112/v/YeRnMcm92fs
-【基礎】連除的併式:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c08_y112/e/merys5ac
-【基礎】連除計算規律:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c08_y112/e/merys5ag
 
 ### 8-2 多步驟問題:
 
@@ -388,10 +296,6 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c08_y112/v/k4w1pfjkZT8
 【解題】三步驟計算：列式有括號（04:21）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c08_y112/v/xHbFJH211LE
-【基礎】四則混合計算:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c08_y112/e/merys5ad
-【基礎】多步驟的連加、連減、連乘與連除問題的併式:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c08_y112/e/n-m5ach7-2a
 
 ### 8-3 分配律
 
@@ -399,10 +303,6 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/article/5284f8cb911f42a8971d994407fbbf81
 【解題】分配律：觀察 250 × 15 ﹣ 250 × 11 ＝ 250 × (15﹣11) 算出來的答案一樣嗎:
 https://www.junyiacademy.org/article/63dbe963595d414aa10d09e339f717b0
-【基礎】認識分配律 1:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c08_y112/e/n-m5ach7-3a
-【基礎】運用分配律的計算練習:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c08_y112/e/merys5ak
 
 ### 8-4 平均問題
 
@@ -410,8 +310,6 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/article/45e1e929b4494e5395afe86bc7a7bad6
 【解題】三次英文測驗的平均分數是多少分:
 https://www.junyiacademy.org/article/66be81a2d0c8491b9b8ab32e526ae872
-【基礎】平均問題:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c08_y112/e/n-m6bch6-1a
 
 ## 【五上】第九單元 面積
 
@@ -424,10 +322,6 @@ https://www.junyiacademy.org/article/b7166b23f3cf449d9b7da2f44a1f6ef1
 https://www.junyiacademy.org/article/262ca747b4ea4c51aa7762b4ef4956f1
 【觀念】平行四邊形的面積＝底 × 高:
 https://www.junyiacademy.org/article/11b93b1b21ed4ff19f0dc1e8c83ff974
-【基礎】面積的變化:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c09_y112/e/n-m5ach8-4a
-【基礎】平行四邊形的面積 2:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c09_y112/e/mesfl5cc
 
 ### 9-2 三角形的面積:
 
@@ -437,10 +331,6 @@ https://www.junyiacademy.org/article/62e1a34af2704e1d87488f5309aa9a3f
 https://www.junyiacademy.org/article/e190c2fb89e04f06953005933b831c7c
 【解題】三角形底邊長不變，高變為原來的 2 倍、3 倍時，面積分別會變為原來的幾倍
 https://www.junyiacademy.org/article/bd7610eb824248e598eadfccf870d727
-【基礎】三角形的面積 2
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c09_y112/e/mesfl5cg
-【一般】三角形面積的應用 1
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c09_y112/e/mesfl5ca
 
 ### 9-3 梯形的面積:
 
@@ -452,7 +342,6 @@ https://www.junyiacademy.org/article/3ef9f77eadda490b935f9ecdabec1a1d
 https://www.junyiacademy.org/article/53fd8547450b420caeee3e0e22a43888
 【觀念】梯形的面積 ＝（上底＋下底）× 高
 https://www.junyiacademy.org/article/c8dfa831b0f04d70bd77b849ccd17c3c
-【基礎】梯形的面積 1
 
 ### 9-4 複合圖形的面積:
 
@@ -467,8 +356,6 @@ https://www.junyiacademy.org/article/a6c9e4ea4bfb44f1902a406415ca8bff
 https://www.junyiacademy.org/article/d2fc1ae2be0c4f25972e2bb7aeaba7ce
 【解題】複合圖形的面積計算 5
 https://www.junyiacademy.org/article/a05a9a498803426e913e5ef45e2a86de
-【基礎】面積公式的應用
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c09_y112/e/n-m5ach8-5a
 
 ## 【五上】第十單元 柱體、錐體和球
 
@@ -485,7 +372,6 @@ https://www.junyiacademy.org/article/da621b154a3443188fcbfa4af8a9ecb1
 https://www.junyiacademy.org/article/dc802042da8a426988eda540d70c144b
 【觀念】認識圓錐
 https://www.junyiacademy.org/article/b67823d3f50d47bdbccdfc6baf5b27e9
-【基礎】立體形體的分類
 
 ### 10-2 角柱和角錐的構成要素及關係:
 
@@ -496,7 +382,6 @@ https://www.junyiacademy.org/article/c496c4f052e94ef38f0f8232dbb48a02
 https://www.junyiacademy.org/article/b9e575b7c2b0449182627dff009eb3f1
 【觀念】角柱的一個底面邊的個數，和角柱邊的個數有什麼關係
 https://www.junyiacademy.org/article/096ba78fa2ad49a0aa5c6b5a9c56eeb7
-【基礎】柱體的構成要素
 
 ### 10-3 面與面的關係:
 
@@ -507,8 +392,6 @@ https://www.junyiacademy.org/article/2d4a94939f22490d8b58357ea7ed22c2
 https://www.junyiacademy.org/article/4b7c0ff6cca64cf389c2a4871204f109
 【觀念】角錐底面邊的個數，和角錐邊的個數有什麼關係
 https://www.junyiacademy.org/article/2020343859c44f9ea701cf4b3e8da82b
-【基礎】錐體的構成要素
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c10_y112/e/mescu5cc
 【觀念】正方體中相鄰的面互相垂直
 https://www.junyiacademy.org/article/89daae53472544febbfd9da8552724b0
 【解題】利用正方體中相鄰的面互相垂直來檢查兩面是否互相垂直
@@ -517,10 +400,6 @@ https://www.junyiacademy.org/article/02b9f9926a1e40669ec9d5e96b7ee710
 https://www.junyiacademy.org/article/b3ddfcb679324010bafa207df11631ba
 【觀念】面與面的平行與垂直關係
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c10_y112/v/HMW9lsVvlpA
-【基礎】面和面及邊和面的垂直關係
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c10_y112/e/n-m6ach9-3a
-【基礎】面和面的平行關係
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c10_y112/e/n-m6ach9-4a
 
 ### 10-4 柱體和錐體的展開圖:
 
@@ -535,5 +414,3 @@ https://www.junyiacademy.org/article/58fb5e40db224999bd427dcb3a9e972d
 https://www.junyiacademy.org/article/fe498a5f6eb9442890338be8de97996c
 【觀念】圓心到圓周上每個點的距離和球心到球面上每個點的距離都一樣長嗎
 https://www.junyiacademy.org/article/a26f1474be28464c9da5544d46c2987e
-【基礎】認識球 1
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c10_y112/e/n-m5bch7-6a

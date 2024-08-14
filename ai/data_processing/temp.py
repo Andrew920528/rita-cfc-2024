@@ -97,7 +97,7 @@ def add_tag_to_videos():
     from langchain.text_splitter import RecursiveCharacterTextSplitter
 
     separators = ['\n# ', '\n## ', '\n### ']
-    chunk_size = 2000
+    chunk_size = 3000
     chunk_overlap = 0
     video_file_path = "/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/data_processing/processed_data/online_resources_links_5a.md"
 
@@ -115,24 +115,25 @@ def add_tag_to_videos():
     docs = text_splitter.create_documents([extracted_text])
 
     the_dict = {
-        "1-": "第一單元 chapter 1 chapter one",
-        "2-": "第二單元 chapter 2 chapter two",
-        "3-": "第三單元 chapter 3 chapter three",
-        "4-": "第四單元 chapter 4 chapter four",
-        "5-": "第五單元 chapter 5 chapter five",
-        "6-": "第六單元 chapter 6 chapter six",
-        "7-": "第七單元 chapter 7 chapter seven",
-        "8-": "第八單元 chapter 8 chapter eight",
-        "9-": "第九單元 chapter 9 chapter nine",
-        "10-": "第十單元 chapter 10 chapter ten"
+        "# 1-": "第一單元 chapter 1 chapter one",
+        "# 2-": "第二單元 chapter 2 chapter two",
+        "# 3-": "第三單元 chapter 3 chapter three",
+        "# 4-": "第四單元 chapter 4 chapter four",
+        "# 5-": "第五單元 chapter 5 chapter five",
+        "# 6-": "第六單元 chapter 6 chapter six",
+        "# 7-": "第七單元 chapter 7 chapter seven",
+        "# 8-": "第八單元 chapter 8 chapter eight",
+        "# 9-": "第九單元 chapter 9 chapter nine",
+        "# 10-": "第十單元 chapter 10 chapter ten"
     }
 
     for i, doc in enumerate(docs):
         content = doc.page_content
+        content = "# 康軒數學五年級上學期教學影片 education video 影片 媒體 章節影片\n" + content
         for key in the_dict:
             if key in content:
                 content = the_dict[key] + "\n" + content
-        content = "# 康軒數學五年級上學期教學影片 education video\n" + content
+        # content = "# 康軒數學五年級上學期教學影片 education video 影片 媒體 章節影片\n" + content
 
         write_path = f"/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/data_processing/processed_data/videos/doc{i+1}.md"
         with open(write_path, 'w', encoding='utf-8') as file:
@@ -140,3 +141,33 @@ def add_tag_to_videos():
 
 
 add_tag_to_videos()
+
+
+def remove_tagged_lines():
+    file_path = "/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/data_processing/processed_data/online_resources_links_5a.md"
+
+    tags = ['【基礎】', '【一般】']
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    new_lines = []
+    i = 0
+    while i < len(lines):
+        # Check if the line starts with the specified tag
+        start_with_tag = False
+        for tag in tags:
+            if lines[i].startswith(tag):
+                start_with_tag = True
+                break
+
+        if start_with_tag:
+            # Skip the current line and the one immediately following it
+            i += 2
+        else:
+            new_lines.append(lines[i])
+            i += 1
+
+    # Write the modified content back to the file (or to a new file)
+    with open(file_path, 'w') as file:
+        file.writelines(new_lines)
+# remove_tagged_lines()
