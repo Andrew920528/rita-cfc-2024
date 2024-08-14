@@ -72,7 +72,7 @@ const Chatroom = ({}: ChatroomProps) => {
   let dispatch = useAppDispatch();
   useEffect(() => {
     terminateResponse();
-    dispatch(ChatroomsServices.actions.resetChatroom(chatroom.id));
+    // dispatch(ChatroomsServices.actions.resetChatroom(chatroom.id));
   }, [currLectureId]);
 
   if (!chatroom) return <></>;
