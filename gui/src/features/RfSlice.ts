@@ -59,7 +59,7 @@ const RfSlice = createSlice({
         if (!state.dict[nodeId]) {
           let startX = action.payload.topLeftX + 8;
           let startY = action.payload.topLeftY + 8;
-          let w = widgetBook(widgetDict[nodeId].type).width;
+          let w = widgetBook(widgetDict[nodeId].type).minWidth;
           let h = widgetBook(widgetDict[nodeId].type).minHeight;
           let spacing = 8;
           let {x, y} = findNextAvailableSpace(

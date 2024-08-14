@@ -10,8 +10,8 @@ export type SemesterPlanWidgetContent = {
 export class SemesterPlanWidgetMaker extends WidgetMaker<SemesterPlanWidgetContent> {
   init() {
     return {
-      headings: ["課程", "教材", "重點"],
-      rows: [{課程: "輸入課程", 教材: "輸入教材", 重點: "輸入重點"}],
+      headings: ["週目", "課程單元", "活動"],
+      rows: [{週目: "", 課程單元: "", 活動: ""}],
     };
   }
   isType(obj: any): obj is SemesterPlanWidgetContent {
