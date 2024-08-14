@@ -118,13 +118,17 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     WID_VERBOSE = False
     #############################################################################
 
+    ############################ Temporary Switch ###############################
+    AGENT_TYPE = "Worksheet" # General or Worksheet
+    #############################################################################
+
     time_logger = LlmTester(name="llm process", on=LOG_OUTPUT)
     time_logger.log_start_timer("Start llm process")
 
     response_queue = queue.Queue()
     stream_handler = RitaStreamHandler(response_queue)
     # Agent 1: Response to the user
-    rita_agent = Rita(llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
+    rita_agent = Rita(llm=llm, retriever=retriever, agent_type=AGENT_TYPE, verbose=RITA_VERBOSE)
     complete_rita_response = ""
     rita_response_done = False
 

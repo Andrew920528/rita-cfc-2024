@@ -6,12 +6,12 @@ from utils.LlmTester import LlmTester
 from utils.util import format_chat_history
 import json
 
-
 class Rita:
-    def __init__(self, llm, retriever, verbose=False) -> None:
+    def __init__(self, llm, retriever, agent_type, verbose=False) -> None:
         self.llm = llm
         self.retriever = retriever
         self.logger = LlmTester(name="Rita", on=verbose)
+        self.agent_type = agent_type
 
     def stream(self, user_prompt, data):
         prompt = self._get_prompt(user_prompt, data)
@@ -45,6 +45,22 @@ class Rita:
             "If the input is irrelevant, suggest ways that you can help to plan a lesson. "
             # "Answer the question with concise sentences."  # decrease unnecessary token
         )
+
+        if self.agent_type == "Worksheet":
+            SYSTEM_INTRO = (
+                "You are a helpful AI teaching assistant chatbot. "
+                "You are suppose to help the user, who is a teacher, to generate questions for their course worksheet. "
+                "There are three usual types of question: multiple choices, matching, and fill in the blanks."
+            )
+            SYSTEM_BASE_INSTRUCTION = (
+                "Generate questions based on the below context: {context}. "
+                "The context is given in markdown format. It is a teacher's guide, which covers course content and methodologies."
+
+                "Below are context information about the course you are helping with:"
+                "Subject: {subject}"
+                "Grade level: {grade}"
+                "Number of classes per week: {credits}."
+            )
 
         messages = [
             ("system", SYSTEM_INTRO),
