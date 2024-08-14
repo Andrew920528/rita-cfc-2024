@@ -48,6 +48,7 @@ class Rita:
 
             "If the input is irrelevant to the context, answer the user's prompt as it is and suggest ways that you can help to plan a lesson. "
             "Use proper markdown formatting for list items. "
+            "When giving an external url, please specify the domain name of the website. "
 
             "Bold important contents appropriately."
         )

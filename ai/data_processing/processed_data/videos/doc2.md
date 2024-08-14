@@ -1,5 +1,7 @@
 第三單元 chapter 3 chapter three
+
 # 康軒數學五年級上學期教學影片 education video 影片 媒體 章節影片
+
 ## 【五上】第三單元 倍數與公倍數
 
 ### 3-1 倍數:
@@ -38,5 +40,3 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c03_y112/v/1Ft1E8U5iA0
 【解題】公倍數的應用題型 1（02:21）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c03_y112/v/SdxuPOxwOoA
-【挑戰】公倍數的應用問題:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c03_y112/e/m3ayb-be

@@ -1,6 +1,8 @@
 第二單元 chapter 2 chapter two
 第一單元 chapter 1 chapter one
+
 # 康軒數學五年級上學期教學影片 education video 影片 媒體 章節影片
+
 ## 【五上】第一單元 小數的加減
 
 【觀念】小數的由來:
@@ -77,5 +79,3 @@ https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c0
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/v/Qo7s9UfPctE
 【解題】最大公因數題型 2：大長方形切割成小正方形（05:48）:
 https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/v/YpTUWUPphDw
-【挑戰】最大公因數的應用題:
-https://www.junyiacademy.org/course-compare/math-elem/math-5/k-m5a_y112/k-m5a-c02_y112/e/menzs5ca
