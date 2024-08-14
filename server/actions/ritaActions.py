@@ -36,7 +36,7 @@ def initRetriever():
     # Get the absolute path of the embedding path with system independent path selectors
     curr_dir = os.path.dirname(os.path.abspath(__file__))
     embedding_path = os.path.join(
-        curr_dir, '..', '..', 'ai', 'rag', 'vector-stores', 'json_only_vs')
+        curr_dir, '..', '..', 'ai', 'rag', 'vector-stores', 'vid_and_json_vs')
 
     env_path = os.path.join(os.path.dirname(curr_dir), '.env')
     load_dotenv(dotenv_path=env_path)

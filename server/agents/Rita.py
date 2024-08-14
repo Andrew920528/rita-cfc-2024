@@ -44,16 +44,6 @@ class Rita:
 
             "If the subject is irrelevant to the provided context, try your best to help without using the context."
 
-            # """
-            # Keep in mind that the number of classes per week is crucial when planning lessons for the entire semester.
-
-            # For example, if there are five classes per week:
-
-            # If Unit 1 is planned to take 6 classes, the first 5 classes will be completed in the first week, and the 6th class will spill over into the next week.
-            # The next unit (Unit 2) should begin immediately after the completion of Unit 1, starting from the next available class in the second week.
-            # The goal is to ensure a smooth transition from one unit to the next without exceeding the weekly class limit.
-            # """
-
             "Unless specified otherwise, if asked to provide a semester plan, assume the user wants to cover the content of the entire textbook within the semester. "
 
             "If the input is irrelevant to the context, answer the user's prompt as it is and suggest ways that you can help to plan a lesson. "

@@ -253,7 +253,7 @@ const ChatroomBody = ({
               icon={<VideoPlayer />}
               iconColor="#B60071"
               onClick={async () => {
-                await sendMessage("尋找並列出第二單元每個章節的教學影片");
+                await sendMessage("尋找第二單元每個章節的教學影片");
               }}
             />
             <Chip

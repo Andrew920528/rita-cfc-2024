@@ -64,9 +64,6 @@ def modifyJson():
             json.dump(data, file, ensure_ascii=False, indent=4)
 
 
-modifyJson()
-
-
 def combineJson():
     import json
     # Define the file path pattern
@@ -94,3 +91,52 @@ def combineJson():
         json.dump(combined_data, combined_file, ensure_ascii=False, indent=4)
 
     print(f"Combined JSON file has been saved to {combined_file_path}")
+
+
+def add_tag_to_videos():
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+    separators = ['\n# ', '\n## ', '\n### ']
+    chunk_size = 2000
+    chunk_overlap = 0
+    video_file_path = "/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/data_processing/processed_data/online_resources_links_5a.md"
+
+    # Load the organized textbook data
+    with open(video_file_path, "r", encoding="utf-8") as file:
+        extracted_text = file.read()
+    # Create a RecursiveCharacterTextSplitter object to split the text into chunks
+    text_splitter = RecursiveCharacterTextSplitter(
+        separators=separators,
+        chunk_size=chunk_size,       # Maximum number of characters in each chunk
+        # Number of characters that overlap between consecutive chunks
+        chunk_overlap=chunk_overlap,
+        length_function=len,    # Function to measure the length of chunks
+    )
+    docs = text_splitter.create_documents([extracted_text])
+
+    the_dict = {
+        "1-": "第一單元 chapter 1 chapter one",
+        "2-": "第二單元 chapter 2 chapter two",
+        "3-": "第三單元 chapter 3 chapter three",
+        "4-": "第四單元 chapter 4 chapter four",
+        "5-": "第五單元 chapter 5 chapter five",
+        "6-": "第六單元 chapter 6 chapter six",
+        "7-": "第七單元 chapter 7 chapter seven",
+        "8-": "第八單元 chapter 8 chapter eight",
+        "9-": "第九單元 chapter 9 chapter nine",
+        "10-": "第十單元 chapter 10 chapter ten"
+    }
+
+    for i, doc in enumerate(docs):
+        content = doc.page_content
+        for key in the_dict:
+            if key in content:
+                content = the_dict[key] + "\n" + content
+        content = "# 康軒數學五年級上學期教學影片 education video\n" + content
+
+        write_path = f"/Users/yenshuohsu/ibm_cfc_2024/rita-cfc-2024/ai/data_processing/processed_data/videos/doc{i+1}.md"
+        with open(write_path, 'w', encoding='utf-8') as file:
+            file.write(content)
+
+
+add_tag_to_videos()

@@ -30,6 +30,12 @@ export function MarkdownRenderer({children: markdown}: MarkdownRendererProps) {
             </SyntaxHighlighter>
           );
         },
+
+        a: (props: any) => (
+          <a href={props.href} target="_blank" rel="noreferrer">
+            {props.children}
+          </a>
+        ),
       }}
     >
       {markdown}
