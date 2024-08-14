@@ -69,7 +69,9 @@ const Chatroom = ({}: ChatroomProps) => {
 
   if (!chatroom) return <></>;
   return (
-    <div className={cx("chatroom", {collapsed: collapsed})}>
+    <div
+      className={cx("chatroom", {collapsed: collapsed}, {maximized: maximized})}
+    >
       <div className={cx("chatroom-header")}>
         <div className={cx("header-group")}>
           <p className={cx("rita")}>Rita</p>
