@@ -24,7 +24,7 @@ export const useMessageRita = () => {
     abortControllerRef,
     loading: waitingForReply,
     setLoading: setWaitingForReply,
-    terminateResponse,
+    terminateResponse: abortApi,
   } = useApiHandler([classroomId]);
 
   const [ritaError, setRitaError] = useState("");
@@ -239,7 +239,10 @@ export const useMessageRita = () => {
       })
     );
   }
-
+  function terminateResponse() {
+    setConstructingWidget(false);
+    abortApi();
+  }
   return {
     sendMessage,
     waitingForReply,

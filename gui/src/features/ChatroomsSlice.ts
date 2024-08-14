@@ -36,6 +36,9 @@ const ChatroomsSlice = createSlice({
       state.dict[action.payload.chatroomId].messages[lastIndex] =
         action.payload.message;
     },
+    resetChatroom: (state, action: PayloadAction<string>) => {
+      state.dict[action.payload].messages = [];
+    },
   },
 });
 

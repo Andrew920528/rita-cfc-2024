@@ -31,6 +31,7 @@ import {CircularProgress} from "@mui/material";
 import {translateService, useApiHandler} from "../../utils/service";
 import {API} from "../../global/constants";
 import Chip from "../ui_components/Chip/Chip";
+import {ChatroomsServices} from "../../features/ChatroomsSlice";
 const cx = classNames.bind(styles);
 type ChatroomProps = {};
 const Chatroom = ({}: ChatroomProps) => {
@@ -66,6 +67,13 @@ const Chatroom = ({}: ChatroomProps) => {
 
   const {isComposing, handleCompositionEnd, handleCompositionStart} =
     useCompose();
+
+  let currLectureId = useTypedSelector((state) => state.Lectures.current);
+  let dispatch = useAppDispatch();
+  useEffect(() => {
+    terminateResponse();
+    dispatch(ChatroomsServices.actions.resetChatroom(chatroom.id));
+  }, [currLectureId]);
 
   if (!chatroom) return <></>;
   return (
