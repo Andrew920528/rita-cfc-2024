@@ -269,11 +269,13 @@ const ChatroomBody = ({
               }}
             />
             <Chip
-              text="給我第一章課程活動的點子"
+              text="給我關於小數的課程活動點子"
               icon={<Idea />}
               iconColor="#FFB200"
               onClick={async () => {
-                await sendMessage("推薦我1-1單元引導學生認識小數的課程活動");
+                await sendMessage(
+                  "推薦我引導學生認識小數的課程活動，活動要有創意並能激起學生興趣"
+                );
               }}
             />
           </div>
