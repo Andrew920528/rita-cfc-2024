@@ -196,9 +196,9 @@ def split_text(text, max_chars=5000):
     chunks = []
     current_chunk = ""
 
-    # Split the text into sentences (ends with . ! ?)
-    sentences = re.split(r'(?<=[.!?])\s+', text)
-
+    # Split the text into sentences (ends with \n \t)
+    sentences = re.split(r'([\n\t])', text)
+    
     for sentence in sentences:
         if len(current_chunk) + len(sentence) < max_chars:
             current_chunk += sentence + " "
