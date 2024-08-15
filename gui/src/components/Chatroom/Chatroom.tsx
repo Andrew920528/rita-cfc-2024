@@ -29,7 +29,7 @@ import {MarkdownRenderer} from "./MarkdownRenderer";
 import {useMessageRita} from "./useMessageRita";
 import {CircularProgress} from "@mui/material";
 import {translateService, useApiHandler} from "../../utils/service";
-import {API} from "../../global/constants";
+import {API, EMPTY_ID} from "../../global/constants";
 import Chip from "../ui_components/Chip/Chip";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 const cx = classNames.bind(styles);
@@ -71,8 +71,9 @@ const Chatroom = ({}: ChatroomProps) => {
   let currLectureId = useTypedSelector((state) => state.Lectures.current);
   let dispatch = useAppDispatch();
   useEffect(() => {
+    if (currLectureId === EMPTY_ID) return;
     terminateResponse();
-    // dispatch(ChatroomsServices.actions.resetChatroom(chatroom.id));
+    dispatch(ChatroomsServices.actions.resetChatroom(chatroom.id));
   }, [currLectureId]);
 
   if (!chatroom) return <></>;
