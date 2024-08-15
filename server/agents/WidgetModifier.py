@@ -59,6 +59,7 @@ class WidgetModifier:
             You should build upon the current widget based on the relevant result of the above conversation.
             {format_instructions}
             You shouldn't response with any additional text.
+            Only response in English.
             """
         )
 

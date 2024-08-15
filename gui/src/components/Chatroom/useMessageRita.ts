@@ -6,6 +6,7 @@ import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {contentIsOfType, widgetBook} from "../../schema/widget/widgetFactory";
 import {EMPTY_ID} from "../../global/constants";
 import {WidgetsServices} from "../../features/WidgetsSlice";
+import {replaceTabsWithSpaces} from "../../utils/util";
 
 export const useMessageRita = () => {
   const dispatch = useAppDispatch();
@@ -106,6 +107,7 @@ export const useMessageRita = () => {
           handleChunk(l, organizer);
         }
       }
+      console.log(organizer.currRitaReply);
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
         console.warn(error.message);
@@ -147,6 +149,7 @@ export const useMessageRita = () => {
     let data = streamObject.data;
 
     if (agent === "Rita") {
+      data = replaceTabsWithSpaces(data); // markdown renderer does not support tabs
       organizer.currRitaReply += data;
       let messageObj = {
         text: organizer.currRitaReply,

@@ -42,7 +42,7 @@ class LlmTester:
         now_formatted = datetime.fromtimestamp(
             time.time()).strftime('%H:%M:%S.%f')[:-3]
         latency_formatted = datetime.fromtimestamp(
-            latency).strftime('%S.%f')[:-3]
+            latency).strftime('%M:%S.%f')[:-3]
         print(
             f"{self.name} | {now_formatted} | Time passed = {latency_formatted} | {message}")
 
