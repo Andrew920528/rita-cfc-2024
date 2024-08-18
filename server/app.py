@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
 
-from utils.word_docs import convert_to_pdf, send_docx, docxToPdfFunction, createBlankDocx, sendDocument
+from utils.word_docs import send_docx, docxToPdfFunction, createBlankDocx, sendDocument
 from utils.LlmTester import LlmTester
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
 from actions.ritaActions import initLLM, llm_stream_response, initRetriever, translateText

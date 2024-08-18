@@ -134,3 +134,7 @@ export const useCompose = () => {
     handleCompositionEnd,
   };
 };
+export function replaceTabsWithSpaces(input: string, spaceCount = 2) {
+  // Replace each tab with the equivalent number of spaces
+  return input.replace(/\t/g, " ".repeat(spaceCount));
+}

@@ -35,15 +35,22 @@ class Rita:
         )
         SYSTEM_BASE_INSTRUCTION = (
             "Answer the user's questions based on the below context: {context}. "
-            "The context is given in markdown format. It is a teacher's guide, which covers course content and methodologies."
+            "The context is a teacher's guide, which covers course content and methodologies."
 
-            "Below are context information about the course you are helping with:"
+            "Below are information about the course you are helping with:"
             "Subject: {subject}"
             "Grade level: {grade}"
             "Number of classes per week: {credits}."
 
-            "If the input is irrelevant, suggest ways that you can help to plan a lesson. "
-            # "Answer the question with concise sentences."  # decrease unnecessary token
+            "If the subject is irrelevant to the provided context, try your best to help without using the context."
+
+            "Unless specified otherwise, if asked to provide a semester plan, assume the user wants to cover the content of the entire textbook within the semester. "
+
+            "If the input is irrelevant to the context, answer the user's prompt as it is and suggest ways that you can help to plan a lesson. "
+            "Use proper markdown formatting for list items. "
+            "When giving an external url, please specify the domain name of the website. "
+
+            "Bold important contents appropriately."
         )
 
         if self.agent_type == "Worksheet":

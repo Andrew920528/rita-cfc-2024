@@ -17,7 +17,7 @@ from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes, DecodingMet
 from langchain_ibm import WatsonxLLM
 from dotenv import load_dotenv
 import os
-from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY
+from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY, TOP_K, TOP_P, TEMPERATURE
 from agents.Rita import Rita
 from agents.IntentClassifier import IntentClassifier
 from agents.WidgetModifier import WidgetModifier
@@ -32,11 +32,12 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from deep_translator import GoogleTranslator
 
+
 def initRetriever():
     # Get the absolute path of the embedding path with system independent path selectors
     curr_dir = os.path.dirname(os.path.abspath(__file__))
     embedding_path = os.path.join(
-        curr_dir, '..', '..', 'ai', 'rag', 'vector-stores', 'test_vector_store')
+        curr_dir, '..', '..', 'ai', 'rag', 'vector-stores', 'vid_and_json_vs')
 
     env_path = os.path.join(os.path.dirname(curr_dir), '.env')
     load_dotenv(dotenv_path=env_path)
@@ -50,7 +51,7 @@ def initRetriever():
     )
 
     # Create a retriever chain
-    retriever = faiss_store.as_retriever()
+    retriever = faiss_store.as_retriever(search_kwargs={"k": 3})
     return retriever
 
 
@@ -68,7 +69,11 @@ def initLLM():
         GenParams.MAX_NEW_TOKENS: MAX_NEW_TOKENS,
         GenParams.DECODING_METHOD: DecodingMethods.GREEDY,
         GenParams.REPETITION_PENALTY: REPETITION_PENALTY,
+        GenParams.TEMPERATURE: TEMPERATURE,
+        GenParams.TOP_P: TOP_P,
+        GenParams.TOP_K: TOP_K,
     }
+
     tester.log_start_timer("loaded IBM watsonX credentials")
 
     # Initialize the LLM model
@@ -114,8 +119,8 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     ##########################  Logging Controllers #############################
     LOG_OUTPUT = True   # Enable to log time and output of the entire process
     # Enable to log detail output of each agent
-    RITA_VERBOSE = False
-    INTENT_VERBOSE = True
+    RITA_VERBOSE = True
+    INTENT_VERBOSE = False
     WID_VERBOSE = False
     WG_VERBOSE = True
     #############################################################################
@@ -163,6 +168,9 @@ def llm_stream_response(data, user_prompt, retriever, llm):
         while not rita_response_done:
             time.sleep(0.1)
 
+        stream_handler.add_to_stream(
+            agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
+
         # Agent 2: Determine user's intent
         if AGENT_TYPE != "Worksheet":
             intent_classifier = IntentClassifier(llm, agent_type=AGENT_TYPE, verbose=INTENT_VERBOSE)
@@ -174,8 +182,7 @@ def llm_stream_response(data, user_prompt, retriever, llm):
         # Agent 3: Modify widget if needed
         if AGENT_TYPE != "Worksheet":
             widget_modifier = WidgetModifier(llm, verbose=WID_VERBOSE)
-            stream_handler.add_to_stream(
-                agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
+
             modified_widget = widget_modifier.invoke(
                 user_prompt, data, intent, complete_rita_response)
             time_logger.log_latency(
@@ -188,8 +195,6 @@ def llm_stream_response(data, user_prompt, retriever, llm):
         # Agent 4: Generate worksheet if needed
         if AGENT_TYPE == "Worksheet":
             worksheet_generator = WorksheetGenerator(llm, verbose=WG_VERBOSE)
-            stream_handler.add_to_stream(
-                agent="Worksheet Generator", data="WORKSHEET_GENERATOR_STARTED")
             generated_worksheet = worksheet_generator.invoke(
                 user_prompt, data, complete_rita_response)
             time_logger.log_latency(
@@ -198,6 +203,7 @@ def llm_stream_response(data, user_prompt, retriever, llm):
             #     agent="Worksheet Generator", data=generated_worksheet)
             stream_handler.end_stream()
             time_logger.log_latency("Stream completed")
+
 
     t2 = threading.Thread(target=run_widget_modifier)
     t2.start()
@@ -208,12 +214,13 @@ def llm_stream_response(data, user_prompt, retriever, llm):
         response = Response(stream_handler.yield_stream())
     return response
 
+
 def split_text(text, max_chars=5000):
     chunks = []
     current_chunk = ""
-    
-    # Split the text into sentences (ends with . ! ?)
-    sentences = re.split(r'(?<=[.!?])\s+', text)
+
+    # Split the text into sentences (ends with \n \t)
+    sentences = re.split(r'([\n\t])', text)
     
     for sentence in sentences:
         if len(current_chunk) + len(sentence) < max_chars:
@@ -222,12 +229,13 @@ def split_text(text, max_chars=5000):
             # If adding this sentence exceeds the limit, store the current chunk
             chunks.append(current_chunk.strip())
             current_chunk = sentence + " "
-    
+
     # Add the last chunk if it's not empty
     if current_chunk:
         chunks.append(current_chunk.strip())
-    
+
     return chunks
+
 
 def translateText(text):
     try:

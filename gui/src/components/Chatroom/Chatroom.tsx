@@ -69,7 +69,9 @@ const Chatroom = ({}: ChatroomProps) => {
 
   if (!chatroom) return <></>;
   return (
-    <div className={cx("chatroom", {collapsed: collapsed})}>
+    <div
+      className={cx("chatroom", {collapsed: collapsed}, {maximized: maximized})}
+    >
       <div className={cx("chatroom-header")}>
         <div className={cx("header-group")}>
           <p className={cx("rita")}>Rita</p>
@@ -253,25 +255,27 @@ const ChatroomBody = ({
               icon={<VideoPlayer />}
               iconColor="#B60071"
               onClick={async () => {
-                await sendMessage("尋找並列出第二單元每個章節的教學影片");
+                await sendMessage("尋找第二單元每個章節的教學影片");
               }}
             />
             <Chip
-              text="生成十六週的教學計畫草稿"
+              text="生成二十週的教學計畫草稿"
               icon={<ResultDraft />}
               iconColor="#478CCF"
               onClick={async () => {
                 await sendMessage(
-                  "生成十六週的教學計畫草稿，包含每週每堂課需要涵蓋的內容"
+                  "生成二十週的學期進度，包含每週需要涵蓋的教材內容"
                 );
               }}
             />
             <Chip
-              text="給我第一章課程活動的點子"
+              text="給我關於小數的課程活動點子"
               icon={<Idea />}
               iconColor="#FFB200"
               onClick={async () => {
-                await sendMessage("推薦我1-1單元引導學生認識小數的課程活動");
+                await sendMessage(
+                  "推薦我引導學生認識小數的課程活動，活動要有創意並能激起學生興趣"
+                );
               }}
             />
           </div>
