@@ -2,7 +2,7 @@ from langchain_core.prompts.few_shot import FewShotPromptTemplate
 from langchain_core.prompts.prompt import PromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field, validator
 from langchain_core.output_parsers import PydanticOutputParser
-from typing import Literal
+from typing import Literal, List
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts import MessagesPlaceholder
 from langchain.schema import AIMessage, HumanMessage
@@ -14,9 +14,10 @@ from utils.LlmTester import LlmTester
 
 
 class IntentClassifier:
-    def __init__(self, llm, verbose=False) -> None:
+    def __init__(self, llm, agent_type, verbose=False) -> None:
         self.llm = llm  # llm used for intent classification
         self.logger = LlmTester(name="Intent Classifier", on=verbose)
+        self.agent_type = agent_type
 
     def invoke(self, user_prompt, data, reply):
         chain = self._get_runnable()
@@ -52,7 +53,12 @@ class IntentClassifier:
             "{format_instructions}"
             "The output should solely contain a json object, with no additional text."
         )
-
+        if self.agent_type == "Worksheet":
+            CLASSIFY_INSTRUCTION = (
+                "You are a classification assistant for determining what's the type of each questions generated. "
+                "From the above conversation, determine each question type as 'Multiple Choices', 'Matching', or 'Fill in the Blanks'. "
+                "{format_instructions}"
+            )
         format_instruction = self._get_parser().get_format_instructions()
 
         intent_classifier_template = PromptTemplate(
@@ -78,6 +84,9 @@ class IntentClassifier:
         class Intent(BaseModel):
             intent: Literal["Ask", "Modify", "None"] = Field(
                 description="the user's intent")
+            if self.agent_type == "Worksheet":
+                intent: List[Literal["Multiple Choices", "Matching", "Fill in the Blanks"]] = Field(
+                    description="question types")
 
         parser = PydanticOutputParser(pydantic_object=Intent)
         return parser

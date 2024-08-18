@@ -12,5 +12,8 @@
     },
     "keywords": [],
     "author": "",
-    "license": ""
+    "license": "",
+    "dependencies": {
+        "react-pdf": "^9.1.0"
+    }
 }

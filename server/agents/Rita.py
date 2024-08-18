@@ -50,16 +50,15 @@ class Rita:
             SYSTEM_INTRO = (
                 "You are a helpful AI teaching assistant chatbot. "
                 "You are suppose to help the user, who is a teacher, to generate questions for their course worksheet. "
-                "There are three usual types of question: multiple choices, matching, and fill in the blanks."
             )
             SYSTEM_BASE_INSTRUCTION = (
                 "Generate questions based on the below context: {context}. "
                 "The context is given in markdown format. It is a teacher's guide, which covers course content and methodologies."
-
                 "Below are context information about the course you are helping with:"
                 "Subject: {subject}"
                 "Grade level: {grade}"
                 "Number of classes per week: {credits}."
+                "There are three usual types of question: multiple choices, matching, and fill in the blanks."
             )
 
         messages = [

@@ -21,6 +21,7 @@ from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY
 from agents.Rita import Rita
 from agents.IntentClassifier import IntentClassifier
 from agents.WidgetModifier import WidgetModifier
+from agents.WorksheetGenerator import WorksheetGenerator
 from utils.LlmTester import LlmTester
 from utils.RitaStreamHandler import RitaStreamHandler
 from langchain_cohere import CohereEmbeddings
@@ -116,6 +117,7 @@ def llm_stream_response(data, user_prompt, retriever, llm):
     RITA_VERBOSE = False
     INTENT_VERBOSE = True
     WID_VERBOSE = False
+    WG_VERBOSE = True
     #############################################################################
 
     ############################ Temporary Switch ###############################
@@ -162,30 +164,47 @@ def llm_stream_response(data, user_prompt, retriever, llm):
             time.sleep(0.1)
 
         # Agent 2: Determine user's intent
-        intent_classifier = IntentClassifier(llm, verbose=INTENT_VERBOSE)
+        intent_classifier = IntentClassifier(llm, agent_type=AGENT_TYPE, verbose=INTENT_VERBOSE)
         intent = intent_classifier.invoke(
             user_prompt, data, complete_rita_response)
 
         time_logger.log_latency(f"Finished detecting intent.")
 
         # Agent 3: Modify widget if needed
-        widget_modifier = WidgetModifier(llm, verbose=WID_VERBOSE)
-        stream_handler.add_to_stream(
-            agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
-        modified_widget = widget_modifier.invoke(
-            user_prompt, data, intent, complete_rita_response)
-        time_logger.log_latency(
-            f"Modified widget generated.")
-        stream_handler.add_to_stream(
-            agent="Widget Modifier", data=modified_widget)
-        stream_handler.end_stream()
-        time_logger.log_latency("Stream completed")
+        if AGENT_TYPE != "Worksheet":
+            widget_modifier = WidgetModifier(llm, verbose=WID_VERBOSE)
+            stream_handler.add_to_stream(
+                agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
+            modified_widget = widget_modifier.invoke(
+                user_prompt, data, intent, complete_rita_response)
+            time_logger.log_latency(
+                f"Modified widget generated.")
+            stream_handler.add_to_stream(
+                agent="Widget Modifier", data=modified_widget)
+            stream_handler.end_stream()
+            time_logger.log_latency("Stream completed")
+
+        # Agent 4: Generate worksheet if needed
+        if AGENT_TYPE == "Worksheet":
+            worksheet_generator = WorksheetGenerator(llm, verbose=WG_VERBOSE)
+            stream_handler.add_to_stream(
+                agent="Worksheet Generator", data="WORKSHEET_GENERATOR_STARTED")
+            generated_worksheet = worksheet_generator.invoke(
+                user_prompt, data, intent, complete_rita_response)
+            time_logger.log_latency(
+                f"Worksheet generated.")
+            # stream_handler.add_to_stream(
+            #     agent="Worksheet Generator", data=generated_worksheet)
+            stream_handler.end_stream()
+            time_logger.log_latency("Stream completed")
 
     t2 = threading.Thread(target=run_widget_modifier)
     t2.start()
-
-    response = Response(stream_handler.yield_stream(),
-                        content_type="application/json")
+    if AGENT_TYPE != "Worksheet":
+        response = Response(stream_handler.yield_stream(),
+                            content_type="application/json")
+    if AGENT_TYPE == "Worksheet":
+        response = Response(stream_handler.yield_stream())
     return response
 
 def split_text(text, max_chars=5000):
