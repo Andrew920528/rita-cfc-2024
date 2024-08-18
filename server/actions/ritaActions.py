@@ -164,11 +164,12 @@ def llm_stream_response(data, user_prompt, retriever, llm):
             time.sleep(0.1)
 
         # Agent 2: Determine user's intent
-        intent_classifier = IntentClassifier(llm, agent_type=AGENT_TYPE, verbose=INTENT_VERBOSE)
-        intent = intent_classifier.invoke(
-            user_prompt, data, complete_rita_response)
+        if AGENT_TYPE != "Worksheet":
+            intent_classifier = IntentClassifier(llm, agent_type=AGENT_TYPE, verbose=INTENT_VERBOSE)
+            intent = intent_classifier.invoke(
+                user_prompt, data, complete_rita_response)
 
-        time_logger.log_latency(f"Finished detecting intent.")
+            time_logger.log_latency(f"Finished detecting intent.")
 
         # Agent 3: Modify widget if needed
         if AGENT_TYPE != "Worksheet":
@@ -190,7 +191,7 @@ def llm_stream_response(data, user_prompt, retriever, llm):
             stream_handler.add_to_stream(
                 agent="Worksheet Generator", data="WORKSHEET_GENERATOR_STARTED")
             generated_worksheet = worksheet_generator.invoke(
-                user_prompt, data, intent, complete_rita_response)
+                user_prompt, data, complete_rita_response)
             time_logger.log_latency(
                 f"Worksheet generated.")
             # stream_handler.add_to_stream(

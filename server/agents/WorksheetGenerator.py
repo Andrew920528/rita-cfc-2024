@@ -22,8 +22,8 @@ class WorksheetGenerator:
         self.llm = llm  # llm used for intent classification
         self.logger = LlmTester(name="Worksheet Generator", on=verbose)
 
-    def invoke(self, user_prompt, data, intent, reply):
-        chain = self._get_runnable(intent)
+    def invoke(self, user_prompt, data, reply):
+        chain = self._get_runnable()
         prompt = self._get_prompt(user_prompt, data, reply)
         self.logger.log(f"Prompt: {prompt}")
         output = chain.invoke(prompt)
@@ -35,23 +35,23 @@ class WorksheetGenerator:
 
         return output
 
-    def _get_runnable(self, intent):
-        chat_prompt = self._get_tempate(intent)
-        chain = chat_prompt | self.llm | self._get_parser(intent)
+    def _get_runnable(self):
+        chat_prompt = self._get_tempate()
+        chain = chat_prompt | self.llm | self._get_parser()
         return chain
 
-    def _get_tempate(self, intent):
+    def _get_tempate(self):
         FORMAT_INSTRUCTION = (
             """
             You are part of a team of teaching assistants whose goal is to help teachers prepare for courses.
             Pervious assistants had generated different kinds of questions based on teacher's need.
-            Your job is to modify the output of these questions into defined format: {format_instructions}s
+            There are three types of question: 'Multiple Choices', 'Matching', or 'Fill in the Blanks'. "
+            Your task is to identify the type of each generated question and then format the output according to {format_instructions}
             You shouldn't response with any additional text.
             """
         )
 
-        format_instruction = self._get_parser(
-            intent).get_format_instructions()
+        format_instruction = self._get_parser().get_format_instructions()
 
         worsheet_generator_template = PromptTemplate(
             template=FORMAT_INSTRUCTION,
@@ -72,7 +72,7 @@ class WorksheetGenerator:
         prompt = {"user_input": user_prompt, "chat_history": chat_history, "reply": reply}
         return prompt
 
-    def _get_parser(self, intent):
+    def _get_parser(self):
         class MultipleChoices(BaseModel):
             question: str = Field(description="question of the multiple choices question")
             choices: List[str] = Field(description="choices of the multiple choices question")
@@ -87,17 +87,6 @@ class WorksheetGenerator:
             answer: List[str] = Field(description="answer of the fill in the blanks question")
         class Questions(BaseModel):
             questions : List[Union[MultipleChoices, Matching, FillInTheBlanks]]
-            
-        #     def populate_questions(self, intent):
-        #         for questionType in intent:
-        #             if questionType == "Multiple Choices":
-        #                 self.questions.append(MultipleChoices())
-        #             elif questionType == "Matching":
-        #                 self.questions.append(Matching())
-        #             else:
-        #                 self.questions.append(FillInTheBlanks())
 
-        # questions = Questions()
-        # questions.populate_questions(intent)
         parser = PydanticOutputParser(pydantic_object=Questions)
         return parser
