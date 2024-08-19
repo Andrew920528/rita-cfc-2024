@@ -15,7 +15,23 @@ from utils.util import format_chat_history
 from langchain_core.output_parsers import StrOutputParser
 from typing import List, Dict, Union
 from utils.LlmTester import LlmTester
+from utils.Worksheet import Worksheet
 
+class MultipleChoices(BaseModel):
+    type: str = "Multiple Choices"
+    question: str = Field(description="question of the multiple choices question")
+    choices: List[str] = Field(description="choices of the multiple choices question")
+    answer: int = Field(description="index of the correct answer")
+class Matching(BaseModel):
+    type: str = "Matching"
+    question: str = Field(description="question of the matching question")
+    premises: List[str] = Field(description="premises of the matching question")
+    options: List[str] = Field(description="options of the matching question")
+    answer: List[int] = Field(description="index of the option corresponding to each premise")
+class FillInTheBlanks(BaseModel):
+    type: str = "Fill in the Blanks"
+    question: str = Field(description="question of the fill in the blanks question")
+    answer: List[str] = Field(description="answer of the fill in the blanks question")
 
 class WorksheetGenerator:
     def __init__(self, llm, verbose=False) -> None:
@@ -26,13 +42,11 @@ class WorksheetGenerator:
         chain = self._get_runnable()
         prompt = self._get_prompt(user_prompt, data, reply)
         self.logger.log(f"Prompt: {prompt}")
-        output = chain.invoke(prompt)
 
-        output = {
-            "worksheetContent": output
-        }
+        output = chain.invoke(prompt)
         self.logger.log(f"Output: {output}")
 
+        self._to_latex(output)
         return output
 
     def _get_runnable(self):
@@ -45,7 +59,7 @@ class WorksheetGenerator:
             """
             You are part of a team of teaching assistants whose goal is to help teachers prepare for courses.
             Pervious assistants had generated different kinds of questions based on teacher's need.
-            There are three types of question: 'Multiple Choices', 'Matching', or 'Fill in the Blanks'. "
+            There are three types of question: 'Multiple Choices', 'Matching', or 'Fill in the Blanks'.
             Your task is to identify the type of each generated question and then format the output according to {format_instructions}
             You shouldn't response with any additional text.
             """
@@ -73,20 +87,11 @@ class WorksheetGenerator:
         return prompt
 
     def _get_parser(self):
-        class MultipleChoices(BaseModel):
-            question: str = Field(description="question of the multiple choices question")
-            choices: List[str] = Field(description="choices of the multiple choices question")
-            answer: int = Field(description="index of the correct answer")
-        class Matching(BaseModel):
-            question: str = Field(description="question of the matching question")
-            premises: List[str] = Field(description="premises of the matching question")
-            options: List[str] = Field(description="options of the matching question")
-            answer: List[int] = Field(description="index of the option corresponding to each premise")
-        class FillInTheBlanks(BaseModel):
-            question: str = Field(description="question of the fill in the blanks question")
-            answer: List[str] = Field(description="answer of the fill in the blanks question")
         class Questions(BaseModel):
             questions : List[Union[MultipleChoices, Matching, FillInTheBlanks]]
 
         parser = PydanticOutputParser(pydantic_object=Questions)
         return parser
+
+    def _to_latex(self, output):
+        self.logger.log(f"{output.questions}")
