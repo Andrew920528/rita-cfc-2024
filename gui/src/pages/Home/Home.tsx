@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 
 import Header from "../../components/Header/Header";
-import NavBar from "../../components/NavBar/NavBar";
 import Dashboard from "../../components/Dashboard/Dashboard";
 import {useTypedSelector} from "../../store/store";
 import classNames from "classnames/bind";
 import styles from "./Home.module.scss";
+import NavBar from "../../components/NavBar/NavBar";
 
 const cx = classNames.bind(styles);
 const Home = () => {
