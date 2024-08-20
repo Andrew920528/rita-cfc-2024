@@ -1,5 +1,5 @@
 import {Plan} from "@carbon/icons-react";
-import {WidgetType} from "./widget";
+import {WidgetCategory, WidgetType} from "./widget";
 import {WidgetMaker} from "./widget";
 
 export type SemesterPlanWidgetContent = {
@@ -39,6 +39,7 @@ export class SemesterPlanWidgetMaker extends WidgetMaker<SemesterPlanWidgetConte
       maxWidth: 5000,
       minHeight: 300,
       maxHeight: 800,
+      category: WidgetCategory.aiTool,
     };
   }
 }

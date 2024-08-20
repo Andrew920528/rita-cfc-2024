@@ -6,6 +6,7 @@
   text-align: start;
   z-index: 70;
   .nav-content {
-    height: 100%;
+    flex-grow: 1;
+    overflow-y: auto;
   }
 }

@@ -10,6 +10,7 @@ import classNames from "classnames/bind";
 import styles from "./WidgetCard.module.scss";
 import {WidgetFrameGhost} from "../../widgets/WidgetFrame/WidgetFrame";
 import {UiServices} from "../../../features/UiSlice";
+import React from "react";
 
 const cx = classNames.bind(styles);
 
@@ -80,4 +81,4 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
   );
 };
 
-export default WidgetCard;
+export default React.memo(WidgetCard);
