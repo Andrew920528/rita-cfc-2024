@@ -2,7 +2,14 @@ import React, {useState} from "react";
 import classNames from "classnames/bind";
 import styles from "./CourseTab.module.scss";
 import IconButton from "../../ui_components/IconButton/IconButton";
-import {Add} from "@carbon/icons-react";
+import {
+  Add,
+  Delete,
+  Edit,
+  Gears,
+  Settings,
+  TrashCan,
+} from "@carbon/icons-react";
 import {EMPTY_ID} from "../../../global/constants";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import {ClassroomsServices} from "../../../features/ClassroomsSlice";
@@ -11,6 +18,11 @@ import {ChatroomsServices} from "../../../features/ChatroomsSlice";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
 import ManageClassroomPU from "../../PopUps/ManageClassroomPU/ManageClassroomPU";
 import CreateLecturePU from "../../PopUps/CreateLecturePU/CreateLecturePU";
+import {
+  FloatingMenu,
+  FloatingMenuButton,
+} from "../../ui_components/FloatingMenu/FloatingMenu";
+import DeleteClassroomPU from "../../PopUps/DeleteClassroomPU/DeleteClassroomPU";
 type Props = {};
 const cx = classNames.bind(styles);
 const CourseTab = (props: Props) => {
@@ -68,7 +80,7 @@ const CourseTab = (props: Props) => {
         <CreateLecturePU
           trigger={openLectureCreation}
           setTrigger={setOpenLectureCreation}
-          title={"創建新計畫"}
+          title={"新增計畫"}
         />
       </div>
       <div className={cx("nav-stack")}>
@@ -109,38 +121,100 @@ const ClassCard = ({
   const dispatch = useAppDispatch();
   const classrooms = useTypedSelector((state) => state.Classrooms);
   const lectures = useTypedSelector((state) => state.Lectures);
+  function clickOnCard() {
+    dispatch(ClassroomsServices.actions.setCurrent(id));
+    const lastLecture = classrooms.dict[id].lastOpenedLecture;
+
+    dispatch(
+      LecturesServices.actions.setCurrent(
+        lastLecture ? (lastLecture as string) : EMPTY_ID
+      )
+    );
+    const chatId = classrooms.dict[id].chatroomId;
+    dispatch(ChatroomsServices.actions.setCurrent(chatId));
+
+    if (lastLecture) {
+      const firstWidget = lectures.dict[lastLecture].widgetIds[0];
+      if (firstWidget) {
+        dispatch(WidgetsServices.actions.setCurrent(firstWidget));
+      } else {
+        dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
+      }
+    }
+  }
+  const [openClassroomModify, setOpenClassroomModify] = useState(false);
+  const [openClassroomDelete, setOpenClassroomDelete] = useState(false);
+  const ClassroomSettings = () => {
+    return (
+      <div className={cx("classroom-settings-fm")}>
+        <IconButton
+          icon={<Edit />}
+          text="編輯"
+          mode={"ghost"}
+          onClick={() => {
+            setOpenClassroomModify(true);
+          }}
+        />
+        <IconButton
+          icon={<TrashCan />}
+          text="刪除"
+          mode={"danger-ghost"}
+          onClick={() => {
+            setOpenClassroomDelete(true);
+          }}
+        />
+      </div>
+    );
+  };
+
   return (
-    <div
-      className={cx("class-card", {selected: selected === id})}
-      onClick={() => {
-        dispatch(ClassroomsServices.actions.setCurrent(id));
-        const lastLecture = classrooms.dict[id].lastOpenedLecture;
-
-        dispatch(
-          LecturesServices.actions.setCurrent(
-            lastLecture ? (lastLecture as string) : EMPTY_ID
-          )
-        );
-        const chatId = classrooms.dict[id].chatroomId;
-        dispatch(ChatroomsServices.actions.setCurrent(chatId));
-
-        if (lastLecture) {
-          const firstWidget = lectures.dict[lastLecture].widgetIds[0];
-          if (firstWidget) {
-            dispatch(WidgetsServices.actions.setCurrent(firstWidget));
-          } else {
-            dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
-          }
-        }
-      }}
-    >
-      <p>
-        <strong>{name}</strong>
-      </p>
-      <p className={cx("--label")}>
-        科目：{subject} ｜年級：{grade}｜教材：{publisher}
-        <br /> 週堂數：{credits} | 學期規劃：{plan ? "已完成" : "未完成"}
-      </p>
+    <div className={cx("class-card", {selected: selected === id})}>
+      <div
+        className={cx("class-card-words")}
+        onClick={() => {
+          console.log("This card in clicked");
+          clickOnCard();
+        }}
+      >
+        <p>
+          <strong>{name}</strong>
+        </p>
+        <p className={cx("--label")}>
+          科目：{subject} ｜年級：{grade}｜教材：{publisher}
+          <br /> 週堂數：{credits} | 學期規劃：{plan ? "已完成" : "未完成"}
+        </p>
+      </div>
+      {selected === id && (
+        <>
+          <div>
+            <FloatingMenuButton
+              button={
+                <IconButton
+                  mode={"ghost-2"}
+                  icon={<Settings />}
+                  // onClick={clickOnSettings}
+                />
+              }
+              menuProps={{mode: "card", content: <ClassroomSettings />}}
+              anchorOrigin={{vertical: "top", horizontal: "right"}}
+              transformOrigin={{vertical: "top", horizontal: "left"}}
+            />
+          </div>
+          <ManageClassroomPU
+            trigger={openClassroomModify}
+            setTrigger={setOpenClassroomModify}
+            title={"編輯教室"}
+            action="edit"
+            editClassroomId={id}
+          />
+          <DeleteClassroomPU
+            trigger={openClassroomDelete}
+            setTrigger={setOpenClassroomDelete}
+            title={"刪除教室"}
+            classroomId={id}
+          />
+        </>
+      )}
     </div>
   );
 };
@@ -172,7 +246,7 @@ const LectureCard = ({
 
   return (
     <div
-      className={cx("class-card", {selected: selected === id})}
+      className={cx("lecture-card", {selected: selected === id})}
       onClick={() => {
         clickOnCard();
       }}

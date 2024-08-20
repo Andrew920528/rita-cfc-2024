@@ -6,8 +6,7 @@ import {WidgetCategory, WidgetType} from "../../../schema/widget/widget";
 import {widgetBook} from "../../../schema/widget/widgetFactory";
 import WidgetCard from "../WidgetCard/WidgetCard";
 import {useTypedSelector} from "../../../store/store";
-import IconButton from "../../ui_components/IconButton/IconButton";
-import {ArrowUp, ChevronUp} from "@carbon/icons-react";
+
 import Accordion from "../../ui_components/Accordion/Accordion";
 
 const cx = classNames.bind(styles);
@@ -15,11 +14,9 @@ type Props = {};
 
 function ToolTab({}: Props) {
   const lectures = useTypedSelector((state) => state.Lectures);
-  const categories = {};
   const toolKeys = Object.keys(
     WidgetCategory
   ) as (keyof typeof WidgetCategory)[];
-  console.log(toolKeys);
   return (
     <div className={cx("nav-widget")}>
       {toolKeys.map((key) => {
@@ -42,7 +39,7 @@ function ToolTab({}: Props) {
                           return false;
                         }
                         let w = widgetBook(type as WidgetType);
-                        console.log(w.category);
+
                         return (
                           w.category === (WidgetCategory[key] as WidgetCategory)
                         );

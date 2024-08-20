@@ -313,6 +313,55 @@ export const useCreateWidgetWithApi = () => {
   };
 };
 
+export const useDeleteClassroom = () => {
+  const dispatch = useAppDispatch();
+  const deleteLecture = useDeleteLecture();
+  const user = useTypedSelector((state) => state.User);
+  const classrooms = useTypedSelector((state) => state.Classrooms);
+  return useCallback(
+    (args: {classroomId: string}) => {
+      const lectures = classrooms.dict[args.classroomId].lectureIds;
+      for (let i = 0; i < lectures.length; i++) {
+        deleteLecture({lectureId: lectures[i], classroomId: args.classroomId});
+      }
+
+      // delete corresponding chatroom (to be changed)
+      const chatroomId = classrooms.dict[args.classroomId].chatroomId;
+      dispatch(ChatroomsServices.actions.deleteChatroom(chatroomId));
+
+      // remove reference from users
+      dispatch(UserServices.actions.deleteClassroom(args.classroomId));
+
+      // reset current classroom if current classroom is deleted
+      let defaultClassroom = EMPTY_ID;
+      for (let i = 0; i < user.classroomIds.length; i++) {
+        if (user.classroomIds[i] !== args.classroomId) {
+          defaultClassroom = user.classroomIds[i];
+          break;
+        }
+      }
+      dispatch(ClassroomsServices.actions.setCurrent(defaultClassroom));
+
+      // sets lecture of the new current classroom
+      const defaultLecture =
+        classrooms.dict[defaultClassroom].lastOpenedLecture ??
+        classrooms.dict[defaultClassroom].lectureIds[0];
+
+      dispatch(LecturesServices.actions.setCurrent(defaultLecture));
+      dispatch(
+        ClassroomsServices.actions.setLastOpenedLecture({
+          classroomId: defaultClassroom,
+          lectureId: defaultLecture,
+        })
+      );
+
+      // delete actual classroom
+      dispatch(ClassroomsServices.actions.deleteClassroom(args.classroomId));
+    },
+    [dispatch, deleteLecture, user, classrooms]
+  );
+};
+
 export const useDeleteLecture = () => {
   const dispatch = useAppDispatch();
   const classrooms = useTypedSelector((state) => state.Classrooms);

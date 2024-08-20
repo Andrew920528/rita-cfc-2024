@@ -32,6 +32,9 @@ const ClassroomsSlice = createSlice({
       state.dict[action.payload.id].publisher = action.payload.publisher;
       state.dict[action.payload.id].credits = action.payload.credits;
     },
+    deleteClassroom: (state, action: PayloadAction<string>) => {
+      delete state.dict[action.payload];
+    },
     addLecture: (
       state,
       action: PayloadAction<{classroomId: string; lectureId: string}>

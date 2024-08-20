@@ -34,6 +34,32 @@
     }
   }
 
+  &.ghost-2 {
+    color: black;
+    &:hover {
+      background-color: #cacaca;
+    }
+  }
+
+  &.danger-ghost {
+    color: #da1e28;
+    background-color: white;
+    &:hover {
+      background-color: #e8e8e8;
+    }
+  }
+
+  &.danger-outline {
+    color: #da1e28;
+    border: 1px solid #da1e28;
+    transition: background-color 0.1s ease-in-out;
+
+    &:hover {
+      color: white;
+      background-color: #da1e28;
+    }
+  }
+
   &.dropdownBtn {
     &:hover {
       background-color: #8d8d8d32;

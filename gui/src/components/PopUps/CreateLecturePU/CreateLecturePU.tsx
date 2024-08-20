@@ -94,10 +94,10 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
       <div className={cx("create-lecture-form")}>
         <div>
           <Textbox
-            label="課堂名稱"
+            label="計畫名稱"
             errorMsg={nameError}
             mode="form"
-            placeholder="請輸入課堂名稱"
+            placeholder="請輸入計畫名稱"
             value={name}
             onChange={(e) => {
               setName(e.currentTarget.value);

@@ -56,6 +56,10 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   );
 
   useEffect(() => {
+    console.log(classrooms);
+  }, [classrooms]);
+
+  useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       // Prevent the default action
       event.preventDefault();

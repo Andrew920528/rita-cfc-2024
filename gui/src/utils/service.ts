@@ -332,6 +332,28 @@ export function updateClassroomService(
   });
 }
 
+export function deleteClassroomService(
+  payload: {
+    classroomId: string;
+  },
+  abortSignal?: AbortSignal
+) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "classroom deleted",
+    };
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+
+  // TODO: Add delete classroom endpoint
+  const response = {
+    status: API.SUCCESS,
+    data: "classroom deleted",
+  };
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+}
+
 // ✅ Can create lecture via header dropdown
 export function createLectureService(
   payload: {
