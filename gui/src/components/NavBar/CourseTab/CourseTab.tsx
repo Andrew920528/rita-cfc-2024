@@ -85,14 +85,15 @@ const CourseTab = (props: Props) => {
         />
       </div>
       <div className={cx("nav-stack")}>
-        {classrooms.dict[classrooms.current].lectureIds.map((id) => (
-          <LectureCard
-            key={id}
-            id={id}
-            name={lectures.dict[id].name}
-            selected={lectures.current}
-          />
-        ))}
+        {classrooms.current !== EMPTY_ID &&
+          classrooms.dict[classrooms.current].lectureIds.map((id) => (
+            <LectureCard
+              key={id}
+              id={id}
+              name={lectures.dict[id].name}
+              selected={lectures.current}
+            />
+          ))}
       </div>
     </div>
   );

@@ -16,7 +16,6 @@ import {initSchedule} from "../schema/schedule";
 import {createWidgetService, useApiHandler} from "../utils/service";
 import {RfServices} from "../features/RfSlice";
 import {ApiServices} from "../features/ApiSlice";
-import {toast} from "react-toastify";
 
 /* 
  Functions that requires the use of multiple slices to perform
@@ -342,6 +341,12 @@ export const useDeleteClassroom = () => {
       }
       dispatch(ClassroomsServices.actions.setCurrent(defaultClassroom));
 
+      // delete actual classroom
+      dispatch(ClassroomsServices.actions.deleteClassroom(args.classroomId));
+
+      if (defaultClassroom === EMPTY_ID) {
+        return;
+      }
       // sets lecture of the new current classroom
       const defaultLecture =
         classrooms.dict[defaultClassroom].lastOpenedLecture ??
@@ -354,9 +359,6 @@ export const useDeleteClassroom = () => {
           lectureId: defaultLecture,
         })
       );
-
-      // delete actual classroom
-      dispatch(ClassroomsServices.actions.deleteClassroom(args.classroomId));
     },
     [dispatch, deleteLecture, user, classrooms]
   );
