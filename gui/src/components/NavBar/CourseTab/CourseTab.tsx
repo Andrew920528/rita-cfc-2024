@@ -10,10 +10,13 @@ import {LecturesServices} from "../../../features/LectureSlice";
 import {ChatroomsServices} from "../../../features/ChatroomsSlice";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
 import ManageClassroomPU from "../../PopUps/ManageClassroomPU/ManageClassroomPU";
+import CreateLecturePU from "../../PopUps/CreateLecturePU/CreateLecturePU";
 type Props = {};
 const cx = classNames.bind(styles);
 const CourseTab = (props: Props) => {
   const [openClassroomCreation, setOpenClassroomCreation] = useState(false);
+  const [openLectureCreation, setOpenLectureCreation] = useState(false);
+  const lectures = useTypedSelector((state) => state.Lectures);
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
   return (
@@ -46,6 +49,35 @@ const CourseTab = (props: Props) => {
             grade={classrooms.dict[id].grade}
             selected={classrooms.current}
             credits={classrooms.dict[id].credits}
+          />
+        ))}
+      </div>
+
+      {/* =========== Lecture Section =========== */}
+
+      <div className={cx("nav-heading")}>
+        <p className={cx("--heading")}>計畫</p>
+        <IconButton
+          mode={"primary"}
+          icon={<Add />}
+          text={"新增"}
+          onClick={() => {
+            setOpenLectureCreation(true);
+          }}
+        />
+        <CreateLecturePU
+          trigger={openLectureCreation}
+          setTrigger={setOpenLectureCreation}
+          title={"創建新計畫"}
+        />
+      </div>
+      <div className={cx("nav-stack")}>
+        {classrooms.dict[classrooms.current].lectureIds.map((id) => (
+          <LectureCard
+            key={id}
+            id={id}
+            name={lectures.dict[id].name}
+            selected={lectures.current}
           />
         ))}
       </div>
@@ -108,6 +140,45 @@ const ClassCard = ({
       <p className={cx("--label")}>
         科目：{subject} ｜年級：{grade}｜教材：{publisher}
         <br /> 週堂數：{credits} | 學期規劃：{plan ? "已完成" : "未完成"}
+      </p>
+    </div>
+  );
+};
+
+type LectureCardProps = {
+  id: string;
+  name: string;
+  selected: string;
+};
+
+const LectureCard = ({
+  id = "",
+  name = "新科目",
+  selected = EMPTY_ID,
+}: LectureCardProps) => {
+  const dispatch = useAppDispatch();
+  const classrooms = useTypedSelector((state) => state.Classrooms);
+  const lectures = useTypedSelector((state) => state.Lectures);
+
+  function clickOnCard() {
+    dispatch(LecturesServices.actions.setCurrent(id));
+    dispatch(
+      ClassroomsServices.actions.setLastOpenedLecture({
+        classroomId: classrooms.current,
+        lectureId: id,
+      })
+    );
+  }
+
+  return (
+    <div
+      className={cx("class-card", {selected: selected === id})}
+      onClick={() => {
+        clickOnCard();
+      }}
+    >
+      <p>
+        <strong>{name}</strong>
       </p>
     </div>
   );
