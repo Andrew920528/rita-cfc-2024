@@ -38,7 +38,7 @@ const DeleteClassroomPU = (props: Props & PopUpProps) => {
         icon={<TrashCan />}
         text="刪除"
         mode="danger-outline"
-        onClick={async () => {
+        onClick={() => {
           handleDelete();
           props.setTrigger(false);
         }}

@@ -23,6 +23,7 @@ import {
   FloatingMenuButton,
 } from "../../ui_components/FloatingMenu/FloatingMenu";
 import DeleteClassroomPU from "../../PopUps/DeleteClassroomPU/DeleteClassroomPU";
+import DeleteLecturePU from "../../PopUps/DeleteLecturePU/DeleteLecturePU";
 type Props = {};
 const cx = classNames.bind(styles);
 const CourseTab = (props: Props) => {
@@ -243,17 +244,59 @@ const LectureCard = ({
       })
     );
   }
+  const [openLectureModify, setOpenLectureModify] = useState(false);
+  const [openLectureDelete, setOpenLectureDelete] = useState(false);
+  function LectureSettings() {
+    return (
+      <div className={cx("lecture-settings-fm")}>
+        <IconButton
+          icon={<Edit />}
+          text="編輯"
+          mode={"ghost"}
+          onClick={() => {
+            setOpenLectureModify(true);
+          }}
+        />
+        <IconButton
+          icon={<TrashCan />}
+          text="刪除"
+          mode={"danger-ghost"}
+          onClick={() => {
+            setOpenLectureDelete(true);
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div
-      className={cx("lecture-card", {selected: selected === id})}
-      onClick={() => {
-        clickOnCard();
-      }}
-    >
-      <p>
+    <div className={cx("lecture-card", {selected: selected === id})}>
+      <p
+        onClick={() => {
+          clickOnCard();
+        }}
+      >
         <strong>{name}</strong>
       </p>
+
+      {selected === id && (
+        <>
+          <div>
+            <FloatingMenuButton
+              button={<IconButton mode={"ghost-2"} icon={<Settings />} />}
+              menuProps={{mode: "card", content: <LectureSettings />}}
+              anchorOrigin={{vertical: "top", horizontal: "right"}}
+              transformOrigin={{vertical: "top", horizontal: "left"}}
+            />
+          </div>
+          <DeleteLecturePU
+            trigger={openLectureDelete}
+            setTrigger={setOpenLectureDelete}
+            title={"刪除計畫"}
+            lectureId={id}
+          />
+        </>
+      )}
     </div>
   );
 };

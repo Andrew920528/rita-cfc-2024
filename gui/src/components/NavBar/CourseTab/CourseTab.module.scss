@@ -44,6 +44,7 @@
 
   .class-card-words {
     display: flex;
+    flex-grow: 1;
     flex-direction: column;
     align-items: flex-start;
     padding: 1rem;
@@ -61,12 +62,16 @@
 }
 
 .lecture-card {
-  padding: 1rem;
   background-color: white;
+  display: flex;
+  flex-direction: row;
   &:hover {
     background-color: #e8e8e8;
   }
-
+  p {
+    padding: 1rem;
+    flex-grow: 1;
+  }
   &.selected {
     background-color: #e0e0e0;
     &:hover {
