@@ -34,67 +34,76 @@ const CourseTab = (props: Props) => {
   const classrooms = useTypedSelector((state) => state.Classrooms);
   return (
     <div className={cx("course-tab")}>
-      <div className={cx("nav-heading")}>
-        <p className={cx("--heading")}>教室</p>
-        <IconButton
-          mode={"primary"}
-          icon={<Add />}
-          text={"新增"}
-          onClick={() => {
-            setOpenClassroomCreation(true);
-          }}
-        />
-        <ManageClassroomPU
-          trigger={openClassroomCreation}
-          setTrigger={setOpenClassroomCreation}
-          title={"創建教室"}
-          action="create"
-        />
-      </div>
-      <div className={cx("nav-stack")}>
-        {user.classroomIds.toReversed().map((id) => (
-          <ClassCard
-            key={id}
-            id={id}
-            name={classrooms.dict[id].name}
-            publisher={classrooms.dict[id].publisher}
-            subject={classrooms.dict[id].subject}
-            grade={classrooms.dict[id].grade}
-            selected={classrooms.current}
-            credits={classrooms.dict[id].credits}
+      <div className={cx("tab-section")}>
+        <div className={cx("nav-heading")}>
+          <p className={cx("--heading")}>教室</p>
+          <IconButton
+            mode={"primary"}
+            icon={<Add />}
+            text={"新增"}
+            onClick={() => {
+              setOpenClassroomCreation(true);
+            }}
           />
-        ))}
+          <ManageClassroomPU
+            trigger={openClassroomCreation}
+            setTrigger={setOpenClassroomCreation}
+            title={"創建教室"}
+            action="create"
+          />
+        </div>
+        <div className={cx("nav-stack")}>
+          {user.classroomIds.length === 0 && (
+            <div className={cx("placeholder")}>請新增教室開始備課</div>
+          )}
+          {user.classroomIds.toReversed().map((id) => (
+            <ClassCard
+              key={id}
+              id={id}
+              name={classrooms.dict[id].name}
+              publisher={classrooms.dict[id].publisher}
+              subject={classrooms.dict[id].subject}
+              grade={classrooms.dict[id].grade}
+              selected={classrooms.current}
+              credits={classrooms.dict[id].credits}
+            />
+          ))}
+        </div>
       </div>
 
       {/* =========== Lecture Section =========== */}
-
-      <div className={cx("nav-heading")}>
-        <p className={cx("--heading")}>計畫</p>
-        <IconButton
-          mode={"primary"}
-          icon={<Add />}
-          text={"新增"}
-          onClick={() => {
-            setOpenLectureCreation(true);
-          }}
-        />
-        <ManageLecturePU
-          trigger={openLectureCreation}
-          setTrigger={setOpenLectureCreation}
-          title={"新增計畫"}
-          action="create"
-        />
-      </div>
-      <div className={cx("nav-stack")}>
-        {classrooms.current !== EMPTY_ID &&
-          classrooms.dict[classrooms.current].lectureIds.map((id) => (
-            <LectureCard
-              key={id}
-              id={id}
-              name={lectures.dict[id].name}
-              selected={lectures.current}
-            />
-          ))}
+      <div className={cx("tab-section")}>
+        <div className={cx("nav-heading")}>
+          <p className={cx("--heading")}>計畫</p>
+          <IconButton
+            mode={"primary"}
+            icon={<Add />}
+            text={"新增"}
+            onClick={() => {
+              setOpenLectureCreation(true);
+            }}
+            disabled={
+              user.classroomIds.length === 0 || classrooms.current === EMPTY_ID
+            }
+          />
+          <ManageLecturePU
+            trigger={openLectureCreation}
+            setTrigger={setOpenLectureCreation}
+            title={"新增計畫"}
+            action="create"
+          />
+        </div>
+        <div className={cx("nav-stack")}>
+          {classrooms.current !== EMPTY_ID &&
+            classrooms.dict[classrooms.current].lectureIds.map((id) => (
+              <LectureCard
+                key={id}
+                id={id}
+                name={lectures.dict[id].name}
+                selected={lectures.current}
+              />
+            ))}
+        </div>
       </div>
     </div>
   );
@@ -149,7 +158,7 @@ const ClassCard = ({
   const [openClassroomDelete, setOpenClassroomDelete] = useState(false);
   const ClassroomSettings = () => {
     return (
-      <div className={cx("classroom-settings-fm")}>
+      <div className={cx("settings-fm")}>
         <IconButton
           icon={<Edit />}
           text="編輯"
@@ -250,7 +259,7 @@ const LectureCard = ({
   const [openLectureDelete, setOpenLectureDelete] = useState(false);
   function LectureSettings() {
     return (
-      <div className={cx("lecture-settings-fm")}>
+      <div className={cx("settings-fm")}>
         <IconButton
           icon={<Edit />}
           text="編輯"
@@ -289,8 +298,8 @@ const LectureCard = ({
             <FloatingMenuButton
               button={<IconButton mode={"ghost-2"} icon={<Settings />} />}
               menuProps={{mode: "card", content: <LectureSettings />}}
-              anchorOrigin={{vertical: "top", horizontal: "right"}}
-              transformOrigin={{vertical: "top", horizontal: "left"}}
+              anchorOrigin={{vertical: "bottom", horizontal: "right"}}
+              transformOrigin={{vertical: "bottom", horizontal: "left"}}
             />
           </div>
           <DeleteLecturePU
