@@ -386,6 +386,40 @@ export function createLectureService(
   });
 }
 
+export function updateLectureService(
+  payload: {
+    lectureId: string;
+    lectureName: string;
+  },
+  abortSignal?: AbortSignal
+) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "lecture updated",
+    };
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const response = {
+    status: API.SUCCESS,
+    data: "lecture updated",
+  };
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  // TODO Connect to actual endpoint
+  // const endPoint = "/update-lecture";
+  // return fetch(BASE_URL_DEV + endPoint, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     sessionId: sessionStorage.getItem("sessionId"),
+  //     ...payload,
+  //   }), // Convert data object to JSON string
+  //   signal: abortSignal,
+  // });
+}
+
 // ✅ Can delete lecture via header dropdown
 export function deleteLectureService(
   payload: {

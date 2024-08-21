@@ -17,7 +17,7 @@ import {useAppDispatch, useTypedSelector} from "../../store/store";
 
 import ManageAccountPU from "../PopUps/ManageAccountPU/ManageAccountPU";
 import ManageClassroomPU from "../PopUps/ManageClassroomPU/ManageClassroomPU";
-import CreateLecturePU from "../PopUps/CreateLecturePU/CreateLecturePU";
+import ManageLecturePU from "../PopUps/CreateLecturePU/CreateLecturePU";
 import {LecturesServices} from "../../features/LectureSlice";
 import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
@@ -56,16 +56,8 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   );
 
   useEffect(() => {
-    console.log(classrooms);
-  }, [classrooms]);
-
-  useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      // Prevent the default action
       event.preventDefault();
-      // Chrome requires returnValue to be set
-
-      // alert("leaving the page");
     };
 
     // Add the event listener
@@ -186,10 +178,11 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
               }
               actionDisabled={() => loading}
             />
-            <CreateLecturePU
+            <ManageLecturePU
               title={"新增課程"}
               trigger={openLectureCreation}
               setTrigger={setopenLectureCreation}
+              action="create"
             />
           </div>
         )}

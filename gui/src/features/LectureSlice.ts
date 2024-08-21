@@ -25,6 +25,9 @@ const LecturesSlice = createSlice({
     deleteLecture: (state, action: PayloadAction<string>) => {
       delete state.dict[action.payload];
     },
+    editLecture: (state, action: PayloadAction<{id: string; name: string}>) => {
+      state.dict[action.payload.id].name = action.payload.name;
+    },
 
     setCurrent: (state, action: PayloadAction<string>) => {
       state.current = action.payload;

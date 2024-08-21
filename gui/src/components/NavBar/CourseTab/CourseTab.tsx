@@ -17,7 +17,7 @@ import {LecturesServices} from "../../../features/LectureSlice";
 import {ChatroomsServices} from "../../../features/ChatroomsSlice";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
 import ManageClassroomPU from "../../PopUps/ManageClassroomPU/ManageClassroomPU";
-import CreateLecturePU from "../../PopUps/CreateLecturePU/CreateLecturePU";
+import ManageLecturePU from "../../PopUps/CreateLecturePU/CreateLecturePU";
 import {
   FloatingMenu,
   FloatingMenuButton,
@@ -78,10 +78,11 @@ const CourseTab = (props: Props) => {
             setOpenLectureCreation(true);
           }}
         />
-        <CreateLecturePU
+        <ManageLecturePU
           trigger={openLectureCreation}
           setTrigger={setOpenLectureCreation}
           title={"新增計畫"}
+          action="create"
         />
       </div>
       <div className={cx("nav-stack")}>
@@ -265,6 +266,7 @@ const LectureCard = ({
           onClick={() => {
             setOpenLectureDelete(true);
           }}
+          disabled={lectures.dict[id].type === 0}
         />
       </div>
     );
@@ -276,6 +278,7 @@ const LectureCard = ({
         onClick={() => {
           clickOnCard();
         }}
+        className={cx("lecture-card-words")}
       >
         <strong>{name}</strong>
       </p>
@@ -295,6 +298,13 @@ const LectureCard = ({
             setTrigger={setOpenLectureDelete}
             title={"刪除計畫"}
             lectureId={id}
+          />
+          <ManageLecturePU
+            trigger={openLectureModify}
+            setTrigger={setOpenLectureModify}
+            title={"新增計畫"}
+            action="edit"
+            editLectureId={id}
           />
         </>
       )}
