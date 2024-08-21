@@ -258,6 +258,7 @@ export const useCreateWidgetWithApi = () => {
     if (!newWidgetId) return;
     if (newWidgetId in apiSignals && apiSignals[newWidgetId] === true) {
       terminateResponse();
+
       dispatch(ApiServices.actions.deleteSignal({id: newWidgetId}));
     }
   }, [apiSignals]);
@@ -397,6 +398,9 @@ export const useDeleteLecture = () => {
             lectureId: defaultLecture,
           })
         );
+
+        // reset widget if none is the lecture is deleted
+        dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
       }
     },
     [dispatch, classrooms, lectures, deleteWidget]

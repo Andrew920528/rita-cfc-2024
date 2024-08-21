@@ -23,7 +23,6 @@ type WidgetCardProps = {
 
 const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
   const {createWidget} = useCreateWidgetWithApi();
-  const ui = useTypedSelector((state) => state.Ui);
   const dispatch = useAppDispatch();
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     if (dragImageRef.current) {
