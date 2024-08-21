@@ -345,6 +345,7 @@ export const useDeleteClassroom = () => {
       dispatch(ClassroomsServices.actions.deleteClassroom(args.classroomId));
 
       if (defaultClassroom === EMPTY_ID) {
+        dispatch(LecturesServices.actions.setCurrent(EMPTY_ID));
         return;
       }
       // sets lecture of the new current classroom

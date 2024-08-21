@@ -6,6 +6,7 @@ const cx = classNames.bind(styles);
 interface TabItem {
   title: string;
   content: ReactNode;
+  disabled?: boolean;
 }
 
 interface TabsProps {
@@ -25,8 +26,16 @@ const Tabs: React.FC<TabsProps> = ({items}) => {
         {items.map((item, index) => (
           <div
             key={index}
-            onClick={() => handleTabClick(index)}
-            className={cx("tab-header", activeIndex === index && "active")}
+            onClick={() => {
+              if (item.disabled) return;
+              handleTabClick(index);
+            }}
+            className={cx("tab-header", {
+              disabled: item.disabled,
+              active: activeIndex === index,
+            })}
+            role="tab"
+            aria-disabled={item.disabled}
           >
             {item.title}
           </div>

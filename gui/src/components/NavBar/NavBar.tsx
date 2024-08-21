@@ -4,12 +4,15 @@ import styles from "./NavBar.module.scss";
 import Tabs from "../ui_components/Tabs/Tabs";
 import CourseTab from "./CourseTab/CourseTab";
 import ToolTab from "./ToolTab/ToolTab";
+import {useTypedSelector} from "../../store/store";
+import {EMPTY_ID} from "../../global/constants";
 
 const cx = classNames.bind(styles);
 
 const NavBar = () => {
   // global states
-
+  let lectures = useTypedSelector((state) => state.Lectures);
+  let widgets = useTypedSelector((state) => state.Widgets);
   const NavContent = ({children}: {children: ReactElement}) => {
     return <div className={cx("nav-content")}>{children}</div>;
   };
@@ -19,8 +22,16 @@ const NavBar = () => {
       <Tabs
         items={[
           {title: "課程", content: <NavContent children={<CourseTab />} />},
-          {title: "工具", content: <NavContent children={<ToolTab />} />},
-          {title: "Rita 小助教", content: <NavContent children={<div />} />},
+          {
+            title: "工具",
+            content: <NavContent children={<ToolTab />} />,
+            disabled: lectures.current === EMPTY_ID,
+          },
+          {
+            title: "Rita 小助教",
+            content: <NavContent children={<div />} />,
+            disabled: widgets.current === EMPTY_ID,
+          },
         ]}
       />
     </div>
