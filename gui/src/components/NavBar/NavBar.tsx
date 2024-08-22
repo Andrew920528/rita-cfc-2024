@@ -6,6 +6,7 @@ import CourseTab from "./CourseTab/CourseTab";
 import ToolTab from "./ToolTab/ToolTab";
 import {useTypedSelector} from "../../store/store";
 import {EMPTY_ID} from "../../global/constants";
+import AiTab from "./AiTab/AiTab";
 
 const cx = classNames.bind(styles);
 
@@ -33,7 +34,7 @@ const NavBar = () => {
           },
           {
             title: "Rita 小助教",
-            content: <NavContent children={<div />} />,
+            content: <NavContent children={<AiTab />} />,
             disabled: disableAiTab,
           },
         ]}
