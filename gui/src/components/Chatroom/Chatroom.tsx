@@ -32,7 +32,9 @@ import {translateService, useApiHandler} from "../../utils/service";
 import {API} from "../../global/constants";
 import Chip from "../ui_components/Chip/Chip";
 const cx = classNames.bind(styles);
-type ChatroomProps = {};
+type ChatroomProps = {
+  absolutePosition?: boolean;
+};
 const Chatroom = ({}: ChatroomProps) => {
   // global states
   const chatroom = useTypedSelector(
