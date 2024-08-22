@@ -15,4 +15,5 @@ export type Classroom = {
 export type Classrooms = {
   dict: {[key: string]: Classroom};
   current: string;
+  loading: {[key: string]: boolean};
 };

@@ -110,64 +110,16 @@ export const useLoginParseState = () => {
   );
 };
 
-export const useCreateClassroom = () => {
-  const dispatch = useAppDispatch();
-  const createLecture = useCreateLecture();
-  return useCallback(
-    async (args: {
-      classroomId: string;
-      classroomName: string;
-      subject: string;
-      grade: string;
-      publisher: string;
-      credits: number;
-      plan: boolean;
-      chatroomId: string;
-    }) => {
-      // create associative classroom
-      let newChatroom: Chatroom = {
-        id: args.chatroomId,
-        messages: [],
-      };
-      let newClassroom: Classroom = {
-        id: args.classroomId,
-        name: args.classroomName,
-        subject: args.subject,
-        grade: args.grade,
-        publisher: args.publisher,
-        lectureIds: [],
-        lastOpenedLecture: EMPTY_ID,
-        plan: args.plan,
-        credits: args.credits,
-        chatroomId: args.chatroomId,
-      };
-
-      // add new chatroom to chatrooms dict
-      dispatch(ChatroomsServices.actions.addChatroom(newChatroom));
-      // set current chatroom to the new chatroom
-      dispatch(ChatroomsServices.actions.setCurrent(args.chatroomId));
-
-      // create classroom
-      dispatch(ClassroomsServices.actions.addClassroom(newClassroom));
-
-      // allow user to reference to the new classroom
-      dispatch(UserServices.actions.addClassroom(args.classroomId));
-      // set current classroom to the new classroom
-      dispatch(ClassroomsServices.actions.setCurrent(args.classroomId));
-    },
-    [dispatch, createLecture]
-  );
+type CreateLectureArgs = {
+  lectureId: string;
+  name: string;
+  classroomId: string;
+  type: number;
 };
-
 export const useCreateLecture = () => {
   const dispatch = useAppDispatch();
   return useCallback(
-    (args: {
-      lectureId: string;
-      name: string;
-      classroomId: string;
-      type: number;
-    }) => {
+    (args: CreateLectureArgs) => {
       // create lecture
       let newLecture: Lecture = {
         id: args.lectureId,

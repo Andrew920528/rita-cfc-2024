@@ -58,6 +58,14 @@
     }
   }
 
+  &.loading {
+    background-color: #c6c6c6;
+    opacity: 0.5;
+    &:hover {
+      background-color: #c6c6c6;
+    }
+  }
+
   .class-card-words {
     display: flex;
     flex-grow: 1;
@@ -75,6 +83,15 @@
       overflow: hidden;
       user-select: none;
     }
+  }
+  .class-card-loading {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-right: 1rem;
+    border-bottom: 1px solid #e0e0e0;
   }
 }
 

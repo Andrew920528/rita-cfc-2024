@@ -24,6 +24,7 @@ import {
 } from "../../ui_components/FloatingMenu/FloatingMenu";
 import DeleteClassroomPU from "../../PopUps/DeleteClassroomPU/DeleteClassroomPU";
 import DeleteLecturePU from "../../PopUps/DeleteLecturePU/DeleteLecturePU";
+import {CircularProgress} from "@mui/material";
 type Props = {};
 const cx = classNames.bind(styles);
 const CourseTab = (props: Props) => {
@@ -66,6 +67,7 @@ const CourseTab = (props: Props) => {
               grade={classrooms.dict[id].grade}
               selected={classrooms.current}
               credits={classrooms.dict[id].credits}
+              loading={classrooms.loading[id]}
             />
           ))}
         </div>
@@ -118,6 +120,7 @@ type ClassCardProps = {
   plan?: boolean;
   selected?: string;
   credits: number;
+  loading?: boolean;
 };
 
 const ClassCard = ({
@@ -128,6 +131,7 @@ const ClassCard = ({
   publisher = "未設定",
   plan = false,
   selected = EMPTY_ID,
+  loading = false,
   credits,
 }: ClassCardProps) => {
   const dispatch = useAppDispatch();
@@ -143,6 +147,7 @@ const ClassCard = ({
       )
     );
     const chatId = classrooms.dict[id].chatroomId;
+
     dispatch(ChatroomsServices.actions.setCurrent(chatId));
 
     if (lastLecture) {
@@ -180,11 +185,12 @@ const ClassCard = ({
   };
 
   return (
-    <div className={cx("class-card", {selected: selected === id})}>
+    <div className={cx("class-card", {selected: selected === id, loading})}>
       <div
         className={cx("class-card-words")}
         onClick={() => {
-          console.log("This card in clicked");
+          if (loading) return;
+
           clickOnCard();
         }}
       >
@@ -196,6 +202,11 @@ const ClassCard = ({
           <br /> 週堂數：{credits} | 學期規劃：{plan ? "已完成" : "未完成"}
         </p>
       </div>
+      {loading && (
+        <div className={cx("class-card-loading")}>
+          <CircularProgress color="inherit" size={12} />
+        </div>
+      )}
       {selected === id && (
         <>
           <div>

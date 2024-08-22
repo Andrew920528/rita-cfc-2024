@@ -5,6 +5,7 @@ import styles from "./AiTab.module.scss";
 import {useTypedSelector} from "../../../store/store";
 import {EMPTY_ID} from "../../../global/constants";
 import {SemesterGoalWidgetContent} from "../../../schema/widget/semesterGoalWidgetContent";
+import {IbmWatsonxAssistant} from "@carbon/icons-react";
 
 const cx = classNames.bind(styles);
 
@@ -15,7 +16,12 @@ const dummyPreviewWidgetContent: SemesterGoalWidgetContent = {
 type Props = {};
 
 function AiTabPlaceHolder() {
-  return <div className={cx("placeholder")}>Placeholder</div>;
+  return (
+    <div className={cx("placeholder")}>
+      <IbmWatsonxAssistant size={80} />
+      請建立或點選右方空間中的備課工具，讓Rita可以針對那個工具為您備課。
+    </div>
+  );
 }
 
 function AiTab({}: Props) {

@@ -8,6 +8,7 @@ import {stat} from "fs";
 const initialState: Classrooms = {
   dict: {},
   current: EMPTY_ID,
+  loading: {},
 };
 
 const ClassroomsSlice = createSlice({
@@ -31,6 +32,19 @@ const ClassroomsSlice = createSlice({
       state.dict[action.payload.id].grade = action.payload.grade;
       state.dict[action.payload.id].publisher = action.payload.publisher;
       state.dict[action.payload.id].credits = action.payload.credits;
+    },
+    setLoading: (
+      state,
+      action: PayloadAction<{id: string; loading: boolean}>
+    ) => {
+      state.loading[action.payload.id] = action.payload.loading;
+    },
+    setChatroom: (
+      state,
+      action: PayloadAction<{classroomId: string; chatroomId: string}>
+    ) => {
+      state.dict[action.payload.classroomId].chatroomId =
+        action.payload.chatroomId;
     },
     deleteClassroom: (state, action: PayloadAction<string>) => {
       delete state.dict[action.payload];
