@@ -16,6 +16,7 @@ import {
 import {ChatroomsServices} from "../features/ChatroomsSlice";
 import {useDeleteClassroom} from "./globalActions";
 import {generateId} from "../utils/util";
+import {toast} from "react-toastify";
 
 export const useCreateClassroomWithApi = () => {
   // global states
@@ -132,6 +133,7 @@ export const useCreateClassroomWithApi = () => {
       allowAsync: true,
     });
     if (r.status === API.ERROR || r.status === API.ABORTED) {
+      toast.error("課堂建立失敗，請確認連線狀況。");
       // delete classroom (and lecture) in frontend
       deleteClassroomFrontend({classroomId: newClassroomId});
       return;
@@ -143,6 +145,7 @@ export const useCreateClassroomWithApi = () => {
       identifier: "createLecture",
     });
     if (r.status === API.ERROR || r.status === API.ABORTED) {
+      toast.error("課堂建立失敗，請確認連線狀況。");
       // delete classroom (and lecture) in frontend
       deleteClassroomFrontend({classroomId: newClassroomId});
       // delete classroom in backend
@@ -176,6 +179,12 @@ export const useCreateClassroomWithApi = () => {
         loading: false,
       })
     );
+    console.log(user.classroomIds.length);
+    if (user.classroomIds.length === 0) {
+      dispatch(ClassroomsServices.actions.setCurrent(newClassroomId));
+      dispatch(LecturesServices.actions.setCurrent(newLectureId));
+      dispatch(ChatroomsServices.actions.setCurrent(newChatroomId));
+    }
   }
 
   return {
@@ -248,13 +257,7 @@ export const useEditClassroomWithApi = () => {
       identifier: "editClassroom",
     });
     if (r.status === API.ERROR || r.status === API.ABORTED) {
-      dispatch(
-        ClassroomsServices.actions.setLoading({
-          id: classroomId,
-          loading: false,
-        })
-      );
-      return;
+      toast.error("您的修改儲存失敗，請確認連線狀況。");
     }
     dispatch(
       ClassroomsServices.actions.setLoading({

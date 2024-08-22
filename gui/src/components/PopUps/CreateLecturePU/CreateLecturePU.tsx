@@ -3,7 +3,7 @@ import Textbox from "../../ui_components/Textbox/Textbox";
 import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "../PopUp/PopUp";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
-import {useCreateLecture} from "../../../global/globalActions";
+import {useDeleteLecture} from "../../../global/globalActions";
 import {generateId, useCompose} from "../../../utils/util";
 import {
   createLectureService,
@@ -14,20 +14,24 @@ import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./CreateLecturePU.module.scss";
 import {LecturesServices} from "../../../features/LectureSlice";
+import {Lecture} from "../../../schema/lecture";
+import {ClassroomsServices} from "../../../features/ClassroomsSlice";
+import {toast} from "react-toastify";
+import {useCreateLectureWithApi} from "../../../global/manageLectureActions";
 
 const cx = classNames.bind(styles);
-type CreateLecturePUProps = {
+type ManageLecturePUProps = {
   action: "create" | "edit";
   editLectureId?: string;
 };
 
-const ManageLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
+const ManageLecturePU = (props: ManageLecturePUProps & PopUpProps) => {
   // global states
   const user = useTypedSelector((state) => state.User);
   const currClassroom = useTypedSelector((state) => state.Classrooms.current);
   const lectures = useTypedSelector((state) => state.Lectures);
-  const createLecture = useCreateLecture();
-  const {apiHandler, loading, terminateResponse} = useApiHandler();
+  const deleteLecture = useDeleteLecture();
+  const {apiHandler} = useApiHandler({runsInBackground: true});
 
   const dispatch = useAppDispatch();
   // local states
@@ -65,64 +69,19 @@ const ManageLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
     return validate;
   }
 
-  async function handleCreateLecture() {
-    const newLectureId = user.username + "-lecture-1" + generateId();
-    const lectureData = {
-      lectureId: newLectureId,
-      classroomId: currClassroom,
-      name: name,
-      type: 1,
-    };
-    let r = await apiHandler({
-      apiFunction: (s) => createLectureService(lectureData, s),
-      debug: true,
-      identifier: "createLecture",
-    });
-
-    if (r.status === API.ERROR || r.status === API.ABORTED) {
-      return;
-    }
-    createLecture(lectureData);
-  }
-
-  async function handleModifyLecture() {
-    if (props.editLectureId === undefined) {
-      throw new Error("editLectureId is undefined");
-    }
-
-    let r = await apiHandler({
-      apiFunction: (s) =>
-        updateLectureService(
-          {
-            lectureName: name,
-            lectureId: props.editLectureId!!,
-          },
-          s
-        ),
-      debug: true,
-      identifier: "updateLecture",
-    });
-
-    if (r.status === API.ERROR || r.status === API.ABORTED) {
-      return;
-    }
-
-    dispatch(
-      LecturesServices.actions.editLecture({
-        name: name,
-        id: props.editLectureId,
-      })
-    );
-  }
+  const {handleCreateLecture, handleModifyLecture} = useCreateLectureWithApi();
 
   async function submitForm() {
     if (!validateForm()) {
       return;
     }
     if (props.action === "create") {
-      await handleCreateLecture();
+      handleCreateLecture({name});
     } else if (props.action === "edit") {
-      await handleModifyLecture();
+      if (props.editLectureId === undefined) {
+        throw new Error("editLectureId is undefined");
+      }
+      handleModifyLecture({editLectureId: props.editLectureId, name});
     }
 
     // reset form
@@ -138,11 +97,9 @@ const ManageLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
       footerBtnProps={{
         icon: <Save size={20} />,
         text: "儲存變更",
-        disabled: loading,
       }}
       reset={() => {
         resetForm();
-        terminateResponse();
       }}
       puAction={async () => {
         await submitForm();

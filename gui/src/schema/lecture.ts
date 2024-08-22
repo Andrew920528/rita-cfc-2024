@@ -8,4 +8,5 @@ export type Lecture = {
 export type Lectures = {
   dict: {[key: string]: Lecture};
   current: string;
+  loading: {[key: string]: boolean};
 };

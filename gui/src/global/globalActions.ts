@@ -7,9 +7,6 @@ import {useAppDispatch, useTypedSelector} from "../store/store";
 import {generateId, mimicApi} from "../utils/util";
 import {WidgetType} from "../schema/widget/widget";
 import {initWidget, widgetBook} from "../schema/widget/widgetFactory";
-import {Chatroom} from "../schema/chatroom";
-import {Lecture} from "../schema/lecture";
-import {Classroom} from "../schema/classroom";
 import {UserServices} from "../features/UserSlice";
 import {API, EMPTY_ID} from "./constants";
 import {initSchedule} from "../schema/schedule";
@@ -23,7 +20,6 @@ import {ApiServices} from "../features/ApiSlice";
 */
 export const useLoginParseState = () => {
   const dispatch = useAppDispatch();
-  const createLecture = useCreateLecture();
   return useCallback(
     async (responseObj: any) => {
       sessionStorage.setItem("sessionId", responseObj.sessionId);
@@ -106,52 +102,9 @@ export const useLoginParseState = () => {
         })
       );
     },
-    [dispatch, createLecture]
-  );
-};
-
-type CreateLectureArgs = {
-  lectureId: string;
-  name: string;
-  classroomId: string;
-  type: number;
-};
-export const useCreateLecture = () => {
-  const dispatch = useAppDispatch();
-  return useCallback(
-    (args: CreateLectureArgs) => {
-      // create lecture
-      let newLecture: Lecture = {
-        id: args.lectureId,
-        name: args.name,
-        type: args.type,
-        widgetIds: [],
-      };
-
-      // add reference to classroom's lecture list
-      dispatch(
-        ClassroomsServices.actions.addLecture({
-          classroomId: args.classroomId,
-          lectureId: args.lectureId,
-        })
-      );
-      // set last opened lecture as the newly created lecture
-      dispatch(
-        ClassroomsServices.actions.setLastOpenedLecture({
-          classroomId: args.classroomId,
-          lectureId: args.lectureId,
-        })
-      );
-
-      // add new lecture to lectures dict
-      dispatch(LecturesServices.actions.addLecture(newLecture));
-      // set current lecture to the new lecture
-      dispatch(LecturesServices.actions.setCurrent(args.lectureId));
-    },
     [dispatch]
   );
 };
-
 export const useCreateWidget = () => {
   const dispatch = useAppDispatch();
   const username = useTypedSelector((state) => state.User.username);

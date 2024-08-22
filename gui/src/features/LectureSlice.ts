@@ -6,6 +6,7 @@ import {EMPTY_ID} from "../global/constants";
 const initialState: Lectures = {
   dict: {},
   current: EMPTY_ID,
+  loading: {},
 };
 
 const LecturesSlice = createSlice({
@@ -27,6 +28,12 @@ const LecturesSlice = createSlice({
     },
     editLecture: (state, action: PayloadAction<{id: string; name: string}>) => {
       state.dict[action.payload.id].name = action.payload.name;
+    },
+    setLoading: (
+      state,
+      action: PayloadAction<{id: string; loading: boolean}>
+    ) => {
+      state.loading[action.payload.id] = action.payload.loading;
     },
 
     setCurrent: (state, action: PayloadAction<string>) => {

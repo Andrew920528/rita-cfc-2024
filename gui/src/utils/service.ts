@@ -402,13 +402,13 @@ export function updateLectureService(
       status: API.SUCCESS,
       data: "lecture updated",
     };
-    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const response = {
     status: API.SUCCESS,
     data: "lecture updated",
   };
-  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
   // TODO Connect to actual endpoint
   // const endPoint = "/update-lecture";
   // return fetch(BASE_URL_DEV + endPoint, {

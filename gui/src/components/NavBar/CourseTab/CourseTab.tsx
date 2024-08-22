@@ -103,6 +103,7 @@ const CourseTab = (props: Props) => {
                 id={id}
                 name={lectures.dict[id].name}
                 selected={lectures.current}
+                loading={lectures.loading[id]}
               />
             ))}
         </div>
@@ -246,12 +247,14 @@ type LectureCardProps = {
   id: string;
   name: string;
   selected: string;
+  loading?: boolean;
 };
 
 const LectureCard = ({
   id = "",
   name = "新科目",
   selected = EMPTY_ID,
+  loading = false,
 }: LectureCardProps) => {
   const dispatch = useAppDispatch();
   const classrooms = useTypedSelector((state) => state.Classrooms);
@@ -293,16 +296,21 @@ const LectureCard = ({
   }
 
   return (
-    <div className={cx("lecture-card", {selected: selected === id})}>
+    <div className={cx("lecture-card", {selected: selected === id, loading})}>
       <p
         onClick={() => {
+          if (loading) return;
           clickOnCard();
         }}
         className={cx("lecture-card-words")}
       >
         <strong>{name}</strong>
       </p>
-
+      {loading && (
+        <div className={cx("lecture-card-loading")}>
+          <CircularProgress color="inherit" size={12} />
+        </div>
+      )}
       {selected === id && (
         <>
           <div>
