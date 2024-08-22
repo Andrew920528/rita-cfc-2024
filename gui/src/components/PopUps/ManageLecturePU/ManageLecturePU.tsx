@@ -12,7 +12,7 @@ import {
 } from "../../../utils/service";
 import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
-import styles from "./CreateLecturePU.module.scss";
+import styles from "./ManageLecturePU.module.scss";
 import {LecturesServices} from "../../../features/LectureSlice";
 import {Lecture} from "../../../schema/lecture";
 import {ClassroomsServices} from "../../../features/ClassroomsSlice";

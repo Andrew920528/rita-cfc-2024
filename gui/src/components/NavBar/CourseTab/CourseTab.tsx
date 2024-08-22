@@ -17,7 +17,7 @@ import {LecturesServices} from "../../../features/LectureSlice";
 import {ChatroomsServices} from "../../../features/ChatroomsSlice";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
 import ManageClassroomPU from "../../PopUps/ManageClassroomPU/ManageClassroomPU";
-import ManageLecturePU from "../../PopUps/CreateLecturePU/CreateLecturePU";
+import ManageLecturePU from "../../PopUps/ManageLecturePU/ManageLecturePU";
 import {
   FloatingMenu,
   FloatingMenuButton,

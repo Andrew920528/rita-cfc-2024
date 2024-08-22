@@ -284,7 +284,7 @@ export function createClassroomService(
       status: API.SUCCESS,
       data: "classroom created",
     };
-    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+    return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
   }
 
   const endPoint = "/create-classroom";
