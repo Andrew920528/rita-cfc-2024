@@ -50,20 +50,24 @@ interface ApiHandlerResult {
   abortControllerRef: React.MutableRefObject<AbortController | null>;
   terminateResponse: () => void;
 }
-export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
+export const useApiHandler = ({
+  dependencies = [],
+  runsInBackground = false,
+}: {
+  dependencies?: any[];
+  runsInBackground?: boolean;
+} = {}): ApiHandlerResult => {
   const [loading, setLoading] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
-  useEffect(
-    () => {
-      // Clean up the controller when the component unmounts
-      return () => {
-        if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-        }
-      };
-    },
-    dependencies ? dependencies : []
-  );
+  useEffect(() => {
+    if (runsInBackground) return;
+    // Clean up the controller when the component unmounts
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, dependencies);
   function terminateResponse() {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();

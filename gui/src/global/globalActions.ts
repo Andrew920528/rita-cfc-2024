@@ -247,7 +247,9 @@ export const useCreateWidgetWithApi = () => {
   const username = useTypedSelector((state) => state.User.username);
   const deleteWidget = useDeleteWidget();
   const addWidget = useCreateWidget();
-  const {apiHandler, loading, terminateResponse} = useApiHandler();
+  const {apiHandler, loading, terminateResponse} = useApiHandler({
+    runsInBackground: true,
+  });
   const dispatch = useAppDispatch();
   const apiSignals = useTypedSelector((state) => state.Api.signals);
   const newWidgetIdRef = useRef<string>();
@@ -413,9 +415,8 @@ export const useDeleteWidget = () => {
   return useCallback(
     (args: {lectureId: string; widgetId: string}) => {
       dispatch(WidgetsServices.actions.deleteWidget(args.widgetId));
-      if (args.widgetId === currentWidget) {
-        dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
-      }
+      dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
+
       dispatch(
         LecturesServices.actions.deleteWidget({
           lectureId: args.lectureId,

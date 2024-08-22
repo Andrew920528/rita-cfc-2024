@@ -1,0 +1,17 @@
+.ai-tab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .chatroom-wrapper {
+    flex-grow: 1;
+  }
+  .preview-wrapper {
+    height: 20rem;
+    overflow-y: hidden;
+    background-color: red;
+    transition: height 0.2s ease-in-out;
+    &.hidden {
+      height: 0;
+    }
+  }
+}

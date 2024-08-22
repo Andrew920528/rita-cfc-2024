@@ -15,6 +15,7 @@ import {API, EMPTY_ID} from "../../../global/constants";
 import {
   createClassroomService,
   createLectureService,
+  deleteClassroomService,
   updateClassroomService,
   useApiHandler,
 } from "../../../utils/service";
@@ -181,6 +182,12 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       identifier: "createLecture",
     });
     if (r.status === API.ERROR || r.status === API.ABORTED) {
+      await apiHandler({
+        apiFunction: (s) =>
+          deleteClassroomService({classroomId: newClassroomId}, s),
+        debug: true,
+        identifier: "deleteClassroom",
+      });
       return;
     }
 

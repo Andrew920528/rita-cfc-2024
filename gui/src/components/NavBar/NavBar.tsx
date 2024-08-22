@@ -12,12 +12,10 @@ const cx = classNames.bind(styles);
 
 const NavBar = () => {
   // global states
-  let disableToolTab = useTypedSelector(
+  let noLecture = useTypedSelector(
     (state) => state.Lectures.current === EMPTY_ID
   );
-  let disableAiTab = useTypedSelector(
-    (state) => state.Widgets.current === EMPTY_ID
-  );
+
   const NavContent = React.memo(({children}: {children: ReactElement}) => {
     return <div className={cx("nav-content")}>{children}</div>;
   });
@@ -30,12 +28,12 @@ const NavBar = () => {
           {
             title: "工具",
             content: <NavContent children={<ToolTab />} />,
-            disabled: disableToolTab,
+            disabled: noLecture,
           },
           {
             title: "Rita 小助教",
             content: <NavContent children={<AiTab />} />,
-            disabled: disableAiTab,
+            disabled: noLecture,
           },
         ]}
       />

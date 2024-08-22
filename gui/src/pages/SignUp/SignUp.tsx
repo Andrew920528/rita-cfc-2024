@@ -116,6 +116,9 @@ const SignUp = () => {
 
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       // failed to create user
+      if (r.data === "username existed") {
+        setUsernameError("使用者名稱已存在");
+      }
       return;
     }
     toast.success("註冊成功，請登入");

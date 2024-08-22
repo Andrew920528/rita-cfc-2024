@@ -45,6 +45,8 @@
   justify-content: space-between;
   align-items: stretch;
   background-color: white;
+  width: 100%;
+
   &:hover {
     background-color: #e8e8e8;
   }
@@ -64,6 +66,7 @@
     padding: 1rem;
     border-bottom: 1px solid #e0e0e0;
     gap: 0.5rem;
+    overflow: hidden;
     p {
       margin: 0;
       text-wrap: nowrap;
