@@ -3,7 +3,7 @@ from flask_cors import CORS
 
 from utils.word_docs import send_docx, docxToPdfFunction, createBlankDocx, sendDocument
 from utils.LlmTester import LlmTester
-from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
+from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, deleteClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
 from actions.ritaActions import initLLM, llm_stream_response, initRetriever, translateText
 import time
 import logging
@@ -232,6 +232,19 @@ def update_classroom():
         plan = request.json.get('plan', None)
         credit = request.json.get('credits', None)
         return updateClassroom(sessionId, classroomId, classroomName, subject, publisher, grade, plan, credit)
+    except Exception as e:
+        response = {
+            'status': 'error',
+            'data': 'Missing ' + str(e)
+        }
+        return response
+
+@app.route('/delete-classroom', methods=['DELETE'])
+def delete_classroom():
+    try:
+        sessionId = request.json['sessionId']
+        classroomId = request.json['classroomId']
+        return deleteClassroom(sessionId, classroomId)
     except Exception as e:
         response = {
             'status': 'error',

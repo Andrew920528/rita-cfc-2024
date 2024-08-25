@@ -982,6 +982,140 @@ def updateLecture(sessionId, lectureId, name, type):
         }
         return response
 
+def deleteClassroom(sessionId, classroomId):
+    getDatabaseDetails()
+
+    verifySession = sessionCheck(sessionId)
+
+    if verifySession['status'] == 'error':
+        return verifySession
+    
+    userId = verifySession['data']
+
+    try:
+        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        with connection.cursor() as cursor:
+
+             # see if classroomId exists
+
+            query = 'SELECT Classroom_ID FROM Classroom_Table WHERE Classroom_ID=%s'
+            values = (classroomId)
+            cursor.execute(query, values)
+
+            if len(cursor.fetchall()) == 0:
+                connection.close()
+                response = { 
+                    'status' : 'error',
+                    'data' : 'classroomId does not exist'
+                }
+                return response
+
+            # find corresponding lectureId from classroom
+
+            query = 'SELECT Lecture_ID FROM Classroom_Lecture_Join_Table WHERE Classroom_ID=%s'
+            values = (classroomId)
+            cursor.execute(query, values)
+
+            lectureIds = cursor.fetchall()
+
+            for lectureId in lectureIds:
+
+                # find corresponding widgets from lectureId
+
+                query = 'SELECT Widget_ID FROM Lecture_Widget_Table WHERE Lecture_ID=%s'
+                values = (lectureId[0])
+                cursor.execute(query, values)
+
+                widgetIds = cursor.fetchall()
+
+                for widgetId in widgetIds:
+
+                    # get chatroomId in Widget_Table
+
+                    query = 'SELECT Chatroom_ID FROM Widget_Table WHERE Widget_ID=%s'
+                    values = (widgetId[0])
+                    cursor.execute(query, values)
+                    chatroomId = cursor.fetchall()
+
+                    # delete widget in Lecture_Widget_Table
+
+                    query = 'DELETE FROM Lecture_Widget_Table WHERE Lecture_ID=%s AND Widget_ID=%s'
+                    values = (lectureId[0], widgetId[0])
+                    cursor.execute(query, values)
+                    connection.commit()
+
+                    # delete widget
+
+                    query = 'DELETE FROM Widget_Table WHERE Widget_ID=%s'
+                    values = (widgetId[0])
+                    cursor.execute(query, values)
+                    connection.commit()
+
+                    # delete chatroomId in Chatroom_Table
+
+                    query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
+                    values = (chatroomId[0][0])
+                    cursor.execute(query, values)
+                    connection.commit()
+
+                # delete lecture in Classroom_Lecture_Join_Table
+
+                query = 'DELETE FROM Classroom_Lecture_Join_Table WHERE Classroom_ID=%s AND Lecture_ID=%s'
+                values = (classroomId, lectureId[0])
+                cursor.execute(query, values)
+                connection.commit()
+
+                # delete lecture
+
+                query = 'DELETE FROM Lecture_Table WHERE Lecture_ID=%s'
+                values = (lectureId[0])
+                cursor.execute(query, values)
+                connection.commit()
+
+            # get chatroomId in Classroom_Table
+
+            query = 'SELECT Chatroom_ID FROM Classroom_Table WHERE Classroom_ID=%s'
+            values = (classroomId)
+            cursor.execute(query, values)
+            chatroomId = cursor.fetchall()
+
+            # delete classroom in User_Classroom_Join_Table
+
+            query = 'DELETE FROM User_Classroom_Join_Table WHERE User_ID=%s AND Classroom_ID=%s'
+            values = (userId, classroomId)
+            cursor.execute(query, values)
+            connection.commit()
+
+            # delete classroom
+
+            query = 'DELETE FROM Classroom_Table WHERE Classroom_ID=%s'
+            values = (classroomId)
+            cursor.execute(query, values)
+            connection.commit()
+
+            # delete chatroomId in Chatroom_Table
+
+            query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
+            values = (chatroomId[0][0])
+            cursor.execute(query, values)
+            connection.commit()
+
+            connection.close()
+            response = { 
+                'status' : 'success',
+                'data' : 'Classroom deleted'
+            }
+            return response
+
+    except Exception as e:
+        print("Error: {}".format(e))
+        connection.close()
+        response = { 
+            'status' : 'error',
+            'data' : str(e)
+        }
+        return response
+
 def deleteLecture(sessionId, classroomId, lectureId):
     getDatabaseDetails()
 
@@ -1038,6 +1172,44 @@ def deleteLecture(sessionId, classroomId, lectureId):
                 }
                 return response
 
+            # find corresponding widgetId from lectureId
+
+            query = 'SELECT Widget_ID FROM Lecture_Widget_Table WHERE Lecture_ID=%s'
+            values = (lectureId)
+            cursor.execute(query, values)
+
+            widgetIds = cursor.fetchall()
+
+            for widgetId in widgetIds:
+
+                # get chatroomId in Widget_Table
+
+                query = 'SELECT Chatroom_ID FROM Widget_Table WHERE Widget_ID=%s'
+                values = (widgetId[0])
+                cursor.execute(query, values)
+                chatroomId = cursor.fetchall()
+
+                # delete widget in Lecture_Widget_Table
+
+                query = 'DELETE FROM Lecture_Widget_Table WHERE Lecture_ID=%s AND Widget_ID=%s'
+                values = (lectureId[0], widgetId[0])
+                cursor.execute(query, values)
+                connection.commit()
+
+                # delete widget
+
+                query = 'DELETE FROM Widget_Table WHERE Widget_ID=%s'
+                values = (widgetId[0])
+                cursor.execute(query, values)
+                connection.commit()
+
+                # delete chatroomId in Chatroom_Table
+
+                query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
+                values = (chatroomId[0][0])
+                cursor.execute(query, values)
+                connection.commit()
+
             # delete -> join table first, then lecture tables
 
             query = 'DELETE FROM Classroom_Lecture_Join_Table WHERE Classroom_ID=%s AND Lecture_ID=%s'
@@ -1076,6 +1248,14 @@ def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent):
     
     userId = verifySession['data']
 
+    chatroomResponse = createChatroom();
+    chatroomId = ""
+
+    if chatroomResponse['data'] == 'error':
+        return chatroomResponse
+    else:
+        chatroomId = chatroomResponse['data']['chatroomId']
+
     try:
         connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
@@ -1109,8 +1289,8 @@ def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent):
 
             # create widget
 
-            query = 'INSERT INTO Widget_Table (Widget_ID, Widget_Type, Widget_Content) VALUES(%s, %s, %s)'
-            values = (widgetId, widgetType, widgetContent)
+            query = 'INSERT INTO Widget_Table (Widget_ID, Widget_Type, Widget_Content, Chatroom_ID) VALUES(%s, %s, %s, %s)'
+            values = (widgetId, widgetType, widgetContent, chatroomId)
 
             cursor.execute(query, values)
             connection.commit()
@@ -1126,7 +1306,10 @@ def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent):
             connection.close()
             response = { 
                 'status' : 'success',
-                'data' : 'Widget created'
+                'data' : {
+                    'message' : 'Widget created',
+                    'chatroomId' : chatroomId
+                }
             }
             return response
     except Exception as e:
@@ -1309,8 +1492,24 @@ def deleteWidget(sessionId, lectureId, widgetId):
             cursor.execute(query, values)
             connection.commit()
 
+            # get chatroomId in Widget_Table
+
+            query = 'SELECT Chatroom_ID FROM Widget_Table WHERE Widget_ID=%s'
+            values = (widgetId)
+            cursor.execute(query, values)
+            chatroomId = cursor.fetchall()
+
+            # delete widget
+
             query = 'DELETE FROM Widget_Table WHERE Widget_ID=%s'
             values = (widgetId)
+            cursor.execute(query, values)
+            connection.commit()
+
+            # delete chatroomId in Chatroom_Table
+
+            query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
+            values = (chatroomId[0][0])
             cursor.execute(query, values)
             connection.commit()
 
