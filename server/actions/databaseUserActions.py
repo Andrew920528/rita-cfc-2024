@@ -268,7 +268,8 @@ def loginUser(username, password):
                             widgetId : {
                                 'id' : widgetId,
                                 'type' : widget[1],
-                                'content' : widget[2]
+                                'content' : widget[2],
+                                'classroomId' : widget[3]
                             }
                         })
 
@@ -280,6 +281,7 @@ def loginUser(username, password):
                             'id' : lectureId,
                             'name' : lecture[1],
                             'type' : lecture[2],
+                            'chatroomId' : lecture[3],
                             'widgetIds' : widgetIds
                         }
                     })
@@ -298,7 +300,7 @@ def loginUser(username, password):
                         # 'plan' : (False if (classroom[6] == None or classroom[6] == b'\x00') else True),
                         'plan' : classroom[6],
                         'credits' : classroom[7],
-                        'chatroomId' : classroom[8],
+                        # 'chatroomId' : classroom[8],
                         'lectureIds' : lectureIds
                     }
                 })
@@ -423,7 +425,8 @@ def loginSessionId(sessionId):
                             widgetId : {
                                 'id' : widgetId,
                                 'type' : widget[1],
-                                'content' : widget[2]
+                                'content' : widget[2],
+                                'classroomId' : widget[3]
                             }
                         })
 
@@ -435,6 +438,7 @@ def loginSessionId(sessionId):
                             'id' : lectureId,
                             'name' : lecture[1],
                             'type' : lecture[2],
+                            'classroomId' : lecture[3],
                             'widgetIds' : widgetIds
                         }
                     })
@@ -453,7 +457,7 @@ def loginSessionId(sessionId):
                         # 'plan' : (False if (classroom[6] == None or classroom[6] == b'\x00') else True),
                         'plan' : classroom[6],
                         'credits' : classroom[7],
-                        'chatroomId' : classroom[8],
+                        # 'chatroomId' : classroom[8],
                         'lectureIds' : lectureIds
                     }
                 })
@@ -577,13 +581,13 @@ def createClassroom(sessionId, classroomId, classroomName, subject, publisher, g
 
     userId = verifySession['data']
     
-    chatroomResponse = createChatroom();
-    chatroomId = ""
+    # chatroomResponse = createChatroom();
+    # chatroomId = ""
 
-    if chatroomResponse['data'] == 'error':
-        return chatroomResponse
-    else:
-        chatroomId = chatroomResponse['data']['chatroomId']
+    # if chatroomResponse['data'] == 'error':
+    #     return chatroomResponse
+    # else:
+    #     chatroomId = chatroomResponse['data']['chatroomId']
         
     try:
         connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
@@ -604,8 +608,11 @@ def createClassroom(sessionId, classroomId, classroomName, subject, publisher, g
 
             # create classroom
 
-            query = 'INSERT INTO Classroom_Table (Classroom_ID, Chatroom_ID'
-            values = [classroomId, chatroomId]
+            # query = 'INSERT INTO Classroom_Table (Classroom_ID, Chatroom_ID'
+            # values = [classroomId, chatroomId]
+
+            query = 'INSERT INTO Classroom_Table (Classroom_ID'
+            values = [classroomId]
 
             if classroomName != None:
                 query += ', Classroom_Name'
@@ -646,12 +653,16 @@ def createClassroom(sessionId, classroomId, classroomName, subject, publisher, g
             connection.commit()
 
             connection.close()
+            # response = { 
+            #     'status' : 'success',
+            #     'data' : {
+            #         'message' : 'Classroom created',
+            #         'chatroomId' : chatroomId
+            #     }
+            # }
             response = { 
                 'status' : 'success',
-                'data' : {
-                    'message' : 'Classroom created',
-                    'chatroomId' : chatroomId
-                }
+                'data' : 'Classroom created'
             }
             return response
     except Exception as e:
@@ -810,6 +821,14 @@ def createLecture(sessionId, classroomId, lectureId, lectureName, lectureType):
     
     userId = verifySession['data']
 
+    chatroomResponse = createChatroom();
+    chatroomId = ""
+
+    if chatroomResponse['data'] == 'error':
+        return chatroomResponse
+    else:
+        chatroomId = chatroomResponse['data']['chatroomId']
+
     try:
         connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
@@ -843,8 +862,8 @@ def createLecture(sessionId, classroomId, lectureId, lectureName, lectureType):
 
             # create lecture
 
-            query = 'INSERT INTO Lecture_Table (Lecture_ID, Lecture_Name, Lecture_Type) VALUES(%s, %s, %s)'
-            values = (lectureId, lectureName, lectureType)
+            query = 'INSERT INTO Lecture_Table (Lecture_ID, Lecture_Name, Lecture_Type, Chatroom_ID) VALUES(%s, %s, %s, %s)'
+            values = (lectureId, lectureName, lectureType, chatroomId)
 
             cursor.execute(query, values)
             connection.commit()
@@ -860,7 +879,10 @@ def createLecture(sessionId, classroomId, lectureId, lectureName, lectureType):
             connection.close()
             response = { 
                 'status' : 'success',
-                'data' : 'Lecture created'
+                'data' : {
+                    'message' : 'Lecture created',
+                    'chatroomId' : chatroomId
+                }
             }
             return response
     except Exception as e:
@@ -1065,6 +1087,13 @@ def deleteClassroom(sessionId, classroomId):
                 cursor.execute(query, values)
                 connection.commit()
 
+                # get chatroomId in Lecture_Table
+
+                query = 'SELECT Chatroom_ID FROM Lecture_Table WHERE Lecture_ID=%s'
+                values = (lectureId[0])
+                cursor.execute(query, values)
+                chatroomId = cursor.fetchall()
+
                 # delete lecture
 
                 query = 'DELETE FROM Lecture_Table WHERE Lecture_ID=%s'
@@ -1072,12 +1101,19 @@ def deleteClassroom(sessionId, classroomId):
                 cursor.execute(query, values)
                 connection.commit()
 
+                 # delete chatroomId in Chatroom_Table
+
+                query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
+                values = (chatroomId[0][0])
+                cursor.execute(query, values)
+                connection.commit()
+
             # get chatroomId in Classroom_Table
 
-            query = 'SELECT Chatroom_ID FROM Classroom_Table WHERE Classroom_ID=%s'
-            values = (classroomId)
-            cursor.execute(query, values)
-            chatroomId = cursor.fetchall()
+            # query = 'SELECT Chatroom_ID FROM Classroom_Table WHERE Classroom_ID=%s'
+            # values = (classroomId)
+            # cursor.execute(query, values)
+            # chatroomId = cursor.fetchall()
 
             # delete classroom in User_Classroom_Join_Table
 
@@ -1095,10 +1131,10 @@ def deleteClassroom(sessionId, classroomId):
 
             # delete chatroomId in Chatroom_Table
 
-            query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
-            values = (chatroomId[0][0])
-            cursor.execute(query, values)
-            connection.commit()
+            # query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
+            # values = (chatroomId[0][0])
+            # cursor.execute(query, values)
+            # connection.commit()
 
             connection.close()
             response = { 
@@ -1217,10 +1253,26 @@ def deleteLecture(sessionId, classroomId, lectureId):
             cursor.execute(query, values)
             connection.commit()
 
+            # get chatroomId in Lecture_Table
+
+            query = 'SELECT Chatroom_ID FROM Lecture_Table WHERE Lecture_ID=%s'
+            values = (lectureId)
+            cursor.execute(query, values)
+            chatroomId = cursor.fetchall()
+
+            # delete lecture
+
             query = 'DELETE FROM Lecture_Table WHERE Lecture_ID=%s'
             values = (lectureId)
             cursor.execute(query, values)
             connection.commit() 
+
+            # delete chatroomId in Chatroom_Table
+
+            query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
+            values = (chatroomId[0][0])
+            cursor.execute(query, values)
+            connection.commit()
 
             connection.close()
             response = { 
