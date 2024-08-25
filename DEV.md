@@ -24,9 +24,10 @@
 - 7/26 17:29 | I'm telling you, ai is another rabbit hole that is so difficult to deal with. Langchain is full of stupid black boxes, and in the end I feel like the less we rely on it, the better. The knowledge and tool I have to write a robust ai system is very limited, and every change is a challenge. Locating what the problem is is also so much more difficult than your typical swe jobs. I think what we need now is constant discussion (like technical discussion). Slow down to do some research might save some time in the long run.
 - 8/1 17:36 | Big change to the ai pipeline today. Probably 500% more scalable. It is amazing how we went from a slow and stupid vanilla model to a multi-agent model that is able to correctly retrieve data, build response on each other, and immediately streams them. The testing pipeline is a lot better but still requires a lot of setup to be not mixed with production code, which I guess will be something to work on tomorrow.
 - 8/2 12:30 | GUI crashing bug detected but difficult to replicate, will ignore for now :P
+- 8/22 12:01 | Definitely slacking a bit on this dev log, that being said the commits did not slow down a bit. As UI is going through more changes, some bugs and unexpected behavior starts to show up. A lot of these bug will definitely be less apparent if the API speed is faster. I feel like there definitely are somewhere in SQL call that can be greatly improved... That being said, there are so many ui that can be improved to help with user experience.
 
 ## Backlog
 
 - v3 improvements:
-  1. right click: delete classroom, prompt with widget, etc.
-  2. keyboard shortcuts
+  1. keyboard shortcuts
+  2. Loading classroom/ lecture card after their creation

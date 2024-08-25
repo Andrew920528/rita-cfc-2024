@@ -1,5 +1,5 @@
 import {Catalog} from "@carbon/icons-react";
-import {WidgetType} from "./widget";
+import {WidgetCategory, WidgetType} from "./widget";
 import {WidgetMaker} from "./widget";
 
 export type NoteWidgetContent = {
@@ -27,6 +27,7 @@ export class NoteWidgetMaker extends WidgetMaker<NoteWidgetContent> {
       maxWidth: 600,
       minHeight: 200,
       maxHeight: 500,
+      category: WidgetCategory.other,
     };
   }
 }

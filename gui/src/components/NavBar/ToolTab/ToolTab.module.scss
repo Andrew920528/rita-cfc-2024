@@ -1,0 +1,21 @@
+.nav-widget {
+  display: flex;
+  flex-direction: column;
+  .nav-heading {
+    box-sizing: content-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-left: 1rem;
+    text-wrap: nowrap;
+    height: 3rem;
+    min-height: 3rem;
+  }
+  .nav-stack {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+  }
+}

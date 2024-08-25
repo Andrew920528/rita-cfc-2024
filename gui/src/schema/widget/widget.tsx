@@ -21,6 +21,12 @@ export enum WidgetType {
   Worksheet,
 }
 
+export enum WidgetCategory {
+  contextSetter = "環境設定",
+  aiTool = "智慧探索",
+  other = "小工具",
+}
+
 export type WidgetContent =
   | SemesterGoalWidgetContent
   | SemesterPlanWidgetContent
@@ -49,6 +55,7 @@ export type widgetUiBook = {
   maxWidth: number;
   minHeight: number;
   maxHeight: number;
+  category: WidgetCategory;
 };
 export abstract class WidgetMaker<T> {
   abstract init(): T;

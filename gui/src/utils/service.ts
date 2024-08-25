@@ -50,20 +50,24 @@ interface ApiHandlerResult {
   abortControllerRef: React.MutableRefObject<AbortController | null>;
   terminateResponse: () => void;
 }
-export const useApiHandler = (dependencies?: any[]): ApiHandlerResult => {
+export const useApiHandler = ({
+  dependencies = [],
+  runsInBackground = false,
+}: {
+  dependencies?: any[];
+  runsInBackground?: boolean;
+} = {}): ApiHandlerResult => {
   const [loading, setLoading] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
-  useEffect(
-    () => {
-      // Clean up the controller when the component unmounts
-      return () => {
-        if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-        }
-      };
-    },
-    dependencies ? dependencies : []
-  );
+  useEffect(() => {
+    if (runsInBackground) return;
+    // Clean up the controller when the component unmounts
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, dependencies);
   function terminateResponse() {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -280,7 +284,7 @@ export function createClassroomService(
       status: API.SUCCESS,
       data: "classroom created",
     };
-    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+    return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
   }
 
   const endPoint = "/create-classroom";
@@ -332,6 +336,28 @@ export function updateClassroomService(
   });
 }
 
+export function deleteClassroomService(
+  payload: {
+    classroomId: string;
+  },
+  abortSignal?: AbortSignal
+) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "classroom deleted",
+    };
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+
+  // TODO: Add delete classroom endpoint
+  const response = {
+    status: API.SUCCESS,
+    data: "classroom deleted",
+  };
+  return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+}
+
 // ✅ Can create lecture via header dropdown
 export function createLectureService(
   payload: {
@@ -362,6 +388,40 @@ export function createLectureService(
     }), // Convert data object to JSON string
     signal: abortSignal,
   });
+}
+
+export function updateLectureService(
+  payload: {
+    lectureId: string;
+    lectureName: string;
+  },
+  abortSignal?: AbortSignal
+) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "lecture updated",
+    };
+    return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const response = {
+    status: API.SUCCESS,
+    data: "lecture updated",
+  };
+  return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+  // TODO Connect to actual endpoint
+  // const endPoint = "/update-lecture";
+  // return fetch(BASE_URL_DEV + endPoint, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     sessionId: sessionStorage.getItem("sessionId"),
+  //     ...payload,
+  //   }), // Convert data object to JSON string
+  //   signal: abortSignal,
+  // });
 }
 
 // ✅ Can delete lecture via header dropdown

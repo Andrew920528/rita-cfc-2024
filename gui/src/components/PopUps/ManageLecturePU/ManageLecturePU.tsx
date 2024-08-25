@@ -1,30 +1,53 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Textbox from "../../ui_components/Textbox/Textbox";
 import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "../PopUp/PopUp";
-import {useTypedSelector} from "../../../store/store";
-import {useCreateLecture} from "../../../global/globalActions";
+import {useAppDispatch, useTypedSelector} from "../../../store/store";
+import {useDeleteLecture} from "../../../global/globalActions";
 import {generateId, useCompose} from "../../../utils/util";
-import {createLectureService, useApiHandler} from "../../../utils/service";
+import {
+  createLectureService,
+  updateLectureService,
+  useApiHandler,
+} from "../../../utils/service";
 import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
-import styles from "./CreateLecturePU.module.scss";
+import styles from "./ManageLecturePU.module.scss";
+import {LecturesServices} from "../../../features/LectureSlice";
+import {Lecture} from "../../../schema/lecture";
+import {ClassroomsServices} from "../../../features/ClassroomsSlice";
+import {toast} from "react-toastify";
+import {useCreateLectureWithApi} from "../../../global/manageLectureActions";
 
 const cx = classNames.bind(styles);
-type CreateLecturePUProps = {};
+type ManageLecturePUProps = {
+  action: "create" | "edit";
+  editLectureId?: string;
+};
 
-const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
+const ManageLecturePU = (props: ManageLecturePUProps & PopUpProps) => {
   // global states
   const user = useTypedSelector((state) => state.User);
   const currClassroom = useTypedSelector((state) => state.Classrooms.current);
   const lectures = useTypedSelector((state) => state.Lectures);
-  const createLecture = useCreateLecture();
-  const {apiHandler, loading, terminateResponse} = useApiHandler();
+  const deleteLecture = useDeleteLecture();
+  const {apiHandler} = useApiHandler({runsInBackground: true});
+
+  const dispatch = useAppDispatch();
   // local states
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState("");
   const {isComposing, handleCompositionStart, handleCompositionEnd} =
     useCompose();
+
+  useEffect(() => {
+    if (props.action === "edit") {
+      let editLectureId = props.editLectureId ?? "";
+      if (editLectureId === "" || !(editLectureId in lectures.dict)) return;
+      setName(lectures.dict[editLectureId!].name);
+    }
+  }, [props.trigger]);
+
   function resetForm() {
     setName("");
     setNameError("");
@@ -37,7 +60,8 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
     } else if (
       new Set<string>(Object.values(lectures.dict).map((c) => c.name)).has(
         name.trim()
-      )
+      ) &&
+      props.action === "create"
     ) {
       setNameError("課堂名稱已存在");
       validate = false;
@@ -45,27 +69,20 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
     return validate;
   }
 
+  const {handleCreateLecture, handleModifyLecture} = useCreateLectureWithApi();
+
   async function submitForm() {
     if (!validateForm()) {
       return;
     }
-    const newLectureId = user.username + "-lecture-1" + generateId();
-    const lectureData = {
-      lectureId: newLectureId,
-      classroomId: currClassroom,
-      name: name,
-      type: 1,
-    };
-    let r = await apiHandler({
-      apiFunction: (s) => createLectureService(lectureData, s),
-      debug: true,
-      identifier: "createLecture",
-    });
-
-    if (r.status === API.ERROR || r.status === API.ABORTED) {
-      return;
+    if (props.action === "create") {
+      handleCreateLecture({name});
+    } else if (props.action === "edit") {
+      if (props.editLectureId === undefined) {
+        throw new Error("editLectureId is undefined");
+      }
+      handleModifyLecture({editLectureId: props.editLectureId, name});
     }
-    createLecture(lectureData);
 
     // reset form
     resetForm();
@@ -80,11 +97,9 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
       footerBtnProps={{
         icon: <Save size={20} />,
         text: "儲存變更",
-        disabled: loading,
       }}
       reset={() => {
         resetForm();
-        terminateResponse();
       }}
       puAction={async () => {
         await submitForm();
@@ -94,10 +109,10 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
       <div className={cx("create-lecture-form")}>
         <div>
           <Textbox
-            label="課堂名稱"
+            label="計畫名稱"
             errorMsg={nameError}
             mode="form"
-            placeholder="請輸入課堂名稱"
+            placeholder="請輸入計畫名稱"
             value={name}
             onChange={(e) => {
               setName(e.currentTarget.value);
@@ -113,4 +128,4 @@ const CreateLecturePU = (props: CreateLecturePUProps & PopUpProps) => {
   );
 };
 
-export default CreateLecturePU;
+export default ManageLecturePU;

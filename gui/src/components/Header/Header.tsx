@@ -4,29 +4,19 @@ import {FloatingMenuButton} from "../ui_components/FloatingMenu/FloatingMenu";
 import {
   Close,
   User,
-  Edit,
-  Add,
   Settings,
   Logout,
   Menu,
   UserAvatar,
   Save,
 } from "@carbon/icons-react";
-import Dropdown from "../ui_components/Dropdown/Dropdown";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 
 import ManageAccountPU from "../PopUps/ManageAccountPU/ManageAccountPU";
-import ManageClassroomPU from "../PopUps/ManageClassroomPU/ManageClassroomPU";
-import CreateLecturePU from "../PopUps/CreateLecturePU/CreateLecturePU";
-import {LecturesServices} from "../../features/LectureSlice";
-import {ClassroomsServices} from "../../features/ClassroomsSlice";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {UserServices} from "../../features/UserSlice";
-import {useDeleteLecture} from "../../global/globalActions";
 import {API, EMPTY_ID} from "../../global/constants";
 import {
-  deleteLectureService,
-  updateClassroomService,
   updateUserService,
   updateWidgetBulkService,
   useApiHandler,
@@ -44,12 +34,7 @@ type HeaderProps = {
   setOpenNav: (set: boolean) => void;
 };
 const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
-  const dispatch = useAppDispatch();
   const classrooms = useTypedSelector((state) => state.Classrooms);
-  const lectures = useTypedSelector((state) => state.Lectures);
-  const [openSubjectEdit, setOpenSubjectEdit] = useState(false);
-  const deleteLectureState = useDeleteLecture();
-  const {apiHandler, loading, terminateResponse} = useApiHandler();
   const unsavedWidgets = useTypedSelector((state) => state.Widgets.unsaved);
   const scheduleChanged = useTypedSelector(
     (state) => state.User.scheduleChanged
@@ -57,11 +42,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      // Prevent the default action
       event.preventDefault();
-      // Chrome requires returnValue to be set
-
-      // alert("leaving the page");
     };
 
     // Add the event listener
@@ -77,29 +58,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [unsavedWidgets, scheduleChanged]);
-  async function deleteLecture(lectureId: string) {
-    // to prevent race condition where a new widget is created when a lecture is being deleted
-    // even if the server fails to delete the lecture in database,
-    // we should update the frontend state
-    deleteLectureState({lectureId: lectureId, classroomId: classrooms.current});
-    let r = await apiHandler({
-      apiFunction: (s) =>
-        deleteLectureService(
-          {
-            lectureId: lectureId,
-            classroomId: classrooms.current,
-          },
-          s
-        ),
-      debug: true,
-      identifier: "deleteLecture",
-    });
-    if (r.status === API.ERROR || r.status === API.ABORTED) {
-      return;
-    }
-  }
-  // ui controllers
-  const [openLectureCreation, setopenLectureCreation] = useState(false);
+
   return (
     <div className={cx("header")}>
       <div className={cx("header-left")}>
@@ -128,65 +87,6 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
             <p className={cx("subject", "--heading")}>
               {classrooms.dict[classrooms.current].name}
             </p>
-            <IconButton
-              mode={"on-dark"}
-              icon={<Edit size={20} />}
-              onClick={() => {
-                setOpenSubjectEdit(true);
-              }}
-            />
-            <ManageClassroomPU
-              trigger={openSubjectEdit}
-              setTrigger={setOpenSubjectEdit}
-              title={"編輯教室"}
-              action="edit"
-              editClassroomId={classrooms.current}
-            />
-            <Dropdown
-              currId={lectures.current}
-              setCurrId={(id: string) => {
-                dispatch(LecturesServices.actions.setCurrent(id));
-                dispatch(
-                  ClassroomsServices.actions.setLastOpenedLecture({
-                    classroomId: classrooms.current,
-                    lectureId: id,
-                  })
-                );
-              }}
-              idDict={classrooms.dict[classrooms.current].lectureIds.reduce(
-                (dict, lectureId: string) => {
-                  dict[lectureId] = "";
-                  return dict;
-                },
-                {} as {[key: string]: string}
-              )}
-              getName={(id) => {
-                return lectures.dict[id].name;
-              }}
-              placeholder="新增課程以開始備課"
-              flex={false}
-              action={(id: string) => lectures.dict[id].type === 1}
-              actionFunction={(id: string) => {
-                deleteLecture(id);
-              }}
-              extra={
-                <IconButton
-                  flex={true}
-                  mode={"primary"}
-                  text={"新增課程"}
-                  icon={<Add />}
-                  onClick={() => {
-                    setopenLectureCreation(true);
-                  }}
-                />
-              }
-              actionDisabled={() => loading}
-            />
-            <CreateLecturePU
-              title={"新增課程"}
-              trigger={openLectureCreation}
-              setTrigger={setopenLectureCreation}
-            />
           </div>
         )}
 

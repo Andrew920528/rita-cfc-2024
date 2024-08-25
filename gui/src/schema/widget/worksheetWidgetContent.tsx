@@ -1,5 +1,5 @@
 import {Alarm, Document} from "@carbon/icons-react";
-import {WidgetType} from "./widget";
+import {WidgetCategory, WidgetType} from "./widget";
 import {WidgetMaker} from "./widget";
 
 export type WorksheetWidgetContent = {}; // currently content comes from user
@@ -21,6 +21,7 @@ export class WorksheetWidgetMaker extends WidgetMaker<WorksheetWidgetContent> {
       maxWidth: 400,
       minHeight: 300,
       maxHeight: 500,
+      category: WidgetCategory.aiTool,
     };
   }
 }

@@ -1,5 +1,5 @@
 import {CertificateCheck} from "@carbon/icons-react";
-import {WidgetType} from "./widget";
+import {WidgetCategory, WidgetType} from "./widget";
 import {WidgetMaker} from "./widget";
 
 // Defines the content properties
@@ -32,6 +32,7 @@ export class SemesterGoalWidgetMaker extends WidgetMaker<SemesterGoalWidgetConte
       maxWidth: 600,
       minHeight: 200,
       maxHeight: 500,
+      category: WidgetCategory.contextSetter,
     };
   }
 }
