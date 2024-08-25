@@ -4,9 +4,10 @@
   height: 100%;
   .chatroom-wrapper {
     flex-grow: 1;
+    overflow-y: auto;
   }
   .preview-wrapper {
-    height: 20rem;
+    height: 40rem;
     overflow-y: hidden;
     transition: height 0.2s ease-in-out;
     &.hidden {

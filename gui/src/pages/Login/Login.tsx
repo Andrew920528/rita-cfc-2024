@@ -68,6 +68,8 @@ const Login = () => {
       identifier: "login",
     });
 
+    console.log(r);
+
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       if (r.data === "Username or password is incorrect. Please try again.") {
         setUsernameError("使用者名稱或密碼錯誤");

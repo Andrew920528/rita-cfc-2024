@@ -19,12 +19,6 @@ import {ChatMessage as ChatMessageT, SENDER} from "../../schema/chatroom";
 import {useCompose} from "../../utils/util";
 import classNames from "classnames/bind";
 import styles from "./Chatroom.module.scss";
-import {WidgetsServices} from "../../features/WidgetsSlice";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
-import {dracula} from "react-syntax-highlighter/dist/cjs/styles/prism";
-import rehypeRaw from "rehype-raw";
 import {MarkdownRenderer} from "./MarkdownRenderer";
 import {useMessageRita} from "./useMessageRita";
 import {CircularProgress} from "@mui/material";
@@ -33,9 +27,11 @@ import {API} from "../../global/constants";
 import Chip from "../ui_components/Chip/Chip";
 const cx = classNames.bind(styles);
 type ChatroomProps = {
-  absolutePosition?: boolean;
+  absolutePositioned?: boolean;
 };
-const Chatroom = ({}: ChatroomProps) => {
+const Chatroom = ({
+  absolutePositioned: absolutePositioned = true,
+}: ChatroomProps) => {
   // global states
   const chatroom = useTypedSelector(
     (state) => state.Chatrooms.dict[state.Chatrooms.current]
@@ -72,7 +68,11 @@ const Chatroom = ({}: ChatroomProps) => {
   if (!chatroom) return <></>;
   return (
     <div
-      className={cx("chatroom", {collapsed: collapsed}, {maximized: maximized})}
+      className={cx("chatroom", {
+        "absolute-position": absolutePositioned,
+        collapsed: absolutePositioned && collapsed,
+        maximized: absolutePositioned && maximized,
+      })}
     >
       <div className={cx("chatroom-header")}>
         <div className={cx("header-group")}>
@@ -83,26 +83,34 @@ const Chatroom = ({}: ChatroomProps) => {
               : ""}
           </p>
         </div>
-        <div className={cx("header-btn-group")}>
-          <IconButton
-            mode={"ghost"}
-            icon={maximized ? <Minimize /> : <Maximize />}
-            onClick={() => {
-              if (collapsed) setCollapsed(false);
-              setMaximized(!maximized);
-            }}
-          />
-          <IconButton
-            mode={"ghost"}
-            icon={collapsed ? <ChevronUp /> : <ChevronDown />}
-            onClick={() => {
-              if (maximized) setMaximized(false);
-              setCollapsed(!collapsed);
-            }}
-          />
-        </div>
+        {absolutePositioned && (
+          <div className={cx("header-btn-group")}>
+            <IconButton
+              mode={"ghost"}
+              icon={maximized ? <Minimize /> : <Maximize />}
+              onClick={() => {
+                if (collapsed) setCollapsed(false);
+                setMaximized(!maximized);
+              }}
+            />
+            <IconButton
+              mode={"ghost"}
+              icon={collapsed ? <ChevronUp /> : <ChevronDown />}
+              onClick={() => {
+                if (maximized) setMaximized(false);
+                setCollapsed(!collapsed);
+              }}
+            />
+          </div>
+        )}
       </div>
-      <div className={cx("chatroom-content", {collapsed, maximized})}>
+      <div
+        className={cx("chatroom-content", {
+          "absolute-position": absolutePositioned,
+          collapsed: absolutePositioned && collapsed,
+          maximized: absolutePositioned && maximized,
+        })}
+      >
         <ChatroomBody
           messages={chatroom.messages}
           constructingWidget={constructingWidget}
