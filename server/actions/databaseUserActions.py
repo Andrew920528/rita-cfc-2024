@@ -1,3 +1,4 @@
+
 import os
 from dotenv import load_dotenv
 import pymysql
@@ -11,12 +12,14 @@ host = ''
 databaseuser = ''
 databasepassword = ''
 database = ''
-port=0
+port = 0
+
 
 def generate_random_string(length=16):
     characters = string.ascii_letters + string.digits
     random_string = ''.join(random.choice(characters) for _ in range(length))
     return random_string
+
 
 def getDatabaseDetails():
     global host, databaseuser, databasepassword, database, port
@@ -32,7 +35,8 @@ def sessionCheck(sessionId):
     getDatabaseDetails()
     # check if this session exists
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             query = 'SELECT * FROM Log_Table WHERE Session_ID=%s'
@@ -43,35 +47,36 @@ def sessionCheck(sessionId):
 
             if len(results) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'Not logged in'
+                response = {
+                    'status': 'error',
+                    'data': 'Not logged in'
                 }
                 return response
 
             timestamp = results[0][1]
             userId = results[0][2]
 
-            #maybe do something with the timestamp
+            # maybe do something with the timestamp
 
             connection.close()
             response = {
-                'status' : 'success',
-                'data' : userId
+                'status': 'success',
+                'data': userId
             }
             return response
-    
+
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
 
+
 def createUser(username, password, school, alias, occupation, schedule):
-    def verifyString(str) :
+    def verifyString(str):
         if len(str) < 6:
             return False
         if ' ' in str:
@@ -79,23 +84,24 @@ def createUser(username, password, school, alias, occupation, schedule):
         return True
     getDatabaseDetails()
     if not verifyString(username):
-        response = { 
-            'status' : 'error',
-            'data' : {
-                'Error' : 'Invalid username. Username must contain at least 6 characters and must not contain spaces.'
+        response = {
+            'status': 'error',
+            'data': {
+                'Error': 'Invalid username. Username must contain at least 6 characters and must not contain spaces.'
             }
         }
         return response
-    
+
     if not verifyString(password):
-        response = { 
-            'status' : 'error',
-            'data' : 'Invalid password. Password must contain at least 6 characters and must not contain spaces.'
+        response = {
+            'status': 'error',
+            'data': 'Invalid password. Password must contain at least 6 characters and must not contain spaces.'
         }
         return response
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # see if the username already exists
@@ -105,14 +111,14 @@ def createUser(username, password, school, alias, occupation, schedule):
 
             if len(cursor.fetchall()) != 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'username existed'
+                response = {
+                    'status': 'error',
+                    'data': 'username existed'
                 }
                 return response
 
             userId = generate_random_string()
-            
+
             # if not exist, then create user
             query = 'INSERT INTO User_Table (User_ID, Username, Pass'
             values = [userId, username, password]
@@ -120,11 +126,11 @@ def createUser(username, password, school, alias, occupation, schedule):
             if school != None:
                 query += ', School'
                 values.append(school)
-            
+
             if alias != None:
                 query += ', Alias'
                 values.append(alias)
-            
+
             if occupation != None:
                 query += ', Occupation'
                 values.append(occupation)
@@ -137,27 +143,29 @@ def createUser(username, password, school, alias, occupation, schedule):
             values = tuple(values)
 
             cursor.execute(query, values)
-            connection.commit() 
+            connection.commit()
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : 'Account created'
+            response = {
+                'status': 'success',
+                'data': 'Account created'
             }
             return response
-    
+
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
+
 
 def getUser(username, password):
     getDatabaseDetails()
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             query = 'SELECT * FROM User_Table WHERE Username=%s AND Pass=%s'
@@ -168,27 +176,28 @@ def getUser(username, password):
 
             if len(results) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'Username or password is incorrect. Please try again.'
+                response = {
+                    'status': 'error',
+                    'data': 'Username or password is incorrect. Please try again.'
                 }
                 return response
 
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : results
+            response = {
+                'status': 'success',
+                'data': results
             }
             return response
-    
+
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
+
 
 def loginUser(username, password):
     userResponse = getUser(username, password)
@@ -198,14 +207,15 @@ def loginUser(username, password):
         return userResponse
     else:
         userId = userResponse['data'][0][0]
-    
+
     getDatabaseDetails()
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # insert into log table
-            
+
             sessionId = generate_random_string()
 
             query = 'INSERT INTO Log_Table (User_ID, Session_ID) VALUES (%s, %s)'
@@ -244,7 +254,7 @@ def loginUser(username, password):
                 lectureIds = []
 
                 for lecture in lectureResponse:
-        
+
                     lectureId = lecture[0]
                     lectureIds.append(lectureId)
 
@@ -265,11 +275,11 @@ def loginUser(username, password):
 
                         widgets.append(widgetId)
                         widgetDetails.update({
-                            widgetId : {
-                                'id' : widgetId,
-                                'type' : widget[1],
-                                'content' : widget[2],
-                                'classroomId' : widget[3]
+                            widgetId: {
+                                'id': widgetId,
+                                'type': widget[1],
+                                'content': widget[2],
+                                'classroomId': widget[3]
                             }
                         })
 
@@ -277,12 +287,12 @@ def loginUser(username, password):
 
                     lectures.append(lectureId)
                     lectureDetails.update({
-                        lectureId : {
-                            'id' : lectureId,
-                            'name' : lecture[1],
-                            'type' : lecture[2],
-                            'chatroomId' : lecture[3],
-                            'widgetIds' : widgetIds
+                        lectureId: {
+                            'id': lectureId,
+                            'name': lecture[1],
+                            'type': lecture[2],
+                            'chatroomId': lecture[3],
+                            'widgetIds': widgetIds
                         }
                     })
 
@@ -290,52 +300,53 @@ def loginUser(username, password):
 
                 classroomIds.append(classroomId)
                 classroomDetails.update({
-                    classroomId : {
-                        'id' : classroomId,
-                        'name' : classroom[1],
-                        'subject' : classroom[2],
-                        'publisher' : classroom[3],
-                        'lastOpenedSession' : classroom[4],
-                        'grade' : classroom[5],
+                    classroomId: {
+                        'id': classroomId,
+                        'name': classroom[1],
+                        'subject': classroom[2],
+                        'publisher': classroom[3],
+                        'lastOpenedSession': classroom[4],
+                        'grade': classroom[5],
                         # 'plan' : (False if (classroom[6] == None or classroom[6] == b'\x00') else True),
-                        'plan' : classroom[6],
-                        'credits' : classroom[7],
+                        'plan': classroom[6],
+                        'credits': classroom[7],
                         # 'chatroomId' : classroom[8],
-                        'lectureIds' : lectureIds
+                        'lectureIds': lectureIds
                     }
                 })
 
             # end of classroom
-            
+
             connection.close()
-            returnResponse = { 
-                'status' : 'success',
-                'data' : {
-                    'sessionId' : sessionId,
-                    'user' : {
-                        'username' : userResponse['data'][0][1],
-                        'school' : userResponse['data'][0][3],
-                        'alias' : userResponse['data'][0][4],
-                        'occupation' : userResponse['data'][0][5],
-                        'schedule' : userResponse['data'][0][6],
-                        'classroomIds' : classroomIds 
+            returnResponse = {
+                'status': 'success',
+                'data': {
+                    'sessionId': sessionId,
+                    'user': {
+                        'username': userResponse['data'][0][1],
+                        'school': userResponse['data'][0][3],
+                        'alias': userResponse['data'][0][4],
+                        'occupation': userResponse['data'][0][5],
+                        'schedule': userResponse['data'][0][6],
+                        'classroomIds': classroomIds
                     },
-                    'classroomsDict' : classroomDetails,
-                    'lecturesDict' : lectureDetails,
-                    'widgetDict' : widgetDetails
+                    'classroomsDict': classroomDetails,
+                    'lecturesDict': lectureDetails,
+                    'widgetDict': widgetDetails
                 }
             }
-            
+
             return returnResponse
-    
+
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
+
 
 def loginSessionId(sessionId):
     getDatabaseDetails()
@@ -343,16 +354,17 @@ def loginSessionId(sessionId):
     verifySession = sessionCheck(sessionId)
 
     if verifySession['status'] == 'error':
-        response = { 
-            'status' : 'error',
-            'data' : 'sessionId does not exist'
+        response = {
+            'status': 'error',
+            'data': 'sessionId does not exist'
         }
         return response
 
     userId = verifySession['data']
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # get all information from user
@@ -365,9 +377,9 @@ def loginSessionId(sessionId):
 
             if len(results) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'No user associated to this sessionId'
+                response = {
+                    'status': 'error',
+                    'data': 'No user associated to this sessionId'
                 }
                 return response
 
@@ -401,7 +413,7 @@ def loginSessionId(sessionId):
                 lectureIds = []
 
                 for lecture in lectureResponse:
-        
+
                     lectureId = lecture[0]
                     lectureIds.append(lectureId)
 
@@ -422,11 +434,11 @@ def loginSessionId(sessionId):
 
                         widgets.append(widgetId)
                         widgetDetails.update({
-                            widgetId : {
-                                'id' : widgetId,
-                                'type' : widget[1],
-                                'content' : widget[2],
-                                'classroomId' : widget[3]
+                            widgetId: {
+                                'id': widgetId,
+                                'type': widget[1],
+                                'content': widget[2],
+                                'classroomId': widget[3]
                             }
                         })
 
@@ -434,12 +446,12 @@ def loginSessionId(sessionId):
 
                     lectures.append(lectureId)
                     lectureDetails.update({
-                        lectureId : {
-                            'id' : lectureId,
-                            'name' : lecture[1],
-                            'type' : lecture[2],
-                            'classroomId' : lecture[3],
-                            'widgetIds' : widgetIds
+                        lectureId: {
+                            'id': lectureId,
+                            'name': lecture[1],
+                            'type': lecture[2],
+                            'classroomId': lecture[3],
+                            'widgetIds': widgetIds
                         }
                     })
 
@@ -447,56 +459,57 @@ def loginSessionId(sessionId):
 
                 classroomIds.append(classroomId)
                 classroomDetails.update({
-                    classroomId : {
-                        'id' : classroomId,
-                        'name' : classroom[1],
-                        'subject' : classroom[2],
-                        'publisher' : classroom[3],
-                        'lastOpenedSession' : classroom[4],
-                        'grade' : classroom[5],
+                    classroomId: {
+                        'id': classroomId,
+                        'name': classroom[1],
+                        'subject': classroom[2],
+                        'publisher': classroom[3],
+                        'lastOpenedSession': classroom[4],
+                        'grade': classroom[5],
                         # 'plan' : (False if (classroom[6] == None or classroom[6] == b'\x00') else True),
-                        'plan' : classroom[6],
-                        'credits' : classroom[7],
+                        'plan': classroom[6],
+                        'credits': classroom[7],
                         # 'chatroomId' : classroom[8],
-                        'lectureIds' : lectureIds
+                        'lectureIds': lectureIds
                     }
                 })
 
             # end of classroom
-            
+
             connection.close()
-            returnResponse = { 
-                'status' : 'success',
-                'data' : {
-                    'sessionId' : sessionId,
-                    'user' : {
-                        'username' : userResponse[1],
-                        'school' : userResponse[3],
-                        'alias' : userResponse[4],
-                        'occupation' : userResponse[5],
-                        'schedule' : userResponse[6],
-                        'classroomIds' : classroomIds 
+            returnResponse = {
+                'status': 'success',
+                'data': {
+                    'sessionId': sessionId,
+                    'user': {
+                        'username': userResponse[1],
+                        'school': userResponse[3],
+                        'alias': userResponse[4],
+                        'occupation': userResponse[5],
+                        'schedule': userResponse[6],
+                        'classroomIds': classroomIds
                     },
-                    'classroomsDict' : classroomDetails,
-                    'lecturesDict' : lectureDetails,
-                    'widgetDict' : widgetDetails
+                    'classroomsDict': classroomDetails,
+                    'lecturesDict': lectureDetails,
+                    'widgetDict': widgetDetails
                 }
             }
-            
+
             return returnResponse
-    
+
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
 
+
 def updateUser(sessionId, alias, school, occupation, schedule):
     getDatabaseDetails()
-    
+
     verifySession = sessionCheck(sessionId)
 
     if verifySession['status'] == 'error':
@@ -505,7 +518,8 @@ def updateUser(sessionId, alias, school, occupation, schedule):
     userId = verifySession['data']
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # see if there is entry first
@@ -515,9 +529,9 @@ def updateUser(sessionId, alias, school, occupation, schedule):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'User does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'User does not exist'
                 }
                 return response
 
@@ -542,8 +556,8 @@ def updateUser(sessionId, alias, school, occupation, schedule):
 
             if len(values) == 0:
                 response = {
-                    'status' : 'error',
-                    'response' : 'Nothing to change'
+                    'status': 'error',
+                    'response': 'Nothing to change'
                 }
                 return response
 
@@ -557,19 +571,20 @@ def updateUser(sessionId, alias, school, occupation, schedule):
             cursor.execute(query, values)
             connection.commit()
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : 'User updated'
+            response = {
+                'status': 'success',
+                'data': 'User updated'
             }
             return response
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
+
 
 def createClassroom(sessionId, classroomId, classroomName, subject, publisher, grade, plan, credit):
     getDatabaseDetails()
@@ -580,7 +595,7 @@ def createClassroom(sessionId, classroomId, classroomName, subject, publisher, g
         return verifySession
 
     userId = verifySession['data']
-    
+
     # chatroomResponse = createChatroom();
     # chatroomId = ""
 
@@ -588,9 +603,10 @@ def createClassroom(sessionId, classroomId, classroomName, subject, publisher, g
     #     return chatroomResponse
     # else:
     #     chatroomId = chatroomResponse['data']['chatroomId']
-        
+
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # see if there is entry first
@@ -600,9 +616,9 @@ def createClassroom(sessionId, classroomId, classroomName, subject, publisher, g
 
             if len(cursor.fetchall()) != 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'classroomId already exists'
+                response = {
+                    'status': 'error',
+                    'data': 'classroomId already exists'
                 }
                 return response
 
@@ -653,24 +669,24 @@ def createClassroom(sessionId, classroomId, classroomName, subject, publisher, g
             connection.commit()
 
             connection.close()
-            # response = { 
+            # response = {
             #     'status' : 'success',
             #     'data' : {
             #         'message' : 'Classroom created',
             #         'chatroomId' : chatroomId
             #     }
             # }
-            response = { 
-                'status' : 'success',
-                'data' : 'Classroom created'
+            response = {
+                'status': 'success',
+                'data': 'Classroom created'
             }
             return response
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
 
@@ -682,11 +698,12 @@ def updateClassroom(sessionId, classroomId, classroomName, subject, publisher, g
 
     if verifySession['status'] == 'error':
         return verifySession
-    
+
     userId = verifySession['data']
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # see if there is entry first
@@ -696,9 +713,9 @@ def updateClassroom(sessionId, classroomId, classroomName, subject, publisher, g
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'classroomId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'classroomId does not exist'
                 }
                 return response
 
@@ -733,8 +750,8 @@ def updateClassroom(sessionId, classroomId, classroomName, subject, publisher, g
 
             if len(values) == 0:
                 response = {
-                    'status' : 'error',
-                    'response' : 'Nothing to change'
+                    'status': 'error',
+                    'response': 'Nothing to change'
                 }
                 return response
 
@@ -754,24 +771,26 @@ def updateClassroom(sessionId, classroomId, classroomName, subject, publisher, g
             connection.commit()
 
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : 'Classroom updated'
+            response = {
+                'status': 'success',
+                'data': 'Classroom updated'
             }
             return response
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
 
-def getClassroom(classroomId): 
+
+def getClassroom(classroomId):
     getDatabaseDetails()
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             query = 'SELECT * FROM Classroom_Table WHERE Classroom_ID=%s'
@@ -782,46 +801,47 @@ def getClassroom(classroomId):
 
             if len(results) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'classroomId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'classroomId does not exist'
                 }
                 return response
 
             classroomResponse = results[0]
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : {
+            response = {
+                'status': 'success',
+                'data': {
                     'name': classroomResponse[1],
-                    'subject':classroomResponse[2],
+                    'subject': classroomResponse[2],
                     'publisher': classroomResponse[3],
                     'grade': classroomResponse[5],
                     'plan': classroomResponse[6],
-                    'credits' : classroomResponse[7],
+                    'credits': classroomResponse[7],
                 }
             }
             return response
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
 
-def createLecture(sessionId, classroomId, lectureId, lectureName, lectureType): 
+
+def createLecture(sessionId, classroomId, lectureId, lectureName, lectureType):
     getDatabaseDetails()
 
     verifySession = sessionCheck(sessionId)
 
     if verifySession['status'] == 'error':
         return verifySession
-    
+
     userId = verifySession['data']
 
-    chatroomResponse = createChatroom();
+    chatroomResponse = createChatroom()
     chatroomId = ""
 
     if chatroomResponse['data'] == 'error':
@@ -830,7 +850,8 @@ def createLecture(sessionId, classroomId, lectureId, lectureName, lectureType):
         chatroomId = chatroomResponse['data']['chatroomId']
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # see if the classroom exists
@@ -841,9 +862,9 @@ def createLecture(sessionId, classroomId, lectureId, lectureName, lectureType):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'classroomId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'classroomId does not exist'
                 }
                 return response
 
@@ -854,9 +875,9 @@ def createLecture(sessionId, classroomId, lectureId, lectureName, lectureType):
 
             if len(cursor.fetchall()) != 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'lectureId already exist'
+                response = {
+                    'status': 'error',
+                    'data': 'lectureId already exist'
                 }
                 return response
 
@@ -877,27 +898,29 @@ def createLecture(sessionId, classroomId, lectureId, lectureName, lectureType):
             connection.commit()
 
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : {
-                    'message' : 'Lecture created',
-                    'chatroomId' : chatroomId
+            response = {
+                'status': 'success',
+                'data': {
+                    'message': 'Lecture created',
+                    'chatroomId': chatroomId
                 }
             }
             return response
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
 
-def getLecture(lectureId): 
+
+def getLecture(lectureId):
     getDatabaseDetails()
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             query = 'SELECT * FROM Lecture_Table WHERE Lecture_ID=%s'
@@ -908,17 +931,17 @@ def getLecture(lectureId):
 
             if len(results) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'lectureId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'lectureId does not exist'
                 }
                 return response
 
             lectureResponse = results[0]
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : {
+            response = {
+                'status': 'success',
+                'data': {
                     'name': lectureResponse[1],
                     'type': lectureResponse[2]
                 }
@@ -928,11 +951,12 @@ def getLecture(lectureId):
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
+
 
 def updateLecture(sessionId, lectureId, name, type):
     getDatabaseDetails()
@@ -941,11 +965,12 @@ def updateLecture(sessionId, lectureId, name, type):
 
     if verifySession['status'] == 'error':
         return verifySession
-    
+
     userId = verifySession['data']
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # see if there is entry first
@@ -955,9 +980,9 @@ def updateLecture(sessionId, lectureId, name, type):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'lectureId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'lectureId does not exist'
                 }
                 return response
 
@@ -974,11 +999,10 @@ def updateLecture(sessionId, lectureId, name, type):
                 query += 'Lecture_Type=%s, '
                 values.append(type)
 
-
             if len(values) == 0:
                 response = {
-                    'status' : 'error',
-                    'response' : 'Nothing to change'
+                    'status': 'error',
+                    'data': 'Nothing to change'
                 }
                 return response
 
@@ -989,20 +1013,21 @@ def updateLecture(sessionId, lectureId, name, type):
             cursor.execute(query, values)
             connection.commit()
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : 'Lecture updated'
+            response = {
+                'status': 'success',
+                'data': 'Lecture updated'
             }
             return response
-            
+
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
+
 
 def deleteClassroom(sessionId, classroomId):
     getDatabaseDetails()
@@ -1011,14 +1036,15 @@ def deleteClassroom(sessionId, classroomId):
 
     if verifySession['status'] == 'error':
         return verifySession
-    
+
     userId = verifySession['data']
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
-             # see if classroomId exists
+            # see if classroomId exists
 
             query = 'SELECT Classroom_ID FROM Classroom_Table WHERE Classroom_ID=%s'
             values = (classroomId)
@@ -1026,9 +1052,9 @@ def deleteClassroom(sessionId, classroomId):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'classroomId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'classroomId does not exist'
                 }
                 return response
 
@@ -1101,7 +1127,7 @@ def deleteClassroom(sessionId, classroomId):
                 cursor.execute(query, values)
                 connection.commit()
 
-                 # delete chatroomId in Chatroom_Table
+                # delete chatroomId in Chatroom_Table
 
                 query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
                 values = (chatroomId[0][0])
@@ -1137,20 +1163,21 @@ def deleteClassroom(sessionId, classroomId):
             # connection.commit()
 
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : 'Classroom deleted'
+            response = {
+                'status': 'success',
+                'data': 'Classroom deleted'
             }
             return response
 
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
+
 
 def deleteLecture(sessionId, classroomId, lectureId):
     getDatabaseDetails()
@@ -1159,11 +1186,12 @@ def deleteLecture(sessionId, classroomId, lectureId):
 
     if verifySession['status'] == 'error':
         return verifySession
-    
+
     userId = verifySession['data']
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # see if lectureId exists
@@ -1174,9 +1202,9 @@ def deleteLecture(sessionId, classroomId, lectureId):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'lectureId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'lectureId does not exist'
                 }
                 return response
 
@@ -1188,9 +1216,9 @@ def deleteLecture(sessionId, classroomId, lectureId):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'classroomId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'classroomId does not exist'
                 }
                 return response
 
@@ -1202,9 +1230,9 @@ def deleteLecture(sessionId, classroomId, lectureId):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'classroomId and lectureId already is not connected'
+                response = {
+                    'status': 'error',
+                    'data': 'classroomId and lectureId already is not connected'
                 }
                 return response
 
@@ -1265,7 +1293,7 @@ def deleteLecture(sessionId, classroomId, lectureId):
             query = 'DELETE FROM Lecture_Table WHERE Lecture_ID=%s'
             values = (lectureId)
             cursor.execute(query, values)
-            connection.commit() 
+            connection.commit()
 
             # delete chatroomId in Chatroom_Table
 
@@ -1275,32 +1303,33 @@ def deleteLecture(sessionId, classroomId, lectureId):
             connection.commit()
 
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : 'Lecture deleted'
+            response = {
+                'status': 'success',
+                'data': 'Lecture deleted'
             }
             return response
 
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
 
-def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent): 
+
+def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent):
     getDatabaseDetails()
-    
+
     verifySession = sessionCheck(sessionId)
 
     if verifySession['status'] == 'error':
         return verifySession
-    
+
     userId = verifySession['data']
 
-    chatroomResponse = createChatroom();
+    chatroomResponse = createChatroom()
     chatroomId = ""
 
     if chatroomResponse['data'] == 'error':
@@ -1309,10 +1338,11 @@ def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent):
         chatroomId = chatroomResponse['data']['chatroomId']
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
-             # see if the lecture exists
+            # see if the lecture exists
 
             query = 'SELECT Lecture_ID FROM Lecture_Table WHERE Lecture_ID=%s'
             values = (lectureId)
@@ -1320,9 +1350,9 @@ def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'lectureId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'lectureId does not exist'
                 }
                 return response
 
@@ -1333,9 +1363,9 @@ def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent):
 
             if len(cursor.fetchall()) != 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'widgetId already exists'
+                response = {
+                    'status': 'error',
+                    'data': 'widgetId already exists'
                 }
                 return response
 
@@ -1356,22 +1386,23 @@ def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent):
             connection.commit()
 
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : {
-                    'message' : 'Widget created',
-                    'chatroomId' : chatroomId
+            response = {
+                'status': 'success',
+                'data': {
+                    'message': 'Widget created',
+                    'chatroomId': chatroomId
                 }
             }
             return response
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
+
 
 def updateWidget(sessionId, widgetId, widgetContent):
     getDatabaseDetails()
@@ -1380,11 +1411,12 @@ def updateWidget(sessionId, widgetId, widgetContent):
 
     if verifySession['status'] == 'error':
         return verifySession
-    
+
     userId = verifySession['data']
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # see if there is entry first
@@ -1394,9 +1426,9 @@ def updateWidget(sessionId, widgetId, widgetContent):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'widgetId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'widgetId does not exist'
                 }
                 return response
 
@@ -1406,27 +1438,28 @@ def updateWidget(sessionId, widgetId, widgetContent):
             cursor.execute(query, values)
             connection.commit()
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : 'widget updated'
+            response = {
+                'status': 'success',
+                'data': 'widget updated'
             }
             return response
-            
+
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
 
+
 def updateWidgetBulk(sessionId, widgetIds, widgetContents):
-    
+
     if len(widgetIds) != len(widgetContents):
-        response = { 
-            'status' : 'error',
-            'data' : 'Array sizes do not match'
+        response = {
+            'status': 'error',
+            'data': 'Array sizes do not match'
         }
         return response
 
@@ -1436,11 +1469,12 @@ def updateWidgetBulk(sessionId, widgetIds, widgetContents):
 
     if verifySession['status'] == 'error':
         return verifySession
-    
+
     userId = verifySession['data']
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # see if there is entry first
@@ -1451,9 +1485,9 @@ def updateWidgetBulk(sessionId, widgetIds, widgetContents):
 
             if len(cursor.fetchall()) != len(widgetIds):
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'some widgetIds are not found'
+                response = {
+                    'status': 'error',
+                    'data': 'some widgetIds are not found'
                 }
                 return response
 
@@ -1467,19 +1501,20 @@ def updateWidgetBulk(sessionId, widgetIds, widgetContents):
                 connection.commit()
 
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : 'All widgets updated'
+            response = {
+                'status': 'success',
+                'data': 'All widgets updated'
             }
             return response
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
+
 
 def deleteWidget(sessionId, lectureId, widgetId):
     getDatabaseDetails()
@@ -1488,11 +1523,12 @@ def deleteWidget(sessionId, lectureId, widgetId):
 
     if verifySession['status'] == 'error':
         return verifySession
-    
+
     userId = verifySession['data']
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # see if lectureId exists
@@ -1503,9 +1539,9 @@ def deleteWidget(sessionId, lectureId, widgetId):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'lectureId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'lectureId does not exist'
                 }
                 return response
 
@@ -1517,9 +1553,9 @@ def deleteWidget(sessionId, lectureId, widgetId):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'widgetId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'widgetId does not exist'
                 }
                 return response
 
@@ -1531,9 +1567,9 @@ def deleteWidget(sessionId, lectureId, widgetId):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'widgetId and lectureId already is not connected'
+                response = {
+                    'status': 'error',
+                    'data': 'widgetId and lectureId already is not connected'
                 }
                 return response
 
@@ -1566,20 +1602,21 @@ def deleteWidget(sessionId, lectureId, widgetId):
             connection.commit()
 
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : 'Widget deleted'
+            response = {
+                'status': 'success',
+                'data': 'Widget deleted'
             }
             return response
 
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
+
 
 def getLectureAndClassroom(lectureId, classroomId):
     # TODO[Jim]: current latency ~2sec, SQL should be optimized
@@ -1587,26 +1624,28 @@ def getLectureAndClassroom(lectureId, classroomId):
 
     if classroomResponse['status'] == 'error':
         return classroomResponse
-    
+
     lectureResponse = getLecture(lectureId)
 
     if lectureResponse['status'] == 'error':
         return lectureResponse
 
     response = {
-        'status' : 'success',
-        'data' : {
-            'classroom' : classroomResponse,
-            'lecture' : lectureResponse
+        'status': 'success',
+        'data': {
+            'classroom': classroomResponse,
+            'lecture': lectureResponse
         }
     }
 
     return response
 
-def createChatroom(content=""): 
+
+def createChatroom(content=""):
     getDatabaseDetails()
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             created = False
@@ -1630,21 +1669,22 @@ def createChatroom(content=""):
             connection.commit()
 
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : {
-                    'chatroomId' : chatroomId
+            response = {
+                'status': 'success',
+                'data': {
+                    'chatroomId': chatroomId
                 }
             }
             return response
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response
+
 
 def updateChatroom(sessionId, chatoomId, content):
     getDatabaseDetails()
@@ -1653,11 +1693,12 @@ def updateChatroom(sessionId, chatoomId, content):
 
     if verifySession['status'] == 'error':
         return verifySession
-    
+
     userId = verifySession['data']
 
     try:
-        connection = pymysql.connect(host=host, user=databaseuser, password=databasepassword, database=database, port=port)
+        connection = pymysql.connect(
+            host=host, user=databaseuser, password=databasepassword, database=database, port=port)
         with connection.cursor() as cursor:
 
             # see if there is entry first
@@ -1667,9 +1708,9 @@ def updateChatroom(sessionId, chatoomId, content):
 
             if len(cursor.fetchall()) == 0:
                 connection.close()
-                response = { 
-                    'status' : 'error',
-                    'data' : 'chatoomId does not exist'
+                response = {
+                    'status': 'error',
+                    'data': 'chatoomId does not exist'
                 }
                 return response
 
@@ -1679,17 +1720,17 @@ def updateChatroom(sessionId, chatoomId, content):
             cursor.execute(query, values)
             connection.commit()
             connection.close()
-            response = { 
-                'status' : 'success',
-                'data' : 'chatroom updated'
+            response = {
+                'status': 'success',
+                'data': 'chatroom updated'
             }
             return response
-            
+
     except Exception as e:
         print("Error: {}".format(e))
         connection.close()
-        response = { 
-            'status' : 'error',
-            'data' : str(e)
+        response = {
+            'status': 'error',
+            'data': str(e)
         }
         return response

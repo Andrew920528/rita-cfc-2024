@@ -239,6 +239,7 @@ def update_classroom():
         }
         return response
 
+
 @app.route('/delete-classroom', methods=['DELETE'])
 def delete_classroom():
     try:
@@ -274,6 +275,7 @@ def create_lecture():
 
 @app.route('/update-lecture', methods=['POST'])
 def update_lecture():
+    print("hi")
     try:
         sessionId = request.json['sessionId']
         lectureId = request.json['lectureId']
@@ -281,6 +283,7 @@ def update_lecture():
         type = request.json.get('type', None)
         return updateLecture(sessionId, lectureId, name, type)
     except Exception as e:
+        print(e)
         response = {
             'status': 'error',
             'data': 'Missing ' + str(e)
@@ -367,6 +370,8 @@ def delete_widget():
         return response
 
 # chatroom
+
+
 @app.route('/update-chatroom', methods=['POST'])
 def update_chatroom():
     try:
@@ -382,6 +387,8 @@ def update_chatroom():
         return response
 
 # documents
+
+
 @app.route('/docxToPdf', methods=['POST'])
 def docxToPdf():
     try:
@@ -400,6 +407,7 @@ def docxToPdf():
         }
         return response
 
+
 @app.route('/create-blank', methods=['POST'])
 def createBlank():
     try:
@@ -417,6 +425,7 @@ def createBlank():
         }
         return response
 
+
 @app.route('/send-file', methods=['POST'])
 def sendFile():
     try:
@@ -425,6 +434,7 @@ def sendFile():
         return document
     except Exception as e:
         return ""
+
 
 initialize()
 if __name__ == '__main__':

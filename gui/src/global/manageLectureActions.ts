@@ -101,7 +101,7 @@ export const useCreateLectureWithApi = () => {
     let r = await apiHandler({
       apiFunction: () =>
         updateLectureService({
-          lectureName: name,
+          name: name,
           lectureId: editLectureId!!,
         }),
       debug: true,
