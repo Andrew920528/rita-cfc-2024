@@ -1129,17 +1129,11 @@ def deleteClassroom(sessionId, classroomId):
 
                 # delete chatroomId in Chatroom_Table
 
-                query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
-                values = (chatroomId[0][0])
-                cursor.execute(query, values)
-                connection.commit()
-
-            # get chatroomId in Classroom_Table
-
-            # query = 'SELECT Chatroom_ID FROM Classroom_Table WHERE Classroom_ID=%s'
-            # values = (classroomId)
-            # cursor.execute(query, values)
-            # chatroomId = cursor.fetchall()
+                if chatroomId[0][0] != None:
+                    query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
+                    values = (chatroomId[0][0])
+                    cursor.execute(query, values)
+                    connection.commit()
 
             # delete classroom in User_Classroom_Join_Table
 
@@ -1154,13 +1148,6 @@ def deleteClassroom(sessionId, classroomId):
             values = (classroomId)
             cursor.execute(query, values)
             connection.commit()
-
-            # delete chatroomId in Chatroom_Table
-
-            # query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
-            # values = (chatroomId[0][0])
-            # cursor.execute(query, values)
-            # connection.commit()
 
             connection.close()
             response = {
@@ -1269,10 +1256,11 @@ def deleteLecture(sessionId, classroomId, lectureId):
 
                 # delete chatroomId in Chatroom_Table
 
-                query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
-                values = (chatroomId[0][0])
-                cursor.execute(query, values)
-                connection.commit()
+                if chatroomId[0][0] != None:
+                    query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
+                    values = (chatroomId[0][0])
+                    cursor.execute(query, values)
+                    connection.commit()
 
             # delete -> join table first, then lecture tables
 
@@ -1297,10 +1285,11 @@ def deleteLecture(sessionId, classroomId, lectureId):
 
             # delete chatroomId in Chatroom_Table
 
-            query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
-            values = (chatroomId[0][0])
-            cursor.execute(query, values)
-            connection.commit()
+            if chatroomId[0][0] != None:
+                query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
+                values = (chatroomId[0][0])
+                cursor.execute(query, values)
+                connection.commit()
 
             connection.close()
             response = {
@@ -1596,10 +1585,11 @@ def deleteWidget(sessionId, lectureId, widgetId):
 
             # delete chatroomId in Chatroom_Table
 
-            query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
-            values = (chatroomId[0][0])
-            cursor.execute(query, values)
-            connection.commit()
+            if chatroomId[0][0] != None:
+                query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
+                values = (chatroomId[0][0])
+                cursor.execute(query, values)
+                connection.commit()
 
             connection.close()
             response = {
