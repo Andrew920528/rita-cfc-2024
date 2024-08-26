@@ -1100,11 +1100,11 @@ def deleteClassroom(sessionId, classroomId):
                     connection.commit()
 
                     # delete chatroomId in Chatroom_Table
-
-                    query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
-                    values = (chatroomId[0][0])
-                    cursor.execute(query, values)
-                    connection.commit()
+                    if chatroomId[0][0] != None:
+                        query = 'DELETE FROM Chatroom_Table WHERE Chatroom_ID=%s'
+                        values = (chatroomId[0][0])
+                        cursor.execute(query, values)
+                        connection.commit()
 
                 # delete lecture in Classroom_Lecture_Join_Table
 

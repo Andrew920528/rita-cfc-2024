@@ -40,13 +40,13 @@ export const useLoginParseState = () => {
             ? classroomsDict[cid].lectureIds[0]
             : EMPTY_ID;
 
-        let chatroomId = classroomsDict[cid].chatroomId as string;
-        dispatch(
-          ChatroomsServices.actions.addChatroom({
-            id: chatroomId,
-            messages: [],
-          })
-        );
+        // let chatroomId = classroomsDict[cid].chatroomId as string;
+        // dispatch(
+        //   ChatroomsServices.actions.addChatroom({
+        //     id: chatroomId,
+        //     messages: [],
+        //   })
+        // );
       }
       let numClassrooms = responseObj.user.classroomIds.length;
       let currentClassroom =
