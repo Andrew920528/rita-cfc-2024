@@ -39,6 +39,7 @@ export type Widget = {
   id: string;
   type: WidgetType;
   content: WidgetContent;
+  chatroomId: string;
 };
 
 export type Widgets = {

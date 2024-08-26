@@ -279,7 +279,7 @@ def loginUser(username, password):
                                 'id': widgetId,
                                 'type': widget[1],
                                 'content': widget[2],
-                                'classroomId': widget[3]
+                                'chatroomId': widget[3]
                             }
                         })
 
@@ -438,7 +438,7 @@ def loginSessionId(sessionId):
                                 'id': widgetId,
                                 'type': widget[1],
                                 'content': widget[2],
-                                'classroomId': widget[3]
+                                'chatroomId': widget[3]
                             }
                         })
 
@@ -450,7 +450,7 @@ def loginSessionId(sessionId):
                             'id': lectureId,
                             'name': lecture[1],
                             'type': lecture[2],
-                            'classroomId': lecture[3],
+                            'chatroomId': lecture[3],
                             'widgetIds': widgetIds
                         }
                     })

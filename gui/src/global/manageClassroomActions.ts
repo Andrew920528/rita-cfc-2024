@@ -84,7 +84,6 @@ export const useCreateClassroomWithApi = () => {
       credits: credit,
       lectureIds: [],
       lastOpenedLecture: EMPTY_ID,
-      chatroomId: EMPTY_ID,
     };
     // create classroom
     dispatch(ClassroomsServices.actions.addClassroom(newClassroom));
@@ -103,6 +102,7 @@ export const useCreateClassroomWithApi = () => {
       name: "學期規劃",
       type: 0,
       widgetIds: [],
+      chatroomId: EMPTY_ID,
     };
 
     // add reference to classroom's lecture list
@@ -138,7 +138,7 @@ export const useCreateClassroomWithApi = () => {
       deleteClassroomFrontend({classroomId: newClassroomId});
       return;
     }
-    const newChatroomId = r.data["chatroomId"];
+
     r = await apiHandler({
       apiFunction: (s) => createLectureService(lectureData, s),
       debug: true,
@@ -158,9 +158,9 @@ export const useCreateClassroomWithApi = () => {
       });
       return;
     }
-
     // Success clean up
     // add new chatroom to chatrooms dict
+    const newChatroomId = r.data["chatroomId"];
     dispatch(
       ChatroomsServices.actions.addChatroom({
         id: newChatroomId,
@@ -168,8 +168,8 @@ export const useCreateClassroomWithApi = () => {
       })
     );
     dispatch(
-      ClassroomsServices.actions.setChatroom({
-        classroomId: newClassroomId,
+      LecturesServices.actions.setChatroom({
+        lectureId: newLectureId,
         chatroomId: newChatroomId,
       })
     );
@@ -179,11 +179,10 @@ export const useCreateClassroomWithApi = () => {
         loading: false,
       })
     );
-    console.log(user.classroomIds.length);
+
     if (user.classroomIds.length === 0) {
       dispatch(ClassroomsServices.actions.setCurrent(newClassroomId));
       dispatch(LecturesServices.actions.setCurrent(newLectureId));
-      dispatch(ChatroomsServices.actions.setCurrent(newChatroomId));
     }
   }
 
@@ -230,7 +229,6 @@ export const useEditClassroomWithApi = () => {
       lastOpenedLecture: "",
       plan: false,
       credits: credit,
-      chatroomId: EMPTY_ID,
     };
     // update classroom to classrooms dict
     dispatch(ClassroomsServices.actions.editClassroom(newClassroom));

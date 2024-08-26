@@ -9,9 +9,10 @@ import {
   useApiHandler,
 } from "../utils/service";
 import {generateId} from "../utils/util";
-import {API} from "./constants";
+import {API, EMPTY_ID} from "./constants";
 import {useDeleteLecture} from "./globalActions";
 import {toast} from "react-toastify";
+import {ChatroomsServices} from "../features/ChatroomsSlice";
 
 export const useCreateLectureWithApi = () => {
   const user = useTypedSelector((state) => state.User);
@@ -34,6 +35,7 @@ export const useCreateLectureWithApi = () => {
       name: name,
       type: 1,
       widgetIds: [],
+      chatroomId: EMPTY_ID,
     };
 
     // add reference to classroom's lecture list
@@ -63,13 +65,27 @@ export const useCreateLectureWithApi = () => {
       debug: true,
       identifier: "createLecture",
     });
-
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       // remove lecture from frontend
       deleteLecture({lectureId: newLectureId, classroomId: currClassroom});
     }
     dispatch(
       LecturesServices.actions.setLoading({id: newLectureId, loading: false})
+    );
+
+    // add new chatroom to chatrooms dict
+    const newChatroomId = r.data["chatroomId"];
+    dispatch(
+      ChatroomsServices.actions.addChatroom({
+        id: newChatroomId,
+        messages: [],
+      })
+    );
+    dispatch(
+      LecturesServices.actions.setChatroom({
+        lectureId: newLectureId,
+        chatroomId: newChatroomId,
+      })
     );
   }
 

@@ -4,19 +4,10 @@ import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "../PopUp/PopUp";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import {useDeleteLecture} from "../../../global/globalActions";
-import {generateId, useCompose} from "../../../utils/util";
-import {
-  createLectureService,
-  updateLectureService,
-  useApiHandler,
-} from "../../../utils/service";
-import {API} from "../../../global/constants";
+import {useCompose} from "../../../utils/util";
+import {useApiHandler} from "../../../utils/service";
 import classNames from "classnames/bind";
 import styles from "./ManageLecturePU.module.scss";
-import {LecturesServices} from "../../../features/LectureSlice";
-import {Lecture} from "../../../schema/lecture";
-import {ClassroomsServices} from "../../../features/ClassroomsSlice";
-import {toast} from "react-toastify";
 import {useCreateLectureWithApi} from "../../../global/manageLectureActions";
 
 const cx = classNames.bind(styles);

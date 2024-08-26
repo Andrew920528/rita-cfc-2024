@@ -88,7 +88,7 @@ const Dashboard = () => {
         <DashboardPlaceHolder />
       )}
 
-      <Chatroom />
+      <Chatroom type="lecture" />
     </div>
   );
 };

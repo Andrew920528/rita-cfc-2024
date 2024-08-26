@@ -32,6 +32,13 @@ const WidgetsSlice = createSlice({
     setCurrent: (state, action: PayloadAction<string>) => {
       state.current = action.payload;
     },
+    setChatroom: (
+      state,
+      action: PayloadAction<{widgetId: string; chatroomId: string}>
+    ) => {
+      state.dict[action.payload.widgetId].chatroomId =
+        action.payload.chatroomId;
+    },
     updateWidget: (state, action: PayloadAction<{newWidget: Widget}>) => {
       const wid = action.payload.newWidget.id;
       if (!(wid in state.dict)) {

@@ -25,18 +25,24 @@ import {CircularProgress} from "@mui/material";
 import {translateService, useApiHandler} from "../../utils/service";
 import {API} from "../../global/constants";
 import Chip from "../ui_components/Chip/Chip";
+import {WidgetsServices} from "../../features/WidgetsSlice";
+import {ChatroomsServices} from "../../features/ChatroomsSlice";
 const cx = classNames.bind(styles);
 type ChatroomProps = {
   absolutePositioned?: boolean;
+  type: "lecture" | "widget";
 };
 const Chatroom = ({
+  type,
   absolutePositioned: absolutePositioned = true,
 }: ChatroomProps) => {
   // global states
   const chatroom = useTypedSelector(
     (state) => state.Chatrooms.dict[state.Chatrooms.current]
   );
+  const dispatch = useAppDispatch();
   const widgets = useTypedSelector((state) => state.Widgets);
+  const lectures = useTypedSelector((state) => state.Lectures);
   const {
     sendMessage,
     waitingForReply,
@@ -44,6 +50,16 @@ const Chatroom = ({
     terminateResponse,
     ritaError,
   } = useMessageRita();
+
+  useEffect(() => {
+    if (type === "widget") {
+      let chid = widgets.dict[widgets.current].chatroomId;
+      dispatch(ChatroomsServices.actions.setCurrent(chid));
+    } else if (type === "lecture") {
+      let chid = lectures.dict[lectures.current].chatroomId;
+      dispatch(ChatroomsServices.actions.setCurrent(chid));
+    }
+  }, [lectures.current, widgets.current]);
 
   // ui handlers
   const [collapsed, setCollapsed] = useState(false);

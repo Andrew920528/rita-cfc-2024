@@ -39,13 +39,7 @@ const ClassroomsSlice = createSlice({
     ) => {
       state.loading[action.payload.id] = action.payload.loading;
     },
-    setChatroom: (
-      state,
-      action: PayloadAction<{classroomId: string; chatroomId: string}>
-    ) => {
-      state.dict[action.payload.classroomId].chatroomId =
-        action.payload.chatroomId;
-    },
+
     deleteClassroom: (state, action: PayloadAction<string>) => {
       delete state.dict[action.payload];
     },

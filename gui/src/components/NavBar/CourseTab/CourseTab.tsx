@@ -147,9 +147,6 @@ const ClassCard = ({
         lastLecture ? (lastLecture as string) : EMPTY_ID
       )
     );
-    const chatId = classrooms.dict[id].chatroomId;
-
-    dispatch(ChatroomsServices.actions.setCurrent(chatId));
 
     if (lastLecture) {
       const firstWidget = lectures.dict[lastLecture].widgetIds[0];
@@ -261,6 +258,8 @@ const LectureCard = ({
   const lectures = useTypedSelector((state) => state.Lectures);
 
   function clickOnCard() {
+    const chatId = lectures.dict[id].chatroomId;
+
     dispatch(LecturesServices.actions.setCurrent(id));
     dispatch(
       ClassroomsServices.actions.setLastOpenedLecture({

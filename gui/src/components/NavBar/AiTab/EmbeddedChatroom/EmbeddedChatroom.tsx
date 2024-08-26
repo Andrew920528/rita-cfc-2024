@@ -8,7 +8,7 @@ type Props = {};
 const EmbeddedChatroom = (props: Props) => {
   return (
     <div className={cx("embedded-chatroom")}>
-      <Chatroom absolutePositioned={false} />
+      <Chatroom absolutePositioned={false} type="widget" />
     </div>
   );
 };

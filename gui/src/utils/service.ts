@@ -376,7 +376,10 @@ export function createLectureService(
   if (INDEPENDENT_MODE) {
     const response = {
       status: API.SUCCESS,
-      data: "lecture created",
+      data: {
+        chatroomId: "DUMMY_LEC_CHID",
+        message: "Lecture created",
+      },
     };
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
   }
@@ -470,7 +473,10 @@ export function createWidgetService(
   if (INDEPENDENT_MODE) {
     const response = {
       status: API.SUCCESS,
-      data: "widget created",
+      data: {
+        chatroomId: "DUMMY_WID_CHID",
+        message: "Widget created",
+      },
     };
     return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
   }

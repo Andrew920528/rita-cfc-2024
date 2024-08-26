@@ -39,7 +39,13 @@ const LecturesSlice = createSlice({
     setCurrent: (state, action: PayloadAction<string>) => {
       state.current = action.payload;
     },
-
+    setChatroom: (
+      state,
+      action: PayloadAction<{lectureId: string; chatroomId: string}>
+    ) => {
+      state.dict[action.payload.lectureId].chatroomId =
+        action.payload.chatroomId;
+    },
     addWidget: (
       state,
       action: PayloadAction<{lectureId: string; widgetId: string}>
