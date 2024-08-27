@@ -17,5 +17,5 @@ export type Chatroom = {
 
 export type Chatrooms = {
   dict: {[key: string]: Chatroom};
-  current: string;
+  waitingForReply: {[key: string]: boolean};
 };

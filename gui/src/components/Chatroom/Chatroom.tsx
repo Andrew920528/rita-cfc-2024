@@ -31,45 +31,25 @@ const cx = classNames.bind(styles);
 type ChatroomProps = {
   absolutePositioned?: boolean;
   type: "lecture" | "widget";
+  chatroomId: string;
 };
 const Chatroom = ({
   type,
+  chatroomId,
   absolutePositioned: absolutePositioned = true,
 }: ChatroomProps) => {
   // global states
   const chatroom = useTypedSelector(
-    (state) => state.Chatrooms.dict[state.Chatrooms.current]
+    (state) => state.Chatrooms.dict[chatroomId]
   );
   const dispatch = useAppDispatch();
   const widgets = useTypedSelector((state) => state.Widgets);
   const lectures = useTypedSelector((state) => state.Lectures);
-  const {
-    sendMessage,
-    waitingForReply,
-    constructingWidget,
-    terminateResponse,
-    ritaError,
-  } = useMessageRita();
-
-  useEffect(() => {
-    if (type === "widget") {
-      if (
-        widgets.current === EMPTY_ID ||
-        widgets.dict[widgets.current] === undefined
-      )
-        return;
-      let chid = widgets.dict[widgets.current].chatroomId;
-      dispatch(ChatroomsServices.actions.setCurrent(chid));
-    } else if (type === "lecture") {
-      if (
-        lectures.current === EMPTY_ID ||
-        lectures.dict[lectures.current] === undefined
-      )
-        return;
-      let chid = lectures.dict[lectures.current].chatroomId;
-      dispatch(ChatroomsServices.actions.setCurrent(chid));
-    }
-  }, [lectures.current, widgets.current]);
+  const {sendMessage, constructingWidget, terminateResponse, ritaError} =
+    useMessageRita(chatroomId);
+  const waitingForReply = useTypedSelector(
+    (state) => state.Chatrooms.waitingForReply[chatroomId]
+  );
 
   // ui handlers
   const [collapsed, setCollapsed] = useState(false);

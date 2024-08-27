@@ -9,6 +9,7 @@ import {ReactFlowProvider} from "reactflow";
 import {useCreateWidgetWithApi} from "../../global/globalActions";
 import {pointIsInRect} from "../../utils/util";
 import {UiServices} from "../../features/UiSlice";
+import {EMPTY_ID} from "../../global/constants";
 
 const cx = classNames.bind(styles);
 const DashboardPlaceHolder = () => {
@@ -88,7 +89,14 @@ const Dashboard = () => {
         <DashboardPlaceHolder />
       )}
 
-      <Chatroom type="lecture" />
+      <Chatroom
+        type="lecture"
+        chatroomId={
+          lectures.dict[lectures.current]
+            ? lectures.dict[lectures.current].chatroomId
+            : EMPTY_ID
+        }
+      />
     </div>
   );
 };
