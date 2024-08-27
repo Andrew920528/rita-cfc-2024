@@ -8,6 +8,7 @@ import classNames from "classnames/bind";
 import styles from "./AiTab.module.scss";
 import EmbeddedChatroom from "./EmbeddedChatroom/EmbeddedChatroom";
 import PreviewSpace from "./PreviewSpace/PreviewSpace";
+import {CircularProgress} from "@mui/material";
 const cx = classNames.bind(styles);
 
 const dummyPreviewWidgetContent: SemesterGoalWidgetContent = {
@@ -25,6 +26,18 @@ function AiTabPlaceHolder() {
   );
 }
 
+function AiTabPlaceHolderWidgetCreating() {
+  return (
+    <div className={cx("placeholder")}>
+      <IbmWatsonxAssistant size={80} />
+      <div className={cx("placeholder-text")}>
+        <CircularProgress color="inherit" size={12} />
+        正在建立工具，請稍等。
+      </div>
+    </div>
+  );
+}
+
 function AiTab({}: Props) {
   let widgets = useTypedSelector((state) => state.Widgets);
   const [showPreview, setShowPreview] = useState(false);
@@ -33,6 +46,8 @@ function AiTab({}: Props) {
     <div className={cx("ai-tab")}>
       {widgets.current === EMPTY_ID ? (
         <AiTabPlaceHolder />
+      ) : widgets.creating[widgets.current] ? (
+        <AiTabPlaceHolderWidgetCreating />
       ) : (
         <>
           <div className={cx("chatroom-wrapper")}>

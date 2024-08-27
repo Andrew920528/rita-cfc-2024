@@ -26,4 +26,11 @@
   height: 100%;
   color: #525252;
   gap: 1rem;
+
+  .placeholder-text {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
 }
