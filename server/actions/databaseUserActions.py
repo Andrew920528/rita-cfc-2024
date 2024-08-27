@@ -1365,7 +1365,7 @@ def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent):
 
             cursor.execute(query, values)
             connection.commit()
-
+            print("Widget created")
             # connect widget to lecture
 
             query = 'INSERT INTO Lecture_Widget_Table (Lecture_ID, Widget_ID) VALUES(%s, %s)'
@@ -1373,7 +1373,7 @@ def createWidget(sessionId, lectureId, widgetId, widgetType, widgetContent):
 
             cursor.execute(query, values)
             connection.commit()
-
+            print("Widget inserted into lecture")
             connection.close()
             response = {
                 'status': 'success',

@@ -46,6 +46,7 @@ export type Widgets = {
   dict: {[key: string]: Widget};
   current: string;
   unsaved: {[key: string]: true};
+  creating: {[key: string]: true};
 };
 export type widgetUiBook = {
   title: string;

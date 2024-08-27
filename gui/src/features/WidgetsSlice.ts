@@ -6,6 +6,7 @@ const initialState: Widgets = {
   dict: {},
   current: EMPTY_ID,
   unsaved: {},
+  creating: {},
 };
 
 const WidgetsSlice = createSlice({
@@ -59,6 +60,12 @@ const WidgetsSlice = createSlice({
     },
     saveAll: (state) => {
       state.unsaved = {};
+    },
+    setCreating: (state, action: PayloadAction<string>) => {
+      state.creating[action.payload] = true;
+    },
+    unsetCreating: (state, action: PayloadAction<string>) => {
+      delete state.creating[action.payload];
     },
   },
 });

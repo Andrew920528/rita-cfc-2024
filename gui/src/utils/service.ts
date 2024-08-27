@@ -109,7 +109,7 @@ export const useApiHandler = ({
         let msg;
         let stat;
         if (err instanceof DOMException && err.name === "AbortError") {
-          msg = "Request aborted";
+          msg = "Request aborted: " + identifier;
           stat = API.ABORTED;
           if (debug) console.warn(msg);
         } else if (err instanceof Error) {

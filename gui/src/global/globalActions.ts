@@ -12,7 +12,6 @@ import {API, EMPTY_ID} from "./constants";
 import {initSchedule} from "../schema/schedule";
 import {createWidgetService, useApiHandler} from "../utils/service";
 import {RfServices} from "../features/RfSlice";
-import {ApiServices} from "../features/ApiSlice";
 
 /* 
  Functions that requires the use of multiple slices to perform
@@ -127,6 +126,7 @@ export const useCreateWidget = () => {
       // create widget
 
       const newWidget = initWidget(args.widgetId, args.widgetType);
+      console.log(newWidget);
       dispatch(WidgetsServices.actions.addWidget(newWidget));
       // add new widget to lecture
       dispatch(
@@ -164,18 +164,8 @@ export const useCreateWidgetWithApi = () => {
     runsInBackground: true,
   });
   const dispatch = useAppDispatch();
-  const apiSignals = useTypedSelector((state) => state.Api.signals);
   const newWidgetIdRef = useRef<string>();
   // const newWidgetId = username + "-wid-" + generateId();
-  useEffect(() => {
-    // newWidgetIdRef.current = username + "-wid-" + generateId();
-    const newWidgetId = newWidgetIdRef.current;
-    if (!newWidgetId) return;
-    if (newWidgetId in apiSignals && apiSignals[newWidgetId] === true) {
-      terminateResponse();
-      dispatch(ApiServices.actions.deleteSignal({id: newWidgetId}));
-    }
-  }, [apiSignals]);
   async function createWidget(
     widgetType: WidgetType,
     position?: {x: number; y: number}
@@ -188,7 +178,7 @@ export const useCreateWidgetWithApi = () => {
       widgetId: newWidgetId,
       position: position,
     });
-
+    dispatch(WidgetsServices.actions.setCreating(newWidgetId));
     let r = await apiHandler({
       apiFunction: (s) =>
         createWidgetService(
@@ -206,7 +196,7 @@ export const useCreateWidgetWithApi = () => {
       debug: true,
       identifier: "createWidget",
     });
-    dispatch(ApiServices.actions.deleteSignal({id: newWidgetId}));
+    dispatch(WidgetsServices.actions.unsetCreating(newWidgetId));
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       // If api fails, delete widget from store
       deleteWidget({lectureId: lectures.current, widgetId: newWidgetId});
@@ -344,6 +334,10 @@ export const useDeleteWidget = () => {
   return useCallback(
     (args: {lectureId: string; widgetId: string}) => {
       // delete corresponding chatroom (to be changed)
+      console.log(args.widgetId);
+      console.log(widgets.dict[args.widgetId]);
+      if (widgets.dict[args.widgetId].chatroomId === EMPTY_ID) {
+      }
       const chatroomId = widgets.dict[args.widgetId].chatroomId;
       dispatch(ChatroomsServices.actions.deleteChatroom(chatroomId));
 
