@@ -23,7 +23,7 @@ import {MarkdownRenderer} from "./MarkdownRenderer";
 import {useMessageRita} from "./useMessageRita";
 import {CircularProgress} from "@mui/material";
 import {translateService, useApiHandler} from "../../utils/service";
-import {API} from "../../global/constants";
+import {API, EMPTY_ID} from "../../global/constants";
 import Chip from "../ui_components/Chip/Chip";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
@@ -53,9 +53,19 @@ const Chatroom = ({
 
   useEffect(() => {
     if (type === "widget") {
+      if (
+        widgets.current === EMPTY_ID ||
+        widgets.dict[widgets.current] === undefined
+      )
+        return;
       let chid = widgets.dict[widgets.current].chatroomId;
       dispatch(ChatroomsServices.actions.setCurrent(chid));
     } else if (type === "lecture") {
+      if (
+        lectures.current === EMPTY_ID ||
+        lectures.dict[lectures.current] === undefined
+      )
+        return;
       let chid = lectures.dict[lectures.current].chatroomId;
       dispatch(ChatroomsServices.actions.setCurrent(chid));
     }

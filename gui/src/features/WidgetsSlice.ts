@@ -40,7 +40,12 @@ const WidgetsSlice = createSlice({
       state.dict[action.payload.widgetId].chatroomId =
         action.payload.chatroomId;
     },
-    updateWidget: (state, action: PayloadAction<{newWidget: Widget}>) => {
+    updateWidget: (
+      state,
+      action: PayloadAction<{
+        newWidget: Omit<Widget, "chatroomId">;
+      }>
+    ) => {
       const wid = action.payload.newWidget.id;
       if (!(wid in state.dict)) {
         console.error("Attempt to update widget that does not exist");

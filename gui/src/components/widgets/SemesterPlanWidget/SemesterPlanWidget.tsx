@@ -16,11 +16,11 @@ import {WidgetsServices} from "../../../features/WidgetsSlice";
 import classNames from "classnames/bind";
 import styles from "./SemesterPlanWidget.module.scss";
 import {Skeleton} from "@mui/material";
-import {useWidgetLoading} from "../../../features/UiSlice";
 
 const cx = classNames.bind(styles);
 type Props = {
   wid: string;
+  loading: boolean;
 };
 
 const SemesterPlanWidget = (props: Props) => {
@@ -147,8 +147,8 @@ const SemesterPlanWidget = (props: Props) => {
       return acc;
     }, {})
   );
-  const loading = useWidgetLoading(props.wid);
-  return loading ? (
+
+  return props.loading ? (
     <SemesterPlanSkeleton />
   ) : (
     <div className={cx("semester-plan-widget")}>

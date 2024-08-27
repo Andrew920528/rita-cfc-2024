@@ -7,18 +7,18 @@ import {NoteWidgetContent} from "../../../schema/widget/noteWidgetContent";
 import classNames from "classnames/bind";
 import styles from "./NoteWidget.module.scss";
 import {Skeleton} from "@mui/material";
-import {useWidgetLoading} from "../../../features/UiSlice";
 
 const cx = classNames.bind(styles);
 type Props = {
   wid: string;
+  loading: boolean;
 };
 
 const NoteWidget = (props: Props) => {
   const dispatch = useAppDispatch();
   const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
   function editNote(newNote: NoteWidgetContent) {
-    const newWidget: Widget = {
+    const newWidget = {
       id: props.wid,
       type: WidgetType.Note,
       content: newNote,
@@ -29,8 +29,7 @@ const NoteWidget = (props: Props) => {
       })
     );
   }
-  const loading = useWidgetLoading(props.wid);
-  return !loading ? (
+  return !props.loading ? (
     <TextArea
       value={(widget.content as NoteWidgetContent).note}
       onChange={(e) => {

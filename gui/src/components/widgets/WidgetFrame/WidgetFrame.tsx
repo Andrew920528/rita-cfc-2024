@@ -1,5 +1,5 @@
 import React, {ReactElement, useEffect, useState} from "react";
-import {Catalog, Close} from "@carbon/icons-react";
+import {Close} from "@carbon/icons-react";
 import IconButton from "../../ui_components/IconButton/IconButton";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
@@ -16,22 +16,22 @@ import classNames from "classnames/bind";
 import styles from "./WidgetFrame.module.scss";
 import {delay} from "../../../utils/util";
 import WorksheetWidget from "../WorksheetWidget/WorksheetWidget";
-import {abort} from "process";
 import {CircularProgress} from "@mui/material";
 
 const cx = classNames.bind(styles);
 const widgetComponent = (widgetId: string, widgetType: WidgetType) => {
+  let loading = false;
   switch (widgetType) {
     case WidgetType.SemesterGoal:
-      return <SemesterGoalWidget wid={widgetId} />;
+      return <SemesterGoalWidget wid={widgetId} loading={loading} />;
     case WidgetType.SemesterPlan:
-      return <SemesterPlanWidget wid={widgetId} />;
+      return <SemesterPlanWidget wid={widgetId} loading={loading} />;
     case WidgetType.Schedule:
-      return <ScheduleWidget wid={widgetId} />;
+      return <ScheduleWidget wid={widgetId} loading={loading} />;
     case WidgetType.Note:
-      return <NoteWidget wid={widgetId} />;
+      return <NoteWidget wid={widgetId} loading={loading} />;
     case WidgetType.Worksheet:
-      return <WorksheetWidget wid={widgetId} />;
+      return <WorksheetWidget wid={widgetId} loading={loading} />;
     default:
       return null;
   }
