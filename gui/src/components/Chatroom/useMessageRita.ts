@@ -4,7 +4,7 @@ import {messageRitaService, useApiHandler} from "../../utils/service";
 import {SENDER} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {contentIsOfType, widgetBook} from "../../schema/widget/widgetFactory";
-import {EMPTY_ID} from "../../global/constants";
+import {EMPTY_ID, WIDGET_MODIFIER_START_TOKEN} from "../../global/constants";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {replaceTabsWithSpaces} from "../../utils/util";
 
@@ -171,7 +171,7 @@ export const useMessageRita = (chatroomId: string) => {
         })
       );
     } else if (agent === "Widget Modifier") {
-      if (data === "WIDGET_MODIFIER_STARTED") {
+      if (data === WIDGET_MODIFIER_START_TOKEN) {
         let messageObj = {
           text: organizer.currRitaReply,
           sender: SENDER.ai,
@@ -205,15 +205,6 @@ export const useMessageRita = (chatroomId: string) => {
 
     let widgetId = modify_widget_data.widgetId;
 
-    // if (
-    //   !widgetId ||
-    //   widgetId === "" ||
-    //   widgetId !== widgets.current ||
-    //   widgetId === EMPTY_ID
-    // ) {
-    //   console.warn("Could not modify widget with id", widgetId);
-    //   return;
-    // }
     let widgetContent = modify_widget_data.widgetContent;
 
     if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {
@@ -223,6 +214,14 @@ export const useMessageRita = (chatroomId: string) => {
       );
       return;
     }
+
+    dispatch(
+      WidgetsServices.actions.addPreviewWidget({
+        id: widgetId,
+        content: widgetContent,
+      })
+    );
+
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {

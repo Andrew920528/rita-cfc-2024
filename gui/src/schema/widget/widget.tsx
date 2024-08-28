@@ -44,6 +44,7 @@ export type Widget = {
 
 export type Widgets = {
   dict: {[key: string]: Widget};
+  previewDict: {[key: string]: WidgetContent};
   current: string;
   unsaved: {[key: string]: true};
   creating: {[key: string]: true};

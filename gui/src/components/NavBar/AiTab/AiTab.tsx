@@ -40,8 +40,7 @@ function AiTabPlaceHolderWidgetCreating() {
 
 function AiTab({}: Props) {
   let widgets = useTypedSelector((state) => state.Widgets);
-  const [showPreview, setShowPreview] = useState(false);
-
+  console.log(widgets.previewDict[widgets.current]);
   return (
     <div className={cx("ai-tab")}>
       {widgets.current === EMPTY_ID ? (
@@ -53,16 +52,10 @@ function AiTab({}: Props) {
           <div className={cx("chatroom-wrapper")}>
             <EmbeddedChatroom />
           </div>
-          <button
-            onClick={() => {
-              setShowPreview(!showPreview);
-            }}
-          >
-            toggle
-          </button>
+
           <div
             className={cx("preview-wrapper", {
-              hidden: !showPreview,
+              hidden: !widgets.previewDict[widgets.current],
             })}
           >
             <PreviewSpace />

@@ -1,9 +1,10 @@
 import {PayloadAction, createSlice, current} from "@reduxjs/toolkit";
 import {Widget, Widgets} from "../schema/widget/widget";
-import {EMPTY_ID} from "../global/constants";
+import {EMPTY_ID, PREVIEW_WID} from "../global/constants";
 
 const initialState: Widgets = {
   dict: {},
+  previewDict: {},
   current: EMPTY_ID,
   unsaved: {},
   creating: {},
@@ -23,6 +24,12 @@ const WidgetsSlice = createSlice({
     },
     addWidget: (state, action: PayloadAction<Widget>) => {
       state.dict[action.payload.id] = action.payload;
+    },
+    addPreviewWidget: (
+      state,
+      action: PayloadAction<Pick<Widget, "id" | "content">>
+    ) => {
+      state.previewDict[action.payload.id] = action.payload.content;
     },
     deleteWidget: (state, action: PayloadAction<string>) => {
       delete state.dict[action.payload];

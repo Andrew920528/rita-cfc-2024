@@ -4,7 +4,7 @@ import {Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../../components/ui_components/Textbox/Textbox";
 import {Link} from "react-router-dom";
 import {loginService, useApiHandler} from "../../utils/service";
-import {API, EMPTY_ID} from "../../global/constants";
+import {API} from "../../global/constants";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 import classNames from "classnames/bind";
 import styles from "./Login.module.scss";

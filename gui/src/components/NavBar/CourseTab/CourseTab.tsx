@@ -25,6 +25,7 @@ import {
 import DeleteClassroomPU from "../../PopUps/DeleteClassroomPU/DeleteClassroomPU";
 import DeleteLecturePU from "../../PopUps/DeleteLecturePU/DeleteLecturePU";
 import {CircularProgress} from "@mui/material";
+import useVerticalHandle from "../VerticalHandle/VerticalHandle";
 type Props = {};
 const cx = classNames.bind(styles);
 const CourseTab = (props: Props) => {
@@ -33,9 +34,15 @@ const CourseTab = (props: Props) => {
   const lectures = useTypedSelector((state) => state.Lectures);
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
+  const {VerticalHandle, mainHeight, setMainHeight} = useVerticalHandle({
+    minHeight: 0,
+  });
   return (
     <div className={cx("course-tab")}>
-      <div className={cx("tab-section")}>
+      <div
+        className={cx("tab-section", "classroom-section")}
+        style={{height: `${mainHeight}%`}}
+      >
         <div className={cx("nav-heading")}>
           <p className={cx("--heading")}>教室</p>
           <IconButton
@@ -72,9 +79,12 @@ const CourseTab = (props: Props) => {
           ))}
         </div>
       </div>
-
+      <VerticalHandle />
       {/* =========== Lecture Section =========== */}
-      <div className={cx("tab-section")}>
+      <div
+        className={cx("tab-section", "lecture-section")}
+        style={{height: `${100 - mainHeight}%`}}
+      >
         <div className={cx("nav-heading")}>
           <p className={cx("--heading")}>計畫</p>
           <IconButton

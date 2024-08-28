@@ -7,11 +7,14 @@
     overflow-y: auto;
   }
   .preview-wrapper {
-    height: 40rem;
+    height: 18rem;
+    min-height: 18rem;
+
     overflow-y: hidden;
-    transition: height 0.2s ease-in-out;
+    transition: min-height 0.2s ease-in-out, height 0.2s ease-in-out;
     &.hidden {
       height: 0;
+      min-height: 0;
     }
   }
 }
