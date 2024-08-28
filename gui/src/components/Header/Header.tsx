@@ -35,6 +35,7 @@ type HeaderProps = {
 };
 const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
   const classrooms = useTypedSelector((state) => state.Classrooms);
+  const lectures = useTypedSelector((state) => state.Lectures);
   const unsavedWidgets = useTypedSelector((state) => state.Widgets.unsaved);
   const scheduleChanged = useTypedSelector(
     (state) => state.User.scheduleChanged
@@ -86,6 +87,9 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
           <div className={cx("subject-banner")}>
             <p className={cx("subject", "--heading")}>
               {classrooms.dict[classrooms.current].name}
+            </p>
+            <p className={cx("subject-lecture", "--heading")}>
+              | {lectures.dict[lectures.current].name}
             </p>
           </div>
         )}
