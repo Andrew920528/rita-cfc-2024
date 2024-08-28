@@ -75,7 +75,6 @@ const Login = () => {
       }
       return;
     }
-
     loginParseState(r.data);
     reset();
     dispatch(LoginStatusServices.actions.setComplete(true));

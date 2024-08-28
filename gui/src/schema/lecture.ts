@@ -3,9 +3,11 @@ export type Lecture = {
   name: string;
   type: number;
   widgetIds: string[]; // in order
+  chatroomId: string;
 };
 
 export type Lectures = {
   dict: {[key: string]: Lecture};
   current: string;
+  loading: {[key: string]: boolean};
 };

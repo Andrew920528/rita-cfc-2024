@@ -8,10 +8,10 @@ import {EMPTY_ID} from "../../global/constants";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {replaceTabsWithSpaces} from "../../utils/util";
 
-export const useMessageRita = () => {
+export const useMessageRita = (chatroomId: string) => {
   const dispatch = useAppDispatch();
   const chatroom = useTypedSelector(
-    (state) => state.Chatrooms.dict[state.Chatrooms.current]
+    (state) => state.Chatrooms.dict[chatroomId]
   );
 
   const classroomId = useTypedSelector((state) => state.Classrooms.current);
@@ -20,15 +20,23 @@ export const useMessageRita = () => {
   );
   const widgets = useTypedSelector((state) => state.Widgets);
   // api handlers
-  const {
-    abortControllerRef,
-    loading: waitingForReply,
-    setLoading: setWaitingForReply,
-    terminateResponse,
-  } = useApiHandler([classroomId]);
+  const {abortControllerRef, terminateResponse} = useApiHandler({
+    dependencies: [classroomId],
+    runsInBackground: true,
+  });
 
   const [ritaError, setRitaError] = useState("");
   const [constructingWidget, setConstructingWidget] = useState(false);
+
+  function setWaitingForReply(waiting: boolean) {
+    dispatch(
+      ChatroomsServices.actions.setWaitingForReply({
+        chatroomId: chatroom.id,
+        waiting: waiting,
+      })
+    );
+  }
+
   async function sendMessage(text: string) {
     abortControllerRef.current = new AbortController();
     let newMessage = {
@@ -107,7 +115,6 @@ export const useMessageRita = () => {
           handleChunk(l, organizer);
         }
       }
-      console.log(organizer.currRitaReply);
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
         console.warn(error.message);
@@ -242,7 +249,6 @@ export const useMessageRita = () => {
 
   return {
     sendMessage,
-    waitingForReply,
     constructingWidget,
     terminateResponse,
     ritaError,

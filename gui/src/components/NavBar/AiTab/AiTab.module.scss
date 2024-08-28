@@ -1,0 +1,36 @@
+.ai-tab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .chatroom-wrapper {
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+  .preview-wrapper {
+    height: 40rem;
+    overflow-y: hidden;
+    transition: height 0.2s ease-in-out;
+    &.hidden {
+      height: 0;
+    }
+  }
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
+  height: 100%;
+  color: #525252;
+  gap: 1rem;
+
+  .placeholder-text {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}

@@ -13,9 +13,9 @@ export const SENDER = {
 export type Chatroom = {
   id: string;
   messages: ChatMessage[];
-};
+}; // TODO: Also need to store a widgetPreview obj
 
 export type Chatrooms = {
   dict: {[key: string]: Chatroom};
-  current: string;
+  waitingForReply: {[key: string]: boolean};
 };

@@ -4,7 +4,7 @@ import {EMPTY_ID} from "../global/constants";
 
 const initialState: Chatrooms = {
   dict: {},
-  current: EMPTY_ID,
+  waitingForReply: {},
 };
 
 const ChatroomsSlice = createSlice({
@@ -16,9 +16,6 @@ const ChatroomsSlice = createSlice({
     },
     deleteChatroom: (state, action: PayloadAction<string>) => {
       delete state.dict[action.payload];
-    },
-    setCurrent: (state, action: PayloadAction<string>) => {
-      state.current = action.payload;
     },
     addMessage: (
       state,
@@ -35,6 +32,12 @@ const ChatroomsSlice = createSlice({
       let lastIndex = state.dict[action.payload.chatroomId].messages.length - 1;
       state.dict[action.payload.chatroomId].messages[lastIndex] =
         action.payload.message;
+    },
+    setWaitingForReply: (
+      state,
+      action: PayloadAction<{chatroomId: string; waiting: boolean}>
+    ): void => {
+      state.waitingForReply[action.payload.chatroomId] = action.payload.waiting;
     },
   },
 });

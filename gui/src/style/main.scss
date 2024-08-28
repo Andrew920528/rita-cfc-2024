@@ -10,4 +10,5 @@
 // Style overrides
 :root {
   --toastify-color-success: #a56eff;
+  overflow: hidden; // absolute positioned item should not cause overflow;
 }

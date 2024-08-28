@@ -6,6 +6,7 @@ const initialState: Widgets = {
   dict: {},
   current: EMPTY_ID,
   unsaved: {},
+  creating: {},
 };
 
 const WidgetsSlice = createSlice({
@@ -32,7 +33,19 @@ const WidgetsSlice = createSlice({
     setCurrent: (state, action: PayloadAction<string>) => {
       state.current = action.payload;
     },
-    updateWidget: (state, action: PayloadAction<{newWidget: Widget}>) => {
+    setChatroom: (
+      state,
+      action: PayloadAction<{widgetId: string; chatroomId: string}>
+    ) => {
+      state.dict[action.payload.widgetId].chatroomId =
+        action.payload.chatroomId;
+    },
+    updateWidget: (
+      state,
+      action: PayloadAction<{
+        newWidget: Omit<Widget, "chatroomId">;
+      }>
+    ) => {
       const wid = action.payload.newWidget.id;
       if (!(wid in state.dict)) {
         console.error("Attempt to update widget that does not exist");
@@ -52,6 +65,12 @@ const WidgetsSlice = createSlice({
     },
     saveAll: (state) => {
       state.unsaved = {};
+    },
+    setCreating: (state, action: PayloadAction<string>) => {
+      state.creating[action.payload] = true;
+    },
+    unsetCreating: (state, action: PayloadAction<string>) => {
+      delete state.creating[action.payload];
     },
   },
 });

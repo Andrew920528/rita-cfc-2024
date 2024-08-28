@@ -9,10 +9,10 @@ export type Classroom = {
   lastOpenedLecture?: string; // not saved in db
   plan: boolean;
   credits: number;
-  chatroomId: string; // chatroom id
 };
 
 export type Classrooms = {
   dict: {[key: string]: Classroom};
   current: string;
+  loading: {[key: string]: boolean};
 };

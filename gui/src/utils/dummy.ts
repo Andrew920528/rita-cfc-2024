@@ -2,177 +2,124 @@ import {initSchedule} from "../schema/schedule";
 
 const dummyUser = {
   username: "dum-username",
-  sessionId: "ENCRYPTED STUFF",
   alias: "使用者B",
   school: "dum-school",
   occupation: "dum-occupation",
   schedule: JSON.stringify(initSchedule),
   classroomIds: [
-    "dum-username-classroom-lxu4e0arlztbh3snv7d",
-    "dum-username-classroom-lxu4ehnp9fs1h0utd99",
+    "AndrewHsu-classroom-m0c0kfxfeu4hrnlqu0m",
+    "AndrewHsu-classroom-m0c2daalm8fervq92ue",
   ],
 };
 
 let classrooms = {
   dict: {
-    "dum-username-classroom-lxu4e0arlztbh3snv7d": {
-      id: "dum-username-classroom-lxu4e0arlztbh3snv7d",
-      name: "502數學",
-      subject: "數學",
+    "AndrewHsu-classroom-m0c0kfxfeu4hrnlqu0m": {
+      credits: 3,
       grade: "五上",
-      publisher: "康軒",
+      id: "AndrewHsu-classroom-m0c0kfxfeu4hrnlqu0m",
+      lastOpenedSession: "Tue, 27 Aug 2024 05:56:00 GMT",
       lectureIds: [
-        "dum-username-lecture-0lxu4e0arrfasuz2nqkr",
-        "dum-username-lecture-1lxu4fmhmbdlc2qmwws",
-        "dum-username-lecture-1lxu4fvybzy672umsmu",
+        "AndrewHsu-lecture-0m0c0kfxfsk3mhsojb3p",
+        "AndrewHsu-lecture-1m0c0kq17kpa68meaj2",
+        "AndrewHsu-lecture-1m0c18bbzg2q5iwvbq2a",
       ],
-      plan: false,
-      credits: 3,
-      chatroomId: "dum-username-chatroom-lxu4e0ar5bk5nztua7",
+      name: "502數學",
+      plan: 0,
+      publisher: "數學",
+      subject: "數學",
+      lastOpenedLecture: "AndrewHsu-lecture-0m0c0kfxfsk3mhsojb3p",
     },
-    "dum-username-classroom-lxu4ehnp9fs1h0utd99": {
-      id: "dum-username-classroom-lxu4ehnp9fs1h0utd99",
-      name: "601 藝文",
-      subject: "藝文",
-      grade: "六上",
-      publisher: "綜合",
-      lectureIds: [
-        "dum-username-lecture-0lxu4ehnpe0uoaf3zevw",
-        "dum-username-lecture-1lxu4f8m4q6noyg5746",
-        "dum-username-lecture-1lxu4g6rppit5sp56eu",
-      ],
-      plan: false,
-      credits: 3,
-      chatroomId: "dum-username-chatroom-lxu4ehnpjhxo7es2c3r",
+    "AndrewHsu-classroom-m0c2daalm8fervq92ue": {
+      credits: 5,
+      grade: "五上",
+      id: "AndrewHsu-classroom-m0c2daalm8fervq92ue",
+      lastOpenedSession: "Tue, 27 Aug 2024 06:46:25 GMT",
+      lectureIds: ["AndrewHsu-lecture-0m0c2daal853830ajriu"],
+      name: "501 國文",
+      plan: 0,
+      publisher: "康軒",
+      subject: "國文",
+      lastOpenedLecture: "AndrewHsu-lecture-0m0c2daal853830ajriu",
     },
   },
-  current: "dum-username-classroom-lxu4ehnp9fs1h0utd99",
+  current: "AndrewHsu-classroom-m0c0kfxfeu4hrnlqu0m",
 };
 let lectures = {
   dict: {
-    "dum-username-lecture-0lxu4e0arrfasuz2nqkr": {
-      id: "dum-username-lecture-0lxu4e0arrfasuz2nqkr",
+    "AndrewHsu-lecture-0m0c0kfxfsk3mhsojb3p": {
+      chatroomId: "jO8dpnhhG1O5vfuZ",
+      id: "AndrewHsu-lecture-0m0c0kfxfsk3mhsojb3p",
       name: "學期規劃",
       type: 0,
-      widgetIds: [],
+      widgetIds: ["AndrewHsu-wid-m0c2evrs5n6ir1e01bk"],
     },
-    "dum-username-lecture-0lxu4ehnpe0uoaf3zevw": {
-      id: "dum-username-lecture-0lxu4ehnpe0uoaf3zevw",
+    "AndrewHsu-lecture-0m0c2daal853830ajriu": {
+      chatroomId: "5hCxbwZaHrCvB8Tt",
+      id: "AndrewHsu-lecture-0m0c2daal853830ajriu",
       name: "學期規劃",
       type: 0,
       widgetIds: [
-        "dum-username-wid-lxu4el0kwcyyfcov1vq",
-        "dum-username-wid-lxu4elg2lfnarfers8",
-        "dum-username-wid-lxu4em4t3ljnn4ddb3r",
+        "AndrewHsu-wid-m0c2dwnzn0dt2pewiql",
+        "AndrewHsu-wid-m0c2fkvbvkuoh1vnnep",
       ],
     },
-    "dum-username-lecture-1lxu4f8m4q6noyg5746": {
-      id: "dum-username-lecture-1lxu4f8m4q6noyg5746",
-      name: "課程一",
+    "AndrewHsu-lecture-1m0c0kq17kpa68meaj2": {
+      chatroomId: "R6zlnDJKZcLSvpTn",
+      id: "AndrewHsu-lecture-1m0c0kq17kpa68meaj2",
+      name: "課1",
       type: 1,
-      widgetIds: [
-        "dum-username-wid-lxu4fakw3fckulw2l1b",
-        "dum-username-wid-lxu4fbgulel7u60vjol",
-      ],
+      widgetIds: ["AndrewHsu-wid-m0c2eea3aw5e6nc1qjq"],
     },
-    "dum-username-lecture-1lxu4fmhmbdlc2qmwws": {
-      id: "dum-username-lecture-1lxu4fmhmbdlc2qmwws",
-      name: "第一張",
-      type: 1,
-      widgetIds: [
-        "dum-username-wid-lxu4fne0habpt5sqpks",
-        "dum-username-wid-lxu4fo90t6q5nmg4wxs",
-        "dum-username-wid-lxu4fomft5jcfmifz3c",
-        "dum-username-wid-lxu4fpoexzcylwyebkr",
-      ],
-    },
-    "dum-username-lecture-1lxu4fvybzy672umsmu": {
-      id: "dum-username-lecture-1lxu4fvybzy672umsmu",
-      name: "第二張",
+    "AndrewHsu-lecture-1m0c18bbzg2q5iwvbq2a": {
+      chatroomId: "R6X7NYkWWZtk7beJ",
+      id: "AndrewHsu-lecture-1m0c18bbzg2q5iwvbq2a",
+      name: "課2",
       type: 1,
       widgetIds: [],
-    },
-    "dum-username-lecture-1lxu4g6rppit5sp56eu": {
-      id: "dum-username-lecture-1lxu4g6rppit5sp56eu",
-      name: "課程二",
-      type: 1,
-      widgetIds: ["dum-username-wid-lxu4g9fh5ayjtgihsqo"],
     },
   },
-  current: "dum-username-lecture-1lxu4g6rppit5sp56eu",
+  current: "AndrewHsu-lecture-0m0c0kfxfsk3mhsojb3p",
 };
 let widgets = {
   dict: {
-    "dum-username-wid-lxu4el0kwcyyfcov1vq": {
-      id: "dum-username-wid-lxu4el0kwcyyfcov1vq",
+    "AndrewHsu-wid-m0c2dwnzn0dt2pewiql": {
+      chatroomId: "a85DoD1PNCwjnCBC",
+      content: `{"goals": ["Learning Goal: Read"]}`,
+      id: "AndrewHsu-wid-m0c2dwnzn0dt2pewiql",
       type: 0,
-      content: `{"goals": []}`,
     },
-    "dum-username-wid-lxu4elg2lfnarfers8": {
-      id: "dum-username-wid-lxu4elg2lfnarfers8",
-      type: 1,
+    "AndrewHsu-wid-m0c2eea3aw5e6nc1qjq": {
+      chatroomId: "z7V1ABwSdaoKHFTX",
       content: `{
-        "headings": ["週目", "目標", "教材"],
-        "rows": [{"週目": "1", "目標": "畢卡索", "教材": "漢字ドリル第1章"}]
+        "note": "12, 1, 22, 90"
       }`,
-    },
-    "dum-username-wid-lxu4em4t3ljnn4ddb3r": {
-      id: "dum-username-wid-lxu4em4t3ljnn4ddb3r",
+      id: "AndrewHsu-wid-m0c2eea3aw5e6nc1qjq",
       type: 2,
-      content: '{"note": "你好呀"}',
     },
-    "dum-username-wid-lxu4fakw3fckulw2l1b": {
-      id: "dum-username-wid-lxu4fakw3fckulw2l1b",
-      type: 2,
-      content: '{"note": ""}',
-    },
-    "dum-username-wid-lxu4fbgulel7u60vjol": {
-      id: "dum-username-wid-lxu4fbgulel7u60vjol",
-      type: 1,
+    "AndrewHsu-wid-m0c2evrs5n6ir1e01bk": {
+      chatroomId: "QOizxxrFfrq7LaPL",
       content: `{
-        "headings": ["週目", "目標", "教材"],
+        "headings": ["週目", "課程單元", "活動"],
         "rows": [
-          {"週目": "1", "目標": "基本的な漢字の習得", "教材": "漢字ドリル第1章"}
+          {
+            "週目": "1",
+            "課程單元": "a",
+            "活動": ""
+          }
         ]
       }`,
-    },
-    "dum-username-wid-lxu4fne0habpt5sqpks": {
-      id: "dum-username-wid-lxu4fne0habpt5sqpks",
-      type: 0,
-      content: `{"goals": []}`,
-    },
-    "dum-username-wid-lxu4fo90t6q5nmg4wxs": {
-      id: "dum-username-wid-lxu4fo90t6q5nmg4wxs",
+      id: "AndrewHsu-wid-m0c2evrs5n6ir1e01bk",
       type: 1,
-      content: `{
-        "headings": ["週目", "目標", "教材"],
-        "rows": [
-          {"週目": "1", "目標": "基本的な漢字の習得", "教材": "漢字ドリル第1章"}
-        ]
-      }`,
     },
-    "dum-username-wid-lxu4fomft5jcfmifz3c": {
-      id: "dum-username-wid-lxu4fomft5jcfmifz3c",
-      type: 2,
-      content: `{"note": ""}`,
-    },
-    "dum-username-wid-lxu4fpoexzcylwyebkr": {
-      id: "dum-username-wid-lxu4fpoexzcylwyebkr",
-      type: 3,
+    "AndrewHsu-wid-m0c2fkvbvkuoh1vnnep": {
+      chatroomId: "qeUVar7vfJTHb7f3",
       content: `{}`,
-    },
-    "dum-username-wid-lxu4g9fh5ayjtgihsqo": {
-      id: "dum-username-wid-lxu4g9fh5ayjtgihsqo",
-      type: 1,
-      content: `{
-        "headings": ["週目", "目標", "教材"],
-        "rows": [
-          {"週目": "1", "目標": "基本的な漢字の習得", "教材": "漢字ドリル第1章"}
-        ]
-      }`,
+      id: "AndrewHsu-wid-m0c2fkvbvkuoh1vnnep",
+      type: 4,
     },
   },
-  current: "dum-username-wid-lxu4g9fh5ayjtgihsqo",
+  current: "AndrewHsu-wid-m0c2dwnzn0dt2pewiql",
   unsaved: {},
 };
 export const dummyLoginData: any = {
@@ -237,5 +184,5 @@ export const dummyRitaResponse = [
   '{"agent": "Rita", "data": "?"}|T|',
   '{"agent": "Rita", "data": ""}|T|',
   '{"agent": "Widget Modifier", "data": "WIDGET_MODIFIER_STARTED"}|T|',
-  `{"agent": "Widget Modifier", "data": "{\\"widgetId\\": \\"dum-username-wid-lxu4el0kwcyyfcov1vq\\",\\"widgetContent\\": {\\"goals\\": [\\"你好\\"]}}"}|T|`,
+  `{"agent": "Widget Modifier", "data": "{\\"widgetId\\": \\"AndrewHsu-wid-m0c2dwnzn0dt2pewiql\\",\\"widgetContent\\": {\\"goals\\": [\\"你好\\"]}}"}|T|`,
 ];

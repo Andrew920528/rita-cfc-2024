@@ -8,15 +8,22 @@
     flex-direction: row;
     flex-grow: 1;
     overflow: hidden; // to fix the height
+    .handle {
+      cursor: col-resize;
+      width: 5px;
+      background-color: #f4f4f4;
+      z-index: 1;
+    }
     .navbar-wrapper {
-      width: 20rem;
       overflow: hidden; // for hiding content when collapsed
-      transition: width 0.2s ease-in-out;
-
+      transition: max-width 0.2s ease-in-out;
+      z-index: 2;
       background-color: white;
       box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+      max-width: 80vw;
+
       &.collapsed {
-        width: 0;
+        max-width: 0;
       }
     }
     .dashboard-wrapper {

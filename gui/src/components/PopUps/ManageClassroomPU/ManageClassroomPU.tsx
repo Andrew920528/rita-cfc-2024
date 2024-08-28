@@ -4,22 +4,15 @@ import {Save} from "@carbon/icons-react";
 import PopUp, {PopUpProps} from "../PopUp/PopUp";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import Dropdown from "../../ui_components/Dropdown/Dropdown";
-import {Classroom} from "../../../schema/classroom";
-import {ClassroomsServices} from "../../../features/ClassroomsSlice";
-import {
-  useCreateClassroom,
-  useCreateLecture,
-} from "../../../global/globalActions";
-import {generateId, isNumeric, useCompose} from "../../../utils/util";
-import {API, EMPTY_ID} from "../../../global/constants";
-import {
-  createClassroomService,
-  createLectureService,
-  updateClassroomService,
-  useApiHandler,
-} from "../../../utils/service";
+import {isNumeric, useCompose} from "../../../utils/util";
+
+import {useApiHandler} from "../../../utils/service";
 import classNames from "classnames/bind";
 import styles from "./ManageClassroomPU.module.scss";
+import {
+  useCreateClassroomWithApi,
+  useEditClassroomWithApi,
+} from "../../../global/manageClassroomActions";
 
 const cx = classNames.bind(styles);
 type ManageClassroomPUProps = {
@@ -48,8 +41,6 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   const dispatch = useAppDispatch();
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
-  const createClassroomState = useCreateClassroom();
-  const createLecture = useCreateLecture();
 
   // local states
   const [name, setName] = useState("");
@@ -68,8 +59,11 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   const {isComposing, handleCompositionStart, handleCompositionEnd} =
     useCompose();
   // api handler
-  const {apiHandler, loading, terminateResponse} = useApiHandler();
-
+  const {apiHandler} = useApiHandler({
+    runsInBackground: true,
+  });
+  const {createClassroom} = useCreateClassroomWithApi();
+  const {editClassroom} = useEditClassroomWithApi();
   useEffect(() => {
     // ensures the classroom to be edited exists, then populates the form
     if (props.action === "edit") {
@@ -141,104 +135,32 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     return validate;
   }
 
-  async function createClassroom() {
-    const newClassroomId: string = user.username + "-classroom-" + generateId();
-    const newLectureId: string = user.username + "-lecture-0" + generateId();
-    let classroomData = {
-      classroomId: newClassroomId,
-      classroomName: name,
-      subject: subject === "其他" ? otherSubject : subject,
-      publisher: subject === "其他" ? "綜合" : publisher,
-      grade: grade,
-      plan: false,
-      credits: parseInt(credit),
-    };
-
-    let r = await apiHandler({
-      apiFunction: (s) =>
-        createClassroomService(
-          {
-            ...classroomData,
-          },
-          s
-        ),
-      debug: true,
-      identifier: "createClassroom",
-    });
-    if (r.status === API.ERROR || r.status === API.ABORTED) {
-      return;
-    }
-    const newChatroomId = r.data["chatroomId"];
-    let lectureData = {
-      lectureId: newLectureId,
-      name: "學期規劃",
-      classroomId: newClassroomId,
-      type: 0,
-    };
-    r = await apiHandler({
-      apiFunction: (s) => createLectureService(lectureData, s),
-      debug: true,
-      identifier: "createLecture",
-    });
-    if (r.status === API.ERROR || r.status === API.ABORTED) {
-      return;
-    }
-
-    createClassroomState({...classroomData, chatroomId: newChatroomId});
-    // create initial lecture & corresponding chatroom
-    createLecture(lectureData);
-  }
-
-  async function editClassroom() {
-    // update global states
-    if (props.editClassroomId === undefined) {
-      throw new Error("editClassroomId is undefined");
-    }
-    const classroomId = props.editClassroomId ? props.editClassroomId : "";
-    let newClassroom: Classroom = {
-      id: classroomId,
-      name: name,
-      subject: subject === "其他" ? otherSubject : subject,
-      grade: grade,
-      publisher: subject === "其他" ? "綜合" : publisher,
-      // these are not editable
-      lectureIds: [],
-      lastOpenedLecture: "",
-      plan: false,
-      credits: parseInt(credit),
-      chatroomId: EMPTY_ID,
-    };
-    let r = await apiHandler({
-      apiFunction: (s) =>
-        updateClassroomService(
-          {
-            classroomId: classroomId,
-            classroomName: name,
-            subject: subject === "其他" ? otherSubject : subject,
-            publisher: subject === "其他" ? "綜合" : publisher,
-            grade: grade,
-            credits: parseInt(credit),
-          },
-          s
-        ),
-      debug: true,
-      identifier: "editClassroom",
-    });
-    if (r.status === API.ERROR || r.status === API.ABORTED) {
-      return;
-    }
-    // update classroom to classrooms dict
-    dispatch(ClassroomsServices.actions.editClassroom(newClassroom));
-  }
-
   async function submitForm() {
     if (!validateForm()) {
       return;
     }
+    let sub = subject === "其他" ? otherSubject : subject;
+    let pub = subject === "其他" ? "綜合" : publisher;
     if (props.action === "create") {
-      await createClassroom();
+      createClassroom({
+        name: name,
+        subject: sub,
+        grade: grade,
+        publisher: pub,
+        credit: parseInt(credit),
+      });
     } else if (props.action === "edit") {
-      await editClassroom();
+      if (props.editClassroomId === undefined) {
+        throw new Error("editClassroomId is undefined");
+      }
+      editClassroom({
+        editClassroomId: props.editClassroomId,
+        name: name,
+        subject: sub,
+        grade: grade,
+        publisher: pub,
+        credit: parseInt(credit),
+      });
     }
     // reset form
     resetForm();
@@ -253,14 +175,12 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       footerBtnProps={{
         icon: <Save size={20} />,
         text: "儲存變更",
-        disabled: loading,
       }}
       puAction={() => {
         submitForm();
       }}
       reset={() => {
         resetForm();
-        terminateResponse();
       }}
       isComposing={isComposing}
     >

@@ -8,3 +8,5 @@ export enum API {
 }
 
 export const EMPTY_ID = "NONE";
+
+export const PREVIEW_WID = "PREVIEW";

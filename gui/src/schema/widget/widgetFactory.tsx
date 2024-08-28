@@ -4,6 +4,7 @@ import {SemesterPlanWidgetMaker} from "./semesterPlanWidgetContent";
 import {WidgetType, Widget} from "./widget";
 import {SemesterGoalWidgetMaker} from "./semesterGoalWidgetContent";
 import {WorksheetWidgetMaker} from "./worksheetWidgetContent";
+import {EMPTY_ID} from "../../global/constants";
 
 const factory = {
   [WidgetType.SemesterGoal]: new SemesterGoalWidgetMaker(),
@@ -19,9 +20,10 @@ export function initWidget(id: string, type: WidgetType): Widget {
       id,
       type,
       content: {},
+      chatroomId: EMPTY_ID,
     };
   }
-  let widget = {id, type, content: factory[type].init()};
+  let widget = {id, type, content: factory[type].init(), chatroomId: EMPTY_ID};
   return widget;
 }
 // Defines UI related properties

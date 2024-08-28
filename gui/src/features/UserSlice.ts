@@ -38,6 +38,11 @@ const UserSlice = createSlice({
     addClassroom: (state, action: PayloadAction<string>) => {
       state.classroomIds.push(action.payload);
     },
+    deleteClassroom: (state, action: PayloadAction<string>) => {
+      state.classroomIds = state.classroomIds.filter(
+        (cId) => cId !== action.payload
+      );
+    },
     updateSchedule: (state, action: PayloadAction<"add" | "delete">) => {
       if (action.payload === "add") {
         state.schedule.push({

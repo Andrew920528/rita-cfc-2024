@@ -5,10 +5,10 @@ import {WidgetsServices} from "../../../features/WidgetsSlice";
 import {WidgetType, Widget} from "../../../schema/widget/widget";
 import {SemesterGoalWidgetContent} from "../../../schema/widget/semesterGoalWidgetContent";
 import {Skeleton} from "@mui/material";
-import {useWidgetLoading} from "../../../features/UiSlice";
 
 type Props = {
   wid: string;
+  loading: boolean;
 };
 
 const SemesterGoalWidget = (props: Props) => {
@@ -28,7 +28,7 @@ const SemesterGoalWidget = (props: Props) => {
     let newSemesterGoal: SemesterGoalWidgetContent = {
       goals: processedGoalList,
     };
-    const newWidget: Widget = {
+    const newWidget = {
       id: props.wid,
       type: WidgetType.SemesterGoal,
       content: newSemesterGoal,
@@ -48,8 +48,8 @@ const SemesterGoalWidget = (props: Props) => {
     displayString = displayString.replace(/\n$/, "");
     setDisplayGoals(displayString);
   }, [widget]);
-  const loading = useWidgetLoading(props.wid);
-  return !loading ? (
+
+  return !props.loading ? (
     <TextArea
       value={displayGoals}
       onChange={(e) => {

@@ -1,8 +1,12 @@
 .floating-menu {
   z-index: 100;
+
   &.dark {
     color: white;
     background-color: #393939;
+  }
+  &.card {
+    background-color: white;
   }
   position: absolute;
 
@@ -13,7 +17,7 @@
 
 .fm-button {
   display: flex;
-
+  height: 100%;
   &.a-top.a-left.t-top.t-left {
     flex-direction: column-reverse;
     .fm-wrapper {
@@ -144,7 +148,7 @@
 
   &.a-bottom.a-right.t-bottom.t-left {
     flex-direction: row;
-    align-items: end;
+    // align-items: end;
     .fm-wrapper {
       display: flex;
       flex-direction: column-reverse;
