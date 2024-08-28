@@ -25,8 +25,9 @@
 - 8/1 17:36 | Big change to the ai pipeline today. Probably 500% more scalable. It is amazing how we went from a slow and stupid vanilla model to a multi-agent model that is able to correctly retrieve data, build response on each other, and immediately streams them. The testing pipeline is a lot better but still requires a lot of setup to be not mixed with production code, which I guess will be something to work on tomorrow.
 - 8/2 12:30 | GUI crashing bug detected but difficult to replicate, will ignore for now :P
 - 8/22 12:01 | Definitely slacking a bit on this dev log, that being said the commits did not slow down a bit. As UI is going through more changes, some bugs and unexpected behavior starts to show up. A lot of these bug will definitely be less apparent if the API speed is faster. I feel like there definitely are somewhere in SQL call that can be greatly improved... That being said, there are so many ui that can be improved to help with user experience.
+- 8/28 11:07 | Navbar and the underlying structure is refactored and upgraded. The new interface definitely opened up new possibilities for multi-agent workflow. It is a fun upgrade that I believe definitely add to the project. Dealing with artifacts is definitely becoming more apparent, but for the most part the current code base is scalable enough. Given no new bug if found (which is optimisitic), the structure of ui and database structure will stable.
 
-## Backlog
+# Backlog
 
 - v3 improvements:
   1. keyboard shortcuts
