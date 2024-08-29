@@ -3,8 +3,18 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: hidden;
   .preview-content {
     overflow-y: auto;
-    flex-grow: 1;
+    flex: 1;
+    padding: 1rem;
+  }
+  .preview-placeholder {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 100%;
+    justify-content: center;
+    text-align: center;
   }
 }

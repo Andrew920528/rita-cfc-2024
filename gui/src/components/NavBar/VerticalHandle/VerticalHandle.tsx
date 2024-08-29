@@ -10,6 +10,7 @@ type Props = {
   initHeight?: number;
   minHeight?: number;
   maxHeight?: number;
+
   onMouseDown?: (e?: React.MouseEvent<HTMLDivElement>) => void;
   onMouseUp?: (e?: React.MouseEvent<HTMLDivElement>) => void;
   onMouseMove?: (e?: MouseEvent) => void;
@@ -21,6 +22,7 @@ const useVerticalHandle = ({
   initHeight = 50,
   minHeight = 0,
   maxHeight = 100,
+
   onMouseDown,
   onMouseUp,
   onMouseMove,
@@ -29,6 +31,7 @@ const useVerticalHandle = ({
   const [onPress, setOnPress] = useState<boolean>(false);
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
+
     const startY = e.clientY;
     const startHeight = mainHeight;
     document.body.style.cursor = "row-resize";
@@ -69,11 +72,16 @@ const useVerticalHandle = ({
     document.addEventListener("mouseup", handleMouseUp);
   };
 
-  function VerticalHandle() {
+  function VerticalHandle({disabled = false}: {disabled?: boolean}) {
     return (
       <div
-        onMouseDown={(e) => handleMouseDown(e)}
-        className={cx("handle", {onPress})}
+        onMouseDown={(e) => {
+          if (disabled) {
+            return;
+          }
+          handleMouseDown(e);
+        }}
+        className={cx("handle", {onPress, disabled})}
       />
     );
   }

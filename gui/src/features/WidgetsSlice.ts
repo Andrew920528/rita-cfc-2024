@@ -1,6 +1,6 @@
 import {PayloadAction, createSlice, current} from "@reduxjs/toolkit";
 import {Widget, Widgets} from "../schema/widget/widget";
-import {EMPTY_ID, PREVIEW_WID} from "../global/constants";
+import {EMPTY_ID} from "../global/constants";
 
 const initialState: Widgets = {
   dict: {},
@@ -38,12 +38,20 @@ const WidgetsSlice = createSlice({
       }
     },
     setCurrent: (state, action: PayloadAction<string>) => {
+      if (!(action.payload in state.dict)) {
+        state.current = EMPTY_ID; //
+        return;
+      }
       state.current = action.payload;
     },
     setChatroom: (
       state,
       action: PayloadAction<{widgetId: string; chatroomId: string}>
     ) => {
+      if (!(action.payload.widgetId in state.dict)) {
+        console.error("Attempt to set chatroom for widget that does not exist");
+        return;
+      }
       state.dict[action.payload.widgetId].chatroomId =
         action.payload.chatroomId;
     },
@@ -81,6 +89,10 @@ const WidgetsSlice = createSlice({
     },
   },
 });
+
+function validateWidget(state: Widgets, wid: string) {
+  return wid in state.dict;
+}
 
 // This is used to perform action
 export const WidgetsServices = {

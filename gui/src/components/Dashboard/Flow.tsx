@@ -124,6 +124,9 @@ function WidgetNode(props: NodeProps) {
   const widgets = useTypedSelector((state) => state.Widgets);
   if (widgets.dict[props.id] === undefined) return;
   return (
-    <WidgetFrame widgetId={props.id} selected={props.id === widgets.current} />
+    <WidgetFrame
+      widget={widgets.dict[props.id]}
+      selected={props.id === widgets.current}
+    />
   );
 }

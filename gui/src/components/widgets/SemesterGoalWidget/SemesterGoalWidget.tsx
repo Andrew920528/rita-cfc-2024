@@ -7,13 +7,13 @@ import {SemesterGoalWidgetContent} from "../../../schema/widget/semesterGoalWidg
 import {Skeleton} from "@mui/material";
 
 type Props = {
-  wid: string;
+  widget: Widget;
   loading: boolean;
 };
 
-const SemesterGoalWidget = (props: Props) => {
+const SemesterGoalWidget = ({widget, loading}: Props) => {
   const dispatch = useAppDispatch();
-  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
+
   const [displayGoals, setDisplayGoals] = useState(
     (widget.content as SemesterGoalWidgetContent).goals.join("\n")
   );
@@ -29,7 +29,7 @@ const SemesterGoalWidget = (props: Props) => {
       goals: processedGoalList,
     };
     const newWidget = {
-      id: props.wid,
+      id: widget.id,
       type: WidgetType.SemesterGoal,
       content: newSemesterGoal,
     };
@@ -49,7 +49,7 @@ const SemesterGoalWidget = (props: Props) => {
     setDisplayGoals(displayString);
   }, [widget]);
 
-  return !props.loading ? (
+  return !loading ? (
     <TextArea
       value={displayGoals}
       onChange={(e) => {

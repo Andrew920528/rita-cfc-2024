@@ -77,7 +77,7 @@ function AiTab({}: Props) {
           >
             <EmbeddedChatroom />
           </div>
-          <VerticalHandle />
+          <VerticalHandle disabled={collapsePreview} />
           <div
             className={cx("preview-wrapper", {
               collapse: collapsePreview,

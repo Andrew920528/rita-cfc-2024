@@ -19,13 +19,12 @@ import {Skeleton} from "@mui/material";
 
 const cx = classNames.bind(styles);
 type Props = {
-  wid: string;
+  widget: Widget;
   loading: boolean;
 };
 
-const SemesterPlanWidget = (props: Props) => {
+const SemesterPlanWidget = ({widget, loading}: Props) => {
   const dispatch = useAppDispatch();
-  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
   const widgetContent = widget.content as SemesterPlanWidgetContent;
   function addColumn(table: SemesterPlanWidgetContent, newHeading: string) {
     const originalTable = structuredClone(table);
@@ -47,7 +46,7 @@ const SemesterPlanWidget = (props: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
-          id: props.wid,
+          id: widget.id,
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
@@ -66,7 +65,7 @@ const SemesterPlanWidget = (props: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
-          id: props.wid,
+          id: widget.id,
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
@@ -85,7 +84,7 @@ const SemesterPlanWidget = (props: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
-          id: props.wid,
+          id: widget.id,
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
@@ -108,7 +107,7 @@ const SemesterPlanWidget = (props: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
-          id: props.wid,
+          id: widget.id,
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
@@ -123,7 +122,7 @@ const SemesterPlanWidget = (props: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
-          id: props.wid,
+          id: widget.id,
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
@@ -148,7 +147,7 @@ const SemesterPlanWidget = (props: Props) => {
     }, {})
   );
 
-  return props.loading ? (
+  return loading ? (
     <SemesterPlanSkeleton />
   ) : (
     <div className={cx("semester-plan-widget")}>

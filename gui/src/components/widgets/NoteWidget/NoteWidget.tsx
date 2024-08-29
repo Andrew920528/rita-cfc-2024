@@ -10,16 +10,15 @@ import {Skeleton} from "@mui/material";
 
 const cx = classNames.bind(styles);
 type Props = {
-  wid: string;
+  widget: Widget;
   loading: boolean;
 };
 
-const NoteWidget = (props: Props) => {
+const NoteWidget = ({widget, loading}: Props) => {
   const dispatch = useAppDispatch();
-  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
   function editNote(newNote: NoteWidgetContent) {
     const newWidget = {
-      id: props.wid,
+      id: widget.id,
       type: WidgetType.Note,
       content: newNote,
     };
@@ -29,7 +28,7 @@ const NoteWidget = (props: Props) => {
       })
     );
   }
-  return !props.loading ? (
+  return !loading ? (
     <TextArea
       value={(widget.content as NoteWidgetContent).note}
       onChange={(e) => {

@@ -7,4 +7,10 @@
   &.onPress {
     background-color: $primary-color;
   }
+  &.disabled {
+    cursor: default;
+    &.onPress {
+      background-color: #e0e0e0;
+    }
+  }
 }
