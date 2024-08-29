@@ -33,6 +33,9 @@ const PreviewSpace = (props: Props) => {
         mode: "actual",
       })
     );
+    dispatch(
+      WidgetsServices.actions.setApplyPreview({id: widget.id, value: true})
+    );
 
     // clean up preview
     dispatch(WidgetsServices.actions.removePreviewWidget(widget.id));

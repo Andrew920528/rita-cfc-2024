@@ -1,13 +1,19 @@
 import {PayloadAction, createSlice, current} from "@reduxjs/toolkit";
 import {Widget, Widgets} from "../schema/widget/widget";
 import {EMPTY_ID} from "../global/constants";
+import {act} from "react";
 
-const initialState: Widgets = {
+type MiscProps = {
+  applyPreview: {[id: string]: boolean};
+};
+
+const initialState: Widgets & MiscProps = {
   dict: {},
   previewDict: {},
   current: EMPTY_ID,
   unsaved: {},
   creating: {},
+  applyPreview: {},
 };
 
 const WidgetsSlice = createSlice({
@@ -104,6 +110,12 @@ const WidgetsSlice = createSlice({
     },
     unsetCreating: (state, action: PayloadAction<string>) => {
       delete state.creating[action.payload];
+    },
+    setApplyPreview: (
+      state,
+      action: PayloadAction<{id: string; value: boolean}>
+    ) => {
+      state.applyPreview[action.payload.id] = action.payload.value;
     },
   },
 });

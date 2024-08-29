@@ -266,8 +266,6 @@ const LectureCard = ({
   const lectures = useTypedSelector((state) => state.Lectures);
 
   function clickOnCard() {
-    const chatId = lectures.dict[id].chatroomId;
-
     dispatch(LecturesServices.actions.setCurrent(id));
     dispatch(
       ClassroomsServices.actions.setLastOpenedLecture({
@@ -275,6 +273,13 @@ const LectureCard = ({
         lectureId: id,
       })
     );
+
+    const firstWidget = lectures.dict[id].widgetIds[0];
+    if (firstWidget) {
+      dispatch(WidgetsServices.actions.setCurrent(firstWidget));
+    } else {
+      dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
+    }
   }
   const [openLectureModify, setOpenLectureModify] = useState(false);
   const [openLectureDelete, setOpenLectureDelete] = useState(false);

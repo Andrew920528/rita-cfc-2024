@@ -90,6 +90,23 @@ const WidgetFrame = ({selected, widget}: WidgetFrameProps) => {
 
   // handle animation
   const [isExiting, setIsExiting] = useState(false);
+  const [shineAnimation, setShineAnimation] = useState(false);
+  const applySignal = useTypedSelector((state) => state.Widgets.applyPreview);
+
+  async function doAnimation() {
+    setShineAnimation(true);
+    await delay(1000);
+    setShineAnimation(false);
+    dispatch(
+      WidgetsServices.actions.setApplyPreview({id: widget.id, value: false})
+    );
+  }
+  useEffect(() => {
+    if (widget.id in applySignal && applySignal[widget.id]) {
+      doAnimation();
+    }
+  }, [applySignal]);
+
   return (
     <div
       className={cx("widget-frame", {
@@ -130,6 +147,7 @@ const WidgetFrame = ({selected, widget}: WidgetFrameProps) => {
       </div>
       <div className={cx("wf-content")}>{widgetComponent(widget)}</div>
       <div className={cx("draggable-area")} />
+      <div className={cx({shine: shineAnimation})}></div>
     </div>
   );
 };

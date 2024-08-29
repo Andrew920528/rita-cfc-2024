@@ -1,8 +1,6 @@
 @use "../../../style/abstract/index" as *;
 
 $dashboard-gap: 0.5rem;
-// Keyframe is set to 100% after the animation
-// so reverse does not work
 @keyframes popup {
   0% {
     opacity: 0;
@@ -24,10 +22,38 @@ $dashboard-gap: 0.5rem;
     transform: scale(0.5);
   }
 }
+
+@keyframes shine {
+  0% {
+    left: -75%;
+  }
+  50% {
+    left: 125%;
+  }
+  100% {
+    left: 125%;
+  }
+}
+
+.shine {
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: skewX(-30deg);
+  animation: shine 1s;
+  z-index: 200;
+}
+
 .widget-frame {
   background-color: white;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  position: relative;
+
   &.selected {
     outline: 2px solid $primary-color;
   }
