@@ -5,15 +5,15 @@ import {WidgetsServices} from "../../../features/WidgetsSlice";
 import {WidgetType, Widget} from "../../../schema/widget/widget";
 import {SemesterGoalWidgetContent} from "../../../schema/widget/semesterGoalWidgetContent";
 import {Skeleton} from "@mui/material";
+import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 
-type Props = {
-  wid: string;
-  loading: boolean;
-};
-
-const SemesterGoalWidget = (props: Props) => {
+const SemesterGoalWidget = ({
+  widget,
+  loading,
+  preview = false,
+}: WidgetContentProps) => {
   const dispatch = useAppDispatch();
-  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
+
   const [displayGoals, setDisplayGoals] = useState(
     (widget.content as SemesterGoalWidgetContent).goals.join("\n")
   );
@@ -29,13 +29,14 @@ const SemesterGoalWidget = (props: Props) => {
       goals: processedGoalList,
     };
     const newWidget = {
-      id: props.wid,
+      id: widget.id,
       type: WidgetType.SemesterGoal,
       content: newSemesterGoal,
     };
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: newWidget,
+        mode: preview ? "preview" : "actual",
       })
     );
   }
@@ -49,7 +50,7 @@ const SemesterGoalWidget = (props: Props) => {
     setDisplayGoals(displayString);
   }, [widget]);
 
-  return !props.loading ? (
+  return !loading ? (
     <TextArea
       value={displayGoals}
       onChange={(e) => {

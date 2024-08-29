@@ -25,6 +25,7 @@ import {
 import DeleteClassroomPU from "../../PopUps/DeleteClassroomPU/DeleteClassroomPU";
 import DeleteLecturePU from "../../PopUps/DeleteLecturePU/DeleteLecturePU";
 import {CircularProgress} from "@mui/material";
+import useVerticalHandle from "../VerticalHandle/VerticalHandle";
 type Props = {};
 const cx = classNames.bind(styles);
 const CourseTab = (props: Props) => {
@@ -33,9 +34,13 @@ const CourseTab = (props: Props) => {
   const lectures = useTypedSelector((state) => state.Lectures);
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
+  const {VerticalHandle, mainHeight} = useVerticalHandle({unit: "percent"});
   return (
     <div className={cx("course-tab")}>
-      <div className={cx("tab-section")}>
+      <div
+        className={cx("tab-section", "classroom-section")}
+        style={{height: `${mainHeight}%`}}
+      >
         <div className={cx("nav-heading")}>
           <p className={cx("--heading")}>教室</p>
           <IconButton
@@ -72,9 +77,12 @@ const CourseTab = (props: Props) => {
           ))}
         </div>
       </div>
-
+      <VerticalHandle />
       {/* =========== Lecture Section =========== */}
-      <div className={cx("tab-section")}>
+      <div
+        className={cx("tab-section", "lecture-section")}
+        style={{height: `${100 - mainHeight}%`}}
+      >
         <div className={cx("nav-heading")}>
           <p className={cx("--heading")}>計畫</p>
           <IconButton
@@ -258,8 +266,6 @@ const LectureCard = ({
   const lectures = useTypedSelector((state) => state.Lectures);
 
   function clickOnCard() {
-    const chatId = lectures.dict[id].chatroomId;
-
     dispatch(LecturesServices.actions.setCurrent(id));
     dispatch(
       ClassroomsServices.actions.setLastOpenedLecture({
@@ -267,6 +273,13 @@ const LectureCard = ({
         lectureId: id,
       })
     );
+
+    const firstWidget = lectures.dict[id].widgetIds[0];
+    if (firstWidget) {
+      dispatch(WidgetsServices.actions.setCurrent(firstWidget));
+    } else {
+      dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
+    }
   }
   const [openLectureModify, setOpenLectureModify] = useState(false);
   const [openLectureDelete, setOpenLectureDelete] = useState(false);

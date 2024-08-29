@@ -9,4 +9,4 @@ export enum API {
 
 export const EMPTY_ID = "NONE";
 
-export const PREVIEW_WID = "PREVIEW";
+export const WIDGET_MODIFIER_START_TOKEN = "WIDGET_MODIFIER_STARTED";

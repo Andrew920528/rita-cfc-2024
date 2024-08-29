@@ -5,18 +5,19 @@ import {Skeleton} from "@mui/material";
 import FileDownload from "./FileDownload";
 import PdfPreview from "./PdfPreview";
 import {useTypedSelector} from "../../../store/store";
+import {Widget} from "../../../schema/widget/widget";
+import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 
 const cx = classNames.bind(styles);
-type Props = {
-  wid: string;
-  loading: boolean;
-};
 
-const WorksheetWidget = (props: Props) => {
+const WorksheetWidget = ({
+  widget,
+  loading,
+  preview = false,
+}: WidgetContentProps) => {
   const [previewReady, setPreviewReady] = useState<boolean>(false);
-  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
   const currWidget = useTypedSelector((state) => state.Widgets.current);
-  return props.loading ? (
+  return loading ? (
     <WorksheetSkeleton />
   ) : (
     <div className={cx("worksheet-widget")}>
@@ -30,7 +31,7 @@ const WorksheetWidget = (props: Props) => {
       {previewReady ? (
         <WorkSheetPreview />
       ) : (
-        <WorksheetPlaceholder ideating={props.wid === currWidget} />
+        <WorksheetPlaceholder ideating={widget.id === currWidget} />
       )}
     </div>
   );
