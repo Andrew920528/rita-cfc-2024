@@ -20,29 +20,48 @@ type Props = {};
 
 const PreviewSpace = (props: Props) => {
   const widgets = useTypedSelector((state) => state.Widgets);
+  const dispatch = useAppDispatch();
+  function applyPreview(widget: Widget) {
+    let newWidget = {
+      id: widget.id,
+      type: widget.type,
+      content: widget.content,
+    };
+    dispatch(
+      WidgetsServices.actions.updateWidget({
+        newWidget: newWidget,
+        mode: "actual",
+      })
+    );
 
+    // clean up preview
+    dispatch(WidgetsServices.actions.removePreviewWidget(widget.id));
+  }
   return (
     <div className={cx("preview-space")}>
-      <div className={cx("preview-content")}>
-        {widgets.current in widgets.previewDict ? (
-          <>
+      {widgets.current in widgets.previewDict ? (
+        <>
+          <div className={cx("preview-content")}>
             <WidgetFramePreview
               previewWidget={widgets.previewDict[widgets.current]}
             />
-          </>
-        ) : (
-          <PreviewPlaceHolder />
-        )}
-      </div>
-
-      <div>
-        <IconButton
-          icon={<MagicWand />}
-          text="套用"
-          mode="primary"
-          onClick={() => {}}
-        />
-      </div>
+          </div>
+          <div>
+            <IconButton
+              icon={<MagicWand />}
+              text="套用"
+              mode="primary"
+              onClick={() => {
+                if (!(widgets.current in widgets.previewDict)) return;
+                applyPreview(widgets.previewDict[widgets.current]);
+              }}
+              disabled={!(widgets.current in widgets.previewDict)}
+            />
+          </div>
+        </>
+      ) : (
+        <PreviewPlaceHolder />
+      )}
     </div>
   );
 };
@@ -54,10 +73,6 @@ function PreviewPlaceHolder() {
       <p className={cx("--label")}> 與Rita 交談，並預覽他幫您生成課程內容。</p>
     </div>
   );
-}
-
-function PreviewSpaceContent() {
-  return <div>content</div>;
 }
 
 export default PreviewSpace;

@@ -223,17 +223,6 @@ export const useMessageRita = (chatroomId: string) => {
       })
     );
 
-    dispatch(
-      WidgetsServices.actions.updateWidget({
-        newWidget: {
-          id: widgetId,
-          type: widgets.dict[widgets.current].type,
-          content: widgetContent,
-        },
-        mode: "actual",
-      })
-    );
-
     let messageObj = {
       text: `更新了${widgetBook(widgets.dict[widgets.current].type).title}`,
       sender: SENDER.system,

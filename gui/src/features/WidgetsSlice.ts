@@ -40,8 +40,12 @@ const WidgetsSlice = createSlice({
       };
       state.previewDict[id] = newWidget;
     },
+    removePreviewWidget: (state, action: PayloadAction<string>) => {
+      delete state.previewDict[action.payload];
+    },
     deleteWidget: (state, action: PayloadAction<string>) => {
       delete state.dict[action.payload];
+      delete state.previewDict[action.payload];
       if (action.payload in state.unsaved) {
         delete state.unsaved[action.payload];
       }
