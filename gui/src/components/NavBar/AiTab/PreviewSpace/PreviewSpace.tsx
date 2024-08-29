@@ -7,6 +7,7 @@ import {WidgetContent} from "../../../../schema/widget/widget";
 import {useTypedSelector} from "../../../../store/store";
 import {EMPTY_ID} from "../../../../global/constants";
 import WidgetFrame from "../../../widgets/WidgetFrame/WidgetFrame";
+
 const cx = classNames.bind(styles);
 type Props = {};
 
@@ -17,7 +18,7 @@ const PreviewSpace = (props: Props) => {
       <div>預覽</div>
       <div className={cx("preview-content")}>
         {widgets.current === EMPTY_ID ? (
-          <></>
+          <>No Preview Available</>
         ) : (
           <>
             <div>{JSON.stringify(widgets.dict[widgets.current].type)}</div>
@@ -25,6 +26,7 @@ const PreviewSpace = (props: Props) => {
           </>
         )}
       </div>
+
       <div>
         <IconButton icon={<MagicWand />} text="套用" mode="primary" />
       </div>

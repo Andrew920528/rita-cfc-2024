@@ -1,14 +1,19 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import {useTypedSelector} from "../../../store/store";
 import {EMPTY_ID} from "../../../global/constants";
 import {SemesterGoalWidgetContent} from "../../../schema/widget/semesterGoalWidgetContent";
-import {IbmWatsonxAssistant} from "@carbon/icons-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  IbmWatsonxAssistant,
+} from "@carbon/icons-react";
 import classNames from "classnames/bind";
 import styles from "./AiTab.module.scss";
 import EmbeddedChatroom from "./EmbeddedChatroom/EmbeddedChatroom";
 import PreviewSpace from "./PreviewSpace/PreviewSpace";
 import {CircularProgress} from "@mui/material";
+import useVerticalHandle from "../VerticalHandle/VerticalHandle";
 const cx = classNames.bind(styles);
 
 const dummyPreviewWidgetContent: SemesterGoalWidgetContent = {
@@ -39,8 +44,25 @@ function AiTabPlaceHolderWidgetCreating() {
 }
 
 function AiTab({}: Props) {
+  const {VerticalHandle, mainHeight, setMainHeight} = useVerticalHandle({
+    unit: "percent",
+    expandDirection: "up",
+    minHeight: 20,
+    initHeight: 20,
+  });
   let widgets = useTypedSelector((state) => state.Widgets);
-  console.log(widgets.previewDict[widgets.current]);
+  const [collapsePreview, setCollapsePreview] = useState(true);
+  useEffect(() => {
+    if (collapsePreview && widgets.previewDict[widgets.current]) {
+      setCollapsePreview(false);
+    }
+  }, [widgets.previewDict[widgets.current]]);
+
+  function onclickCollapse() {
+    let collapse = !collapsePreview;
+    setCollapsePreview(collapse);
+  }
+
   return (
     <div className={cx("ai-tab")}>
       {widgets.current === EMPTY_ID ? (
@@ -49,15 +71,23 @@ function AiTab({}: Props) {
         <AiTabPlaceHolderWidgetCreating />
       ) : (
         <>
-          <div className={cx("chatroom-wrapper")}>
+          <div
+            className={cx("chatroom-wrapper")}
+            style={{height: `${100 - mainHeight}%`}}
+          >
             <EmbeddedChatroom />
           </div>
-
+          <VerticalHandle />
           <div
             className={cx("preview-wrapper", {
-              hidden: !widgets.previewDict[widgets.current],
+              collapse: collapsePreview,
             })}
+            style={{height: `${mainHeight}%`}}
           >
+            <div onClick={onclickCollapse} className={cx("preview-header")}>
+              {collapsePreview ? <ChevronRight /> : <ChevronDown />}
+              內容預覽
+            </div>
             <PreviewSpace />
           </div>
         </>

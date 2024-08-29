@@ -34,9 +34,7 @@ const CourseTab = (props: Props) => {
   const lectures = useTypedSelector((state) => state.Lectures);
   const user = useTypedSelector((state) => state.User);
   const classrooms = useTypedSelector((state) => state.Classrooms);
-  const {VerticalHandle, mainHeight, setMainHeight} = useVerticalHandle({
-    minHeight: 0,
-  });
+  const {VerticalHandle, mainHeight} = useVerticalHandle({unit: "percent"});
   return (
     <div className={cx("course-tab")}>
       <div

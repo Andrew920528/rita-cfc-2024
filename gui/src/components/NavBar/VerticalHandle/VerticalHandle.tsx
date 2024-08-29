@@ -5,11 +5,27 @@ import {useState} from "react";
 const cx = classNames.bind(styles);
 
 type Props = {
-  minHeight: number;
+  unit: "percent" | "pixel";
+  expandDirection?: "up" | "down";
+  initHeight?: number;
+  minHeight?: number;
+  maxHeight?: number;
+  onMouseDown?: (e?: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseUp?: (e?: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseMove?: (e?: MouseEvent) => void;
 };
 
-const useVerticalHandle = (props: Props) => {
-  const [mainHeight, setMainHeight] = useState<number>(50);
+const useVerticalHandle = ({
+  unit,
+  expandDirection = "down",
+  initHeight = 50,
+  minHeight = 0,
+  maxHeight = 100,
+  onMouseDown,
+  onMouseUp,
+  onMouseMove,
+}: Props) => {
+  const [mainHeight, setMainHeight] = useState<number>(initHeight);
   const [onPress, setOnPress] = useState<boolean>(false);
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -17,22 +33,36 @@ const useVerticalHandle = (props: Props) => {
     const startHeight = mainHeight;
     document.body.style.cursor = "row-resize";
     setOnPress(true);
+    onMouseDown && onMouseDown(e);
     const handleMouseMove = (e: MouseEvent) => {
-      const deltaY = e.clientY - startY;
-      console.log(deltaY);
-      let newHeight =
-        (((startHeight / 100) * window.innerHeight + deltaY) /
-          window.innerHeight) *
-        100;
-      console.log(newHeight);
-      newHeight = Math.min(Math.max(0, newHeight), 100);
+      let deltaY;
+      if (expandDirection === "up") {
+        deltaY = startY - e.clientY; // up: +, down: -
+      } else {
+        deltaY = e.clientY - startY; // up: -, down: +
+      }
+
+      let newHeight;
+
+      if (unit === "percent") {
+        newHeight =
+          (((startHeight / 100) * window.innerHeight + deltaY) /
+            window.innerHeight) *
+          100;
+      } else {
+        // pixel
+        newHeight = startHeight + deltaY;
+      }
+      newHeight = Math.min(Math.max(minHeight, newHeight), maxHeight);
       setMainHeight(newHeight);
+      onMouseMove && onMouseMove(e);
     };
     const handleMouseUp = () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
       setOnPress(false);
       document.body.style.cursor = "";
+      onMouseUp && onMouseUp(e);
     };
 
     document.addEventListener("mousemove", handleMouseMove);
