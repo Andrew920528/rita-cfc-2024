@@ -11,7 +11,7 @@ import NoteWidget from "../NoteWidget/NoteWidget";
 import ScheduleWidget from "../ScheduleWidget/ScheduleWidget";
 import {useDeleteWidget} from "../../../global/globalActions";
 import {deleteWidgetService, useApiHandler} from "../../../utils/service";
-import {API} from "../../../global/constants";
+import {API, EMPTY_ID} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./WidgetFrame.module.scss";
 import {delay} from "../../../utils/util";
@@ -19,20 +19,34 @@ import WorksheetWidget from "../WorksheetWidget/WorksheetWidget";
 import {CircularProgress} from "@mui/material";
 
 const cx = classNames.bind(styles);
-const widgetComponent = (widget: Widget) => {
+
+export type WidgetContentProps = {
+  widget: Widget;
+  loading: boolean;
+  preview: boolean;
+};
+
+const widgetComponent = (widget: Widget, preview: boolean = false) => {
   let loading = false;
   let widgetType = widget.type;
+
+  let props = {
+    widget: widget,
+    loading: loading,
+    preview: preview,
+  };
+
   switch (widgetType) {
     case WidgetType.SemesterGoal:
-      return <SemesterGoalWidget widget={widget} loading={loading} />;
+      return <SemesterGoalWidget {...props} />;
     case WidgetType.SemesterPlan:
-      return <SemesterPlanWidget widget={widget} loading={loading} />;
+      return <SemesterPlanWidget {...props} />;
     case WidgetType.Schedule:
-      return <ScheduleWidget widget={widget} loading={loading} />;
+      return <ScheduleWidget {...props} />;
     case WidgetType.Note:
-      return <NoteWidget widget={widget} loading={loading} />;
+      return <NoteWidget {...props} />;
     case WidgetType.Worksheet:
-      return <WorksheetWidget widget={widget} loading={loading} />;
+      return <WorksheetWidget {...props} />;
     default:
       return null;
   }
@@ -150,24 +164,16 @@ export const WidgetFrameGhost = ({widgetType}: {widgetType: WidgetType}) => {
 };
 
 export const WidgetFramePreview = ({
-  widgetType,
-  widgetContent,
+  previewWidget,
 }: {
-  widgetType: WidgetType;
-  widgetContent: WidgetContent;
+  previewWidget: Widget;
 }) => {
+  let widgetType = previewWidget.type;
   const title = widgetBook(widgetType).title;
   const icon = widgetBook(widgetType).icon;
+
   return (
-    <div
-      className={cx("widget-frame")}
-      // style={{
-      //   minWidth: widgetBook(widgetType).minWidth,
-      //   maxWidth: widgetBook(widgetType).maxWidth,
-      //   minHeight: widgetBook(widgetType).minHeight,
-      //   maxHeight: widgetBook(widgetType).maxHeight,
-      // }}
-    >
+    <div className={cx("widget-frame", "widget-frame-preview")}>
       <div className={cx("wf-heading")}>
         <div className={cx("wf-heading-left")}>
           {icon}
@@ -175,9 +181,8 @@ export const WidgetFramePreview = ({
         </div>
       </div>
       <div className={cx("wf-content")}>
-        {/* {widgetComponent(widgetId, widgetType)} */}
+        {widgetComponent(previewWidget, true)}
       </div>
-      <div className={cx("draggable-area")} />
     </div>
   );
 };

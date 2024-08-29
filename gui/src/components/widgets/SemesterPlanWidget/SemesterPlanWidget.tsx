@@ -16,14 +16,15 @@ import {WidgetsServices} from "../../../features/WidgetsSlice";
 import classNames from "classnames/bind";
 import styles from "./SemesterPlanWidget.module.scss";
 import {Skeleton} from "@mui/material";
+import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 
 const cx = classNames.bind(styles);
-type Props = {
-  widget: Widget;
-  loading: boolean;
-};
 
-const SemesterPlanWidget = ({widget, loading}: Props) => {
+const SemesterPlanWidget = ({
+  widget,
+  loading,
+  preview = false,
+}: WidgetContentProps) => {
   const dispatch = useAppDispatch();
   const widgetContent = widget.content as SemesterPlanWidgetContent;
   function addColumn(table: SemesterPlanWidgetContent, newHeading: string) {
@@ -50,6 +51,7 @@ const SemesterPlanWidget = ({widget, loading}: Props) => {
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
+        mode: preview ? "preview" : "actual",
       })
     );
   }
@@ -69,6 +71,7 @@ const SemesterPlanWidget = ({widget, loading}: Props) => {
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
+        mode: preview ? "preview" : "actual",
       })
     );
   }
@@ -88,6 +91,7 @@ const SemesterPlanWidget = ({widget, loading}: Props) => {
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
+        mode: preview ? "preview" : "actual",
       })
     );
   }
@@ -111,6 +115,7 @@ const SemesterPlanWidget = ({widget, loading}: Props) => {
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
+        mode: preview ? "preview" : "actual",
       })
     );
   }
@@ -126,6 +131,7 @@ const SemesterPlanWidget = ({widget, loading}: Props) => {
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
+        mode: preview ? "preview" : "actual",
       })
     );
   }

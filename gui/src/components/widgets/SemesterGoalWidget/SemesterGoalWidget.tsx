@@ -5,13 +5,13 @@ import {WidgetsServices} from "../../../features/WidgetsSlice";
 import {WidgetType, Widget} from "../../../schema/widget/widget";
 import {SemesterGoalWidgetContent} from "../../../schema/widget/semesterGoalWidgetContent";
 import {Skeleton} from "@mui/material";
+import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 
-type Props = {
-  widget: Widget;
-  loading: boolean;
-};
-
-const SemesterGoalWidget = ({widget, loading}: Props) => {
+const SemesterGoalWidget = ({
+  widget,
+  loading,
+  preview = false,
+}: WidgetContentProps) => {
   const dispatch = useAppDispatch();
 
   const [displayGoals, setDisplayGoals] = useState(
@@ -36,6 +36,7 @@ const SemesterGoalWidget = ({widget, loading}: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: newWidget,
+        mode: preview ? "preview" : "actual",
       })
     );
   }

@@ -16,10 +16,6 @@ import {CircularProgress} from "@mui/material";
 import useVerticalHandle from "../VerticalHandle/VerticalHandle";
 const cx = classNames.bind(styles);
 
-const dummyPreviewWidgetContent: SemesterGoalWidgetContent = {
-  goals: ["1", "2", "3"],
-};
-
 type Props = {};
 
 function AiTabPlaceHolder() {
@@ -47,8 +43,8 @@ function AiTab({}: Props) {
   const {VerticalHandle, mainHeight, setMainHeight} = useVerticalHandle({
     unit: "percent",
     expandDirection: "up",
-    minHeight: 20,
-    initHeight: 20,
+    minHeight: 40,
+    initHeight: 40,
   });
   let widgets = useTypedSelector((state) => state.Widgets);
   const [collapsePreview, setCollapsePreview] = useState(true);

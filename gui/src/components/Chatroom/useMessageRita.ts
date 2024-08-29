@@ -218,6 +218,7 @@ export const useMessageRita = (chatroomId: string) => {
     dispatch(
       WidgetsServices.actions.addPreviewWidget({
         id: widgetId,
+        type: widgets.dict[widgets.current].type,
         content: widgetContent,
       })
     );
@@ -229,6 +230,7 @@ export const useMessageRita = (chatroomId: string) => {
           type: widgets.dict[widgets.current].type,
           content: widgetContent,
         },
+        mode: "actual",
       })
     );
 

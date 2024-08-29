@@ -6,14 +6,15 @@ import FileDownload from "./FileDownload";
 import PdfPreview from "./PdfPreview";
 import {useTypedSelector} from "../../../store/store";
 import {Widget} from "../../../schema/widget/widget";
+import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 
 const cx = classNames.bind(styles);
-type Props = {
-  widget: Widget;
-  loading: boolean;
-};
 
-const WorksheetWidget = ({widget, loading}: Props) => {
+const WorksheetWidget = ({
+  widget,
+  loading,
+  preview = false,
+}: WidgetContentProps) => {
   const [previewReady, setPreviewReady] = useState<boolean>(false);
   const currWidget = useTypedSelector((state) => state.Widgets.current);
   return loading ? (

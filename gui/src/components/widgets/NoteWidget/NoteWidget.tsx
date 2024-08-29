@@ -7,14 +7,11 @@ import {NoteWidgetContent} from "../../../schema/widget/noteWidgetContent";
 import classNames from "classnames/bind";
 import styles from "./NoteWidget.module.scss";
 import {Skeleton} from "@mui/material";
+import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 
 const cx = classNames.bind(styles);
-type Props = {
-  widget: Widget;
-  loading: boolean;
-};
 
-const NoteWidget = ({widget, loading}: Props) => {
+const NoteWidget = ({widget, loading, preview = false}: WidgetContentProps) => {
   const dispatch = useAppDispatch();
   function editNote(newNote: NoteWidgetContent) {
     const newWidget = {
@@ -25,6 +22,7 @@ const NoteWidget = ({widget, loading}: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: newWidget,
+        mode: preview ? "preview" : "actual",
       })
     );
   }

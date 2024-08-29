@@ -14,14 +14,15 @@ import classNames from "classnames/bind";
 import styles from "./ScheduleWidget.module.scss";
 import Skeleton from "@mui/material/Skeleton";
 import {Widget} from "../../../schema/widget/widget";
+import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 
 const cx = classNames.bind(styles);
-type Props = {
-  widget: Widget;
-  loading: boolean;
-};
 
-const ScheduleWidget = ({widget, loading}: Props) => {
+const ScheduleWidget = ({
+  widget,
+  loading,
+  preview = false,
+}: WidgetContentProps) => {
   const dispatch = useAppDispatch();
   const schedule = useTypedSelector((state) => state.User.schedule);
   const widgetTableContent = schedule.map((row, rowIndex) =>

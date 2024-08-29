@@ -27,9 +27,18 @@ const WidgetsSlice = createSlice({
     },
     addPreviewWidget: (
       state,
-      action: PayloadAction<Pick<Widget, "id" | "content">>
+      action: PayloadAction<Omit<Widget, "chatroomId">>
     ) => {
-      state.previewDict[action.payload.id] = action.payload.content;
+      let id = action.payload.id;
+      let content = action.payload.content;
+      let type = action.payload.type;
+      let newWidget = {
+        id,
+        type,
+        content,
+        chatroomId: EMPTY_ID,
+      };
+      state.previewDict[id] = newWidget;
     },
     deleteWidget: (state, action: PayloadAction<string>) => {
       delete state.dict[action.payload];
@@ -59,22 +68,27 @@ const WidgetsSlice = createSlice({
       state,
       action: PayloadAction<{
         newWidget: Omit<Widget, "chatroomId">;
+        mode: "preview" | "actual";
       }>
     ) => {
+      const dict =
+        action.payload.mode === "preview" ? state.previewDict : state.dict;
       const wid = action.payload.newWidget.id;
-      if (!(wid in state.dict)) {
-        console.error("Attempt to update widget that does not exist");
+      if (!(wid in dict)) {
+        console.error(
+          `Attempt to update widget that does not exist [${action.payload.mode}]`
+        );
         return;
       }
-      const oldWidget = state.dict[wid];
+      const oldWidget = dict[wid];
       if (oldWidget.type !== action.payload.newWidget.type) {
         console.error(
-          "Attempts to update widget, but given wrong payload type"
+          `Attempts to update widget, but given wrong payload type [${action.payload.mode}]`
         );
         return;
       }
       oldWidget.content = action.payload.newWidget.content;
-      if (!(wid in state.unsaved)) {
+      if (action.payload.mode !== "preview" && !(wid in state.unsaved)) {
         state.unsaved[wid] = true;
       }
     },
