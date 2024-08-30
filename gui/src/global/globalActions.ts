@@ -150,7 +150,7 @@ export const useCreateWidget = () => {
       dispatch(
         LecturesServices.actions.setSemesterGoalId({
           lectureId: args.lectureId,
-          widgetId: args.widgetId,
+          widgetId: semesterGoalId,
         })
       );
 
