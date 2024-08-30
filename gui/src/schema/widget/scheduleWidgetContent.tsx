@@ -1,5 +1,5 @@
 import {Alarm} from "@carbon/icons-react";
-import {WidgetCategory, WidgetType} from "./widget";
+import {PromptItem, WidgetCategory, WidgetType} from "./widget";
 import {WidgetMaker} from "./widget";
 
 export type ScheduleWidgetContent = {}; // currently content comes from user
@@ -23,5 +23,8 @@ export class ScheduleWidgetMaker extends WidgetMaker<ScheduleWidgetContent> {
       maxHeight: 500,
       category: WidgetCategory.contextSetter,
     };
+  }
+  promptRecs(): PromptItem[] {
+    return [];
   }
 }

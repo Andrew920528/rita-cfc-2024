@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {ReactNode, useEffect, useRef, useState} from "react";
 import Textbox from "../ui_components/Textbox/Textbox";
 import IconButton from "../ui_components/IconButton/IconButton";
 import {
@@ -6,6 +6,7 @@ import {
   Catalog,
   ChevronDown,
   ChevronUp,
+  Help,
   Idea,
   Maximize,
   Minimize,
@@ -14,7 +15,11 @@ import {
   VideoPlayer,
 } from "@carbon/icons-react";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
-import {contentIsOfType, widgetBook} from "../../schema/widget/widgetFactory";
+import {
+  contentIsOfType,
+  widgetBook,
+  widgetPromptRec,
+} from "../../schema/widget/widgetFactory";
 import {ChatMessage as ChatMessageT, SENDER} from "../../schema/chatroom";
 import {useCompose} from "../../utils/util";
 import classNames from "classnames/bind";
@@ -81,11 +86,13 @@ const Chatroom = ({
       <div className={cx("chatroom-header")}>
         <div className={cx("header-group")}>
           <p className={cx("rita")}>Rita</p>
-          <p>
-            {widgets.dict[widgets.current]
-              ? widgetBook(widgets.dict[widgets.current].type).title
-              : ""}
-          </p>
+          {chatroom.agency !== AGENCY.LECTURE && (
+            <p>
+              {widgets.dict[widgets.current]
+                ? widgetBook(widgets.dict[widgets.current].type).title
+                : ""}
+            </p>
+          )}
         </div>
         {absolutePositioned && (
           <div className={cx("header-btn-group")}>
@@ -122,6 +129,7 @@ const Chatroom = ({
           ritaError={ritaError}
           sendMessage={sendMessage}
           setText={setText}
+          agency={chatroom.agency}
         />
         <div className={cx("chatroom-footer")}>
           <Textbox
@@ -224,6 +232,7 @@ type ChatroomBodyProps = {
   ritaError: string;
   setText: (text: string) => void;
   sendMessage: any;
+  agency: AGENCY;
 };
 const ChatroomBody = ({
   messages,
@@ -231,7 +240,9 @@ const ChatroomBody = ({
   constructingWidget,
   ritaError,
   sendMessage,
+  agency,
 }: ChatroomBodyProps) => {
+  const widgets = useTypedSelector((state) => state.Widgets);
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const scrollToBottom = () => {
@@ -263,34 +274,35 @@ const ChatroomBody = ({
         <div className={cx("empty-chatroom-placeholder")}>
           您好，請問我能怎麼協助您？
           <div className={cx("chips")}>
-            <Chip
-              text="尋找第二單元的相關影片"
-              icon={<VideoPlayer />}
-              iconColor="#B60071"
-              onClick={async () => {
-                await sendMessage("尋找第二單元每個章節的教學影片");
-              }}
-            />
-            <Chip
-              text="生成二十週的教學計畫草稿"
-              icon={<ResultDraft />}
-              iconColor="#478CCF"
-              onClick={async () => {
-                await sendMessage(
-                  "生成二十週的學期進度，包含每週需要涵蓋的教材內容"
-                );
-              }}
-            />
-            <Chip
-              text="給我關於小數的課程活動點子"
-              icon={<Idea />}
-              iconColor="#FFB200"
-              onClick={async () => {
-                await sendMessage(
-                  "推薦我引導學生認識小數的課程活動，活動要有創意並能激起學生興趣"
-                );
-              }}
-            />
+            {agency === AGENCY.LECTURE ? (
+              lecturePromptRecs.map((promptObj) => (
+                <Chip
+                  text={promptObj.chipMessage}
+                  icon={promptObj.icon}
+                  iconColor={promptObj.iconColor}
+                  onClick={async () => {
+                    await sendMessage(promptObj.actualPrompt);
+                  }}
+                  key={promptObj.chipMessage}
+                />
+              ))
+            ) : widgets.dict[widgets.current] ? (
+              widgetPromptRec(widgets.dict[widgets.current].type).map(
+                (promptObj) => (
+                  <Chip
+                    text={promptObj.chipMessage}
+                    icon={promptObj.icon}
+                    iconColor={promptObj.iconColor}
+                    onClick={async () => {
+                      await sendMessage(promptObj.actualPrompt);
+                    }}
+                    key={promptObj.chipMessage}
+                  />
+                )
+              )
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       )}
@@ -313,3 +325,25 @@ const ChatroomBody = ({
     </div>
   );
 };
+
+const lecturePromptRecs = [
+  {
+    chipMessage: "尋找第二單元的相關影片",
+    actualPrompt: "尋找第二單元每個章節的教學影片",
+    icon: <VideoPlayer />,
+    iconColor: "#B60071",
+  },
+  {
+    chipMessage: "你可以怎麼幫我備課？",
+    actualPrompt: "你可以怎麼幫我備課？",
+    icon: <Help />,
+    iconColor: "#505050",
+  },
+  {
+    chipMessage: "給我關於小數的課程活動點子",
+    actualPrompt:
+      "推薦我引導學生認識小數的課程活動，活動要有創意並能激起學生興趣",
+    icon: <Idea />,
+    iconColor: "#FFB200",
+  },
+];

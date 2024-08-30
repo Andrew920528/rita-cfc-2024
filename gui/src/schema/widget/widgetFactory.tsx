@@ -32,6 +32,10 @@ export function widgetBook(type: WidgetType) {
   return factory[type].uiBook();
 }
 
+export function widgetPromptRec(type: WidgetType) {
+  return factory[type].promptRecs();
+}
+
 // Type guards
 export function contentIsOfType(type: WidgetType, content: any) {
   if (!(type in factory)) {

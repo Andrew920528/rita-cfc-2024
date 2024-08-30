@@ -9,7 +9,7 @@ import {
   useApiHandler,
 } from "../utils/service";
 import {generateId} from "../utils/util";
-import {API, EMPTY_ID} from "./constants";
+import {AGENCY, API, EMPTY_ID} from "./constants";
 import {useDeleteLecture} from "./globalActions";
 import {toast} from "react-toastify";
 import {ChatroomsServices} from "../features/ChatroomsSlice";
@@ -79,6 +79,7 @@ export const useCreateLectureWithApi = () => {
       ChatroomsServices.actions.addChatroom({
         id: newChatroomId,
         messages: [],
+        agency: AGENCY.LECTURE,
       })
     );
     dispatch(

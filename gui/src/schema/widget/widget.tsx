@@ -60,8 +60,16 @@ export type widgetUiBook = {
   maxHeight: number;
   category: WidgetCategory;
 };
+export type PromptItem = {
+  chipMessage: string;
+  actualPrompt: string;
+  icon: ReactNode; // or JSX.Element if you prefer
+  iconColor: string;
+};
+
 export abstract class WidgetMaker<T> {
   abstract init(): T;
   abstract isType(obj: any): obj is T;
   abstract uiBook(): widgetUiBook;
+  abstract promptRecs(): PromptItem[];
 }
