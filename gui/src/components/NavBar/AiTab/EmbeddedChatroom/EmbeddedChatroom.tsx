@@ -13,7 +13,6 @@ const EmbeddedChatroom = (props: Props) => {
     <div className={cx("embedded-chatroom")}>
       <Chatroom
         absolutePositioned={false}
-        type="widget"
         chatroomId={
           widgets.dict[widgets.current]
             ? widgets.dict[widgets.current].chatroomId

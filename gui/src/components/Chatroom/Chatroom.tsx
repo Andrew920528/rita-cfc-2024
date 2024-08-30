@@ -23,18 +23,18 @@ import {MarkdownRenderer} from "./MarkdownRenderer";
 import {useMessageRita} from "./useMessageRita";
 import {CircularProgress} from "@mui/material";
 import {translateService, useApiHandler} from "../../utils/service";
-import {API, EMPTY_ID} from "../../global/constants";
+import {AGENCY, API, EMPTY_ID} from "../../global/constants";
 import Chip from "../ui_components/Chip/Chip";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
+import {WidgetType} from "../../schema/widget/widget";
 const cx = classNames.bind(styles);
+
 type ChatroomProps = {
   absolutePositioned?: boolean;
-  type: "lecture" | "widget";
   chatroomId: string;
 };
 const Chatroom = ({
-  type,
   chatroomId,
   absolutePositioned: absolutePositioned = true,
 }: ChatroomProps) => {
@@ -42,9 +42,7 @@ const Chatroom = ({
   const chatroom = useTypedSelector(
     (state) => state.Chatrooms.dict[chatroomId]
   );
-  const dispatch = useAppDispatch();
   const widgets = useTypedSelector((state) => state.Widgets);
-  const lectures = useTypedSelector((state) => state.Lectures);
   const {sendMessage, constructingWidget, terminateResponse, ritaError} =
     useMessageRita(chatroomId);
   const waitingForReply = useTypedSelector(
@@ -232,7 +230,6 @@ const ChatroomBody = ({
   loading,
   constructingWidget,
   ritaError,
-  setText,
   sendMessage,
 }: ChatroomBodyProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);

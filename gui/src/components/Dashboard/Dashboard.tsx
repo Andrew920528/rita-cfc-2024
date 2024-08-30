@@ -90,7 +90,6 @@ const Dashboard = () => {
       )}
 
       <Chatroom
-        type="lecture"
         chatroomId={
           lectures.dict[lectures.current]
             ? lectures.dict[lectures.current].chatroomId

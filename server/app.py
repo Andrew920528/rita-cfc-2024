@@ -60,6 +60,7 @@ def message_rita():
         return response
 
     prompt = request.json['prompt']
+    agency = request.json['agency']
 
     ##########################  Test Controllers ##############################
     # Enable if want to test without db, run frontend in indep mode and commented out the dummy api call
@@ -109,7 +110,8 @@ def message_rita():
     ###########################################################################
 
     try:
-        llmOutput = llm_stream_response(watsonxRequest, prompt, RETRIEVER, LLM)
+        llmOutput = llm_stream_response(
+            watsonxRequest, prompt, agency, RETRIEVER, LLM)
         return llmOutput
     except Exception as e:
         logging.error("Error: {}".format(e))

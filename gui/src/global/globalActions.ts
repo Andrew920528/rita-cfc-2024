@@ -8,10 +8,11 @@ import {generateId, mimicApi} from "../utils/util";
 import {WidgetType} from "../schema/widget/widget";
 import {initWidget, widgetBook} from "../schema/widget/widgetFactory";
 import {UserServices} from "../features/UserSlice";
-import {API, EMPTY_ID} from "./constants";
+import {AGENCY, API, EMPTY_ID} from "./constants";
 import {initSchedule} from "../schema/schedule";
 import {createWidgetService, useApiHandler} from "../utils/service";
 import {RfServices} from "../features/RfSlice";
+import {getAgencyByWidgetType} from "../schema/chatroom";
 
 /* 
  Functions that requires the use of multiple slices to perform
@@ -59,6 +60,7 @@ export const useLoginParseState = () => {
           ChatroomsServices.actions.addChatroom({
             id: chatroomId,
             messages: [],
+            agency: AGENCY.LECTURE,
           })
         );
       }
@@ -99,13 +101,15 @@ export const useLoginParseState = () => {
         responseObj.widgetDict[wid].content = JSON.parse(
           widget.content as string
         );
-        responseObj.widgetDict[wid].type = parseInt(widget.type as string);
+        let widgetType = parseInt(widget.type as string);
+        responseObj.widgetDict[wid].type = widgetType;
 
         let chatroomId = widget.chatroomId as string;
         dispatch(
           ChatroomsServices.actions.addChatroom({
             id: chatroomId,
             messages: [],
+            agency: getAgencyByWidgetType(widgetType),
           })
         );
       }
@@ -228,6 +232,7 @@ export const useCreateWidgetWithApi = () => {
       ChatroomsServices.actions.addChatroom({
         id: newChatroomId,
         messages: [],
+        agency: getAgencyByWidgetType(widgetType),
       })
     );
     dispatch(

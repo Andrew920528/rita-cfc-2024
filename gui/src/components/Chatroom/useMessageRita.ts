@@ -52,8 +52,11 @@ export const useMessageRita = (chatroomId: string) => {
     );
     setRitaError("");
     // Step 1: Formulate payload
+    console.log(chatroom.agency);
+
     let payload = {
       prompt: text,
+      agency: chatroom.agency,
       widget:
         widgets.current === EMPTY_ID
           ? {

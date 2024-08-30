@@ -87,7 +87,7 @@ def initLLM():
     return llm
 
 
-def llm_stream_response(data, user_prompt, retriever, llm):
+def llm_stream_response(data, user_prompt, agency, retriever, llm):
     """
     https://www.figma.com/design/xiYG1qIDmu9S1KSapuJQb9/Rita-%7C-CFC-2024?node-id=350-1636&t=BZfXxoQSRUG081uy-0
     data (dict): context data, in the following format:
@@ -198,7 +198,7 @@ def split_text(text, max_chars=5000):
 
     # Split the text into sentences (ends with \n \t)
     sentences = re.split(r'([\n\t])', text)
-    
+
     for sentence in sentences:
         if len(current_chunk) + len(sentence) < max_chars:
             current_chunk += sentence + " "
