@@ -8,9 +8,21 @@ import WidgetCard from "../WidgetCard/WidgetCard";
 import {useTypedSelector} from "../../../store/store";
 
 import Accordion from "../../ui_components/Accordion/Accordion";
+import {Lecture} from "../../../schema/lecture";
 
 const cx = classNames.bind(styles);
 type Props = {};
+
+function validateWidgetCard(widgetType: WidgetType, lecture: Lecture) {
+  let valid = true;
+  if (widgetType === WidgetType.SemesterGoal) {
+    if (lecture.semeterGoalId && lecture.semeterGoalId !== EMPTY_ID) {
+      valid = false;
+    }
+  }
+
+  return valid;
+}
 
 function ToolTab({}: Props) {
   const lectures = useTypedSelector((state) => state.Lectures);
@@ -53,6 +65,12 @@ function ToolTab({}: Props) {
                             hint={w.hint}
                             icon={w.icon}
                             widgetType={w.type}
+                            disabled={
+                              !validateWidgetCard(
+                                w.type,
+                                lectures.dict[lectures.current]
+                              )
+                            }
                           />
                         );
                       })}

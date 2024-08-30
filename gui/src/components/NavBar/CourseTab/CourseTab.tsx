@@ -280,6 +280,8 @@ const LectureCard = ({
     } else {
       dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
     }
+
+    console.log(lectures.dict[id]);
   }
   const [openLectureModify, setOpenLectureModify] = useState(false);
   const [openLectureDelete, setOpenLectureDelete] = useState(false);

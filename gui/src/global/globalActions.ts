@@ -70,13 +70,21 @@ export const useLoginParseState = () => {
           .lastOpenedLecture as string;
       }
 
-      console.log(currentLecture);
       dispatch(
         LecturesServices.actions.parseLogin({
           dict: lectureDict,
           current: currentLecture,
         })
       );
+
+      for (let lid in lectureDict) {
+        dispatch(
+          LecturesServices.actions.findSemesterGoal({
+            lectureId: lid,
+            widgetDict: responseObj.widgetDict,
+          })
+        );
+      }
 
       let currentWidget = EMPTY_ID;
       if (
@@ -135,6 +143,17 @@ export const useCreateWidget = () => {
           widgetId: args.widgetId,
         })
       );
+      let semesterGoalId = EMPTY_ID;
+      if (args.widgetType === WidgetType.SemesterGoal) {
+        semesterGoalId = args.widgetId;
+      }
+      dispatch(
+        LecturesServices.actions.setSemesterGoalId({
+          lectureId: args.lectureId,
+          widgetId: args.widgetId,
+        })
+      );
+
       // set current widget
       dispatch(WidgetsServices.actions.setCurrent(args.widgetId));
       if (args.position) {
@@ -350,6 +369,14 @@ export const useDeleteWidget = () => {
           widgetId: args.widgetId,
         })
       );
+      if (widgets.dict[args.widgetId].type === WidgetType.SemesterGoal) {
+        dispatch(
+          LecturesServices.actions.setSemesterGoalId({
+            lectureId: args.lectureId,
+            widgetId: EMPTY_ID,
+          })
+        );
+      }
     },
     [dispatch, widgets]
   );

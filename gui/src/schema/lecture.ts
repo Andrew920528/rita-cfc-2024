@@ -4,6 +4,9 @@ export type Lecture = {
   type: number;
   widgetIds: string[]; // in order
   chatroomId: string;
+
+  // saves locally
+  semeterGoalId?: string;
 };
 
 export type Lectures = {

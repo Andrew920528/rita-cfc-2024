@@ -19,12 +19,20 @@ type WidgetCardProps = {
   title: string;
   hint: string;
   widgetType: WidgetType;
+  disabled: boolean;
 };
 
-const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
+const WidgetCard = ({
+  icon,
+  title,
+  hint,
+  widgetType,
+  disabled,
+}: WidgetCardProps) => {
   const {createWidget} = useCreateWidgetWithApi();
   const dispatch = useAppDispatch();
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    if (disabled) return;
     if (dragImageRef.current) {
       dragImageRef.current.style.display = "block";
 
@@ -38,10 +46,12 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
   };
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
+    if (disabled) return;
     if (e.clientX === 0 && e.clientY === 0) return; // Skip events when dragging out of bounds
   };
 
   const handleDragEnd = () => {
+    if (disabled) return;
     if (dragImageRef.current) {
       dragImageRef.current.style.display = "none";
     }
@@ -50,8 +60,8 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
 
   return (
     <div
-      draggable
-      className={cx("widget-card")}
+      draggable={!disabled}
+      className={cx("widget-card", {disabled})}
       onDragStart={handleDragStart}
       onDrag={handleDrag}
       onDragEnd={handleDragEnd}
@@ -69,8 +79,10 @@ const WidgetCard = ({icon, title, hint, widgetType}: WidgetCardProps) => {
           mode={"primary"}
           icon={<Add />}
           onClick={async () => {
+            if (disabled) return;
             await createWidget(widgetType);
           }}
+          disabled={disabled}
         />
       </div>
       <div ref={dragImageRef} className={cx("card-ghost")}>
