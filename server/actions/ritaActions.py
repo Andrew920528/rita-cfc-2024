@@ -193,24 +193,6 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
                     agent="Widget Modifier", data=modified_widget)
                 stream_handler.end_stream()
                 time_logger.log_latency("Stream completed")
-
-                time_logger.log_latency(f"Finished detecting intent.")
-            case Agent_Type.Lecture:
-                intent_classifier = IntentClassifier(llm, agent_type=AGENT_TYPE, verbose=INTENT_VERBOSE)
-                intent = intent_classifier.invoke(
-                    user_prompt, data, complete_rita_response)
-                # Agent 3: Modify widget if needed
-                widget_modifier = WidgetModifier(llm, verbose=WID_VERBOSE)
-
-                modified_widget = widget_modifier.invoke(
-                    user_prompt, data, intent, complete_rita_response)
-                time_logger.log_latency(
-                    f"Modified widget generated.")
-                stream_handler.add_to_stream(
-                    agent="Widget Modifier", data=modified_widget)
-                stream_handler.end_stream()
-                time_logger.log_latency("Stream completed")
-
                 time_logger.log_latency(f"Finished detecting intent.")
             case Agent_Type.Worksheet:
                 # Agent 4: Generate worksheet if needed
