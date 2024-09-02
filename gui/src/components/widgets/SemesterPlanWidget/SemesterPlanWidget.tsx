@@ -16,16 +16,16 @@ import {WidgetsServices} from "../../../features/WidgetsSlice";
 import classNames from "classnames/bind";
 import styles from "./SemesterPlanWidget.module.scss";
 import {Skeleton} from "@mui/material";
-import {useWidgetLoading} from "../../../features/UiSlice";
+import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 
 const cx = classNames.bind(styles);
-type Props = {
-  wid: string;
-};
 
-const SemesterPlanWidget = (props: Props) => {
+const SemesterPlanWidget = ({
+  widget,
+  loading,
+  preview = false,
+}: WidgetContentProps) => {
   const dispatch = useAppDispatch();
-  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
   const widgetContent = widget.content as SemesterPlanWidgetContent;
   function addColumn(table: SemesterPlanWidgetContent, newHeading: string) {
     const originalTable = structuredClone(table);
@@ -47,10 +47,11 @@ const SemesterPlanWidget = (props: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
-          id: props.wid,
+          id: widget.id,
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
+        mode: preview ? "preview" : "actual",
       })
     );
   }
@@ -66,10 +67,11 @@ const SemesterPlanWidget = (props: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
-          id: props.wid,
+          id: widget.id,
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
+        mode: preview ? "preview" : "actual",
       })
     );
   }
@@ -85,10 +87,11 @@ const SemesterPlanWidget = (props: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
-          id: props.wid,
+          id: widget.id,
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
+        mode: preview ? "preview" : "actual",
       })
     );
   }
@@ -108,10 +111,11 @@ const SemesterPlanWidget = (props: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
-          id: props.wid,
+          id: widget.id,
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
+        mode: preview ? "preview" : "actual",
       })
     );
   }
@@ -123,10 +127,11 @@ const SemesterPlanWidget = (props: Props) => {
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
-          id: props.wid,
+          id: widget.id,
           type: WidgetType.SemesterPlan,
           content: originalTable,
         },
+        mode: preview ? "preview" : "actual",
       })
     );
   }
@@ -147,7 +152,7 @@ const SemesterPlanWidget = (props: Props) => {
       return acc;
     }, {})
   );
-  const loading = useWidgetLoading(props.wid);
+
   return loading ? (
     <SemesterPlanSkeleton />
   ) : (

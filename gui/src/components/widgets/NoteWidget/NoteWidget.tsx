@@ -7,29 +7,25 @@ import {NoteWidgetContent} from "../../../schema/widget/noteWidgetContent";
 import classNames from "classnames/bind";
 import styles from "./NoteWidget.module.scss";
 import {Skeleton} from "@mui/material";
-import {useWidgetLoading} from "../../../features/UiSlice";
+import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 
 const cx = classNames.bind(styles);
-type Props = {
-  wid: string;
-};
 
-const NoteWidget = (props: Props) => {
+const NoteWidget = ({widget, loading, preview = false}: WidgetContentProps) => {
   const dispatch = useAppDispatch();
-  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
   function editNote(newNote: NoteWidgetContent) {
-    const newWidget: Widget = {
-      id: props.wid,
+    const newWidget = {
+      id: widget.id,
       type: WidgetType.Note,
       content: newNote,
     };
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: newWidget,
+        mode: preview ? "preview" : "actual",
       })
     );
   }
-  const loading = useWidgetLoading(props.wid);
   return !loading ? (
     <TextArea
       value={(widget.content as NoteWidgetContent).note}

@@ -7,16 +7,12 @@ import {useAppDispatch, useTypedSelector} from "../store/store";
 import {generateId, mimicApi} from "../utils/util";
 import {WidgetType} from "../schema/widget/widget";
 import {initWidget, widgetBook} from "../schema/widget/widgetFactory";
-import {Chatroom} from "../schema/chatroom";
-import {Lecture} from "../schema/lecture";
-import {Classroom} from "../schema/classroom";
 import {UserServices} from "../features/UserSlice";
-import {API, EMPTY_ID} from "./constants";
+import {AGENCY, API, EMPTY_ID} from "./constants";
 import {initSchedule} from "../schema/schedule";
 import {createWidgetService, useApiHandler} from "../utils/service";
 import {RfServices} from "../features/RfSlice";
-import {ApiServices} from "../features/ApiSlice";
-import {toast} from "react-toastify";
+import {getAgencyByWidgetType} from "../schema/chatroom";
 
 /* 
  Functions that requires the use of multiple slices to perform
@@ -24,7 +20,6 @@ import {toast} from "react-toastify";
 */
 export const useLoginParseState = () => {
   const dispatch = useAppDispatch();
-  const createLecture = useCreateLecture();
   return useCallback(
     async (responseObj: any) => {
       sessionStorage.setItem("sessionId", responseObj.sessionId);
@@ -44,24 +39,12 @@ export const useLoginParseState = () => {
           classroomsDict[cid].lectureIds.length > 0
             ? classroomsDict[cid].lectureIds[0]
             : EMPTY_ID;
-
-        let chatroomId = classroomsDict[cid].chatroomId as string;
-        dispatch(
-          ChatroomsServices.actions.addChatroom({
-            id: chatroomId,
-            messages: [],
-          })
-        );
       }
       let numClassrooms = responseObj.user.classroomIds.length;
       let currentClassroom =
         numClassrooms > 0
           ? responseObj.user.classroomIds[numClassrooms - 1]
           : EMPTY_ID;
-      let currentChatroom =
-        currentClassroom === EMPTY_ID
-          ? EMPTY_ID
-          : classroomsDict[currentClassroom].chatroomId;
       dispatch(
         ClassroomsServices.actions.parseLogin({
           dict: classroomsDict,
@@ -69,8 +52,20 @@ export const useLoginParseState = () => {
         })
       );
 
-      dispatch(ChatroomsServices.actions.setCurrent(currentChatroom as string));
+      let lectureDict = responseObj.lecturesDict;
+      for (let lid in lectureDict) {
+        let lecture = lectureDict[lid];
+        let chatroomId = lecture.chatroomId as string;
+        dispatch(
+          ChatroomsServices.actions.addChatroom({
+            id: chatroomId,
+            messages: [],
+            agency: AGENCY.LECTURE,
+          })
+        );
+      }
 
+      // set current lecture
       let currentLecture = EMPTY_ID;
       if (currentClassroom !== EMPTY_ID) {
         currentLecture = classroomsDict[currentClassroom]
@@ -79,10 +74,19 @@ export const useLoginParseState = () => {
 
       dispatch(
         LecturesServices.actions.parseLogin({
-          dict: responseObj.lecturesDict,
+          dict: lectureDict,
           current: currentLecture,
         })
       );
+
+      for (let lid in lectureDict) {
+        dispatch(
+          LecturesServices.actions.findSemesterGoal({
+            lectureId: lid,
+            widgetDict: responseObj.widgetDict,
+          })
+        );
+      }
 
       let currentWidget = EMPTY_ID;
       if (
@@ -97,7 +101,17 @@ export const useLoginParseState = () => {
         responseObj.widgetDict[wid].content = JSON.parse(
           widget.content as string
         );
-        responseObj.widgetDict[wid].type = parseInt(widget.type as string);
+        let widgetType = parseInt(widget.type as string);
+        responseObj.widgetDict[wid].type = widgetType;
+
+        let chatroomId = widget.chatroomId as string;
+        dispatch(
+          ChatroomsServices.actions.addChatroom({
+            id: chatroomId,
+            messages: [],
+            agency: getAgencyByWidgetType(widgetType),
+          })
+        );
       }
 
       dispatch(
@@ -107,100 +121,9 @@ export const useLoginParseState = () => {
         })
       );
     },
-    [dispatch, createLecture]
-  );
-};
-
-export const useCreateClassroom = () => {
-  const dispatch = useAppDispatch();
-  const createLecture = useCreateLecture();
-  return useCallback(
-    async (args: {
-      classroomId: string;
-      classroomName: string;
-      subject: string;
-      grade: string;
-      publisher: string;
-      credits: number;
-      plan: boolean;
-      chatroomId: string;
-    }) => {
-      // create associative classroom
-      let newChatroom: Chatroom = {
-        id: args.chatroomId,
-        messages: [],
-      };
-      let newClassroom: Classroom = {
-        id: args.classroomId,
-        name: args.classroomName,
-        subject: args.subject,
-        grade: args.grade,
-        publisher: args.publisher,
-        lectureIds: [],
-        lastOpenedLecture: EMPTY_ID,
-        plan: args.plan,
-        credits: args.credits,
-        chatroomId: args.chatroomId,
-      };
-
-      // add new chatroom to chatrooms dict
-      dispatch(ChatroomsServices.actions.addChatroom(newChatroom));
-      // set current chatroom to the new chatroom
-      dispatch(ChatroomsServices.actions.setCurrent(args.chatroomId));
-
-      // create classroom
-      dispatch(ClassroomsServices.actions.addClassroom(newClassroom));
-
-      // allow user to reference to the new classroom
-      dispatch(UserServices.actions.addClassroom(args.classroomId));
-      // set current classroom to the new classroom
-      dispatch(ClassroomsServices.actions.setCurrent(args.classroomId));
-    },
-    [dispatch, createLecture]
-  );
-};
-
-export const useCreateLecture = () => {
-  const dispatch = useAppDispatch();
-  return useCallback(
-    (args: {
-      lectureId: string;
-      name: string;
-      classroomId: string;
-      type: number;
-    }) => {
-      // create lecture
-      let newLecture: Lecture = {
-        id: args.lectureId,
-        name: args.name,
-        type: args.type,
-        widgetIds: [],
-      };
-
-      // add reference to classroom's lecture list
-      dispatch(
-        ClassroomsServices.actions.addLecture({
-          classroomId: args.classroomId,
-          lectureId: args.lectureId,
-        })
-      );
-      // set last opened lecture as the newly created lecture
-      dispatch(
-        ClassroomsServices.actions.setLastOpenedLecture({
-          classroomId: args.classroomId,
-          lectureId: args.lectureId,
-        })
-      );
-
-      // add new lecture to lectures dict
-      dispatch(LecturesServices.actions.addLecture(newLecture));
-      // set current lecture to the new lecture
-      dispatch(LecturesServices.actions.setCurrent(args.lectureId));
-    },
     [dispatch]
   );
 };
-
 export const useCreateWidget = () => {
   const dispatch = useAppDispatch();
   const username = useTypedSelector((state) => state.User.username);
@@ -215,6 +138,7 @@ export const useCreateWidget = () => {
       // create widget
 
       const newWidget = initWidget(args.widgetId, args.widgetType);
+      console.log(newWidget);
       dispatch(WidgetsServices.actions.addWidget(newWidget));
       // add new widget to lecture
       dispatch(
@@ -223,6 +147,17 @@ export const useCreateWidget = () => {
           widgetId: args.widgetId,
         })
       );
+      let semesterGoalId = EMPTY_ID;
+      if (args.widgetType === WidgetType.SemesterGoal) {
+        semesterGoalId = args.widgetId;
+      }
+      dispatch(
+        LecturesServices.actions.setSemesterGoalId({
+          lectureId: args.lectureId,
+          widgetId: semesterGoalId,
+        })
+      );
+
       // set current widget
       dispatch(WidgetsServices.actions.setCurrent(args.widgetId));
       if (args.position) {
@@ -248,20 +183,12 @@ export const useCreateWidgetWithApi = () => {
   const username = useTypedSelector((state) => state.User.username);
   const deleteWidget = useDeleteWidget();
   const addWidget = useCreateWidget();
-  const {apiHandler, loading, terminateResponse} = useApiHandler();
+  const {apiHandler, loading, terminateResponse} = useApiHandler({
+    runsInBackground: true,
+  });
   const dispatch = useAppDispatch();
-  const apiSignals = useTypedSelector((state) => state.Api.signals);
   const newWidgetIdRef = useRef<string>();
   // const newWidgetId = username + "-wid-" + generateId();
-  useEffect(() => {
-    // newWidgetIdRef.current = username + "-wid-" + generateId();
-    const newWidgetId = newWidgetIdRef.current;
-    if (!newWidgetId) return;
-    if (newWidgetId in apiSignals && apiSignals[newWidgetId] === true) {
-      terminateResponse();
-      dispatch(ApiServices.actions.deleteSignal({id: newWidgetId}));
-    }
-  }, [apiSignals]);
   async function createWidget(
     widgetType: WidgetType,
     position?: {x: number; y: number}
@@ -274,7 +201,7 @@ export const useCreateWidgetWithApi = () => {
       widgetId: newWidgetId,
       position: position,
     });
-
+    dispatch(WidgetsServices.actions.setCreating(newWidgetId));
     let r = await apiHandler({
       apiFunction: (s) =>
         createWidgetService(
@@ -292,12 +219,28 @@ export const useCreateWidgetWithApi = () => {
       debug: true,
       identifier: "createWidget",
     });
-    dispatch(ApiServices.actions.deleteSignal({id: newWidgetId}));
+    dispatch(WidgetsServices.actions.unsetCreating(newWidgetId));
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       // If api fails, delete widget from store
       deleteWidget({lectureId: lectures.current, widgetId: newWidgetId});
       return EMPTY_ID;
     }
+
+    // add new chatroom to chatrooms dict
+    const newChatroomId = r.data["chatroomId"];
+    dispatch(
+      ChatroomsServices.actions.addChatroom({
+        id: newChatroomId,
+        messages: [],
+        agency: getAgencyByWidgetType(widgetType),
+      })
+    );
+    dispatch(
+      WidgetsServices.actions.setChatroom({
+        widgetId: newWidgetId,
+        chatroomId: newChatroomId,
+      })
+    );
 
     return newWidgetId;
   }
@@ -313,6 +256,55 @@ export const useCreateWidgetWithApi = () => {
   };
 };
 
+export const useDeleteClassroom = () => {
+  const dispatch = useAppDispatch();
+  const deleteLecture = useDeleteLecture();
+  const user = useTypedSelector((state) => state.User);
+  const classrooms = useTypedSelector((state) => state.Classrooms);
+  return useCallback(
+    (args: {classroomId: string}) => {
+      const lectures = classrooms.dict[args.classroomId].lectureIds;
+      for (let i = 0; i < lectures.length; i++) {
+        deleteLecture({lectureId: lectures[i], classroomId: args.classroomId});
+      }
+
+      // remove reference from users
+      dispatch(UserServices.actions.deleteClassroom(args.classroomId));
+
+      // reset current classroom if current classroom is deleted
+      let defaultClassroom = EMPTY_ID;
+      for (let i = 0; i < user.classroomIds.length; i++) {
+        if (user.classroomIds[i] !== args.classroomId) {
+          defaultClassroom = user.classroomIds[i];
+          break;
+        }
+      }
+      dispatch(ClassroomsServices.actions.setCurrent(defaultClassroom));
+
+      // delete actual classroom
+      dispatch(ClassroomsServices.actions.deleteClassroom(args.classroomId));
+
+      if (defaultClassroom === EMPTY_ID) {
+        dispatch(LecturesServices.actions.setCurrent(EMPTY_ID));
+        return;
+      }
+      // sets lecture of the new current classroom
+      const defaultLecture =
+        classrooms.dict[defaultClassroom].lastOpenedLecture ??
+        classrooms.dict[defaultClassroom].lectureIds[0];
+
+      dispatch(LecturesServices.actions.setCurrent(defaultLecture));
+      dispatch(
+        ClassroomsServices.actions.setLastOpenedLecture({
+          classroomId: defaultClassroom,
+          lectureId: defaultLecture,
+        })
+      );
+    },
+    [dispatch, deleteLecture, user, classrooms]
+  );
+};
+
 export const useDeleteLecture = () => {
   const dispatch = useAppDispatch();
   const classrooms = useTypedSelector((state) => state.Classrooms);
@@ -326,12 +318,18 @@ export const useDeleteLecture = () => {
         deleteWidget({lectureId: args.lectureId, widgetId: widgets[i]});
       }
 
+      // delete referece to this lecture
       dispatch(
         ClassroomsServices.actions.deleteLecture({
           classroomId: args.classroomId,
           lectureId: args.lectureId,
         })
       );
+
+      // delete corresponding chatroom
+      const chatroomId = lectures.dict[args.lectureId].chatroomId;
+      dispatch(ChatroomsServices.actions.deleteChatroom(chatroomId));
+
       // delete actual lecture object
       dispatch(LecturesServices.actions.deleteLecture(args.lectureId));
 
@@ -345,6 +343,9 @@ export const useDeleteLecture = () => {
             lectureId: defaultLecture,
           })
         );
+
+        // reset widget if none is the lecture is deleted
+        dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
       }
     },
     [dispatch, classrooms, lectures, deleteWidget]
@@ -353,20 +354,35 @@ export const useDeleteLecture = () => {
 
 export const useDeleteWidget = () => {
   const dispatch = useAppDispatch();
-  const currentWidget = useTypedSelector((state) => state.Widgets.current);
+  const widgets = useTypedSelector((state) => state.Widgets);
   return useCallback(
     (args: {lectureId: string; widgetId: string}) => {
-      dispatch(WidgetsServices.actions.deleteWidget(args.widgetId));
-      if (args.widgetId === currentWidget) {
-        dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
+      // delete corresponding chatroom (to be changed)
+      console.log(args.widgetId);
+      console.log(widgets.dict[args.widgetId]);
+      if (widgets.dict[args.widgetId].chatroomId === EMPTY_ID) {
       }
+      const chatroomId = widgets.dict[args.widgetId].chatroomId;
+      dispatch(ChatroomsServices.actions.deleteChatroom(chatroomId));
+
+      dispatch(WidgetsServices.actions.deleteWidget(args.widgetId));
+      dispatch(WidgetsServices.actions.setCurrent(EMPTY_ID));
+
       dispatch(
         LecturesServices.actions.deleteWidget({
           lectureId: args.lectureId,
           widgetId: args.widgetId,
         })
       );
+      if (widgets.dict[args.widgetId].type === WidgetType.SemesterGoal) {
+        dispatch(
+          LecturesServices.actions.setSemesterGoalId({
+            lectureId: args.lectureId,
+            widgetId: EMPTY_ID,
+          })
+        );
+      }
     },
-    [dispatch, currentWidget]
+    [dispatch, widgets]
   );
 };

@@ -2,22 +2,22 @@ import React, {useCallback, useEffect, useState} from "react";
 import classNames from "classnames/bind";
 import styles from "./WorksheetWidget.module.scss";
 import {Skeleton} from "@mui/material";
-import {useWidgetLoading} from "../../../features/UiSlice";
 import FileDownload from "./FileDownload";
 import PdfPreview from "./PdfPreview";
 import {useTypedSelector} from "../../../store/store";
+import {Widget} from "../../../schema/widget/widget";
+import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 
 const cx = classNames.bind(styles);
-type Props = {
-  wid: string;
-};
 
-const WorksheetWidget = (props: Props) => {
-  const widgetLoading = useWidgetLoading(props.wid);
+const WorksheetWidget = ({
+  widget,
+  loading,
+  preview = false,
+}: WidgetContentProps) => {
   const [previewReady, setPreviewReady] = useState<boolean>(false);
-  const widget = useTypedSelector((state) => state.Widgets.dict[props.wid]);
   const currWidget = useTypedSelector((state) => state.Widgets.current);
-  return widgetLoading ? (
+  return loading ? (
     <WorksheetSkeleton />
   ) : (
     <div className={cx("worksheet-widget")}>
@@ -31,7 +31,7 @@ const WorksheetWidget = (props: Props) => {
       {previewReady ? (
         <WorkSheetPreview />
       ) : (
-        <WorksheetPlaceholder ideating={props.wid === currWidget} />
+        <WorksheetPlaceholder ideating={widget.id === currWidget} />
       )}
     </div>
   );

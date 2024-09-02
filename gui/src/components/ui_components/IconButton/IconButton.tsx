@@ -23,7 +23,6 @@ const IconButton = ({
     <div
       className={cx("icon-button", ...mode.split(" "), {
         flex: flex,
-
         disabled: disabled,
       })}
       onKeyDown={(e) => {

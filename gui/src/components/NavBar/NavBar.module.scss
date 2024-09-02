@@ -5,58 +5,8 @@
   flex-direction: column;
   text-align: start;
   z-index: 70;
-  .nav-classroom,
-  .nav-widget {
-    display: flex;
-    flex-direction: column;
-    height: 50%;
-  }
-  .nav-heading {
-    border-bottom: 1px solid #8d8d8d;
-    box-sizing: content-box;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-
-    padding-left: 1rem;
-    text-wrap: nowrap;
-    height: 3rem;
-    min-height: 3rem;
-  }
-  .nav-stack {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  .nav-content {
+    flex-grow: 1;
     overflow-y: auto;
-    margin: 0;
-  }
-
-  .class-card {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 1rem;
-    border-bottom: 1px solid #e0e0e0;
-    gap: 0.5rem;
-    background-color: white;
-    &:hover {
-      background-color: #e8e8e8;
-    }
-
-    &.selected {
-      background-color: #e0e0e0;
-      &:hover {
-        background-color: #cacaca;
-      }
-    }
-    p {
-      margin: 0;
-      text-wrap: nowrap;
-      width: 100%;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      user-select: none;
-    }
   }
 }

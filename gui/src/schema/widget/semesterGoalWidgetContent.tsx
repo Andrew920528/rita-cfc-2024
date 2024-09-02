@@ -1,5 +1,5 @@
-import {CertificateCheck} from "@carbon/icons-react";
-import {WidgetType} from "./widget";
+import {CertificateCheck, TableOfContents} from "@carbon/icons-react";
+import {PromptItem, WidgetCategory, WidgetType} from "./widget";
 import {WidgetMaker} from "./widget";
 
 // Defines the content properties
@@ -32,6 +32,17 @@ export class SemesterGoalWidgetMaker extends WidgetMaker<SemesterGoalWidgetConte
       maxWidth: 600,
       minHeight: 200,
       maxHeight: 500,
+      category: WidgetCategory.contextSetter,
     };
+  }
+  promptRecs(): PromptItem[] {
+    return [
+      {
+        chipMessage: "列出第三單元的學習重點",
+        actualPrompt: "列出第三單元的學習重點",
+        icon: <TableOfContents />,
+        iconColor: "#B60071",
+      },
+    ];
   }
 }

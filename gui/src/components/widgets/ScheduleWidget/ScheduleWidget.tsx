@@ -13,14 +13,16 @@ import {Add, RowDelete, RowInsert, Subtract} from "@carbon/icons-react";
 import classNames from "classnames/bind";
 import styles from "./ScheduleWidget.module.scss";
 import Skeleton from "@mui/material/Skeleton";
-import {useWidgetLoading} from "../../../features/UiSlice";
+import {Widget} from "../../../schema/widget/widget";
+import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 
 const cx = classNames.bind(styles);
-type Props = {
-  wid: string;
-};
 
-const ScheduleWidget = (props: Props) => {
+const ScheduleWidget = ({
+  widget,
+  loading,
+  preview = false,
+}: WidgetContentProps) => {
   const dispatch = useAppDispatch();
   const schedule = useTypedSelector((state) => state.User.schedule);
   const widgetTableContent = schedule.map((row, rowIndex) =>
@@ -35,7 +37,7 @@ const ScheduleWidget = (props: Props) => {
       return acc;
     }, {})
   );
-  const loading = useWidgetLoading(props.wid);
+
   return loading ? (
     <ScheduleSkeleton />
   ) : (

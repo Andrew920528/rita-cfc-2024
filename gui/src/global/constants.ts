@@ -8,3 +8,11 @@ export enum API {
 }
 
 export const EMPTY_ID = "NONE";
+
+export const WIDGET_MODIFIER_START_TOKEN = "WIDGET_MODIFIER_STARTED";
+
+export enum AGENCY {
+  GENERAL = "general",
+  LECTURE = "lecture",
+  WORKSHEET = "worksheet",
+}

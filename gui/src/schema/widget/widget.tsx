@@ -21,6 +21,12 @@ export enum WidgetType {
   Worksheet,
 }
 
+export enum WidgetCategory {
+  contextSetter = "環境設定",
+  aiTool = "智慧探索",
+  other = "小工具",
+}
+
 export type WidgetContent =
   | SemesterGoalWidgetContent
   | SemesterPlanWidgetContent
@@ -33,12 +39,15 @@ export type Widget = {
   id: string;
   type: WidgetType;
   content: WidgetContent;
+  chatroomId: string;
 };
 
 export type Widgets = {
   dict: {[key: string]: Widget};
+  previewDict: {[key: string]: Widget};
   current: string;
   unsaved: {[key: string]: true};
+  creating: {[key: string]: true};
 };
 export type widgetUiBook = {
   title: string;
@@ -49,9 +58,18 @@ export type widgetUiBook = {
   maxWidth: number;
   minHeight: number;
   maxHeight: number;
+  category: WidgetCategory;
 };
+export type PromptItem = {
+  chipMessage: string;
+  actualPrompt: string;
+  icon: ReactNode; // or JSX.Element if you prefer
+  iconColor: string;
+};
+
 export abstract class WidgetMaker<T> {
   abstract init(): T;
   abstract isType(obj: any): obj is T;
   abstract uiBook(): widgetUiBook;
+  abstract promptRecs(): PromptItem[];
 }

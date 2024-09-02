@@ -40,11 +40,15 @@
       flex-direction: row;
       align-items: center;
       height: 100%;
-      margin-left: 1.25rem;
-      margin-right: 1.25rem;
+      gap: 0.5rem;
+      margin-left: 1rem;
+      margin-right: 1rem;
       .subject {
         text-wrap: nowrap;
-        margin-right: 1rem;
+      }
+      .subject-lecture {
+        text-wrap: nowrap;
+        font-weight: 400;
       }
     }
     .header-right-end {

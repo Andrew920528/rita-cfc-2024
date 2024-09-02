@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0.2rem 0.5rem;
+  padding: 0.2rem 1rem 0.2rem 0.5rem;
   gap: 0.25rem;
   background-color: white;
   &:hover {
@@ -13,14 +13,11 @@
     background-color: #e8e8e8;
     cursor: pointer;
   }
-  p {
-    // background-color: red;
-  }
+
   .chip-icon {
     width: 1.5rem;
     height: 1.5rem;
     border-radius: 50%;
-    // background-color: $primary-color;
     display: flex;
     align-items: center;
     justify-content: center;

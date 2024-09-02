@@ -1,3 +1,6 @@
+import {AGENCY} from "../global/constants";
+import {WidgetType} from "./widget/widget";
+
 export type ChatMessage = {
   text: string;
   sender: string;
@@ -13,9 +16,18 @@ export const SENDER = {
 export type Chatroom = {
   id: string;
   messages: ChatMessage[];
+  agency: AGENCY;
 };
 
 export type Chatrooms = {
   dict: {[key: string]: Chatroom};
-  current: string;
+  waitingForReply: {[key: string]: boolean};
 };
+
+export function getAgencyByWidgetType(widgetType: WidgetType): AGENCY {
+  if (widgetType === WidgetType.Worksheet) {
+    return AGENCY.WORKSHEET;
+  } else {
+    return AGENCY.GENERAL;
+  }
+}

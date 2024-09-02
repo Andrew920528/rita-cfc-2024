@@ -4,14 +4,14 @@ import {messageRitaService, useApiHandler} from "../../utils/service";
 import {SENDER} from "../../schema/chatroom";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {contentIsOfType, widgetBook} from "../../schema/widget/widgetFactory";
-import {EMPTY_ID} from "../../global/constants";
+import {EMPTY_ID, WIDGET_MODIFIER_START_TOKEN} from "../../global/constants";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {replaceTabsWithSpaces} from "../../utils/util";
 
-export const useMessageRita = () => {
+export const useMessageRita = (chatroomId: string) => {
   const dispatch = useAppDispatch();
   const chatroom = useTypedSelector(
-    (state) => state.Chatrooms.dict[state.Chatrooms.current]
+    (state) => state.Chatrooms.dict[chatroomId]
   );
 
   const classroomId = useTypedSelector((state) => state.Classrooms.current);
@@ -20,15 +20,23 @@ export const useMessageRita = () => {
   );
   const widgets = useTypedSelector((state) => state.Widgets);
   // api handlers
-  const {
-    abortControllerRef,
-    loading: waitingForReply,
-    setLoading: setWaitingForReply,
-    terminateResponse,
-  } = useApiHandler([classroomId]);
+  const {abortControllerRef, terminateResponse} = useApiHandler({
+    dependencies: [classroomId],
+    runsInBackground: true,
+  });
 
   const [ritaError, setRitaError] = useState("");
   const [constructingWidget, setConstructingWidget] = useState(false);
+
+  function setWaitingForReply(waiting: boolean) {
+    dispatch(
+      ChatroomsServices.actions.setWaitingForReply({
+        chatroomId: chatroom.id,
+        waiting: waiting,
+      })
+    );
+  }
+
   async function sendMessage(text: string) {
     abortControllerRef.current = new AbortController();
     let newMessage = {
@@ -44,8 +52,11 @@ export const useMessageRita = () => {
     );
     setRitaError("");
     // Step 1: Formulate payload
+    console.log(chatroom.agency);
+
     let payload = {
       prompt: text,
+      agency: chatroom.agency,
       widget:
         widgets.current === EMPTY_ID
           ? {
@@ -107,7 +118,6 @@ export const useMessageRita = () => {
           handleChunk(l, organizer);
         }
       }
-      console.log(organizer.currRitaReply);
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
         console.warn(error.message);
@@ -164,7 +174,7 @@ export const useMessageRita = () => {
         })
       );
     } else if (agent === "Widget Modifier") {
-      if (data === "WIDGET_MODIFIER_STARTED") {
+      if (data === WIDGET_MODIFIER_START_TOKEN) {
         let messageObj = {
           text: organizer.currRitaReply,
           sender: SENDER.ai,
@@ -198,15 +208,6 @@ export const useMessageRita = () => {
 
     let widgetId = modify_widget_data.widgetId;
 
-    // if (
-    //   !widgetId ||
-    //   widgetId === "" ||
-    //   widgetId !== widgets.current ||
-    //   widgetId === EMPTY_ID
-    // ) {
-    //   console.warn("Could not modify widget with id", widgetId);
-    //   return;
-    // }
     let widgetContent = modify_widget_data.widgetContent;
 
     if (!contentIsOfType(widgets.dict[widgets.current].type, widgetContent)) {
@@ -216,13 +217,12 @@ export const useMessageRita = () => {
       );
       return;
     }
+
     dispatch(
-      WidgetsServices.actions.updateWidget({
-        newWidget: {
-          id: widgetId,
-          type: widgets.dict[widgets.current].type,
-          content: widgetContent,
-        },
+      WidgetsServices.actions.addPreviewWidget({
+        id: widgetId,
+        type: widgets.dict[widgets.current].type,
+        content: widgetContent,
       })
     );
 
@@ -242,7 +242,6 @@ export const useMessageRita = () => {
 
   return {
     sendMessage,
-    waitingForReply,
     constructingWidget,
     terminateResponse,
     ritaError,

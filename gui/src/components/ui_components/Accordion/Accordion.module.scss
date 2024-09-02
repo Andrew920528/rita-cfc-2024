@@ -1,0 +1,16 @@
+.accordion-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: 1px solid #8d8d8d;
+}
+
+.accordion-content {
+  height: 100%;
+  transition: max-height 0.2s ease-in-out;
+  overflow: hidden;
+  max-height: 1000px;
+  &.collapsed {
+    max-height: 0;
+  }
+}

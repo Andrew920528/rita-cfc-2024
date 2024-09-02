@@ -1,0 +1,137 @@
+.course-tab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  .tab-section {
+    display: flex;
+    flex-direction: column;
+    min-height: 3rem;
+    overflow: hidden;
+  }
+
+  .nav-heading {
+    border-bottom: 1px solid #8d8d8d;
+    box-sizing: content-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    padding-left: 1rem;
+    text-wrap: nowrap;
+    height: 3rem;
+    min-height: 3rem;
+  }
+  .nav-stack {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    margin: 0;
+    flex: 1;
+    .placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 3rem;
+      color: #8d8d8d;
+    }
+  }
+}
+
+.class-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  align-items: stretch;
+  background-color: white;
+  width: 100%;
+
+  &:hover {
+    background-color: #e8e8e8;
+  }
+
+  &.selected {
+    background-color: #e0e0e0;
+    &:hover {
+      background-color: #e8e8e8;
+    }
+  }
+
+  &.loading {
+    background-color: #c6c6c6;
+    opacity: 0.5;
+    &:hover {
+      background-color: #c6c6c6;
+    }
+  }
+
+  .class-card-words {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    gap: 0.5rem;
+    overflow: hidden;
+    p {
+      margin: 0;
+      text-wrap: nowrap;
+      width: 100%;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      user-select: none;
+    }
+  }
+  .class-card-loading {
+    // height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-right: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+  }
+}
+
+.lecture-card {
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  &:hover {
+    background-color: #e8e8e8;
+  }
+  .lecture-card-words {
+    padding: 1rem;
+    flex-grow: 1;
+  }
+  &.selected {
+    background-color: #e0e0e0;
+    &:hover {
+      background-color: #e8e8e8;
+    }
+  }
+  &.loading {
+    background-color: #c6c6c6;
+    opacity: 0.5;
+    &:hover {
+      background-color: #c6c6c6;
+    }
+  }
+  .lecture-card-loading {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-right: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+  }
+}
+
+.settings-fm {
+  text-wrap: nowrap;
+}
