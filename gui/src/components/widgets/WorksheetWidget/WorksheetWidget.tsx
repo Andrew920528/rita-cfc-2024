@@ -4,9 +4,16 @@ import styles from "./WorksheetWidget.module.scss";
 import {Skeleton} from "@mui/material";
 import FileDownload from "./FileDownload";
 import PdfPreview from "./PdfPreview";
-import {useTypedSelector} from "../../../store/store";
-import {Widget} from "../../../schema/widget/widget";
+import {useAppDispatch, useTypedSelector} from "../../../store/store";
+import {Widget, WidgetType} from "../../../schema/widget/widget";
 import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
+import {
+  Question,
+  QuestionType,
+  WorksheetWidgetContent,
+} from "../../../schema/widget/worksheetWidgetContent";
+import {useDispatch} from "react-redux";
+import {WidgetsServices} from "../../../features/WidgetsSlice";
 
 const cx = classNames.bind(styles);
 
@@ -15,23 +22,63 @@ const WorksheetWidget = ({
   loading,
   preview = false,
 }: WidgetContentProps) => {
-  const [previewReady, setPreviewReady] = useState<boolean>(false);
-  const currWidget = useTypedSelector((state) => state.Widgets.current);
+  const [showPreview, setShowPreview] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const addQuestionForDebug = () => {
+    let newQ = {
+      question: "What is your name",
+      questionType: QuestionType.FR,
+      questionContent: {},
+    } as Question;
+
+    dispatch(
+      WidgetsServices.actions.addQuestion({
+        widgetId: widget.id,
+        question: newQ,
+      })
+    );
+  };
+
   return loading ? (
     <WorksheetSkeleton />
   ) : (
     <div className={cx("worksheet-widget")}>
+      {(widget.content as WorksheetWidgetContent).questions.length === 0 ? (
+        <WorksheetPlaceholder />
+      ) : (
+        <WorkSheetQuestionStack widget={widget} />
+      )}
       <button
         onClick={() => {
-          setPreviewReady(!previewReady);
+          setShowPreview(!showPreview);
         }}
       >
-        Toggle to debug
+        Show preview space
       </button>
-      {previewReady ? (
-        <WorkSheetPreview />
-      ) : (
-        <WorksheetPlaceholder ideating={widget.id === currWidget} />
+
+      <button
+        onClick={() => {
+          addQuestionForDebug();
+        }}
+      >
+        Add Question
+      </button>
+      {showPreview && <WorkSheetPreview />}
+    </div>
+  );
+};
+
+const WorkSheetQuestionStack = ({widget}: {widget: Widget}) => {
+  return (
+    <div className={cx("worksheet-question-stack")}>
+      {(widget.content as WorksheetWidgetContent).questions.map(
+        (questionObj, index) => {
+          return (
+            <div className={cx("worksheet-question-stack-item")} key={index}>
+              {questionObj.question}
+            </div>
+          );
+        }
       )}
     </div>
   );
@@ -40,13 +87,13 @@ const WorksheetWidget = ({
 const WorkSheetPreview = () => {
   return (
     <div className={cx("worksheet-preview")}>
-      <PdfPreview />
-      <FileDownload />
+      {/* <PdfPreview />
+      <FileDownload /> */}
     </div>
   );
 };
 
-const WorksheetPlaceholder = (props: {ideating: boolean}) => {
+const WorksheetPlaceholder = () => {
   return (
     <div className={cx("worksheet-placeholder")}>
       <div className={cx("title")}>
@@ -62,12 +109,6 @@ const WorksheetPlaceholder = (props: {ideating: boolean}) => {
       </div>
       <div className={cx("example")}>”我要一份數學練習的學習單。“</div>
       <div className={cx("example")}>”來設計校外教學的學習單吧！“</div>
-
-      {props.ideating ? (
-        <div className={cx("status", "--label")}>討論中</div>
-      ) : (
-        <div className={cx("status", "--label")}>討論已暫停</div>
-      )}
     </div>
   );
 };

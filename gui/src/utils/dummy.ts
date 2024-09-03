@@ -114,7 +114,9 @@ let widgets = {
     },
     "AndrewHsu-wid-m0c2fkvbvkuoh1vnnep": {
       chatroomId: "qeUVar7vfJTHb7f3",
-      content: `{}`,
+      content: `{
+        "questions": []
+      }`,
       id: "AndrewHsu-wid-m0c2fkvbvkuoh1vnnep",
       type: 4,
     },

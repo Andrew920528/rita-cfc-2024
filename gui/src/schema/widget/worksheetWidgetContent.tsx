@@ -7,11 +7,32 @@ import {
 import {PromptItem, WidgetCategory, WidgetType} from "./widget";
 import {WidgetMaker} from "./widget";
 
-export type WorksheetWidgetContent = {}; // currently content comes from user
+export enum QuestionType {
+  MC,
+  FR,
+}
+
+type McContent = {
+  choices: string[];
+  answer: number;
+};
+type FrContent = {};
+
+export type Question = {
+  question: string;
+  questionType: QuestionType;
+  questionContent: McContent | FrContent;
+};
+
+export type WorksheetWidgetContent = {
+  questions: Question[];
+};
 
 export class WorksheetWidgetMaker extends WidgetMaker<WorksheetWidgetContent> {
   init() {
-    return {};
+    return {
+      questions: [],
+    };
   }
   isType(obj: any): obj is WorksheetWidgetContent {
     return true;

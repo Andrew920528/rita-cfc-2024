@@ -1,7 +1,11 @@
 import {PayloadAction, createSlice, current} from "@reduxjs/toolkit";
-import {Widget, Widgets} from "../schema/widget/widget";
+import {Widget, WidgetType, Widgets} from "../schema/widget/widget";
 import {EMPTY_ID} from "../global/constants";
 import {act} from "react";
+import {
+  Question,
+  WorksheetWidgetContent,
+} from "../schema/widget/worksheetWidgetContent";
 
 type MiscProps = {
   applyPreview: {[id: string]: boolean};
@@ -116,6 +120,27 @@ const WidgetsSlice = createSlice({
       action: PayloadAction<{id: string; value: boolean}>
     ) => {
       state.applyPreview[action.payload.id] = action.payload.value;
+    },
+
+    // Worksheet related actions
+    addQuestion: (
+      state,
+      action: PayloadAction<{
+        widgetId: string;
+        question: Question;
+      }>
+    ) => {
+      const wid = action.payload.widgetId;
+      if (!(wid in state.dict)) {
+        return;
+      }
+      const widget = state.dict[wid];
+      if (widget.type !== WidgetType.Worksheet) {
+        return;
+      }
+      (widget.content as WorksheetWidgetContent).questions.push(
+        action.payload.question
+      );
     },
   },
 });
