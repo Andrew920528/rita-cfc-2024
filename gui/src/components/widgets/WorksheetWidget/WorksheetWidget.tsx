@@ -15,6 +15,8 @@ import {
 import {useDispatch} from "react-redux";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
 import Accordion from "../../ui_components/Accordion/Accordion";
+import IconButton from "../../ui_components/IconButton/IconButton";
+import {MagicWand} from "@carbon/icons-react";
 
 const cx = classNames.bind(styles);
 
@@ -24,6 +26,10 @@ const WorksheetWidget = ({
   preview = false,
 }: WidgetContentProps) => {
   const [showPreview, setShowPreview] = useState<boolean>(false);
+  // useEffect(() => {
+  //   console.trace(widget);
+  // }, [widget]);
+  // console.trace(widget);
   const dispatch = useAppDispatch();
   const addQuestionForDebug = () => {
     let newQ = {
@@ -46,13 +52,6 @@ const WorksheetWidget = ({
     <div className={cx("worksheet-widget")}>
       <button
         onClick={() => {
-          setShowPreview(!showPreview);
-        }}
-      >
-        Toggle Preview
-      </button>
-      <button
-        onClick={() => {
           addQuestionForDebug();
         }}
       >
@@ -64,7 +63,17 @@ const WorksheetWidget = ({
       ) : (widget.content as WorksheetWidgetContent).questions.length === 0 ? (
         <WorksheetPlaceholder />
       ) : (
-        <WorkSheetQuestionStack widget={widget} />
+        <>
+          <WorkSheetQuestionStack widget={widget} />
+          <IconButton
+            text="生成學習單"
+            onClick={() => {
+              setShowPreview(!showPreview);
+            }}
+            icon={<MagicWand />}
+            mode="primary"
+          />
+        </>
       )}
     </div>
   );

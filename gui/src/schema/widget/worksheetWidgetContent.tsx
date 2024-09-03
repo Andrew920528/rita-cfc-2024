@@ -36,7 +36,23 @@ export class WorksheetWidgetMaker extends WidgetMaker<WorksheetWidgetContent> {
     };
   }
   isType(obj: any): obj is WorksheetWidgetContent {
-    return true;
+    return (
+      typeof obj === "object" &&
+      obj !== null &&
+      Array.isArray(obj.questions) &&
+      obj.questions.every(
+        (question: any) =>
+          typeof question.questionId === "string" &&
+          typeof question.question === "string" &&
+          typeof question.questionType === "number" &&
+          question.questionContent &&
+          ((Array.isArray((question.questionContent as McContent).choices) &&
+            typeof (question.questionContent as McContent).answer ===
+              "number") ||
+            (typeof question.questionContent === "object" &&
+              Object.keys(question.questionContent).length === 0))
+      )
+    );
   }
   uiBook() {
     return {
