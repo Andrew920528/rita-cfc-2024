@@ -19,6 +19,7 @@ from dotenv import load_dotenv
 import os
 from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY, TOP_K, TOP_P, TEMPERATURE
 from agents.Rita import Rita
+from agents.RitaAgents import GeneralAgent, WorksheetAgent, LectureAgent
 from agents.IntentClassifier import IntentClassifier
 from agents.WidgetModifier import WidgetModifier
 from agents.WorksheetGenerator import WorksheetGenerator
@@ -131,7 +132,7 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
         General = 0
         Worksheet = 1
         Lecture = 2
-    AGENT_TYPE = Agent_Type.General
+    AGENT_TYPE = Agent_Type.Lecture
     #############################################################################
 
     time_logger = LlmTester(name="llm process", on=LOG_OUTPUT)
@@ -140,7 +141,13 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
     response_queue = queue.Queue()
     stream_handler = RitaStreamHandler(response_queue)
     # Agent 1: Response to the user
-    rita_agent = Rita(llm=llm, retriever=retriever, agent_type=AGENT_TYPE, verbose=RITA_VERBOSE)
+    match AGENT_TYPE:
+        case Agent_Type.General:          
+            rita_agent = GeneralAgent(llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
+        case Agent_Type.Worksheet:
+            rita_agent = WorksheetAgent(llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
+        case Agent_Type.Lecture:
+            rita_agent = LectureAgent(llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
     complete_rita_response = ""
     rita_response_done = False
 

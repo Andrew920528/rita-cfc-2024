@@ -7,11 +7,10 @@ from utils.util import format_chat_history
 import json
 
 class BaseAgent:
-    def __init__(self, llm, retriever, agent_type, verbose=False) -> None:
+    def __init__(self, llm, retriever, verbose=False) -> None:
         self.llm = llm
         self.retriever = retriever
         self.logger = LlmTester(name="Rita", on=verbose)
-        self.agent_type = agent_type
 
     def stream(self, user_prompt, data):
         prompt = self._get_prompt(user_prompt, data)
@@ -106,7 +105,14 @@ class LectureAgent(BaseAgent):
             "You are supposed to answer the user's questions on how to use Rita."
         )
         SYSTEM_BASE_INSTRUCTION = (
-            "Answer the user's questions based on the below context: {context}."
+            "Answer the user's questions based on the below context: {context}"
+            "You can use the learning goals widget to view the key learning points of each course"
+            "You can use the course weekly schedule widget to view the classes in a week"
+            "You can use the course content schedule widget to make a chart of what to do each week"
+            "You can use the worksheet widget to make a worksheets for the course"
+            "We also have a note widget for you to take notes"
+            "To use these widgets, use the panel on the left"
+            "You can use the chatroom on the bottom right to modify all these widgets"
             "The context is a guide to use Rita."
 
             "If the subject is irrelevant to the provided context, try your best to help without using the context."
@@ -118,6 +124,16 @@ class LectureAgent(BaseAgent):
         )
 
         return SYSTEM_INTRO, SYSTEM_BASE_INSTRUCTION
+    def _get_prompt(self, user_prompt, data):
+        chat_history = format_chat_history(data["chat_history"])
+
+        return {
+            "context": [],
+            "chat_history": chat_history,
+            "input": user_prompt,
+            # "widget_id": data["widget"]["id"],
+            # "widget_content": json.dumps(data["widget"]["content"]),
+        }
 
 class WorksheetAgent(BaseAgent):
 
