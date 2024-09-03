@@ -64,22 +64,10 @@ const WorksheetPlaceholder = (props: {ideating: boolean}) => {
       <div className={cx("example")}>”來設計校外教學的學習單吧！“</div>
 
       {props.ideating ? (
-        <div className={cx("status", "--label")}>
-          討論中 <IdeatingDots />
-        </div>
+        <div className={cx("status", "--label")}>討論中</div>
       ) : (
         <div className={cx("status", "--label")}>討論已暫停</div>
       )}
-    </div>
-  );
-};
-
-const IdeatingDots = () => {
-  return (
-    <div className={cx("ideating-dots")}>
-      <div className={cx("ideating-dot")} />
-      <div className={cx("ideating-dot")} />
-      <div className={cx("ideating-dot")} />
     </div>
   );
 };
