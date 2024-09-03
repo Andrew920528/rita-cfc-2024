@@ -19,6 +19,7 @@ type McContent = {
 type FrContent = {};
 
 export type Question = {
+  questionId: string;
   question: string;
   questionType: QuestionType;
   questionContent: McContent | FrContent;

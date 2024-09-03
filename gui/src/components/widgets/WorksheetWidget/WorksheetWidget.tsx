@@ -14,6 +14,7 @@ import {
 } from "../../../schema/widget/worksheetWidgetContent";
 import {useDispatch} from "react-redux";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
+import Accordion from "../../ui_components/Accordion/Accordion";
 
 const cx = classNames.bind(styles);
 
@@ -29,7 +30,7 @@ const WorksheetWidget = ({
       question: "What is your name",
       questionType: QuestionType.FR,
       questionContent: {},
-    } as Question;
+    } as Omit<Question, "questionId">;
 
     dispatch(
       WidgetsServices.actions.addQuestion({
@@ -43,19 +44,13 @@ const WorksheetWidget = ({
     <WorksheetSkeleton />
   ) : (
     <div className={cx("worksheet-widget")}>
-      {(widget.content as WorksheetWidgetContent).questions.length === 0 ? (
-        <WorksheetPlaceholder />
-      ) : (
-        <WorkSheetQuestionStack widget={widget} />
-      )}
       <button
         onClick={() => {
           setShowPreview(!showPreview);
         }}
       >
-        Show preview space
+        Toggle Preview
       </button>
-
       <button
         onClick={() => {
           addQuestionForDebug();
@@ -63,7 +58,14 @@ const WorksheetWidget = ({
       >
         Add Question
       </button>
-      {showPreview && <WorkSheetPreview />}
+
+      {showPreview ? (
+        <WorkSheetPreview />
+      ) : (widget.content as WorksheetWidgetContent).questions.length === 0 ? (
+        <WorksheetPlaceholder />
+      ) : (
+        <WorkSheetQuestionStack widget={widget} />
+      )}
     </div>
   );
 };
@@ -74,9 +76,19 @@ const WorkSheetQuestionStack = ({widget}: {widget: Widget}) => {
       {(widget.content as WorksheetWidgetContent).questions.map(
         (questionObj, index) => {
           return (
-            <div className={cx("worksheet-question-stack-item")} key={index}>
-              {questionObj.question}
-            </div>
+            <Accordion
+              key={questionObj.questionId}
+              id={questionObj.questionId}
+              header={<>{`Question ${index + 1}`}</>}
+              content={
+                <div
+                  className={cx("worksheet-question-stack-item")}
+                  key={index}
+                >
+                  {questionObj.question}
+                </div>
+              }
+            />
           );
         }
       )}

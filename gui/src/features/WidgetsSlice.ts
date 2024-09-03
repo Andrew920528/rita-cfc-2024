@@ -6,6 +6,7 @@ import {
   Question,
   WorksheetWidgetContent,
 } from "../schema/widget/worksheetWidgetContent";
+import {generateId} from "../utils/util";
 
 type MiscProps = {
   applyPreview: {[id: string]: boolean};
@@ -127,7 +128,7 @@ const WidgetsSlice = createSlice({
       state,
       action: PayloadAction<{
         widgetId: string;
-        question: Question;
+        question: Omit<Question, "questionId">;
       }>
     ) => {
       const wid = action.payload.widgetId;
@@ -135,12 +136,18 @@ const WidgetsSlice = createSlice({
         return;
       }
       const widget = state.dict[wid];
+
+      let newQuestion = {
+        questionId: generateId(),
+        ...action.payload.question,
+      };
+
       if (widget.type !== WidgetType.Worksheet) {
         return;
       }
-      (widget.content as WorksheetWidgetContent).questions.push(
-        action.payload.question
-      );
+
+      (widget.content as WorksheetWidgetContent).questions.push(newQuestion);
+      state.unsaved[wid] = true;
     },
   },
 });
