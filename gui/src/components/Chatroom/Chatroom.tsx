@@ -48,8 +48,13 @@ const Chatroom = ({
     (state) => state.Chatrooms.dict[chatroomId]
   );
   const widgets = useTypedSelector((state) => state.Widgets);
-  const {sendMessage, constructingWidget, terminateResponse, ritaError} =
-    useMessageRita(chatroomId);
+  const {
+    sendMessage,
+    constructingWidget,
+    terminateResponse,
+    ritaError,
+    setConstructingWidget,
+  } = useMessageRita(chatroomId);
   const waitingForReply = useTypedSelector(
     (state) => state.Chatrooms.waitingForReply[chatroomId]
   );
@@ -148,6 +153,7 @@ const Chatroom = ({
             icon={waitingForReply ? <Stop /> : <ArrowRight />}
             onClick={async () => {
               if (waitingForReply) {
+                setConstructingWidget(false);
                 terminateResponse();
               } else {
                 setText("");

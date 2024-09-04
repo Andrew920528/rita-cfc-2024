@@ -128,11 +128,11 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
     #############################################################################
 
     ############################ Temporary Switch ###############################
-    class Agent_Type(Enum) :
+    class Agency_Type(Enum):
         General = 0
         Worksheet = 1
         Lecture = 2
-    AGENT_TYPE = Agent_Type.Lecture
+    AGENCY_TYPE = Agency_Type.Lecture
     #############################################################################
 
     time_logger = LlmTester(name="llm process", on=LOG_OUTPUT)
@@ -141,13 +141,16 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
     response_queue = queue.Queue()
     stream_handler = RitaStreamHandler(response_queue)
     # Agent 1: Response to the user
-    match AGENT_TYPE:
-        case Agent_Type.General:          
-            rita_agent = GeneralAgent(llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
-        case Agent_Type.Worksheet:
-            rita_agent = WorksheetAgent(llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
-        case Agent_Type.Lecture:
-            rita_agent = LectureAgent(llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
+    match AGENCY_TYPE:
+        case Agency_Type.General:
+            rita_agent = GeneralAgent(
+                llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
+        case Agency_Type.Worksheet:
+            rita_agent = WorksheetAgent(
+                llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
+        case Agency_Type.Lecture:
+            rita_agent = LectureAgent(
+                llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
     complete_rita_response = ""
     rita_response_done = False
 
@@ -177,16 +180,17 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
         nonlocal complete_rita_response
         nonlocal complete_rita_response
 
-        while not rita_response_done:
+        while not rita_response_done:   # wait until previous agent finishes
             time.sleep(0.1)
 
         stream_handler.add_to_stream(
             agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
 
         # Agent 2: Determine user's intent
-        match AGENT_TYPE:
-            case Agent_Type.General:
-                intent_classifier = IntentClassifier(llm, agent_type=AGENT_TYPE, verbose=INTENT_VERBOSE)
+        match AGENCY_TYPE:
+            case Agency_Type.General:
+                intent_classifier = IntentClassifier(
+                    llm, agent_type=AGENCY_TYPE, verbose=INTENT_VERBOSE)
                 intent = intent_classifier.invoke(
                     user_prompt, data, complete_rita_response)
                 # Agent 3: Modify widget if needed
@@ -198,30 +202,32 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
                     f"Modified widget generated.")
                 stream_handler.add_to_stream(
                     agent="Widget Modifier", data=modified_widget)
-                stream_handler.end_stream()
-                time_logger.log_latency("Stream completed")
                 time_logger.log_latency(f"Finished detecting intent.")
-            case Agent_Type.Worksheet:
+            case Agency_Type.Worksheet:
                 # Agent 4: Generate worksheet if needed
-                worksheet_generator = WorksheetGenerator(llm, verbose=WG_VERBOSE)
+                worksheet_generator = WorksheetGenerator(
+                    llm, verbose=WG_VERBOSE)
                 generated_worksheet = worksheet_generator.invoke(
                     user_prompt, data, complete_rita_response)
                 time_logger.log_latency(
                     f"Worksheet generated.")
                 # stream_handler.add_to_stream(
                 #     agent="Worksheet Generator", data=generated_worksheet)
-                stream_handler.end_stream()
                 time_logger.log_latency("Stream completed")
 
+        # end the stream after the widget modifier is ran
+        stream_handler.end_stream()
+        time_logger.log_latency("Stream completed")
     t2 = threading.Thread(target=run_widget_modifier)
     t2.start()
 
-    match AGENT_TYPE:
-        case Agent_Type.Worksheet:
+    match AGENCY_TYPE:
+        case Agency_Type.Worksheet:
             response = Response(stream_handler.yield_stream())
         case _:
-            response = Response(stream_handler.yield_stream(), content_type="application/json")
-  
+            response = Response(stream_handler.yield_stream(),
+                                content_type="application/json")
+
     return response
 
 

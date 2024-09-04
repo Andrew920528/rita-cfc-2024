@@ -52,8 +52,6 @@ export const useMessageRita = (chatroomId: string) => {
     );
     setRitaError("");
     // Step 1: Formulate payload
-    console.log(chatroom.agency);
-
     let payload = {
       prompt: text,
       agency: chatroom.agency,
@@ -243,6 +241,7 @@ export const useMessageRita = (chatroomId: string) => {
   return {
     sendMessage,
     constructingWidget,
+    setConstructingWidget,
     terminateResponse,
     ritaError,
   };
