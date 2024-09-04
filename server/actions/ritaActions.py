@@ -132,7 +132,7 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
         General = 0
         Worksheet = 1
         Lecture = 2
-    AGENCY_TYPE = Agency_Type.Lecture
+    AGENCY_TYPE = Agency_Type.Lecture   # FIXME: should be agency from param
     #############################################################################
 
     time_logger = LlmTester(name="llm process", on=LOG_OUTPUT)
@@ -221,6 +221,7 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
     t2 = threading.Thread(target=run_widget_modifier)
     t2.start()
 
+    # Returns response
     match AGENCY_TYPE:
         case Agency_Type.Worksheet:
             response = Response(stream_handler.yield_stream())
