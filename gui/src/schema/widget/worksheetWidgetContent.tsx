@@ -6,24 +6,31 @@ import {
 } from "@carbon/icons-react";
 import {PromptItem, WidgetCategory, WidgetType} from "./widget";
 import {WidgetMaker} from "./widget";
-
 export enum QuestionType {
-  MC,
-  FR,
+  MC = "Multiple Choices",
+  FIB = "Fill in the Blanks",
+  MATCH = "Matching",
 }
 
-type McContent = {
+type BaseQuestion = {
+  questionId: string;
+  question: string;
+  type: QuestionType;
+};
+export type McQuestion = BaseQuestion & {
   choices: string[];
   answer: number;
 };
-type FrContent = {};
-
-export type Question = {
-  questionId: string;
-  question: string;
-  questionType: QuestionType;
-  questionContent: McContent | FrContent;
+export type FibQuestion = BaseQuestion & {
+  answer: string[];
 };
+export type MatchQuestion = BaseQuestion & {
+  premises: string[];
+  options: string[];
+  answer: number[];
+};
+
+export type Question = McQuestion | FibQuestion | MatchQuestion;
 
 export type WorksheetWidgetContent = {
   questions: Question[];
@@ -40,18 +47,49 @@ export class WorksheetWidgetMaker extends WidgetMaker<WorksheetWidgetContent> {
       typeof obj === "object" &&
       obj !== null &&
       Array.isArray(obj.questions) &&
-      obj.questions.every(
-        (question: any) =>
-          typeof question.questionId === "string" &&
-          typeof question.question === "string" &&
-          typeof question.questionType === "number" &&
-          question.questionContent &&
-          ((Array.isArray((question.questionContent as McContent).choices) &&
-            typeof (question.questionContent as McContent).answer ===
-              "number") ||
-            (typeof question.questionContent === "object" &&
-              Object.keys(question.questionContent).length === 0))
-      )
+      obj.questions.every((question: any) => {
+        if (
+          typeof question.questionId !== "string" ||
+          typeof question.question !== "string" ||
+          typeof question.type !== "number"
+        ) {
+          return false;
+        }
+
+        switch (question.type) {
+          case QuestionType.MC:
+            return (
+              Array.isArray(question.choices) &&
+              question.choices.every(
+                (choice: any) => typeof choice === "string"
+              ) &&
+              typeof question.answer === "number"
+            );
+
+          case QuestionType.FIB:
+            return (
+              Array.isArray(question.answer) &&
+              question.answer.every((ans: any) => typeof ans === "string")
+            );
+
+          case QuestionType.MATCH:
+            return (
+              Array.isArray(question.premises) &&
+              question.premises.every(
+                (premise: any) => typeof premise === "string"
+              ) &&
+              Array.isArray(question.options) &&
+              question.options.every(
+                (option: any) => typeof option === "string"
+              ) &&
+              Array.isArray(question.answer) &&
+              question.answer.every((ans: any) => typeof ans === "number")
+            );
+
+          default:
+            return false;
+        }
+      })
     );
   }
   uiBook() {
@@ -63,7 +101,7 @@ export class WorksheetWidgetMaker extends WidgetMaker<WorksheetWidgetContent> {
       minWidth: 400,
       maxWidth: 400,
       minHeight: 300,
-      maxHeight: 500,
+      maxHeight: 800,
       category: WidgetCategory.aiTool,
     };
   }

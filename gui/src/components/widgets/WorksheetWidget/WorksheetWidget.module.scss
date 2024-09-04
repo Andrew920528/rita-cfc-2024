@@ -39,4 +39,86 @@
   display: flex;
   flex-direction: column;
   margin: 0;
+  .header {
+    font-weight: bold;
+  }
+  .view-btn {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+  }
+}
+
+// Question Views
+.question-view {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding: 0.5rem;
+  text-align: start;
+  gap: 0.5rem;
+  .question-header {
+    font-weight: 500;
+    font-size: 1rem;
+  }
+}
+
+.mc {
+  .choice {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .circle {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #393939;
+    &.selected {
+      border: 2px solid $primary-color;
+    }
+  }
+  .check {
+    background-color: $primary-color;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+  }
+  .choices {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    row-gap: 2rem;
+    column-gap: 1rem;
+  }
+}
+
+.fib {
+  .matches {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 95%;
+    .match {
+      display: flex;
+      flex-direction: row;
+      // justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 0.25rem;
+      .dots {
+        flex-grow: 1;
+        height: 2px;
+        // background-color: red;
+        background-image: linear-gradient(to right, black 30%, transparent 50%);
+        background-size: 5px 5px;
+        background-repeat: repeat-x;
+      }
+    }
+  }
 }

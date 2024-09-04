@@ -16,7 +16,13 @@ import {useDispatch} from "react-redux";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
 import Accordion from "../../ui_components/Accordion/Accordion";
 import IconButton from "../../ui_components/IconButton/IconButton";
-import {MagicWand} from "@carbon/icons-react";
+import {CheckmarkOutline, Edit, MagicWand} from "@carbon/icons-react";
+import QuestionView from "./QuestionView";
+import {
+  dummyFibQuestion,
+  dummyMatchQuestion,
+  dummyMcQuestion,
+} from "../../../utils/dummy";
 
 const cx = classNames.bind(styles);
 
@@ -26,22 +32,24 @@ const WorksheetWidget = ({
   preview = false,
 }: WidgetContentProps) => {
   const [showPreview, setShowPreview] = useState<boolean>(false);
-  // useEffect(() => {
-  //   console.trace(widget);
-  // }, [widget]);
-  // console.trace(widget);
   const dispatch = useAppDispatch();
   const addQuestionForDebug = () => {
-    let newQ = {
-      question: "What is your name",
-      questionType: QuestionType.FR,
-      questionContent: {},
-    } as Omit<Question, "questionId">;
-
     dispatch(
       WidgetsServices.actions.addQuestion({
         widgetId: widget.id,
-        question: newQ,
+        question: dummyMcQuestion,
+      })
+    );
+    dispatch(
+      WidgetsServices.actions.addQuestion({
+        widgetId: widget.id,
+        question: dummyFibQuestion,
+      })
+    );
+    dispatch(
+      WidgetsServices.actions.addQuestion({
+        widgetId: widget.id,
+        question: dummyMatchQuestion,
       })
     );
   };
@@ -72,6 +80,7 @@ const WorksheetWidget = ({
             }}
             icon={<MagicWand />}
             mode="primary"
+            disabled={true}
           />
         </>
       )}
@@ -84,17 +93,40 @@ const WorkSheetQuestionStack = ({widget}: {widget: Widget}) => {
     <div className={cx("worksheet-question-stack")}>
       {(widget.content as WorksheetWidgetContent).questions.map(
         (questionObj, index) => {
+          const [editing, setEditing] = React.useState<boolean>(false);
+
           return (
             <Accordion
               key={questionObj.questionId}
               id={questionObj.questionId}
-              header={<>{`Question ${index + 1}`}</>}
+              header={<div className={cx("header")}>{`題目 ${index + 1}`}</div>}
               content={
                 <div
                   className={cx("worksheet-question-stack-item")}
                   key={index}
                 >
-                  {questionObj.question}
+                  <QuestionView
+                    question={questionObj}
+                    editing={editing}
+                    widgetId={widget.id}
+                  />
+                  <div className={cx("view-btn")}>
+                    {editing ? (
+                      <IconButton
+                        mode="primary"
+                        icon={<CheckmarkOutline />}
+                        text="確認"
+                        onClick={() => setEditing(false)}
+                      />
+                    ) : (
+                      <IconButton
+                        mode="ghost"
+                        icon={<Edit />}
+                        text="編輯"
+                        onClick={() => setEditing(true)}
+                      />
+                    )}
+                  </div>
                 </div>
               }
             />
