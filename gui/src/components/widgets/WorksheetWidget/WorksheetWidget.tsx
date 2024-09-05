@@ -89,12 +89,27 @@ const WorksheetWidget = ({
 };
 
 const WorkSheetQuestionStack = ({widget}: {widget: Widget}) => {
+  const [editingList, setEditingList] = React.useState<boolean[]>([]);
+  useEffect(() => {
+    let newList = [];
+    for (
+      let i = 0;
+      i < (widget.content as WorksheetWidgetContent).questions.length;
+      i++
+    ) {
+      newList.push(false);
+    }
+  }, [(widget.content as WorksheetWidgetContent).questions.length]);
   return (
     <div className={cx("worksheet-question-stack")}>
       {(widget.content as WorksheetWidgetContent).questions.map(
         (questionObj, index) => {
-          const [editing, setEditing] = React.useState<boolean>(false);
-
+          let editing = editingList[index];
+          let setEditing = (value: boolean) => {
+            let newList = [...editingList];
+            newList[index] = value;
+            setEditingList(newList);
+          };
           return (
             <Accordion
               key={questionObj.questionId}

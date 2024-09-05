@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {
   FibQuestion,
   MatchQuestion,
@@ -10,8 +10,9 @@ import {
 import classNames from "classnames/bind";
 import styles from "./WorksheetWidget.module.scss";
 import IconButton from "../../ui_components/IconButton/IconButton";
-import {CheckmarkOutline, Edit} from "@carbon/icons-react";
+import {Add, CheckmarkOutline, Edit, TrashCan} from "@carbon/icons-react";
 import Textbox from "../../ui_components/Textbox/Textbox";
+import {generateId} from "../../../utils/util";
 const cx = classNames.bind(styles);
 type QuestionViewProps = {
   question: Question;
@@ -56,42 +57,177 @@ export const QuestionView = ({
 export default QuestionView;
 
 function McQuestionView({question, editing, widgetId}: QuestionViewProps) {
-  const questionContent = question as McQuestion;
-  const Choice = ({
-    content,
-    selected,
-  }: {
-    content: string;
-    selected: boolean;
-  }) => {
-    return (
-      <div className={cx("choice")}>
-        <div className={cx("circle", {selected})}>
-          {selected && <div className={cx("check")} />}
-        </div>
-        <div className={cx("choice-text")}>{content}</div>
-      </div>
-    );
-  };
+  // stores the McQuestion object
+  const [displayQuestionObj, setDisplayQuestionObj] =
+    React.useState<McQuestion>(question as McQuestion);
+  const questionIsChanged = React.useRef<boolean>(false);
+
+  // The ids at each index corresponds to each choices
+  const [choiceIds, setChoiceIds] = useState<string[]>([]);
+
+  // for changing each choice content without re-rendering the entire list
+  const choicesRef = React.useRef<string[]>([]);
+
+  // Initialize choiceIds and choiceRefs
+  useEffect(() => {
+    let newlist = [];
+    for (let i in displayQuestionObj.choices) {
+      newlist.push(generateId());
+      choicesRef.current[i] = displayQuestionObj.choices[i];
+    }
+    setChoiceIds(newlist);
+  }, []);
+
+  // saves global state
+  useEffect(() => {
+    if (!questionIsChanged.current) return;
+    setDisplayQuestionObj({
+      ...displayQuestionObj,
+      choices: choicesRef.current,
+    });
+
+    // TODO : save global state
+
+    questionIsChanged.current = false;
+  }, [editing]);
+
+  const handleSelect = useCallback(
+    (index: number) => {
+      questionIsChanged.current = true;
+
+      setDisplayQuestionObj({
+        ...displayQuestionObj,
+        answer: index,
+        choices: choicesRef.current,
+      });
+    },
+    [displayQuestionObj]
+  );
+  const handleContentChange = useCallback((index: number, value: string) => {
+    questionIsChanged.current = true;
+    choicesRef.current[index] = value;
+  }, []);
+  const handleDeleteChoice = useCallback(
+    (index: number) => {
+      questionIsChanged.current = true;
+      let newChoiceList = [
+        ...displayQuestionObj.choices.slice(0, index),
+        ...displayQuestionObj.choices.slice(index + 1),
+      ];
+
+      setDisplayQuestionObj({
+        ...displayQuestionObj,
+        choices: newChoiceList,
+        answer:
+          displayQuestionObj.answer > index
+            ? displayQuestionObj.answer - 1
+            : displayQuestionObj.answer,
+      });
+
+      // Remove corresponding id
+      let newChoiceIds = [
+        ...choiceIds.slice(0, index),
+        ...choiceIds.slice(index + 1),
+      ];
+      setChoiceIds(newChoiceIds);
+      choicesRef.current = newChoiceList;
+    },
+    [displayQuestionObj, choiceIds]
+  );
+  const handleAddChoice = useCallback(() => {
+    questionIsChanged.current = true;
+    let newChoices = [...displayQuestionObj.choices, ""];
+    setDisplayQuestionObj({
+      ...displayQuestionObj,
+      choices: newChoices,
+    });
+    setChoiceIds([...choiceIds, generateId()]);
+    choicesRef.current = newChoices;
+  }, [displayQuestionObj, choiceIds]);
 
   return (
     <div className={cx("question-view", "mc")}>
       <p className={cx("question-header")}>{question.question}</p>
       <div className={cx("choices")}>
-        {questionContent.choices.map((choice, ind) => (
-          <Choice
-            key={choice}
-            content={choice}
-            selected={ind === questionContent.answer}
-          />
-        ))}
+        {displayQuestionObj.choices.map((choice, ind) => {
+          if (choiceIds[ind] === undefined) return null;
+          return (
+            <Choice
+              key={choiceIds[ind]}
+              content={choice}
+              selected={ind === displayQuestionObj.answer}
+              editing={editing}
+              editSelect={() => handleSelect(ind)}
+              editContent={(value) => handleContentChange(ind, value)}
+              deleteChoice={() => handleDeleteChoice(ind)}
+            />
+          );
+        })}
       </div>
+      {editing && (
+        <IconButton
+          mode="ghost"
+          icon={<Add />}
+          text="新增選項"
+          onClick={handleAddChoice}
+        />
+      )}
     </div>
   );
 }
 
+const Choice = ({
+  content, // initial display value
+  selected, // whether the choice is selected
+  editing, // whether the choice is in editing mode
+  editSelect, // edit the right answer
+  editContent, // edit the value
+  deleteChoice, // delete the choice
+}: {
+  content: string;
+  selected: boolean;
+  editing: boolean;
+  editSelect: () => void;
+  editContent: (value: string) => void;
+  deleteChoice: () => void;
+}) => {
+  return (
+    <div className={cx("choice")}>
+      <div
+        className={cx("circle", {selected, editing})}
+        onClick={() => {
+          if (!editing) return;
+          editSelect();
+        }}
+      >
+        {selected && <div className={cx("check")} />}
+      </div>
+      {editing ? (
+        <Textbox
+          defaultValue={content}
+          onChange={(e) => {
+            editContent(e.currentTarget.value);
+          }}
+          mode="form"
+          name={content}
+        />
+      ) : (
+        <div className={cx("choice-text")}>{content}</div>
+      )}
+      {editing && (
+        <IconButton
+          mode="ghost"
+          icon={<TrashCan />}
+          onClick={() => {
+            deleteChoice();
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
 function FibQuestionView({question, editing, widgetId}: QuestionViewProps) {
-  const questionContent = question as FibQuestion;
   const [displayQuestionObj, setDisplayQuestionObj] =
     React.useState<Question>(question);
   const [questionIsChanged, setQuestionIsChanged] =
@@ -101,6 +237,7 @@ function FibQuestionView({question, editing, widgetId}: QuestionViewProps) {
   useEffect(() => {
     if (!questionIsChanged) return;
     console.log("Save new widget content");
+    // TODO Save global state
     setQuestionIsChanged(false);
   }, [editing]);
   return (
@@ -123,7 +260,23 @@ function FibQuestionView({question, editing, widgetId}: QuestionViewProps) {
         <p className={cx("question-header")}>{displayQuestionObj.question}</p>
       )}
       <div className={cx("answer")}>
-        參考答案：{displayQuestionContent.answer.join(", ")}
+        參考答案：
+        {editing ? (
+          <Textbox
+            value={displayQuestionContent.answer.join(", ")}
+            onChange={(e) => {
+              setDisplayQuestionObj({
+                ...displayQuestionObj,
+                answer: e.currentTarget.value.split(", "),
+              });
+              setQuestionIsChanged(true);
+            }}
+            flex
+            mode="form"
+          />
+        ) : (
+          displayQuestionContent.answer.join(", ")
+        )}
       </div>
     </div>
   );
