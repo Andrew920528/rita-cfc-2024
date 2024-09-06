@@ -5,6 +5,47 @@
   flex-grow: 1;
   gap: 0.5rem;
   justify-content: space-between;
+  position: relative;
+  .btns {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: end;
+  }
+  .btn-row {
+    display: flex;
+    flex-direction: row;
+    align-self: flex-end;
+    justify-self: end;
+    margin-top: 1rem;
+    position: relative;
+  }
+}
+
+.pick-ques-container {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  text-align: start;
+  gap: 0.5rem;
+  .pick-ques-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    .cancel {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+  .pick-ques {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    background-color: #f4f4f4;
+    // border-radius: 5px;
+  }
 }
 
 .worksheet-placeholder {
@@ -35,42 +76,93 @@
   }
 }
 
-$dot-size: 2px;
-$dot-color: #333;
-$animation-duration: 1.8s;
-$dot-spacing: 0.2rem;
-$jump-height: -5px;
-@keyframes jump {
-  0%,
-  40%,
-  100% {
-    transform: translateY(0);
+.worksheet-question-stack {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  .header {
+    font-weight: bold;
   }
-  20% {
-    transform: translateY($jump-height);
+  .view-btn {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
   }
 }
 
-.ideating-dots {
+// Question Views
+.question-view {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  .ideating-dot {
-    width: $dot-size;
-    height: $dot-size;
-    background-color: $dot-color;
-    border-radius: 50%;
-    margin: 0 $dot-spacing;
-    animation: jump $animation-duration ease-in-out infinite;
+  flex-direction: column;
+  align-items: start;
+  padding: 0.5rem;
+  text-align: start;
+  gap: 0.5rem;
+  .question-header {
+    font-weight: 500;
+    font-size: 1rem;
+  }
+}
 
-    &:nth-child(1) {
-      animation-delay: 0s;
+.mc {
+  .choice {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .circle {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #393939;
+    &.selected {
+      border: 2px solid $primary-color;
     }
-    &:nth-child(2) {
-      animation-delay: 0.2s;
+    &.editing {
+      cursor: pointer;
     }
-    &:nth-child(3) {
-      animation-delay: 0.4s;
+  }
+  .check {
+    background-color: $primary-color;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+  }
+  .choices {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    row-gap: 2rem;
+    column-gap: 1rem;
+  }
+}
+
+.fib {
+  .matches {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 95%;
+    .match {
+      display: flex;
+      flex-direction: row;
+      // justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 0.25rem;
+      .dots {
+        flex-grow: 1;
+        height: 2px;
+        // background-color: red;
+        background-image: linear-gradient(to right, black 30%, transparent 50%);
+        background-size: 5px 5px;
+        background-repeat: repeat-x;
+      }
     }
   }
 }

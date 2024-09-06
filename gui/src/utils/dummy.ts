@@ -1,4 +1,11 @@
 import {initSchedule} from "../schema/schedule";
+import {
+  FibQuestion,
+  MatchQuestion,
+  McQuestion,
+  Question,
+  QuestionType,
+} from "../schema/widget/worksheetWidgetContent";
 
 const dummyUser = {
   username: "dum-username",
@@ -114,7 +121,9 @@ let widgets = {
     },
     "AndrewHsu-wid-m0c2fkvbvkuoh1vnnep": {
       chatroomId: "qeUVar7vfJTHb7f3",
-      content: `{}`,
+      content: `{
+        "questions": []
+      }`,
       id: "AndrewHsu-wid-m0c2fkvbvkuoh1vnnep",
       type: 4,
     },
@@ -186,3 +195,23 @@ export const dummyRitaResponse = [
   '{"agent": "Widget Modifier", "data": "WIDGET_MODIFIER_STARTED"}|T|',
   `{"agent": "Widget Modifier", "data": "{\\"widgetId\\": \\"AndrewHsu-wid-m0c2dwnzn0dt2pewiql\\",\\"widgetContent\\": {\\"goals\\": [\\"你好\\"]}}"}|T|`,
 ];
+
+export const dummyMcQuestion: Omit<McQuestion, "questionId"> = {
+  question: "What is the capital of France?",
+  type: QuestionType.MC,
+  choices: ["Paris", "London", "Berlin", "Madrid"],
+  answer: 0, // Index of the correct choice
+};
+
+export const dummyFibQuestion: Omit<FibQuestion, "questionId"> = {
+  question: "The largest planet in our solar system is ____.",
+  type: QuestionType.FIB,
+  answer: ["Jupiter"], // Correct answer(s)
+};
+
+export const dummyMatchQuestion: Omit<MatchQuestion, "questionId"> = {
+  question: "Match the countries with their capitals.",
+  type: QuestionType.MATCH,
+  leftList: ["France", "Germany", "Spain"],
+  rightList: ["Paris", "Berlin", "Madrid"],
+};

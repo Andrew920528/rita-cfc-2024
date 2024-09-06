@@ -127,7 +127,7 @@ export const useLoginParseState = () => {
 export const useCreateWidget = () => {
   const dispatch = useAppDispatch();
   const username = useTypedSelector((state) => state.User.username);
-
+  const lectures = useTypedSelector((state) => state.Lectures.dict);
   return useCallback(
     (args: {
       widgetType: WidgetType;
@@ -138,7 +138,6 @@ export const useCreateWidget = () => {
       // create widget
 
       const newWidget = initWidget(args.widgetId, args.widgetType);
-      console.log(newWidget);
       dispatch(WidgetsServices.actions.addWidget(newWidget));
       // add new widget to lecture
       dispatch(
@@ -148,7 +147,13 @@ export const useCreateWidget = () => {
         })
       );
       let semesterGoalId = EMPTY_ID;
-      if (args.widgetType === WidgetType.SemesterGoal) {
+
+      if (
+        lectures[args.lectureId].semeterGoalId &&
+        lectures[args.lectureId].semeterGoalId !== EMPTY_ID
+      ) {
+        semesterGoalId = lectures[args.lectureId].semeterGoalId as string;
+      } else if (args.widgetType === WidgetType.SemesterGoal) {
         semesterGoalId = args.widgetId;
       }
       dispatch(
@@ -174,7 +179,7 @@ export const useCreateWidget = () => {
         );
       }
     },
-    [dispatch, username]
+    [dispatch, username, lectures]
   );
 };
 // username + "-wid-" + generateId()

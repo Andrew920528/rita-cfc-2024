@@ -33,6 +33,7 @@ import Chip from "../ui_components/Chip/Chip";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {WidgetType} from "../../schema/widget/widget";
+import {IdeatingDots} from "../ui_components/IdeatingDots/IdeatingDots";
 const cx = classNames.bind(styles);
 
 type ChatroomProps = {
@@ -252,22 +253,7 @@ const ChatroomBody = ({
     };
     scrollToBottom();
   }, [messages, loading]);
-  const LoadingMessage = (args: {
-    text: string;
-    loadingCondition: boolean;
-    className?: string;
-    showCircularProgress?: boolean;
-  }) => {
-    if (!args.loadingCondition) return null;
-    return (
-      <div className={cx("loading-message", args.className)}>
-        {args.showCircularProgress && (
-          <CircularProgress color="inherit" size={12} />
-        )}
-        <p className={cx("--label")}>{args.text}</p>
-      </div>
-    );
-  };
+
   return (
     <div className={cx("chatroom-body")} ref={scrollRef}>
       {messages.length === 0 && (
@@ -313,6 +299,7 @@ const ChatroomBody = ({
         text={"回覆中，請稍等"}
         loadingCondition={loading && !constructingWidget}
         showCircularProgress={false}
+        showDots={true}
       />
       <LoadingMessage
         text={"正在編輯工具內容"}
@@ -322,6 +309,25 @@ const ChatroomBody = ({
       {ritaError && (
         <p className={cx("--label", "--error")}>出了點問題。請再試一次。</p>
       )}
+    </div>
+  );
+};
+
+const LoadingMessage = (args: {
+  text: string;
+  loadingCondition: boolean;
+  className?: string;
+  showCircularProgress?: boolean;
+  showDots?: boolean;
+}) => {
+  if (!args.loadingCondition) return null;
+  return (
+    <div className={cx("loading-message", args.className)}>
+      {args.showCircularProgress && (
+        <CircularProgress color="inherit" size={12} />
+      )}
+      <p className={cx("--label")}>{args.text}</p>
+      {args.showDots && <IdeatingDots />}
     </div>
   );
 };

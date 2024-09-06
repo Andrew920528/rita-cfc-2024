@@ -4,9 +4,36 @@ import styles from "./WorksheetWidget.module.scss";
 import {Skeleton} from "@mui/material";
 import FileDownload from "./FileDownload";
 import PdfPreview from "./PdfPreview";
-import {useTypedSelector} from "../../../store/store";
-import {Widget} from "../../../schema/widget/widget";
+import {useAppDispatch, useTypedSelector} from "../../../store/store";
+import {Widget, WidgetType} from "../../../schema/widget/widget";
 import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
+import {
+  Question,
+  QuestionType,
+  WorksheetWidgetContent,
+  initFibQuestion,
+  initMatchQuestion,
+  initMcQuestion,
+} from "../../../schema/widget/worksheetWidgetContent";
+import {useDispatch} from "react-redux";
+import {WidgetsServices} from "../../../features/WidgetsSlice";
+import Accordion from "../../ui_components/Accordion/Accordion";
+import IconButton from "../../ui_components/IconButton/IconButton";
+import {
+  Add,
+  CheckmarkOutline,
+  Edit,
+  MagicWand,
+  TrashCan,
+} from "@carbon/icons-react";
+import QuestionView from "./QuestionView";
+import {
+  dummyFibQuestion,
+  dummyMatchQuestion,
+  dummyMcQuestion,
+} from "../../../utils/dummy";
+import {FloatingMenuButton} from "../../ui_components/FloatingMenu/FloatingMenu";
+import {relative} from "path";
 
 const cx = classNames.bind(styles);
 
@@ -15,23 +42,212 @@ const WorksheetWidget = ({
   loading,
   preview = false,
 }: WidgetContentProps) => {
-  const [previewReady, setPreviewReady] = useState<boolean>(false);
-  const currWidget = useTypedSelector((state) => state.Widgets.current);
+  const [showPreview, setShowPreview] = useState<boolean>(false);
+  const [showPickQuestion, setShowPickQuestion] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const addQuestion = (questionType: QuestionType) => {
+    if (questionType === QuestionType.MC) {
+      dispatch(
+        WidgetsServices.actions.addQuestion({
+          widgetId: widget.id,
+          question: initMcQuestion,
+        })
+      );
+    } else if (questionType === QuestionType.FIB) {
+      dispatch(
+        WidgetsServices.actions.addQuestion({
+          widgetId: widget.id,
+          question: initFibQuestion,
+        })
+      );
+    } else if (questionType === QuestionType.MATCH) {
+      dispatch(
+        WidgetsServices.actions.addQuestion({
+          widgetId: widget.id,
+          question: initMatchQuestion,
+        })
+      );
+    }
+  };
+
+  const PickQuestion = () => {
+    return (
+      <div className={cx("pick-ques-container")}>
+        <div className={cx("pick-ques-header")}>
+          <p className={cx("--label")}>選擇題型 | </p>
+          <p
+            className={cx("--label", "cancel")}
+            onClick={() => setShowPickQuestion(false)}
+          >
+            {" "}
+            取消
+          </p>
+        </div>
+        <div className={cx("pick-ques")}>
+          <IconButton
+            text="選擇題"
+            icon={<MagicWand />}
+            mode="ghost"
+            flex
+            onClick={() => {
+              addQuestion(QuestionType.MC);
+              setShowPickQuestion(false);
+            }}
+          />
+          <IconButton
+            text="填空題"
+            icon={<MagicWand />}
+            mode="ghost"
+            flex
+            onClick={() => {
+              addQuestion(QuestionType.FIB);
+              setShowPickQuestion(false);
+            }}
+          />
+          <IconButton
+            text="連連看"
+            icon={<MagicWand />}
+            mode="ghost"
+            flex
+            onClick={() => {
+              addQuestion(QuestionType.MATCH);
+              setShowPickQuestion(false);
+            }}
+          />
+        </div>
+      </div>
+    );
+  };
+
   return loading ? (
     <WorksheetSkeleton />
   ) : (
     <div className={cx("worksheet-widget")}>
-      <button
-        onClick={() => {
-          setPreviewReady(!previewReady);
-        }}
-      >
-        Toggle to debug
-      </button>
-      {previewReady ? (
+      {showPreview ? (
         <WorkSheetPreview />
+      ) : (widget.content as WorksheetWidgetContent).questions.length === 0 ? (
+        <WorksheetPlaceholder />
       ) : (
-        <WorksheetPlaceholder ideating={widget.id === currWidget} />
+        <>
+          <WorkSheetQuestionStack widget={widget} />
+        </>
+      )}
+      {showPickQuestion && <PickQuestion />}
+      <div className={cx("btns")}>
+        {showPreview && (
+          <IconButton
+            onClick={() => {
+              setShowPreview(!showPreview);
+            }}
+            icon={<CheckmarkOutline />}
+            mode="ghost"
+            text="關閉預覽"
+          />
+        )}
+
+        {!showPreview && (
+          <div className={cx("btn-row")}>
+            <IconButton
+              onClick={() => {
+                setShowPickQuestion(!showPickQuestion);
+              }}
+              icon={<Add />}
+              mode="ghost"
+              text="新增問題"
+            />
+
+            <IconButton
+              text="生成學習單"
+              onClick={() => {
+                setShowPreview(!showPreview);
+              }}
+              icon={<MagicWand />}
+              mode="primary"
+              disabled={
+                (widget.content as WorksheetWidgetContent).questions.length ===
+                0
+              }
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const WorkSheetQuestionStack = ({widget}: {widget: Widget}) => {
+  const [editingList, setEditingList] = React.useState<boolean[]>([]);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    let newList = [];
+    for (
+      let i = 0;
+      i < (widget.content as WorksheetWidgetContent).questions.length;
+      i++
+    ) {
+      newList.push(false);
+    }
+  }, [(widget.content as WorksheetWidgetContent).questions.length]);
+  return (
+    <div className={cx("worksheet-question-stack")}>
+      {(widget.content as WorksheetWidgetContent).questions.map(
+        (questionObj, index) => {
+          let editing = editingList[index];
+          let setEditing = (value: boolean) => {
+            let newList = [...editingList];
+            newList[index] = value;
+            setEditingList(newList);
+          };
+          return (
+            <Accordion
+              key={questionObj.questionId}
+              id={questionObj.questionId}
+              header={<div className={cx("header")}>{`題目 ${index + 1}`}</div>}
+              content={
+                <div
+                  className={cx("worksheet-question-stack-item")}
+                  key={index}
+                >
+                  <QuestionView
+                    question={questionObj}
+                    editing={editing}
+                    widgetId={widget.id}
+                  />
+                  <div className={cx("view-btn")}>
+                    {editing ? (
+                      <IconButton
+                        mode="primary"
+                        icon={<CheckmarkOutline />}
+                        text="確認"
+                        onClick={() => setEditing(false)}
+                      />
+                    ) : (
+                      <IconButton
+                        mode="ghost"
+                        icon={<Edit />}
+                        text="編輯"
+                        onClick={() => setEditing(true)}
+                      />
+                    )}
+                    <IconButton
+                      mode="danger-ghost"
+                      icon={<TrashCan />}
+                      text="刪除"
+                      onClick={() => {
+                        dispatch(
+                          WidgetsServices.actions.deleteQuestion({
+                            widgetId: widget.id,
+                            questionId: questionObj.questionId,
+                          })
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+              }
+            />
+          );
+        }
       )}
     </div>
   );
@@ -40,13 +256,13 @@ const WorksheetWidget = ({
 const WorkSheetPreview = () => {
   return (
     <div className={cx("worksheet-preview")}>
-      <PdfPreview />
-      <FileDownload />
+      {/* <PdfPreview />
+      <FileDownload /> */}
     </div>
   );
 };
 
-const WorksheetPlaceholder = (props: {ideating: boolean}) => {
+const WorksheetPlaceholder = () => {
   return (
     <div className={cx("worksheet-placeholder")}>
       <div className={cx("title")}>
@@ -62,24 +278,6 @@ const WorksheetPlaceholder = (props: {ideating: boolean}) => {
       </div>
       <div className={cx("example")}>”我要一份數學練習的學習單。“</div>
       <div className={cx("example")}>”來設計校外教學的學習單吧！“</div>
-
-      {props.ideating ? (
-        <div className={cx("status", "--label")}>
-          討論中 <IdeatingDots />
-        </div>
-      ) : (
-        <div className={cx("status", "--label")}>討論已暫停</div>
-      )}
-    </div>
-  );
-};
-
-const IdeatingDots = () => {
-  return (
-    <div className={cx("ideating-dots")}>
-      <div className={cx("ideating-dot")} />
-      <div className={cx("ideating-dot")} />
-      <div className={cx("ideating-dot")} />
     </div>
   );
 };

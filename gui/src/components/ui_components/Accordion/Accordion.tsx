@@ -5,7 +5,7 @@ import IconButton from "../IconButton/IconButton";
 import {ChevronDown, ChevronRight, ChevronUp} from "@carbon/icons-react";
 const cx = classNames.bind(styles);
 type Props = {
-  id: string;
+  id?: string;
   header: ReactElement;
   content: ReactElement;
   initialOpen?: boolean;
@@ -13,10 +13,12 @@ type Props = {
 
 function Accordion({id, header, content, initialOpen = true}: Props) {
   const [open, setOpen] = useState<boolean>(() => {
+    if (!id) return initialOpen;
     const savedState = sessionStorage.getItem(id);
     return savedState ? JSON.parse(savedState) : initialOpen;
   });
   useEffect(() => {
+    if (!id) return;
     sessionStorage.setItem(id, JSON.stringify(open));
   }, [id, open]);
   return (

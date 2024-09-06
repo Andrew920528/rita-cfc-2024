@@ -132,7 +132,12 @@ export const FloatingMenuButton = ({
       )}
       ref={buttonRef}
     >
-      <div onClick={() => setIsOpen(!isOpen)}>{button}</div>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className={cx("fm-button-wrapper")}
+      >
+        {button}
+      </div>
 
       {isOpen && (
         <div
