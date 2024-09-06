@@ -5,6 +5,47 @@
   flex-grow: 1;
   gap: 0.5rem;
   justify-content: space-between;
+  position: relative;
+  .btns {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: end;
+  }
+  .btn-row {
+    display: flex;
+    flex-direction: row;
+    align-self: flex-end;
+    justify-self: end;
+    margin-top: 1rem;
+    position: relative;
+  }
+}
+
+.pick-ques-container {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  text-align: start;
+  gap: 0.5rem;
+  .pick-ques-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    .cancel {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+  .pick-ques {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    background-color: #f4f4f4;
+    // border-radius: 5px;
+  }
 }
 
 .worksheet-placeholder {

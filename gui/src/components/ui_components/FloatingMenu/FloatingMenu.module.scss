@@ -18,6 +18,11 @@
 .fm-button {
   display: flex;
   height: 100%;
+  position: inherit;
+  .fm-button-wrapper {
+    height: 100%;
+  }
+
   &.a-top.a-left.t-top.t-left {
     flex-direction: column-reverse;
     .fm-wrapper {

@@ -149,6 +149,29 @@ const WidgetsSlice = createSlice({
       (widget.content as WorksheetWidgetContent).questions.push(newQuestion);
       state.unsaved[wid] = true;
     },
+    deleteQuestion: (
+      state,
+      action: PayloadAction<{widgetId: string; questionId: string}>
+    ) => {
+      const wid = action.payload.widgetId;
+      if (
+        !(wid in state.dict) ||
+        state.dict[wid].type !== WidgetType.Worksheet
+      ) {
+        return;
+      }
+
+      const widget = state.dict[wid];
+      const index = (
+        widget.content as WorksheetWidgetContent
+      ).questions.findIndex((q) => q.questionId === action.payload.questionId);
+      if (index === -1) {
+        return;
+      }
+
+      (widget.content as WorksheetWidgetContent).questions.splice(index, 1);
+      state.unsaved[wid] = true;
+    },
 
     updateQuestion: (
       state,

@@ -217,13 +217,7 @@ const ClassCard = ({
         <>
           <div>
             <FloatingMenuButton
-              button={
-                <IconButton
-                  mode={"ghost-2"}
-                  icon={<Settings />}
-                  // onClick={clickOnSettings}
-                />
-              }
+              button={<IconButton mode={"ghost-2"} icon={<Settings />} />}
               menuProps={{mode: "card", content: <ClassroomSettings />}}
               anchorOrigin={{vertical: "top", horizontal: "right"}}
               transformOrigin={{vertical: "top", horizontal: "left"}}

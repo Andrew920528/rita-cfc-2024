@@ -11,18 +11,29 @@ import {
   Question,
   QuestionType,
   WorksheetWidgetContent,
+  initFibQuestion,
+  initMatchQuestion,
+  initMcQuestion,
 } from "../../../schema/widget/worksheetWidgetContent";
 import {useDispatch} from "react-redux";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
 import Accordion from "../../ui_components/Accordion/Accordion";
 import IconButton from "../../ui_components/IconButton/IconButton";
-import {CheckmarkOutline, Edit, MagicWand} from "@carbon/icons-react";
+import {
+  Add,
+  CheckmarkOutline,
+  Edit,
+  MagicWand,
+  TrashCan,
+} from "@carbon/icons-react";
 import QuestionView from "./QuestionView";
 import {
   dummyFibQuestion,
   dummyMatchQuestion,
   dummyMcQuestion,
 } from "../../../utils/dummy";
+import {FloatingMenuButton} from "../../ui_components/FloatingMenu/FloatingMenu";
+import {relative} from "path";
 
 const cx = classNames.bind(styles);
 
@@ -32,25 +43,79 @@ const WorksheetWidget = ({
   preview = false,
 }: WidgetContentProps) => {
   const [showPreview, setShowPreview] = useState<boolean>(false);
+  const [showPickQuestion, setShowPickQuestion] = useState<boolean>(false);
   const dispatch = useAppDispatch();
-  const addQuestionForDebug = () => {
-    dispatch(
-      WidgetsServices.actions.addQuestion({
-        widgetId: widget.id,
-        question: dummyMcQuestion,
-      })
-    );
-    dispatch(
-      WidgetsServices.actions.addQuestion({
-        widgetId: widget.id,
-        question: dummyFibQuestion,
-      })
-    );
-    dispatch(
-      WidgetsServices.actions.addQuestion({
-        widgetId: widget.id,
-        question: dummyMatchQuestion,
-      })
+  const addQuestion = (questionType: QuestionType) => {
+    if (questionType === QuestionType.MC) {
+      dispatch(
+        WidgetsServices.actions.addQuestion({
+          widgetId: widget.id,
+          question: initMcQuestion,
+        })
+      );
+    } else if (questionType === QuestionType.FIB) {
+      dispatch(
+        WidgetsServices.actions.addQuestion({
+          widgetId: widget.id,
+          question: initFibQuestion,
+        })
+      );
+    } else if (questionType === QuestionType.MATCH) {
+      dispatch(
+        WidgetsServices.actions.addQuestion({
+          widgetId: widget.id,
+          question: initMatchQuestion,
+        })
+      );
+    }
+  };
+
+  const PickQuestion = () => {
+    return (
+      <div className={cx("pick-ques-container")}>
+        <div className={cx("pick-ques-header")}>
+          <p className={cx("--label")}>選擇題型 | </p>
+          <p
+            className={cx("--label", "cancel")}
+            onClick={() => setShowPickQuestion(false)}
+          >
+            {" "}
+            取消
+          </p>
+        </div>
+        <div className={cx("pick-ques")}>
+          <IconButton
+            text="選擇題"
+            icon={<MagicWand />}
+            mode="ghost"
+            flex
+            onClick={() => {
+              addQuestion(QuestionType.MC);
+              setShowPickQuestion(false);
+            }}
+          />
+          <IconButton
+            text="填空題"
+            icon={<MagicWand />}
+            mode="ghost"
+            flex
+            onClick={() => {
+              addQuestion(QuestionType.FIB);
+              setShowPickQuestion(false);
+            }}
+          />
+          <IconButton
+            text="連連看"
+            icon={<MagicWand />}
+            mode="ghost"
+            flex
+            onClick={() => {
+              addQuestion(QuestionType.MATCH);
+              setShowPickQuestion(false);
+            }}
+          />
+        </div>
+      </div>
     );
   };
 
@@ -58,14 +123,6 @@ const WorksheetWidget = ({
     <WorksheetSkeleton />
   ) : (
     <div className={cx("worksheet-widget")}>
-      <button
-        onClick={() => {
-          addQuestionForDebug();
-        }}
-      >
-        Add Question
-      </button>
-
       {showPreview ? (
         <WorkSheetPreview />
       ) : (widget.content as WorksheetWidgetContent).questions.length === 0 ? (
@@ -73,23 +130,54 @@ const WorksheetWidget = ({
       ) : (
         <>
           <WorkSheetQuestionStack widget={widget} />
+        </>
+      )}
+      {showPickQuestion && <PickQuestion />}
+      <div className={cx("btns")}>
+        {showPreview && (
           <IconButton
-            text="生成學習單"
             onClick={() => {
               setShowPreview(!showPreview);
             }}
-            icon={<MagicWand />}
-            mode="primary"
-            disabled={true}
+            icon={<CheckmarkOutline />}
+            mode="ghost"
+            text="關閉預覽"
           />
-        </>
-      )}
+        )}
+
+        {!showPreview && (
+          <div className={cx("btn-row")}>
+            <IconButton
+              onClick={() => {
+                setShowPickQuestion(!showPickQuestion);
+              }}
+              icon={<Add />}
+              mode="ghost"
+              text="新增問題"
+            />
+
+            <IconButton
+              text="生成學習單"
+              onClick={() => {
+                setShowPreview(!showPreview);
+              }}
+              icon={<MagicWand />}
+              mode="primary"
+              disabled={
+                (widget.content as WorksheetWidgetContent).questions.length ===
+                0
+              }
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
 const WorkSheetQuestionStack = ({widget}: {widget: Widget}) => {
   const [editingList, setEditingList] = React.useState<boolean[]>([]);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     let newList = [];
     for (
@@ -141,6 +229,19 @@ const WorkSheetQuestionStack = ({widget}: {widget: Widget}) => {
                         onClick={() => setEditing(true)}
                       />
                     )}
+                    <IconButton
+                      mode="danger-ghost"
+                      icon={<TrashCan />}
+                      text="刪除"
+                      onClick={() => {
+                        dispatch(
+                          WidgetsServices.actions.deleteQuestion({
+                            widgetId: widget.id,
+                            questionId: questionObj.questionId,
+                          })
+                        );
+                      }}
+                    />
                   </div>
                 </div>
               }
