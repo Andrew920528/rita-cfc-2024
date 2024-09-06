@@ -212,7 +212,6 @@ export const dummyFibQuestion: Omit<FibQuestion, "questionId"> = {
 export const dummyMatchQuestion: Omit<MatchQuestion, "questionId"> = {
   question: "Match the countries with their capitals.",
   type: QuestionType.MATCH,
-  premises: ["France", "Germany", "Spain"],
-  options: ["Paris", "Berlin", "Madrid"],
-  answer: [0, 1, 2], // Mapping from premises to options
+  leftList: ["France", "Germany", "Spain"],
+  rightList: ["Paris", "Berlin", "Madrid"],
 };

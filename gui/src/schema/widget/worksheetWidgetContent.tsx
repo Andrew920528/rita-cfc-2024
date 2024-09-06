@@ -25,9 +25,8 @@ export type FibQuestion = BaseQuestion & {
   answer: string[];
 };
 export type MatchQuestion = BaseQuestion & {
-  premises: string[];
-  options: string[];
-  answer: number[];
+  leftList: string[];
+  rightList: string[];
 };
 
 export type Question = McQuestion | FibQuestion | MatchQuestion;

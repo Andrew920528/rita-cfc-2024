@@ -283,26 +283,151 @@ function FibQuestionView({question, editing, widgetId}: QuestionViewProps) {
 }
 
 function MatchQuestionView({question, editing, widgetId}: QuestionViewProps) {
-  const questionContent = question as MatchQuestion;
-  const leftList = questionContent.premises;
-  const rightList = questionContent.answer.map(
-    (index) => questionContent.options[index]
-  );
+  const [displayQuestionObj, setDisplayQuestionObj] =
+    React.useState<Question>(question);
+  const questionContent = displayQuestionObj as MatchQuestion;
+  const leftList = questionContent.leftList;
+  const rightList = questionContent.rightList;
+  // The ids at each index corresponds to each choices
+  const [matchIds, setMatchIds] = useState<string[]>([]);
+
+  // for changing each choice content without re-rendering the entire list
+  const leftRef = React.useRef<string[]>([]);
+  const rightRef = React.useRef<string[]>([]);
+
+  const questionIsChanged = React.useRef<boolean>(false);
+  useEffect(() => {
+    let newlist = [];
+    for (let i in questionContent.leftList) {
+      newlist.push(generateId());
+      rightRef.current[i] = questionContent.rightList[i];
+      leftRef.current[i] = questionContent.leftList[i];
+    }
+
+    setMatchIds(newlist);
+  }, []);
+
+  // saves global state
+  useEffect(() => {
+    if (!questionIsChanged.current) return;
+    setDisplayQuestionObj({
+      ...displayQuestionObj,
+      leftList: leftRef.current,
+      rightList: rightRef.current,
+    });
+
+    // TODO : save global state
+
+    questionIsChanged.current = false;
+  }, [editing]);
+
+  function handleContentChange(
+    listType: "left" | "right",
+    index: number,
+    value: string
+  ) {
+    if (listType === "left") {
+      leftRef.current[index] = value;
+    } else {
+      rightRef.current[index] = value;
+    }
+    questionIsChanged.current = true;
+  }
+
+  function deleteMatch(index: number) {
+    questionIsChanged.current = true;
+    let newLeftList = [
+      ...questionContent.leftList.slice(0, index),
+      ...questionContent.leftList.slice(index + 1),
+    ];
+
+    let newRightList = [
+      ...questionContent.rightList.slice(0, index),
+      ...questionContent.rightList.slice(index + 1),
+    ];
+
+    setDisplayQuestionObj({
+      ...displayQuestionObj,
+      leftList: newLeftList,
+      rightList: newRightList,
+    });
+
+    // Remove corresponding id
+    let newMatchIds = [
+      ...matchIds.slice(0, index),
+      ...matchIds.slice(index + 1),
+    ];
+    setMatchIds(newMatchIds);
+    leftRef.current = newLeftList;
+    rightRef.current = newRightList;
+  }
+
+  const handleAddChoice = () => {
+    questionIsChanged.current = true;
+    let newLeft = [...questionContent.leftList, "新增選項"];
+    let newRight = [...questionContent.rightList, "新增選項"];
+    setDisplayQuestionObj({
+      ...displayQuestionObj,
+      leftList: newLeft,
+      rightList: newRight,
+    });
+    setMatchIds([...matchIds, generateId()]);
+    leftRef.current = newLeft;
+    rightRef.current = newRight;
+  };
 
   return (
     <div className={cx("question-view", "fib")}>
       <p className={cx("question-header")}>{question.question}</p>
       <div className={cx("matches")}>
-        {leftList.map((left, ind) => (
-          <div className={cx("match")} key={left}>
-            <div className={cx("left")}>{left}</div>
-            <div className={cx("dots")}></div>
-            <div className={cx("right")}>
-              {rightList[ind] ? rightList[ind] : "ERROR"}
+        {leftList.map((left, ind) => {
+          if (matchIds[ind] === undefined) return null;
+          return (
+            <div className={cx("match")} key={matchIds[ind]}>
+              {editing ? (
+                <Textbox
+                  defaultValue={left}
+                  onChange={(e) => {
+                    handleContentChange("left", ind, e.currentTarget.value);
+                  }}
+                />
+              ) : (
+                <div className={cx("left")}>{left}</div>
+              )}
+              <div className={cx("dots")}></div>
+              {editing ? (
+                <Textbox
+                  defaultValue={rightList[ind]}
+                  onChange={(e) => {
+                    handleContentChange("right", ind, e.currentTarget.value);
+                  }}
+                />
+              ) : (
+                <div className={cx("right")}>
+                  {rightList[ind] !== undefined ? rightList[ind] : "ERROR"}
+                </div>
+              )}
+              {editing && (
+                <IconButton
+                  mode="ghost"
+                  icon={<TrashCan />}
+                  onClick={() => {
+                    deleteMatch(ind);
+                  }}
+                />
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+      {editing && (
+        <IconButton
+          mode="ghost"
+          icon={<Add />}
+          text="新增選項"
+          onClick={handleAddChoice}
+        />
+      )}
     </div>
   );
 }
