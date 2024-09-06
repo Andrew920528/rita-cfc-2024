@@ -140,7 +140,7 @@ const WidgetsSlice = createSlice({
       let newQuestion = {
         questionId: generateId(),
         ...action.payload.question,
-      };
+      } as Question;
 
       if (widget.type !== WidgetType.Worksheet) {
         return;
@@ -149,12 +149,35 @@ const WidgetsSlice = createSlice({
       (widget.content as WorksheetWidgetContent).questions.push(newQuestion);
       state.unsaved[wid] = true;
     },
+
+    updateQuestion: (
+      state,
+      action: PayloadAction<{
+        widgetId: string;
+        questionId: string;
+        question: Question;
+      }>
+    ) => {
+      if (
+        !state.dict[action.payload.widgetId] ||
+        state.dict[action.payload.widgetId].type !== WidgetType.Worksheet
+      ) {
+        return;
+      }
+
+      const widget = state.dict[action.payload.widgetId];
+      const question = widget.content as WorksheetWidgetContent;
+      const index = question.questions.findIndex(
+        (q) => q.questionId === action.payload.questionId
+      );
+      if (index === -1) {
+        return;
+      }
+      question.questions[index] = action.payload.question;
+      state.unsaved[action.payload.widgetId] = true;
+    },
   },
 });
-
-function validateWidget(state: Widgets, wid: string) {
-  return wid in state.dict;
-}
 
 // This is used to perform action
 export const WidgetsServices = {

@@ -13,6 +13,8 @@ import IconButton from "../../ui_components/IconButton/IconButton";
 import {Add, CheckmarkOutline, Edit, TrashCan} from "@carbon/icons-react";
 import Textbox from "../../ui_components/Textbox/Textbox";
 import {generateId} from "../../../utils/util";
+import {useAppDispatch} from "../../../store/store";
+import {WidgetsServices} from "../../../features/WidgetsSlice";
 const cx = classNames.bind(styles);
 type QuestionViewProps = {
   question: Question;
@@ -67,7 +69,7 @@ function McQuestionView({question, editing, widgetId}: QuestionViewProps) {
 
   // for changing each choice content without re-rendering the entire list
   const choicesRef = React.useRef<string[]>([]);
-
+  const dispatch = useAppDispatch();
   // Initialize choiceIds and choiceRefs
   useEffect(() => {
     let newlist = [];
@@ -86,7 +88,13 @@ function McQuestionView({question, editing, widgetId}: QuestionViewProps) {
       choices: choicesRef.current,
     });
 
-    // TODO : save global state
+    dispatch(
+      WidgetsServices.actions.updateQuestion({
+        widgetId,
+        question: displayQuestionObj,
+        questionId: question.questionId,
+      })
+    );
 
     questionIsChanged.current = false;
   }, [editing]);
@@ -233,11 +241,16 @@ function FibQuestionView({question, editing, widgetId}: QuestionViewProps) {
   const [questionIsChanged, setQuestionIsChanged] =
     React.useState<boolean>(false);
   const displayQuestionContent = displayQuestionObj as FibQuestion;
-
+  const dispatch = useAppDispatch();
   useEffect(() => {
     if (!questionIsChanged) return;
-    console.log("Save new widget content");
-    // TODO Save global state
+    dispatch(
+      WidgetsServices.actions.updateQuestion({
+        widgetId,
+        question: displayQuestionObj,
+        questionId: question.questionId,
+      })
+    );
     setQuestionIsChanged(false);
   }, [editing]);
   return (
@@ -296,6 +309,7 @@ function MatchQuestionView({question, editing, widgetId}: QuestionViewProps) {
   const rightRef = React.useRef<string[]>([]);
 
   const questionIsChanged = React.useRef<boolean>(false);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     let newlist = [];
     for (let i in questionContent.leftList) {
@@ -315,8 +329,13 @@ function MatchQuestionView({question, editing, widgetId}: QuestionViewProps) {
       leftList: leftRef.current,
       rightList: rightRef.current,
     });
-
-    // TODO : save global state
+    dispatch(
+      WidgetsServices.actions.updateQuestion({
+        widgetId,
+        question: displayQuestionObj,
+        questionId: question.questionId,
+      })
+    );
 
     questionIsChanged.current = false;
   }, [editing]);
