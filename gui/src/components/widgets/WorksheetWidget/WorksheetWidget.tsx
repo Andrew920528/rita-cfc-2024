@@ -23,8 +23,11 @@ import {
   Add,
   CheckmarkOutline,
   Edit,
+  List,
   MagicWand,
+  Pen,
   TrashCan,
+  WatsonHealth3DCurveAutoColon,
 } from "@carbon/icons-react";
 import QuestionView from "./QuestionView";
 import {
@@ -86,7 +89,7 @@ const WorksheetWidget = ({
         <div className={cx("pick-ques")}>
           <IconButton
             text="選擇題"
-            icon={<MagicWand />}
+            icon={<List />}
             mode="ghost"
             flex
             onClick={() => {
@@ -96,7 +99,7 @@ const WorksheetWidget = ({
           />
           <IconButton
             text="填空題"
-            icon={<MagicWand />}
+            icon={<Pen />}
             mode="ghost"
             flex
             onClick={() => {
@@ -106,7 +109,7 @@ const WorksheetWidget = ({
           />
           <IconButton
             text="連連看"
-            icon={<MagicWand />}
+            icon={<WatsonHealth3DCurveAutoColon />}
             mode="ghost"
             flex
             onClick={() => {
