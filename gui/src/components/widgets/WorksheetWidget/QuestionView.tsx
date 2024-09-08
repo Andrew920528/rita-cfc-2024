@@ -155,7 +155,24 @@ function McQuestionView({question, editing, widgetId}: QuestionViewProps) {
 
   return (
     <div className={cx("question-view", "mc")}>
-      <p className={cx("question-header")}>{question.question}</p>
+      {editing ? (
+        <Textbox
+          value={displayQuestionObj.question}
+          onChange={(e) => {
+            setDisplayQuestionObj({
+              ...displayQuestionObj,
+              question: e.currentTarget.value,
+            });
+            questionIsChanged.current = true;
+          }}
+          flex
+          mode="form"
+          label="題目"
+        />
+      ) : (
+        <p className={cx("question-header")}>{question.question}</p>
+      )}
+
       <div className={cx("choices")}>
         {displayQuestionObj.choices.map((choice, ind) => {
           if (choiceIds[ind] === undefined) return null;
@@ -397,7 +414,24 @@ function MatchQuestionView({question, editing, widgetId}: QuestionViewProps) {
 
   return (
     <div className={cx("question-view", "fib")}>
-      <p className={cx("question-header")}>{question.question}</p>
+      {editing ? (
+        <Textbox
+          value={displayQuestionObj.question}
+          onChange={(e) => {
+            setDisplayQuestionObj({
+              ...displayQuestionObj,
+              question: e.currentTarget.value,
+            });
+            questionIsChanged.current = true;
+          }}
+          flex
+          mode="form"
+          label="題目"
+        />
+      ) : (
+        <p className={cx("question-header")}>{question.question}</p>
+      )}
+
       <div className={cx("matches")}>
         {leftList.map((left, ind) => {
           if (matchIds[ind] === undefined) return null;
@@ -409,6 +443,7 @@ function MatchQuestionView({question, editing, widgetId}: QuestionViewProps) {
                   onChange={(e) => {
                     handleContentChange("left", ind, e.currentTarget.value);
                   }}
+                  mode="form"
                 />
               ) : (
                 <div className={cx("left")}>{left}</div>
@@ -420,6 +455,7 @@ function MatchQuestionView({question, editing, widgetId}: QuestionViewProps) {
                   onChange={(e) => {
                     handleContentChange("right", ind, e.currentTarget.value);
                   }}
+                  mode="form"
                 />
               ) : (
                 <div className={cx("right")}>

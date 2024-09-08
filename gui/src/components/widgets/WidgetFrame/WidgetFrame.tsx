@@ -107,6 +107,14 @@ const WidgetFrame = ({selected, widget}: WidgetFrameProps) => {
     }
   }, [applySignal]);
 
+  const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
+    // Prevent parent scroll event
+    e.stopPropagation();
+
+    // Handle child-specific scroll behavior here
+    console.log("Scrolling inside child component");
+  };
+
   return (
     <div
       className={cx("widget-frame", {
@@ -145,7 +153,9 @@ const WidgetFrame = ({selected, widget}: WidgetFrameProps) => {
           disabled={loading || Object.keys(apiSignals).includes(widget.id)}
         />
       </div>
-      <div className={cx("wf-content")}>{widgetComponent(widget)}</div>
+      <div className={cx("wf-content", "nowheel")} onWheel={handleScroll}>
+        {widgetComponent(widget)}
+      </div>
       <div className={cx("draggable-area")} />
       <div className={cx({shine: shineAnimation})}></div>
     </div>
