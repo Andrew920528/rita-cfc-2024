@@ -9,9 +9,10 @@ type Props = {
   header: ReactElement;
   content: ReactElement;
   initialOpen?: boolean;
+  mode?: string;
 };
 
-function Accordion({id, header, content, initialOpen = true}: Props) {
+function Accordion({id, header, content, initialOpen = true, mode}: Props) {
   const [open, setOpen] = useState<boolean>(() => {
     if (!id) return initialOpen;
     const savedState = sessionStorage.getItem(id);
@@ -22,7 +23,7 @@ function Accordion({id, header, content, initialOpen = true}: Props) {
     sessionStorage.setItem(id, JSON.stringify(open));
   }, [id, open]);
   return (
-    <div>
+    <div className={cx("accordion", mode)}>
       <div className={cx("accordion-header", open && "active")}>
         {header}
         <IconButton

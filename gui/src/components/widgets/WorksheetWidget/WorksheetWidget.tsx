@@ -202,6 +202,7 @@ const WorkSheetQuestionStack = ({widget}: {widget: Widget}) => {
             <Accordion
               key={questionObj.questionId}
               id={questionObj.questionId}
+              mode="outlined"
               header={<div className={cx("header")}>{`題目 ${index + 1}`}</div>}
               content={
                 <div

@@ -443,6 +443,7 @@ function MatchQuestionView({question, editing, widgetId}: QuestionViewProps) {
                   onChange={(e) => {
                     handleContentChange("left", ind, e.currentTarget.value);
                   }}
+                  mode="form"
                 />
               ) : (
                 <div className={cx("left")}>{left}</div>
@@ -454,6 +455,7 @@ function MatchQuestionView({question, editing, widgetId}: QuestionViewProps) {
                   onChange={(e) => {
                     handleContentChange("right", ind, e.currentTarget.value);
                   }}
+                  mode="form"
                 />
               ) : (
                 <div className={cx("right")}>
