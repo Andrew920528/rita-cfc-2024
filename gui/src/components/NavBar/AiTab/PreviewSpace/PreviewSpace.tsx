@@ -20,6 +20,8 @@ type Props = {};
 
 const PreviewSpace = (props: Props) => {
   const widgets = useTypedSelector((state) => state.Widgets);
+
+  console.log(widgets.previewDict);
   const dispatch = useAppDispatch();
   function applyPreview(widget: Widget) {
     let newWidget = {

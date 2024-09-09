@@ -9,7 +9,9 @@ export class ScheduleWidgetMaker extends WidgetMaker<ScheduleWidgetContent> {
     return {};
   }
   isType(obj: any): obj is ScheduleWidgetContent {
-    return true;
+    return (
+      typeof obj === "object" && obj !== null && Object.keys(obj).length === 0
+    );
   }
   uiBook() {
     return {
