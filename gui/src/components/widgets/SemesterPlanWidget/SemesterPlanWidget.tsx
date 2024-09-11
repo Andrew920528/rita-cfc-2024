@@ -264,31 +264,64 @@ const SemesterPlanWidget = ({
 
 type SemesterPlanCellProps = {
   data: any;
-  locked?: boolean;
+  readonly?: boolean;
   onClick: () => void;
   onChange: (s: string) => void;
 };
 const SemesterPlanCell = ({
   data,
   onClick,
-  locked = false,
+  readonly = false,
   onChange,
 }: SemesterPlanCellProps) => {
   return (
     <div
       onClick={() => {
+        if (readonly) return;
         onClick();
       }}
     >
-      <Textbox
-        flex={true}
-        mode="table"
-        value={data}
-        onChange={(e) => {
-          onChange(e.currentTarget.value);
-        }}
-        ariaLabel="semester plan cell"
-      />
+      {readonly ? (
+        data
+      ) : (
+        <Textbox
+          flex={true}
+          mode="table"
+          value={data}
+          onChange={(e) => {
+            if (readonly) return;
+            onChange(e.currentTarget.value);
+          }}
+          ariaLabel="semester plan cell"
+        />
+      )}
+    </div>
+  );
+};
+
+export const SemesterPlanReadOnly = ({widget}: {widget: Widget}) => {
+  const widgetContent = widget.content as SemesterPlanWidgetContent;
+  const widgetTableContent = widgetContent.rows.map((row, rowIndex) =>
+    Object.keys(row).reduce((acc: any, key: string) => {
+      acc[key] = (
+        <SemesterPlanCell
+          data={row[key as keyof typeof row]}
+          onClick={() => {}}
+          onChange={() => {}}
+          readonly
+        />
+      );
+      return acc;
+    }, {})
+  );
+
+  return (
+    <div className={cx("readonly", "semester-plan-widget")}>
+      <div className={cx("name-row")}>
+        <p className={cx("name")}>{widgetContent.name ?? "未命名的計畫"}</p>
+      </div>
+
+      <Table headings={widgetContent.headings} content={widgetTableContent} />
     </div>
   );
 };
