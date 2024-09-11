@@ -1,4 +1,5 @@
 import {sign} from "crypto";
+import dayjs, {Dayjs} from "dayjs";
 import {useState} from "react";
 
 export function formatTime(date: Date): string {
@@ -137,4 +138,30 @@ export const useCompose = () => {
 export function replaceTabsWithSpaces(input: string, spaceCount = 2) {
   // Replace each tab with the equivalent number of spaces
   return input.replace(/\t/g, " ".repeat(spaceCount));
+}
+
+export function parseDate(dateString: string | undefined): Dayjs | null {
+  if (dateString === undefined) {
+    return null;
+  }
+
+  // Check if the input dateString is in the format MM-DD-YYYY
+  const regex = /^\d{2}-\d{2}-\d{4}$/;
+  if (!regex.test(dateString)) {
+    console.error(
+      "Invalid date format. Expected MM-DD-YYYY but get " + dateString
+    );
+    return null;
+  }
+
+  // Parse the date string using dayjs
+  const date = dayjs(dateString, "MM-DD-YYYY");
+
+  // Check if the date is valid
+  if (!date.isValid()) {
+    // console.error("Invalid date.");
+    return null;
+  }
+
+  return date;
 }

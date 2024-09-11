@@ -1,0 +1,53 @@
+.semester-goal-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  width: 100%;
+}
+.as-header {
+  font-weight: bold;
+  font-size: 1.05rem;
+}
+.semester-goal-advanced-settings {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 100%;
+
+  gap: 0.75rem;
+  .setting-block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 0.6rem;
+    .setting-block-title {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      p {
+        font-weight: 500;
+      }
+    }
+    .dates {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .setting-block-row {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      align-items: center;
+    }
+    .set-plan-hint {
+      display: flex;
+      flex-direction: row;
+      gap: 0.25rem;
+      align-items: center;
+    }
+  }
+}
