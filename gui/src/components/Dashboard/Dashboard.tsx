@@ -10,6 +10,7 @@ import {useCreateWidgetWithApi} from "../../global/globalActions";
 import {pointIsInRect} from "../../utils/util";
 import {UiServices} from "../../features/UiSlice";
 import {EMPTY_ID} from "../../global/constants";
+import SetSemesterPlanPU from "../PopUps/SetSemesterPlanPU/SetSemesterPlanPU";
 
 const cx = classNames.bind(styles);
 const DashboardPlaceHolder = () => {
@@ -68,6 +69,12 @@ const Dashboard = () => {
       }
     }
   }
+  const openPlanPU = useTypedSelector(
+    (state) => state.Ui.openSetSemesterPlanPU
+  );
+  const setOpenPlanPU = (trigger: boolean) => {
+    dispatch(UiServices.actions.setOpenSetSemesterPlanPU(trigger));
+  };
   return (
     <div
       className={cx("dashboard", {isDragging: ui.dragOver})}
@@ -95,6 +102,15 @@ const Dashboard = () => {
             ? lectures.dict[lectures.current].chatroomId
             : EMPTY_ID
         }
+      />
+
+      {/* This component is activated by a semester plan widget,
+          but it seems like react-flow introduces overrides css positioning, 
+          so we use global states for the popup trigger */}
+      <SetSemesterPlanPU
+        trigger={openPlanPU}
+        setTrigger={setOpenPlanPU}
+        title="設定進度表"
       />
     </div>
   );

@@ -17,7 +17,7 @@
     .navbar-wrapper {
       overflow: hidden; // for hiding content when collapsed
       transition: max-width 0.2s ease-in-out;
-      z-index: 2;
+      // z-index: 2;
       background-color: white;
       box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
       max-width: 80vw;

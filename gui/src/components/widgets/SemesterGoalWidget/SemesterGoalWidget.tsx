@@ -20,6 +20,8 @@ import {
 } from "@carbon/icons-react";
 import {parseDate} from "../../../utils/util";
 import IconButton from "../../ui_components/IconButton/IconButton";
+import SetSemesterPlanPU from "../../PopUps/SetSemesterPlanPU/SetSemesterPlanPU";
+import {UiServices} from "../../../features/UiSlice";
 
 const cx = classNames.bind(styles);
 
@@ -81,6 +83,7 @@ const SemesterGoalWidget = ({
         header={<div className={cx("as-header")}>進階設定</div>}
         content={<SemesterGoalAdvancedSettings widgetId={widget.id} />}
         mode="no-border"
+        initialOpen={false}
       />
     </div>
   ) : (
@@ -117,7 +120,6 @@ const SemesterGoalAdvancedSettings = ({widgetId}: {widgetId: string}) => {
     );
   }
 
-  function editSemesterGoalReference(reference: string) {}
   const widget = useTypedSelector((state: any) => state.Widgets.dict[widgetId]);
   return (
     <div className={cx("semester-goal-advanced-settings")}>
@@ -182,7 +184,14 @@ const SemesterGoalAdvancedSettings = ({widgetId}: {widgetId: string}) => {
               尚未設定
             </div>
           )}
-          <IconButton icon={<Plan />} text="設定進度表" mode="primary" />
+          <IconButton
+            icon={<Plan />}
+            text="設定進度表"
+            mode="primary"
+            onClick={() =>
+              dispatch(UiServices.actions.setOpenSetSemesterPlanPU(true))
+            }
+          />
         </span>
       </div>
     </div>
