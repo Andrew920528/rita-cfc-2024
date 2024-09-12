@@ -23,6 +23,11 @@
       }
     }
   }
+  &.table {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    gap: 0.2rem;
+  }
   .placeholder {
     color: #a8a8a8; // placeholder text color
   }

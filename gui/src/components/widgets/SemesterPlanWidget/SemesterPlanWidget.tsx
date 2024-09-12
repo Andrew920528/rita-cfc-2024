@@ -84,6 +84,33 @@ const SemesterPlanWidget = ({
     );
   }
 
+  function editColumn(
+    table: SemesterPlanWidgetContent,
+    index: number,
+    newColNam: string
+  ) {
+    const originalTable = structuredClone(table);
+    const originalHeading = originalTable.headings[index];
+    if (originalHeading === newColNam) return;
+    originalTable.headings[index] = newColNam;
+    for (let row of originalTable.rows) {
+      row[newColNam] = row[originalHeading]; // set new column value
+      delete row[originalHeading]; // delete old column
+    }
+    console.log(originalTable);
+
+    dispatch(
+      WidgetsServices.actions.updateWidget({
+        newWidget: {
+          id: widget.id,
+          type: WidgetType.SemesterPlan,
+          content: originalTable,
+        },
+        mode: preview ? "preview" : "actual",
+      })
+    );
+  }
+
   function setCell(
     table: SemesterPlanWidgetContent,
     heading: string,
@@ -232,6 +259,9 @@ const SemesterPlanWidget = ({
         }}
         deleteRow={(i) => {
           deleteRow(widgetContent, i);
+        }}
+        editColumn={(i, val) => {
+          editColumn(widgetContent, i, val);
         }}
       />
       <div className={cx("widget-button-row")}>

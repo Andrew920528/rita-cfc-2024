@@ -4,6 +4,7 @@ import styles from "./Table.module.scss";
 import {FloatingMenuButton} from "../FloatingMenu/FloatingMenu";
 import IconButton from "../IconButton/IconButton";
 import {
+  CheckmarkOutline,
   ColumnDelete,
   ColumnInsert,
   Edit,
@@ -13,6 +14,7 @@ import {
 } from "@carbon/icons-react";
 import {Menu, MenuItem} from "@mui/material";
 import {generateId} from "../../../utils/util";
+import Textbox from "../Textbox/Textbox";
 
 const cx = classNames.bind(styles);
 type Props = {
@@ -24,7 +26,7 @@ type Props = {
   deleteColumn?: (index: number) => void;
   insertRow?: (index: number) => void;
   deleteRow?: (index: number) => void;
-  editColumn?: (index: number) => void;
+  editColumn?: (index: number, newName: string) => void;
 };
 
 type TableStyleProps = {};
@@ -34,11 +36,11 @@ const Table = ({
   headings,
   content,
   readonly = false,
-  insertColumn = () => {},
-  deleteColumn = () => {},
-  insertRow = () => {},
-  deleteRow = () => {},
-  editColumn = () => {},
+  insertColumn,
+  deleteColumn,
+  insertRow,
+  deleteRow,
+  editColumn,
 }: Props & TableStyleProps) => {
   const [columnWidths, setColumnWidths] = useState(
     Array(headings.length).fill(initColWidth)
@@ -89,6 +91,13 @@ const Table = ({
 
   const [selectedColIndex, setSelectedColIndex] = useState(-1);
   const [selectedRowIndex, setSelectedRowIndex] = useState(-1);
+
+  const [editHeading, setEditHeading] = useState<boolean[]>(
+    headings.map(() => false)
+  );
+  const editingValue = useRef<string>("");
+  const [editingError, setEditingError] = useState("");
+
   const handleClickMenu = (
     event: React.MouseEvent<HTMLButtonElement>,
     type: "col" | "row",
@@ -111,9 +120,37 @@ const Table = ({
 
   const handleEditColumn = (index: number) => {
     if (!editColumn) return;
-    editColumn(index);
+    // editColumn(index);
+
+    for (let i = 0; i < editHeading.length; i++) {
+      if (editHeading[i]) {
+        confirmEditColumn(i, editingValue.current);
+        editHeading[i] = false;
+      }
+    }
+
+    let newEditHeading = [...editHeading];
+    newEditHeading[index] = true;
+    setEditHeading(newEditHeading);
+    editingValue.current = headings[index];
 
     handleCloseMenu();
+  };
+
+  const confirmEditColumn = (index: number, newName: string) => {
+    if (!editColumn) return;
+    for (let i = 0; i < headings.length; i++) {
+      if (headings[i] === newName && i !== index) {
+        setEditingError("欄位名稱重複");
+        return;
+      }
+    }
+    setEditingError("");
+    editColumn(index, newName);
+    let newEditHeading = [...editHeading];
+    newEditHeading[index] = false;
+    setEditHeading(newEditHeading);
+    editingValue.current = "";
   };
 
   const handleDeleteColumn = (index: number) => {
@@ -239,23 +276,44 @@ const Table = ({
             className={cx("table-header-item")}
             style={{width: `${columnWidths[index]}px`}}
           >
-            {heading}
-            {!readonly && (
-              <div className={cx("action-dots")}>
+            {editHeading[index] ? (
+              <Textbox
+                defaultValue={heading}
+                onChange={(e) => {
+                  editingValue.current = e.target.value;
+                }}
+                errorMsg={editingError}
+                mode="table"
+              />
+            ) : (
+              <p>{heading}</p>
+            )}
+
+            {!readonly &&
+              (editHeading[index] ? (
                 <IconButton
-                  icon={<OverflowMenuVertical />}
-                  onClick={(e) => {
-                    handleClickMenu(
-                      e as React.MouseEvent<HTMLButtonElement>,
-                      "col",
-                      index,
-                      -1
-                    );
+                  icon={<CheckmarkOutline />}
+                  onClick={() => {
+                    confirmEditColumn(index, editingValue.current);
                   }}
                   mode="ghost"
                 />
-              </div>
-            )}
+              ) : (
+                <div className={cx("action-dots")}>
+                  <IconButton
+                    icon={<OverflowMenuVertical />}
+                    onClick={(e) => {
+                      handleClickMenu(
+                        e as React.MouseEvent<HTMLButtonElement>,
+                        "col",
+                        index,
+                        -1
+                      );
+                    }}
+                    mode="ghost"
+                  />
+                </div>
+              ))}
             <div
               className={cx("vertical-resize-handle")}
               onMouseDown={(e) => handleHorizontalDrag(e, index)}
@@ -285,11 +343,11 @@ const Table = ({
                   {row[column]}
                 </div>
               ))}
-              <div
-                className={cx("table-row-item", "action-col")}
-                style={{width: `3rem`}}
-              >
-                {!readonly && (
+              {!readonly && (
+                <div
+                  className={cx("table-row-item", "action-col")}
+                  style={{width: `3rem`}}
+                >
                   <div className={cx("action-dots")}>
                     <IconButton
                       icon={<OverflowMenuVertical />}
@@ -304,8 +362,8 @@ const Table = ({
                       mode="ghost"
                     />
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
             <div
               className={cx("row-controller")}

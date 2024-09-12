@@ -42,7 +42,11 @@ const ScheduleWidget = ({
     <ScheduleSkeleton />
   ) : (
     <div className={cx("schedule-widget")}>
-      <Table headings={scheduleHeadings} content={widgetTableContent} />
+      <Table
+        headings={scheduleHeadings}
+        content={widgetTableContent}
+        readonly
+      />
       <div className={cx("widget-button-row")}>
         <IconButton
           flex={false}

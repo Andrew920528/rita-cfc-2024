@@ -21,15 +21,19 @@
   text-wrap: nowrap;
   align-items: center;
   width: 100%;
+
   overflow: hidden;
   justify-content: space-between;
 }
 
 .table-header-item {
-  font-weight: bold;
+  p {
+    font-weight: bold;
+  }
   background-color: #f4f4f4;
   display: flex;
   flex-direction: row;
+  min-height: 2rem;
 }
 
 .table-row-item {
