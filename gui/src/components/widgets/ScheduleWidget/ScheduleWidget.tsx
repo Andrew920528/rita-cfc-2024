@@ -47,25 +47,8 @@ const ScheduleWidget = ({
         content={widgetTableContent}
         readonly
       />
-      <div className={cx("widget-button-row")}>
-        <IconButton
-          flex={false}
-          icon={<Add />}
-          mode={"primary"}
-          onClick={() => {
-            dispatch(UserServices.actions.updateSchedule("add"));
-          }}
-        />
-        <IconButton
-          flex={false}
-          icon={<Subtract />}
-          mode={"primary"}
-          onClick={() => {
-            dispatch(UserServices.actions.updateSchedule("delete"));
-          }}
-        />
-      </div>
     </div>
+    // TODO: Add some hint
   );
 };
 

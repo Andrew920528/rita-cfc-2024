@@ -61,6 +61,9 @@
   gap: 1rem;
   width: 100%;
   // justify-content: space-between;
+  &.danger {
+    color: #da1e28;
+  }
 }
 
 .action-col {

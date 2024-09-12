@@ -20,6 +20,7 @@ import classNames from "classnames/bind";
 import styles from "./SemesterPlanWidget.module.scss";
 import {Skeleton} from "@mui/material";
 import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
+import * as XLSX from "xlsx";
 
 const cx = classNames.bind(styles);
 
@@ -167,6 +168,17 @@ const SemesterPlanWidget = ({
     );
   }
 
+  const downloadExcel = () => {
+    const data = widgetContent.rows;
+    const worksheet = XLSX.utils.json_to_sheet(data);
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+    // Step 3: Write the Excel file and trigger the download
+    XLSX.writeFile(workbook, "plan.xlsx");
+  };
+
   const widgetTableContent = widgetContent.rows.map((row, rowIndex) =>
     Object.keys(row).reduce((acc: any, key: string) => {
       acc[key] = (
@@ -266,11 +278,12 @@ const SemesterPlanWidget = ({
       />
       <div className={cx("widget-button-row")}>
         <IconButton
-          text={"生成Excel試算表"}
+          text={"下載Excel試算表"}
           icon={<TableBuilt />}
           mode={"primary"}
           onClick={() => {
             console.log("Make excel");
+            downloadExcel();
           }}
         />
       </div>

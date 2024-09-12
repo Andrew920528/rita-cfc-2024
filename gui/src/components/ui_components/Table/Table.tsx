@@ -220,7 +220,7 @@ const Table = ({
           onClick={() => handleDeleteColumn(index)}
           disabled={headings.length === 1}
         >
-          <div className={cx("menu-action-item")}>
+          <div className={cx("menu-action-item", "danger")}>
             <ColumnDelete />
             刪除此欄位
           </div>
@@ -258,7 +258,7 @@ const Table = ({
           onClick={() => handleDeleteRow(index)}
           disabled={content.length === 1}
         >
-          <div className={cx("menu-action-item")}>
+          <div className={cx("menu-action-item", "danger")}>
             <RowDelete />
             刪除此列
           </div>
