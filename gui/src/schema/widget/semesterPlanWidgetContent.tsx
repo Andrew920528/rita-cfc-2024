@@ -5,6 +5,7 @@ import {WidgetMaker} from "./widget";
 export type SemesterPlanWidgetContent = {
   headings: string[];
   rows: {[key: string]: string}[];
+  name?: string;
 };
 
 export class SemesterPlanWidgetMaker extends WidgetMaker<SemesterPlanWidgetContent> {

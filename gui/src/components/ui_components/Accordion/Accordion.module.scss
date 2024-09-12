@@ -19,3 +19,9 @@
 .outlined {
   border: 1px solid #dcdcdc;
 }
+
+.no-border {
+  .accordion-header {
+    border: none;
+  }
+}

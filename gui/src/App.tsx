@@ -14,6 +14,8 @@ import {overrideConsoleWarning} from "./utils/util";
 import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./style/main.scss";
+import {ThemeProvider} from "@mui/material";
+import {muiTheme} from "./style/MuiThemeProvider";
 overrideConsoleWarning("https://reactflow.dev/error#002"); // weird react flow warning that's irrelevant
 
 function App() {
@@ -64,43 +66,45 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <ToastContainer theme="light" />
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={RouteHandler({
-              element: <Home />,
-              rule: "after-login",
-            })}
-          />
-          <Route
-            path="/login"
-            element={RouteHandler({
-              element: <Login />,
-              rule: "before-login",
-            })}
-          />
-          <Route
-            path="/signup"
-            element={RouteHandler({
-              element: <SignUp />,
-              rule: "before-login",
-            })}
-          />
+    <ThemeProvider theme={muiTheme}>
+      <div className="App">
+        <ToastContainer theme="light" />
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/"
+              element={RouteHandler({
+                element: <Home />,
+                rule: "after-login",
+              })}
+            />
+            <Route
+              path="/login"
+              element={RouteHandler({
+                element: <Login />,
+                rule: "before-login",
+              })}
+            />
+            <Route
+              path="/signup"
+              element={RouteHandler({
+                element: <SignUp />,
+                rule: "before-login",
+              })}
+            />
 
-          <Route
-            path="/redirecting"
-            element={
-              loginStatus.loading ? <Redirect /> : <Navigate to="/" replace />
-            }
-          />
+            <Route
+              path="/redirecting"
+              element={
+                loginStatus.loading ? <Redirect /> : <Navigate to="/" replace />
+              }
+            />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </ThemeProvider>
   );
 }
 

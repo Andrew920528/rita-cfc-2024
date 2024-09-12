@@ -6,8 +6,10 @@ import Table from "../../ui_components/Table/Table";
 import Textbox from "../../ui_components/Textbox/Textbox";
 import IconButton from "../../ui_components/IconButton/IconButton";
 import {
+  CheckmarkOutline,
   ColumnDelete,
   ColumnInsert,
+  Edit,
   RowDelete,
   RowInsert,
   Settings,
@@ -153,10 +155,67 @@ const SemesterPlanWidget = ({
     }, {})
   );
 
+  const [editName, setEditName] = useState(false);
+  const [nameError, setNameError] = useState<string>("");
+  function editPlanName(newName: string) {
+    setNameError("");
+    if (newName.trim() === "") {
+      setNameError("請輸入計畫名稱");
+      // return;
+    }
+    const newWidget = {
+      id: widget.id,
+      type: WidgetType.SemesterPlan,
+      content: {
+        ...widgetContent,
+        name: newName,
+      },
+    };
+    dispatch(
+      WidgetsServices.actions.updateWidget({
+        newWidget: newWidget,
+        mode: "actual",
+      })
+    );
+  }
   return loading ? (
     <SemesterPlanSkeleton />
   ) : (
     <div className={cx("semester-plan-widget")}>
+      {editName ? (
+        <div className={cx("name-row")}>
+          <div className={cx("input-wrapper")}>
+            <Textbox
+              value={widgetContent.name ?? "未命名的計畫"}
+              onChange={(e) => {
+                editPlanName(e.currentTarget.value);
+              }}
+              mode="form"
+              errorMsg={nameError}
+            />
+          </div>
+
+          <IconButton
+            icon={<CheckmarkOutline />}
+            onClick={() => {
+              if (nameError !== "") return;
+              setEditName(false);
+            }}
+            mode="ghost"
+            text="確定"
+          />
+        </div>
+      ) : (
+        <div className={cx("name-row")}>
+          <p className={cx("name")}>{widgetContent.name ?? "未命名的計畫"}</p>
+          <IconButton
+            icon={<Edit />}
+            onClick={() => setEditName(true)}
+            mode="ghost"
+            text="編輯"
+          />
+        </div>
+      )}
       <Table headings={widgetContent.headings} content={widgetTableContent} />
       <div className={cx("widget-button-row")}>
         <IconButton
@@ -205,31 +264,64 @@ const SemesterPlanWidget = ({
 
 type SemesterPlanCellProps = {
   data: any;
-  locked?: boolean;
+  readonly?: boolean;
   onClick: () => void;
   onChange: (s: string) => void;
 };
 const SemesterPlanCell = ({
   data,
   onClick,
-  locked = false,
+  readonly = false,
   onChange,
 }: SemesterPlanCellProps) => {
   return (
     <div
       onClick={() => {
+        if (readonly) return;
         onClick();
       }}
     >
-      <Textbox
-        flex={true}
-        mode="table"
-        value={data}
-        onChange={(e) => {
-          onChange(e.currentTarget.value);
-        }}
-        ariaLabel="semester plan cell"
-      />
+      {readonly ? (
+        data
+      ) : (
+        <Textbox
+          flex={true}
+          mode="table"
+          value={data}
+          onChange={(e) => {
+            if (readonly) return;
+            onChange(e.currentTarget.value);
+          }}
+          ariaLabel="semester plan cell"
+        />
+      )}
+    </div>
+  );
+};
+
+export const SemesterPlanReadOnly = ({widget}: {widget: Widget}) => {
+  const widgetContent = widget.content as SemesterPlanWidgetContent;
+  const widgetTableContent = widgetContent.rows.map((row, rowIndex) =>
+    Object.keys(row).reduce((acc: any, key: string) => {
+      acc[key] = (
+        <SemesterPlanCell
+          data={row[key as keyof typeof row]}
+          onClick={() => {}}
+          onChange={() => {}}
+          readonly
+        />
+      );
+      return acc;
+    }, {})
+  );
+
+  return (
+    <div className={cx("readonly", "semester-plan-widget")}>
+      <div className={cx("name-row")}>
+        <p className={cx("name")}>{widgetContent.name ?? "未命名的計畫"}</p>
+      </div>
+
+      <Table headings={widgetContent.headings} content={widgetTableContent} />
     </div>
   );
 };
