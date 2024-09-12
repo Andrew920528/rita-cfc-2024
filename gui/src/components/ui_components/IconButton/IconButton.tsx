@@ -8,7 +8,10 @@ export type IconButtonProps = {
   mode?: string;
   text?: string;
   icon: ReactNode;
-  onClick?: (args?: any) => void;
+  onClick?: (
+    e: React.MouseEvent<Element> | React.KeyboardEvent<Element>,
+    ...args: any[]
+  ) => void;
   disabled?: boolean;
 };
 const IconButton = ({
@@ -29,14 +32,14 @@ const IconButton = ({
         if (!disabled && (e.key === "Enter" || e.key === " ")) {
           if (e.repeat) return;
           if (disabled) return;
-          onClick();
+          onClick(e);
         }
       }}
       role="button"
       tabIndex={0}
-      onClick={() => {
+      onClick={(e) => {
         if (disabled) return;
-        onClick();
+        onClick(e);
       }}
     >
       {text}

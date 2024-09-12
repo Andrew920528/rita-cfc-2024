@@ -13,6 +13,7 @@ import {
   RowDelete,
   RowInsert,
   Settings,
+  TableBuilt,
 } from "@carbon/icons-react";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
 import classNames from "classnames/bind";
@@ -29,7 +30,11 @@ const SemesterPlanWidget = ({
 }: WidgetContentProps) => {
   const dispatch = useAppDispatch();
   const widgetContent = widget.content as SemesterPlanWidgetContent;
-  function addColumn(table: SemesterPlanWidgetContent, newHeading: string) {
+  function insertColumn(
+    table: SemesterPlanWidgetContent,
+    newHeading: string,
+    index: number
+  ) {
     const originalTable = structuredClone(table);
     // inspect the original table and add new column with unique name
     let counter = 0;
@@ -42,7 +47,7 @@ const SemesterPlanWidget = ({
       newHeading = newHeading + "(" + counter + ")";
     }
 
-    originalTable.headings.push(newHeading);
+    originalTable.headings.splice(index, 0, newHeading);
     originalTable.rows.forEach((row: any) => {
       row[newHeading] = "";
     });
@@ -58,8 +63,9 @@ const SemesterPlanWidget = ({
     );
   }
 
-  function deleteColumn(table: SemesterPlanWidgetContent, heading: string) {
+  function deleteColumn(table: SemesterPlanWidgetContent, index: number) {
     const originalTable = structuredClone(table);
+    const heading = originalTable.headings[index];
     originalTable.headings = originalTable.headings.filter(
       (h: string) => h !== heading
     );
@@ -105,11 +111,7 @@ const SemesterPlanWidget = ({
       return acc;
     }, {});
 
-    originalTable.rows = [
-      ...originalTable.rows.slice(0, row),
-      initObj,
-      ...originalTable.rows.slice(row),
-    ];
+    originalTable.rows.splice(row, 0, initObj);
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
@@ -125,7 +127,7 @@ const SemesterPlanWidget = ({
   function deleteRow(table: SemesterPlanWidgetContent, row: number) {
     const originalTable = structuredClone(table);
 
-    originalTable.rows.pop();
+    originalTable.rows.splice(row, 1);
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
@@ -216,45 +218,29 @@ const SemesterPlanWidget = ({
           />
         </div>
       )}
-      <Table headings={widgetContent.headings} content={widgetTableContent} />
+      <Table
+        headings={widgetContent.headings}
+        content={widgetTableContent}
+        insertColumn={(i) => {
+          insertColumn(widgetContent, "新增欄位", i);
+        }}
+        deleteColumn={(i) => {
+          deleteColumn(widgetContent, i);
+        }}
+        insertRow={(i) => {
+          insertRow(widgetContent, i);
+        }}
+        deleteRow={(i) => {
+          deleteRow(widgetContent, i);
+        }}
+      />
       <div className={cx("widget-button-row")}>
         <IconButton
-          flex={true}
-          text={"Add Column"}
-          icon={<ColumnInsert />}
+          text={"生成Excel試算表"}
+          icon={<TableBuilt />}
           mode={"primary"}
           onClick={() => {
-            addColumn(widgetContent, "新增欄位");
-          }}
-        />
-        <IconButton
-          flex={true}
-          text={"Delete Column"}
-          icon={<ColumnDelete />}
-          mode={"primary"}
-          onClick={() => {
-            deleteColumn(
-              widgetContent,
-              widgetContent.headings[widgetContent.headings.length - 1]
-            );
-          }}
-        />
-        <IconButton
-          flex={true}
-          text={"Add row"}
-          icon={<RowInsert />}
-          mode={"primary"}
-          onClick={() => {
-            insertRow(widgetContent, widgetContent.rows.length);
-          }}
-        />
-        <IconButton
-          flex={true}
-          text={"Delete row"}
-          icon={<RowDelete />}
-          mode={"primary"}
-          onClick={() => {
-            deleteRow(widgetContent, widgetContent.rows.length - 1);
+            console.log("Make excel");
           }}
         />
       </div>
