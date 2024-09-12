@@ -13,12 +13,14 @@ import {
   RowDelete,
   RowInsert,
   Settings,
+  TableBuilt,
 } from "@carbon/icons-react";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
 import classNames from "classnames/bind";
 import styles from "./SemesterPlanWidget.module.scss";
 import {Skeleton} from "@mui/material";
 import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
+import * as XLSX from "xlsx";
 
 const cx = classNames.bind(styles);
 
@@ -29,7 +31,11 @@ const SemesterPlanWidget = ({
 }: WidgetContentProps) => {
   const dispatch = useAppDispatch();
   const widgetContent = widget.content as SemesterPlanWidgetContent;
-  function addColumn(table: SemesterPlanWidgetContent, newHeading: string) {
+  function insertColumn(
+    table: SemesterPlanWidgetContent,
+    newHeading: string,
+    index: number
+  ) {
     const originalTable = structuredClone(table);
     // inspect the original table and add new column with unique name
     let counter = 0;
@@ -42,7 +48,7 @@ const SemesterPlanWidget = ({
       newHeading = newHeading + "(" + counter + ")";
     }
 
-    originalTable.headings.push(newHeading);
+    originalTable.headings.splice(index, 0, newHeading);
     originalTable.rows.forEach((row: any) => {
       row[newHeading] = "";
     });
@@ -58,14 +64,42 @@ const SemesterPlanWidget = ({
     );
   }
 
-  function deleteColumn(table: SemesterPlanWidgetContent, heading: string) {
+  function deleteColumn(table: SemesterPlanWidgetContent, index: number) {
     const originalTable = structuredClone(table);
+    const heading = originalTable.headings[index];
     originalTable.headings = originalTable.headings.filter(
       (h: string) => h !== heading
     );
     originalTable.rows.forEach((row: any) => {
       delete row[heading];
     });
+    dispatch(
+      WidgetsServices.actions.updateWidget({
+        newWidget: {
+          id: widget.id,
+          type: WidgetType.SemesterPlan,
+          content: originalTable,
+        },
+        mode: preview ? "preview" : "actual",
+      })
+    );
+  }
+
+  function editColumn(
+    table: SemesterPlanWidgetContent,
+    index: number,
+    newColNam: string
+  ) {
+    const originalTable = structuredClone(table);
+    const originalHeading = originalTable.headings[index];
+    if (originalHeading === newColNam) return;
+    originalTable.headings[index] = newColNam;
+    for (let row of originalTable.rows) {
+      row[newColNam] = row[originalHeading]; // set new column value
+      delete row[originalHeading]; // delete old column
+    }
+    console.log(originalTable);
+
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
@@ -105,11 +139,7 @@ const SemesterPlanWidget = ({
       return acc;
     }, {});
 
-    originalTable.rows = [
-      ...originalTable.rows.slice(0, row),
-      initObj,
-      ...originalTable.rows.slice(row),
-    ];
+    originalTable.rows.splice(row, 0, initObj);
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
@@ -125,7 +155,7 @@ const SemesterPlanWidget = ({
   function deleteRow(table: SemesterPlanWidgetContent, row: number) {
     const originalTable = structuredClone(table);
 
-    originalTable.rows.pop();
+    originalTable.rows.splice(row, 1);
     dispatch(
       WidgetsServices.actions.updateWidget({
         newWidget: {
@@ -137,6 +167,17 @@ const SemesterPlanWidget = ({
       })
     );
   }
+
+  const downloadExcel = () => {
+    const data = widgetContent.rows;
+    const worksheet = XLSX.utils.json_to_sheet(data);
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+    // Step 3: Write the Excel file and trigger the download
+    XLSX.writeFile(workbook, "plan.xlsx");
+  };
 
   const widgetTableContent = widgetContent.rows.map((row, rowIndex) =>
     Object.keys(row).reduce((acc: any, key: string) => {
@@ -216,45 +257,33 @@ const SemesterPlanWidget = ({
           />
         </div>
       )}
-      <Table headings={widgetContent.headings} content={widgetTableContent} />
+      <Table
+        headings={widgetContent.headings}
+        content={widgetTableContent}
+        insertColumn={(i) => {
+          insertColumn(widgetContent, "新增欄位", i);
+        }}
+        deleteColumn={(i) => {
+          deleteColumn(widgetContent, i);
+        }}
+        insertRow={(i) => {
+          insertRow(widgetContent, i);
+        }}
+        deleteRow={(i) => {
+          deleteRow(widgetContent, i);
+        }}
+        editColumn={(i, val) => {
+          editColumn(widgetContent, i, val);
+        }}
+      />
       <div className={cx("widget-button-row")}>
         <IconButton
-          flex={true}
-          text={"Add Column"}
-          icon={<ColumnInsert />}
+          text={"下載Excel試算表"}
+          icon={<TableBuilt />}
           mode={"primary"}
           onClick={() => {
-            addColumn(widgetContent, "新增欄位");
-          }}
-        />
-        <IconButton
-          flex={true}
-          text={"Delete Column"}
-          icon={<ColumnDelete />}
-          mode={"primary"}
-          onClick={() => {
-            deleteColumn(
-              widgetContent,
-              widgetContent.headings[widgetContent.headings.length - 1]
-            );
-          }}
-        />
-        <IconButton
-          flex={true}
-          text={"Add row"}
-          icon={<RowInsert />}
-          mode={"primary"}
-          onClick={() => {
-            insertRow(widgetContent, widgetContent.rows.length);
-          }}
-        />
-        <IconButton
-          flex={true}
-          text={"Delete row"}
-          icon={<RowDelete />}
-          mode={"primary"}
-          onClick={() => {
-            deleteRow(widgetContent, widgetContent.rows.length - 1);
+            console.log("Make excel");
+            downloadExcel();
           }}
         />
       </div>

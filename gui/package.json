@@ -39,7 +39,8 @@
     "typescript": "^5.4.5",
     "vite": "^5.2.13",
     "vite-tsconfig-paths": "^4.3.2",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "vite",
