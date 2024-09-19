@@ -42,26 +42,13 @@ const ScheduleWidget = ({
     <ScheduleSkeleton />
   ) : (
     <div className={cx("schedule-widget")}>
-      <Table headings={scheduleHeadings} content={widgetTableContent} />
-      <div className={cx("widget-button-row")}>
-        <IconButton
-          flex={false}
-          icon={<Add />}
-          mode={"primary"}
-          onClick={() => {
-            dispatch(UserServices.actions.updateSchedule("add"));
-          }}
-        />
-        <IconButton
-          flex={false}
-          icon={<Subtract />}
-          mode={"primary"}
-          onClick={() => {
-            dispatch(UserServices.actions.updateSchedule("delete"));
-          }}
-        />
-      </div>
+      <Table
+        headings={scheduleHeadings}
+        content={widgetTableContent}
+        readonly
+      />
     </div>
+    // TODO: Add some hint
   );
 };
 

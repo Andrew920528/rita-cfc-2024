@@ -4,10 +4,12 @@ import {useTypedSelector} from "../store/store";
 interface UiState {
   dragOffset: {x: number; y: number}; // for widget card dragging
   dragOver: boolean; // for styling and logic when dragging widget card over dashboard, which metigate buggy html default drag api
+  openSetSemesterPlanPU: boolean;
 }
 const initialState: UiState = {
   dragOffset: {x: 0, y: 0},
   dragOver: false,
+  openSetSemesterPlanPU: false,
 };
 
 const UiSlice = createSlice({
@@ -19,6 +21,9 @@ const UiSlice = createSlice({
     },
     setDragOver: (state, action: PayloadAction<boolean>) => {
       state.dragOver = action.payload;
+    },
+    setOpenSetSemesterPlanPU: (state, action: PayloadAction<boolean>) => {
+      state.openSetSemesterPlanPU = action.payload;
     },
   },
 });

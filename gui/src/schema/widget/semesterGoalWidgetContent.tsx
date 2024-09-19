@@ -5,6 +5,9 @@ import {WidgetMaker} from "./widget";
 // Defines the content properties
 export type SemesterGoalWidgetContent = {
   goals: string[];
+  start?: string;
+  end?: string;
+  semesterPlanRef?: string;
 };
 
 // Set of methods that define the widget
@@ -19,7 +22,11 @@ export class SemesterGoalWidgetMaker extends WidgetMaker<SemesterGoalWidgetConte
       typeof obj === "object" &&
       obj !== null &&
       Array.isArray(obj.goals) &&
-      obj.goals.every((goal: any) => typeof goal === "string")
+      obj.goals.every((goal: any) => typeof goal === "string") &&
+      (obj.start === undefined || typeof obj.start === "string") &&
+      (obj.end === undefined || typeof obj.end === "string") &&
+      (obj.semesterPlanRef === undefined ||
+        typeof obj.semesterPlanRef === "string")
     );
   }
   uiBook() {

@@ -110,9 +110,6 @@ const WidgetFrame = ({selected, widget}: WidgetFrameProps) => {
   const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
     // Prevent parent scroll event
     e.stopPropagation();
-
-    // Handle child-specific scroll behavior here
-    console.log("Scrolling inside child component");
   };
 
   return (

@@ -1,5 +1,3 @@
-# pip install docx2pdf
-from docx2pdf import convert
 from flask import send_file, jsonify
 import os
 import tempfile
