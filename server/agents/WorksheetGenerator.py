@@ -19,20 +19,20 @@ from utils.Worksheet import Worksheet
 
 class MultipleChoices(BaseModel):
     type: str = "Multiple Choices"
+    questionId: str = Field(description="Id of the question")
     question: str = Field(description="question of the multiple choices question")
     choices: List[str] = Field(description="choices of the multiple choices question")
     answer: int = Field(description="index of the correct answer")
-class Matching(BaseModel):
-    type: str = "Matching"
-    question: str = Field(description="question of the matching question")
-    premises: List[str] = Field(description="premises of the matching question")
-    options: List[str] = Field(description="options of the matching question")
-    answer: List[int] = Field(description="index of the option corresponding to each premise")
 class FillInTheBlanks(BaseModel):
     type: str = "Fill in the Blanks"
     question: str = Field(description="question of the fill in the blanks question")
     answer: List[str] = Field(description="answer of the fill in the blanks question")
-
+class Matching(BaseModel):
+    type: str = "Matching"
+    question: str = Field(description="question of the matching question")
+    leftList: List[str] = Field(description="premises of the matching question")
+    rightList: List[str] = Field(description="options of the matching question")
+    
 class WorksheetGenerator:
     def __init__(self, llm, verbose=False) -> None:
         self.llm = llm  # llm used for intent classification
@@ -50,11 +50,11 @@ class WorksheetGenerator:
         return output
 
     def _get_runnable(self):
-        chat_prompt = self._get_tempate()
+        chat_prompt = self._get_template()
         chain = chat_prompt | self.llm | self._get_parser()
         return chain
 
-    def _get_tempate(self):
+    def _get_template(self):
         FORMAT_INSTRUCTION = (
             """
             You are part of a team of teaching assistants whose goal is to help teachers prepare for courses.

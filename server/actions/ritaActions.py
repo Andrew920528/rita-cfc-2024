@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 import os
 from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY, TOP_K, TOP_P, TEMPERATURE
 from agents.Rita import Rita
-from agents.RitaAgents import GeneralAgent, WorksheetAgent, LectureAgent
+from agents.RitaAgents import BaseAgent, GeneralAgent, WorksheetAgent, LectureAgent
 from agents.IntentClassifier import IntentClassifier
 from agents.WidgetModifier import WidgetModifier
 from agents.WorksheetGenerator import WorksheetGenerator
@@ -132,23 +132,22 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
         General = 0
         Worksheet = 1
         Lecture = 2
-    AGENCY_TYPE = Agency_Type.Lecture   # FIXME: should be agency from param
+    # AGENCY_TYPE = Agency_Type.Lecture   # FIXME: should be agency from param
     #############################################################################
-
     time_logger = LlmTester(name="llm process", on=LOG_OUTPUT)
     time_logger.log_start_timer("Start llm process")
 
     response_queue = queue.Queue()
     stream_handler = RitaStreamHandler(response_queue)
     # Agent 1: Response to the user
-    match AGENCY_TYPE:
-        case Agency_Type.General:
+    match agency:
+        case Agency_Type.General.value:
             rita_agent = GeneralAgent(
                 llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
-        case Agency_Type.Worksheet:
+        case Agency_Type.Worksheet.value:
             rita_agent = WorksheetAgent(
                 llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
-        case Agency_Type.Lecture:
+        case Agency_Type.Lecture.value:
             rita_agent = LectureAgent(
                 llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
     complete_rita_response = ""
@@ -187,10 +186,10 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
             agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
 
         # Agent 2: Determine user's intent
-        match AGENCY_TYPE:
-            case Agency_Type.General:
+        match agency:
+            case Agency_Type.General.value:
                 intent_classifier = IntentClassifier(
-                    llm, agent_type=AGENCY_TYPE, verbose=INTENT_VERBOSE)
+                    llm, agent_type=agency, verbose=INTENT_VERBOSE)
                 intent = intent_classifier.invoke(
                     user_prompt, data, complete_rita_response)
                 # Agent 3: Modify widget if needed
@@ -203,7 +202,7 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
                 stream_handler.add_to_stream(
                     agent="Widget Modifier", data=modified_widget)
                 time_logger.log_latency(f"Finished detecting intent.")
-            case Agency_Type.Worksheet:
+            case Agency_Type.Worksheet.value:
                 # Agent 4: Generate worksheet if needed
                 worksheet_generator = WorksheetGenerator(
                     llm, verbose=WG_VERBOSE)
@@ -222,8 +221,8 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
     t2.start()
 
     # Returns response
-    match AGENCY_TYPE:
-        case Agency_Type.Worksheet:
+    match agency:
+        case Agency_Type.Worksheet.value:
             response = Response(stream_handler.yield_stream())
         case _:
             response = Response(stream_handler.yield_stream(),

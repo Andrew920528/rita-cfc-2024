@@ -14,10 +14,10 @@ from utils.LlmTester import LlmTester
 
 
 class IntentClassifier:
-    def __init__(self, llm, agent_type, verbose=False) -> None:
+    def __init__(self, llm, agency, verbose=False) -> None:
         self.llm = llm  # llm used for intent classification
         self.logger = LlmTester(name="Intent Classifier", on=verbose)
-        self.agent_type = agent_type
+        self.agency = agency
 
     def invoke(self, user_prompt, data, reply):
         chain = self._get_runnable()

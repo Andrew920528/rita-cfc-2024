@@ -140,17 +140,20 @@ class WorksheetAgent(BaseAgent):
     def _get_agent_setup_input(self):
         SYSTEM_INTRO = (
                 "You are a helpful AI teaching assistant chatbot."
-                "You are supposed to assist the user, who is a teacher, in generating questions for their course worksheet to be assigned to students."
+                "Your task is to assist the user, who is a teacher, in generating questions for their course worksheet to be assigned to students."
                 "Please also provide answers to the questions."
             )
         SYSTEM_BASE_INSTRUCTION = (
-            "Generate questions based on the below context: {context}."
-            "The context is given in markdown format. It is a teacher's guide, which covers course content and methodologies."
-            "Below are context information about the course you are helping with:"
+            "Generate questions for students based on the content described in the course guide: {context}."
+            "The context is provided in markdown format and includes details of the course content."
+            "Questions should only focus on course content, key concepts, and topics relevant to the subject."
+            "Do NOT generate questions based on methodologies or instructional approaches outlined in the teacher's guide."
+            "Below is the context information about the course you are assisting with:"
             "Subject: {subject}"
             "Grade level: {grade}"
             "Number of classes per week: {credits}."
-            "There are three usual types of question: multiple choices, matching, and fill in the blanks."
+            "The questions should be in one of these formats: multiple choice, matching, or fill in the blanks."
+            "Do NOT generate extra text besides the title, questions, and answers"
         )
 
         return SYSTEM_INTRO, SYSTEM_BASE_INSTRUCTION
