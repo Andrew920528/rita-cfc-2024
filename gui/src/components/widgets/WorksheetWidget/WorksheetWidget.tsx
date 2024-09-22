@@ -127,7 +127,7 @@ const WorksheetWidget = ({
   ) : (
     <div className={cx("worksheet-widget")}>
       {showPreview ? (
-        <WorkSheetPreview />
+        <WorkSheetPreview content={(widget.content as WorksheetWidgetContent).questions}/>
       ) : (widget.content as WorksheetWidgetContent).questions.length === 0 ? (
         <WorksheetPlaceholder />
       ) : (
@@ -257,11 +257,11 @@ const WorkSheetQuestionStack = ({widget}: {widget: Widget}) => {
   );
 };
 
-const WorkSheetPreview = () => {
+const WorkSheetPreview = (props : {content : Question[]}) => {
   return (
     <div className={cx("worksheet-preview")}>
-      {/* <PdfPreview />
-      <FileDownload /> */}
+      <PdfPreview content={props.content}/>
+      <FileDownload content={props.content}/>
     </div>
   );
 };

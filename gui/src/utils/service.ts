@@ -3,6 +3,7 @@ import {formatTime, mimicApi, mimicStreamApi} from "./util";
 import {API, INDEPENDENT_MODE} from "../global/constants";
 
 import {dummyLoginData, dummyRitaResponse} from "./dummy";
+import { Question } from "../schema/widget/worksheetWidgetContent";
 type ResponseData = {
   status: API;
   data: any;
@@ -607,7 +608,7 @@ export function setUpRitaService(abortSignal?: AbortSignal) {
 }
 
 /// Worksheet APIs
-export function getWordDocService(abortSignal?: AbortSignal) {
+export function getWordDocService(content: Question[], abortSignal?: AbortSignal) {
   if (INDEPENDENT_MODE) {
     const response = {
       status: API.SUCCESS,
@@ -617,7 +618,33 @@ export function getWordDocService(abortSignal?: AbortSignal) {
   }
   const endPoint = "/send-word-doc";
   return fetch(BASE_URL_DEV + endPoint, {
-    method: "GET",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      content
+    }), // Convert data object to JSON string
+    signal: abortSignal,
+  });
+}
+export function getPdfService(content: Question[], abortSignal?: AbortSignal) {
+  if (INDEPENDENT_MODE) {
+    const response = {
+      status: API.SUCCESS,
+      data: "Successfully retrieved pdf",
+    };
+    return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
+  }
+  const endPoint = "/send-pdf";
+  return fetch(BASE_URL_DEV + endPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      content
+    }), // Convert data object to JSON string
     signal: abortSignal,
   });
 }

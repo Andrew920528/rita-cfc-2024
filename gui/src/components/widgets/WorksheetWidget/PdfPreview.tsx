@@ -1,11 +1,13 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Document, Page, pdfjs} from "react-pdf";
+import { Question } from "../../../schema/widget/worksheetWidgetContent";
+import { getPdfService } from "../../../utils/service";
 // import pdfWorker from "pdfjs-dist/build/pdf.worker.entry";
 
 // Set workerSrc for pdf.js
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
-const PdfPreview = () => {
+const PdfPreview = (props : {content : Question[]}) => {
   const [pdfUrl, setPdfUrl] = useState("");
   const runOnce = useRef<boolean>(false);
   useEffect(() => {
@@ -13,7 +15,7 @@ const PdfPreview = () => {
     runOnce.current = true;
     const fetchPdf = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/test-get-pdf");
+        const response = await getPdfService(props.content);
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         setPdfUrl(url);

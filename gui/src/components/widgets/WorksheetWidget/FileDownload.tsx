@@ -3,11 +3,12 @@ import React from "react";
 import {getWordDocService} from "../../../utils/service";
 import IconButton from "../../ui_components/IconButton/IconButton";
 import {Download} from "@carbon/icons-react";
+import {Question} from "../../../schema/widget/worksheetWidgetContent";
 
-const FileDownload = () => {
+const FileDownload = (props : {content : Question[]}) => {
   const downloadFile = async () => {
     try {
-      const response = await getWordDocService();
+      const response = await getWordDocService(props.content);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -15,7 +16,7 @@ const FileDownload = () => {
       const url = window.URL.createObjectURL(new Blob([blob]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "custom_filename.docx"); // Filename you want to download
+      link.setAttribute("download", "testDocument.docx"); // Filename you want to download
       document.body.appendChild(link);
       link.click();
       link.parentNode?.removeChild(link);
