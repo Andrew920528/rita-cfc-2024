@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
 
-from utils.word_docs import send_docx, docxToPdfFunction, createBlankDocx, sendDocument
+from utils.word_docs import send_docx, docxToPdfFunction, createBlankDocx, sendDocument, send_pdf
 from utils.LlmTester import LlmTester
 from actions.databaseUserActions import getUser, createUser, loginUser, updateUser, createClassroom, deleteClassroom, createLecture, updateLecture, createWidget, updateWidget, getLectureAndClassroom, updateClassroom, deleteLecture, deleteWidget, updateWidgetBulk, loginSessionId, updateChatroom
 from actions.ritaActions import initLLM, llm_stream_response, initRetriever, translateText
@@ -29,10 +29,11 @@ def get_output():
     return {'output': 'hello guys!'}
 
 
-@app.route('/send-word-doc', methods=['GET'])
+@app.route('/send-word-doc', methods=['POST'])
 def get_file():
     try:
-        file = send_docx()
+        content = request.json['content']
+        file = send_docx(content)
         return file
     except Exception as e:
         response = {
@@ -42,11 +43,19 @@ def get_file():
     return response
 
 
-@app.route('/test-get-pdf', methods=['GET'])
+@app.route('/send-pdf', methods=['POST'])
 def get_pdf():
-    return docxToPdfFunction("worksheet_tmp/Rita Test document.docx", "worksheet_tmp/Rita Test document.pdf")
-    # if docxToPdfFunction does not branch for mac, then use convert_to_pdf with mac.
-    # return convert_to_pdf()
+    try:
+        content = request.json['content']
+        file = send_pdf(content)
+        return file
+    except Exception as e:
+        response = {
+            'status': 'error',
+            'data': str(e)
+        }
+    return response
+   
 
 
 @app.route('/message-rita', methods=['POST'])
