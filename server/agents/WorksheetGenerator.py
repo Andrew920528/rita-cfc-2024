@@ -2,7 +2,7 @@ import time
 from langchain_core.prompts.few_shot import FewShotPromptTemplate
 from langchain_core.prompts.prompt import PromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field, validator
-from langchain_core.output_parsers import PydanticOutputParser
+from langchain_core.output_parsers import JsonOutputParser
 from typing import Literal
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts import MessagesPlaceholder
@@ -90,7 +90,7 @@ class WorksheetGenerator:
         class Questions(BaseModel):
             questions : List[Union[MultipleChoices, Matching, FillInTheBlanks]]
 
-        parser = PydanticOutputParser(pydantic_object=Questions)
+        parser = JsonOutputParser(pydantic_object=Questions)
         return parser
 
     def _to_latex(self, output):

@@ -127,12 +127,11 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
     WG_VERBOSE = True
     #############################################################################
 
-    ############################ Temporary Switch ###############################
+    ############################ Agency Switch ###############################
     class Agency_Type(Enum):
         General = 0
         Worksheet = 1
         Lecture = 2
-    # AGENCY_TYPE = Agency_Type.Lecture   # FIXME: should be agency from param
     #############################################################################
     time_logger = LlmTester(name="llm process", on=LOG_OUTPUT)
     time_logger.log_start_timer("Start llm process")
@@ -184,39 +183,27 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
 
         stream_handler.add_to_stream(
             agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
-
+        
         # Agent 2: Determine user's intent
-        match agency:
-            case Agency_Type.General.value:
-                intent_classifier = IntentClassifier(
-                    llm, agent_type=agency, verbose=INTENT_VERBOSE)
-                intent = intent_classifier.invoke(
-                    user_prompt, data, complete_rita_response)
-                # Agent 3: Modify widget if needed
-                widget_modifier = WidgetModifier(llm, verbose=WID_VERBOSE)
+        intent_classifier = IntentClassifier(
+            llm, verbose=INTENT_VERBOSE)
+        intent = intent_classifier.invoke(
+            user_prompt, data, complete_rita_response)
+        # Agent 3: Modify widget if needed
+        widget_modifier = WidgetModifier(llm, verbose=WID_VERBOSE)
 
-                modified_widget = widget_modifier.invoke(
-                    user_prompt, data, intent, complete_rita_response)
-                time_logger.log_latency(
-                    f"Modified widget generated.")
-                stream_handler.add_to_stream(
-                    agent="Widget Modifier", data=modified_widget)
-                time_logger.log_latency(f"Finished detecting intent.")
-            case Agency_Type.Worksheet.value:
-                # Agent 4: Generate worksheet if needed
-                worksheet_generator = WorksheetGenerator(
-                    llm, verbose=WG_VERBOSE)
-                generated_worksheet = worksheet_generator.invoke(
-                    user_prompt, data, complete_rita_response)
-                time_logger.log_latency(
-                    f"Worksheet generated.")
-                # stream_handler.add_to_stream(
-                #     agent="Worksheet Generator", data=generated_worksheet)
-                time_logger.log_latency("Stream completed")
-
+        modified_widget = widget_modifier.invoke(
+            user_prompt, data, intent, complete_rita_response)
+        print(modified_widget)
+        time_logger.log_latency(
+            f"Modified widget generated.")
+        stream_handler.add_to_stream(
+            agent="Widget Modifier", data=modified_widget)
+        time_logger.log_latency(f"Finished detecting intent.")
         # end the stream after the widget modifier is ran
         stream_handler.end_stream()
         time_logger.log_latency("Stream completed")
+
     t2 = threading.Thread(target=run_widget_modifier)
     t2.start()
 

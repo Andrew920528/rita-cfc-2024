@@ -70,7 +70,7 @@ export class WorksheetWidgetMaker extends WidgetMaker<WorksheetWidgetContent> {
         if (
           typeof question.questionId !== "string" ||
           typeof question.question !== "string" ||
-          typeof question.type !== "number"
+          typeof question.type !== "string"
         ) {
           return false;
         }
@@ -93,20 +93,18 @@ export class WorksheetWidgetMaker extends WidgetMaker<WorksheetWidgetContent> {
 
           case QuestionType.MATCH:
             return (
-              Array.isArray(question.premises) &&
-              question.premises.every(
+              Array.isArray(question.leftList) &&
+              question.leftList.every(
                 (premise: any) => typeof premise === "string"
               ) &&
-              Array.isArray(question.options) &&
-              question.options.every(
+              Array.isArray(question.rightList) &&
+              question.rightList.every(
                 (option: any) => typeof option === "string"
-              ) &&
-              Array.isArray(question.answer) &&
-              question.answer.every((ans: any) => typeof ans === "number")
+              )
             );
 
           default:
-            return false;
+            return true;
         }
       })
     );
