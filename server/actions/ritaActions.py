@@ -19,6 +19,7 @@ from dotenv import load_dotenv
 import os
 from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY, TOP_K, TOP_P, TEMPERATURE
 from agents.Rita import Rita
+from agents.RitaAgents import BaseAgent, GeneralAgent, WorksheetAgent, LectureAgent
 from agents.IntentClassifier import IntentClassifier
 from agents.WidgetModifier import WidgetModifier
 from utils.LlmTester import LlmTester
@@ -26,6 +27,7 @@ from utils.RitaStreamHandler import RitaStreamHandler
 from langchain_cohere import CohereEmbeddings
 import json
 import re
+from enum import Enum
 
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
@@ -121,15 +123,31 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
     RITA_VERBOSE = True
     INTENT_VERBOSE = False
     WID_VERBOSE = False
+    WG_VERBOSE = True
     #############################################################################
 
+    ############################ Agency Switch ###############################
+    class Agency_Type(Enum):
+        General = 0
+        Worksheet = 1
+        Lecture = 2
+    #############################################################################
     time_logger = LlmTester(name="llm process", on=LOG_OUTPUT)
     time_logger.log_start_timer("Start llm process")
 
     response_queue = queue.Queue()
     stream_handler = RitaStreamHandler(response_queue)
     # Agent 1: Response to the user
-    rita_agent = Rita(llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
+    match agency:
+        case Agency_Type.General.value:
+            rita_agent = GeneralAgent(
+                llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
+        case Agency_Type.Worksheet.value:
+            rita_agent = WorksheetAgent(
+                llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
+        case Agency_Type.Lecture.value:
+            rita_agent = LectureAgent(
+                llm=llm, retriever=retriever, verbose=RITA_VERBOSE)
     complete_rita_response = ""
     rita_response_done = False
 
@@ -159,36 +177,43 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
         nonlocal complete_rita_response
         nonlocal complete_rita_response
 
-        while not rita_response_done:
+        while not rita_response_done:   # wait until previous agent finishes
             time.sleep(0.1)
 
         stream_handler.add_to_stream(
             agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
-
+        
         # Agent 2: Determine user's intent
-        intent_classifier = IntentClassifier(llm, verbose=INTENT_VERBOSE)
+        intent_classifier = IntentClassifier(
+            llm, verbose=INTENT_VERBOSE)
         intent = intent_classifier.invoke(
             user_prompt, data, complete_rita_response)
-
-        time_logger.log_latency(f"Finished detecting intent.")
-
         # Agent 3: Modify widget if needed
         widget_modifier = WidgetModifier(llm, verbose=WID_VERBOSE)
 
         modified_widget = widget_modifier.invoke(
             user_prompt, data, intent, complete_rita_response)
+        print(modified_widget)
         time_logger.log_latency(
             f"Modified widget generated.")
         stream_handler.add_to_stream(
             agent="Widget Modifier", data=modified_widget)
+        time_logger.log_latency(f"Finished detecting intent.")
+        # end the stream after the widget modifier is ran
         stream_handler.end_stream()
         time_logger.log_latency("Stream completed")
 
     t2 = threading.Thread(target=run_widget_modifier)
     t2.start()
 
-    response = Response(stream_handler.yield_stream(),
-                        content_type="application/json")
+    # Returns response
+    match agency:
+        case Agency_Type.Worksheet.value:
+            response = Response(stream_handler.yield_stream())
+        case _:
+            response = Response(stream_handler.yield_stream(),
+                                content_type="application/json")
+
     return response
 
 

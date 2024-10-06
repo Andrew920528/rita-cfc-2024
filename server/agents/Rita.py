@@ -6,12 +6,12 @@ from utils.LlmTester import LlmTester
 from utils.util import format_chat_history
 import json
 
-
 class Rita:
-    def __init__(self, llm, retriever, verbose=False) -> None:
+    def __init__(self, llm, retriever, agent_type, verbose=False) -> None:
         self.llm = llm
         self.retriever = retriever
         self.logger = LlmTester(name="Rita", on=verbose)
+        self.agent_type = agent_type
 
     def stream(self, user_prompt, data):
         prompt = self._get_prompt(user_prompt, data)
@@ -30,11 +30,11 @@ class Rita:
 
     def _get_template(self):
         SYSTEM_INTRO = (
-            "You are a helpful AI teaching assistant chatbot. "
-            "You are suppose to help the user, who is a teacher, to plan their courses. "
+            "You are a helpful AI teaching assistant chatbot."
+            "You are suppose to help the user, who is a teacher, to plan their courses."
         )
         SYSTEM_BASE_INSTRUCTION = (
-            "Answer the user's questions based on the below context: {context}. "
+            "Answer the user's questions based on the below context: {context}."
             "The context is a teacher's guide, which covers course content and methodologies."
 
             "Below are information about the course you are helping with:"
@@ -52,6 +52,22 @@ class Rita:
 
             "Bold important contents appropriately."
         )
+
+        if self.agent_type == "Worksheet":
+            SYSTEM_INTRO = (
+                "You are a helpful AI teaching assistant chatbot."
+                "You are supposed to assist the user, who is a teacher, in generating questions for their course worksheet to be assigned to students."
+                "Please also provide answers to the questions."
+            )
+            SYSTEM_BASE_INSTRUCTION = (
+                "Generate questions based on the below context: {context}."
+                "The context is given in markdown format. It is a teacher's guide, which covers course content and methodologies."
+                "Below are context information about the course you are helping with:"
+                "Subject: {subject}"
+                "Grade level: {grade}"
+                "Number of classes per week: {credits}."
+                "There are three usual types of question: multiple choices, matching, and fill in the blanks."
+            )
 
         messages = [
             ("system", SYSTEM_INTRO),

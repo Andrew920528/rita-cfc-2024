@@ -2,22 +2,18 @@ import time
 from langchain_core.prompts.few_shot import FewShotPromptTemplate
 from langchain_core.prompts.prompt import PromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field, validator
-from langchain_core.output_parsers import PydanticOutputParser
-from typing import Literal
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.prompts import MessagesPlaceholder
+from langchain_core.output_parsers import PydanticOutputParser, StrOutputParser, JsonOutputParser
+from typing import Literal, List, Dict, Union
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.schema import AIMessage, HumanMessage
 from langchain_core.prompts.chat import SystemMessagePromptTemplate
 from config.llm_param import MEMORY_CUTOFF
 from agents.Rita import Rita
 from utils.widget_prompts.WidgetPromptSelector import Intents, WidgetTypes
 from utils.util import format_chat_history
-from langchain_core.output_parsers import StrOutputParser
-import json
-from typing import List, Dict
-from langchain_core.output_parsers import JsonOutputParser
 from utils.LlmTester import LlmTester
-
+from utils.Worksheet import Worksheet
+import json
 
 class WidgetModifier:
     def __init__(self, llm, verbose=False) -> None:
@@ -27,6 +23,7 @@ class WidgetModifier:
     def invoke(self, user_prompt, data, intent, reply):
         type = data["widget"]["type"]
         if type not in WidgetTypes.values():
+            self.logger.log(f"Widget type {type} is not supported")
             return ""
 
         chain = self._get_runnable(type)
@@ -63,6 +60,13 @@ class WidgetModifier:
             """
         )
 
+        if widget_type == WidgetTypes.WORKSHEET:
+            FORMAT_INSTRUCTION += (
+                """
+                There are three types of question: 'Multiple Choices', 'Matching', or 'Fill in the Blanks'.
+                """
+                )
+         
         format_instruction = self._get_parser(
             widget_type).get_format_instructions()
 
@@ -104,12 +108,31 @@ class WidgetModifier:
             rows: List[Dict[str, str]] = Field(
                 description="rows for the semester plan, such as {{'Week': 'Week 1', 'Task': 'Task 1'}}. Each key of the dictionary should match the headings")
 
+        class MultipleChoices(BaseModel):
+            type: str = "Multiple Choices"
+            questionId: str = Field(description="Id of the question")
+            question: str = Field(description="question of the multiple choices question")
+            choices: List[str] = Field(description="choices of the multiple choices question")
+            answer: int = Field(description="index of the correct answer")
+        class FillInTheBlanks(BaseModel):
+            type: str = "Fill in the Blanks"
+            question: str = Field(description="question of the fill in the blanks question")
+            answer: List[str] = Field(description="answer of the fill in the blanks question")
+        class Matching(BaseModel):
+            type: str = "Matching"
+            question: str = Field(description="question of the matching question")
+            leftList: List[str] = Field(description="left list of the matching question")
+            rightList: List[str] = Field(description="right list of the matching question")
+        class Questions(BaseModel):
+            questions : List[Union[MultipleChoices, Matching, FillInTheBlanks]]
         if widget_type == WidgetTypes.SEMESTER_GOAL:
             parser = JsonOutputParser(pydantic_object=Goals)
         elif widget_type == WidgetTypes.SEMESTER_PLAN:
             parser = JsonOutputParser(pydantic_object=SemesterPlan)
         elif widget_type == WidgetTypes.NOTE:
             parser = JsonOutputParser(pydantic_object=Note)
+        elif widget_type == WidgetTypes.WORKSHEET:
+            parser = JsonOutputParser(pydantic_object=Questions)
         else:
             # Provided widget cannot be modified
             parser = JsonOutputParser(pydantic_object=Goals)

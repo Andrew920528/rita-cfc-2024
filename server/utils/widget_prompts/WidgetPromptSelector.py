@@ -17,6 +17,7 @@ class WidgetTypes():  # only includes the widgets that can be modified
     SEMESTER_GOAL = 0
     SEMESTER_PLAN = 1
     NOTE = 2
+    WORKSHEET = 4
     # SCHEDULE = 3
 
     @classmethod
@@ -35,5 +36,7 @@ class WidgetTypes():  # only includes the widgets that can be modified
 
         elif type == WidgetTypes.NOTE:
             return "Teacher's schedule of the week."
+        elif type == WidgetTypes.WORKSHEET:
+            return "A worksheet for students."
         else:
             return ""
