@@ -18,7 +18,6 @@ from langchain_ibm import WatsonxLLM
 from dotenv import load_dotenv
 import os
 from config.llm_param import MAX_NEW_TOKENS, REPETITION_PENALTY, TOP_K, TOP_P, TEMPERATURE
-from agents.Rita import Rita
 from agents.RitaAgents import BaseAgent, GeneralAgent, WorksheetAgent, LectureAgent
 from agents.IntentClassifier import IntentClassifier
 from agents.WidgetModifier import WidgetModifier
@@ -123,7 +122,6 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
     RITA_VERBOSE = True
     INTENT_VERBOSE = False
     WID_VERBOSE = False
-    WG_VERBOSE = True
     #############################################################################
 
     ############################ Agency Switch ###############################
@@ -179,9 +177,16 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
 
         while not rita_response_done:   # wait until previous agent finishes
             time.sleep(0.1)
-
+            
+        
         stream_handler.add_to_stream(
             agent="Widget Modifier", data="WIDGET_MODIFIER_STARTED")
+        
+        if agency == Agency_Type.Lecture.value:
+            stream_handler.end_stream()
+            return
+
+        
         
         # Agent 2: Determine user's intent
         intent_classifier = IntentClassifier(
@@ -193,7 +198,7 @@ def llm_stream_response(data, user_prompt, agency, retriever, llm):
 
         modified_widget = widget_modifier.invoke(
             user_prompt, data, intent, complete_rita_response)
-        print(modified_widget)
+        time_logger.log_latency(modified_widget)
         time_logger.log_latency(
             f"Modified widget generated.")
         stream_handler.add_to_stream(

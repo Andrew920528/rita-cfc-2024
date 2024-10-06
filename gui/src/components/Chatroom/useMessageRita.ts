@@ -156,6 +156,8 @@ export const useMessageRita = (chatroomId: string) => {
     let agent = streamObject.agent;
     let data = streamObject.data;
 
+    // console.log({agent_d: agent, data_d: data});
+
     if (agent === "Rita") {
       data = replaceTabsWithSpaces(data); // markdown renderer does not support tabs
       organizer.currRitaReply += data;

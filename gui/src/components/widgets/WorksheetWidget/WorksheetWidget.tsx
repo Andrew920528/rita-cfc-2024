@@ -30,13 +30,6 @@ import {
   WatsonHealth3DCurveAutoColon,
 } from "@carbon/icons-react";
 import QuestionView from "./QuestionView";
-import {
-  dummyFibQuestion,
-  dummyMatchQuestion,
-  dummyMcQuestion,
-} from "../../../utils/dummy";
-import {FloatingMenuButton} from "../../ui_components/FloatingMenu/FloatingMenu";
-import {relative} from "path";
 
 const cx = classNames.bind(styles);
 
@@ -45,7 +38,8 @@ const WorksheetWidget = ({
   loading,
   preview = false,
 }: WidgetContentProps) => {
-  const [showPreview, setShowPreview] = useState<boolean>(false);
+  const [showWorksheetPreview, setShowWorksheetPreview] =
+    useState<boolean>(false);
   const [showPickQuestion, setShowPickQuestion] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const addQuestion = (questionType: QuestionType) => {
@@ -82,7 +76,6 @@ const WorksheetWidget = ({
             className={cx("--label", "cancel")}
             onClick={() => setShowPickQuestion(false)}
           >
-            {" "}
             取消
           </p>
         </div>
@@ -126,59 +119,74 @@ const WorksheetWidget = ({
     <WorksheetSkeleton />
   ) : (
     <div className={cx("worksheet-widget")}>
-      {showPreview ? (
-        <WorkSheetPreview content={(widget.content as WorksheetWidgetContent).questions}/>
+      {showWorksheetPreview ? (
+        <WorkSheetPreview
+          content={(widget.content as WorksheetWidgetContent).questions}
+        />
       ) : (widget.content as WorksheetWidgetContent).questions.length === 0 ? (
         <WorksheetPlaceholder />
       ) : (
         <>
-          <WorkSheetQuestionStack widget={widget} />
+          <WorkSheetQuestionStack widget={widget} preview={preview} />
         </>
       )}
       {showPickQuestion && <PickQuestion />}
-      <div className={cx("btns")}>
-        {showPreview && (
-          <IconButton
-            onClick={() => {
-              setShowPreview(!showPreview);
-            }}
-            icon={<CheckmarkOutline />}
-            mode="ghost"
-            text="關閉預覽"
-          />
-        )}
 
-        {!showPreview && (
-          <div className={cx("btn-row")}>
+      {preview ? (
+        <div className={cx("--label")}>
+          若要新增或修改問題，請先選擇「套用」並在左側視窗直接進行更改
+        </div>
+      ) : (
+        <div className={cx("btns", "add-question-btns")}>
+          {showWorksheetPreview && (
             <IconButton
               onClick={() => {
-                setShowPickQuestion(!showPickQuestion);
+                setShowWorksheetPreview(!showWorksheetPreview);
               }}
-              icon={<Add />}
+              icon={<CheckmarkOutline />}
               mode="ghost"
-              text="新增問題"
+              text="關閉預覽"
             />
+          )}
 
-            <IconButton
-              text="生成學習單"
-              onClick={() => {
-                setShowPreview(!showPreview);
-              }}
-              icon={<MagicWand />}
-              mode="primary"
-              disabled={
-                (widget.content as WorksheetWidgetContent).questions.length ===
-                0
-              }
-            />
-          </div>
-        )}
-      </div>
+          {!showWorksheetPreview && (
+            <div className={cx("btn-row")}>
+              <IconButton
+                onClick={() => {
+                  setShowPickQuestion(!showPickQuestion);
+                }}
+                icon={<Add />}
+                mode="ghost"
+                text="新增問題"
+              />
+
+              <IconButton
+                text="生成學習單"
+                onClick={() => {
+                  setShowWorksheetPreview(!showWorksheetPreview);
+                }}
+                icon={<MagicWand />}
+                mode="primary"
+                disabled={
+                  (widget.content as WorksheetWidgetContent).questions
+                    .length === 0
+                }
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
-const WorkSheetQuestionStack = ({widget}: {widget: Widget}) => {
+const WorkSheetQuestionStack = ({
+  widget,
+  preview,
+}: {
+  widget: Widget;
+  preview: boolean;
+}) => {
   const [editingList, setEditingList] = React.useState<boolean[]>([]);
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -217,36 +225,38 @@ const WorkSheetQuestionStack = ({widget}: {widget: Widget}) => {
                     editing={editing}
                     widgetId={widget.id}
                   />
-                  <div className={cx("view-btn")}>
-                    {editing ? (
+                  {!preview && (
+                    <div className={cx("view-btn")}>
+                      {editing ? (
+                        <IconButton
+                          mode="primary"
+                          icon={<CheckmarkOutline />}
+                          text="確認"
+                          onClick={() => setEditing(false)}
+                        />
+                      ) : (
+                        <IconButton
+                          mode="ghost"
+                          icon={<Edit />}
+                          text="編輯"
+                          onClick={() => setEditing(true)}
+                        />
+                      )}
                       <IconButton
-                        mode="primary"
-                        icon={<CheckmarkOutline />}
-                        text="確認"
-                        onClick={() => setEditing(false)}
+                        mode="danger-ghost"
+                        icon={<TrashCan />}
+                        text="刪除"
+                        onClick={() => {
+                          dispatch(
+                            WidgetsServices.actions.deleteQuestion({
+                              widgetId: widget.id,
+                              questionId: questionObj.questionId,
+                            })
+                          );
+                        }}
                       />
-                    ) : (
-                      <IconButton
-                        mode="ghost"
-                        icon={<Edit />}
-                        text="編輯"
-                        onClick={() => setEditing(true)}
-                      />
-                    )}
-                    <IconButton
-                      mode="danger-ghost"
-                      icon={<TrashCan />}
-                      text="刪除"
-                      onClick={() => {
-                        dispatch(
-                          WidgetsServices.actions.deleteQuestion({
-                            widgetId: widget.id,
-                            questionId: questionObj.questionId,
-                          })
-                        );
-                      }}
-                    />
-                  </div>
+                    </div>
+                  )}
                 </div>
               }
             />
@@ -257,11 +267,11 @@ const WorkSheetQuestionStack = ({widget}: {widget: Widget}) => {
   );
 };
 
-const WorkSheetPreview = (props : {content : Question[]}) => {
+const WorkSheetPreview = (props: {content: Question[]}) => {
   return (
     <div className={cx("worksheet-preview")}>
-      <PdfPreview content={props.content}/>
-      <FileDownload content={props.content}/>
+      <PdfPreview content={props.content} />
+      <FileDownload content={props.content} />
     </div>
   );
 };

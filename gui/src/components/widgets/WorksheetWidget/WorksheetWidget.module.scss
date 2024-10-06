@@ -6,6 +6,8 @@
   gap: 0.5rem;
   justify-content: space-between;
   position: relative;
+  height: 100%;
+  overflow: hidden;
   .btns {
     display: flex;
     flex-direction: row;
@@ -81,6 +83,7 @@
   flex-direction: column;
   margin: 0;
   gap: 0.5rem;
+  overflow: auto;
   .header {
     font-weight: bold;
     padding-left: 1rem;
