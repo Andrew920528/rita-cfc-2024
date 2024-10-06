@@ -64,7 +64,6 @@ class WidgetModifier:
             FORMAT_INSTRUCTION += (
                 """
                 There are three types of question: 'Multiple Choices', 'Matching', or 'Fill in the Blanks'.
-                For 'Matching', keep formatting and order of both lists.
                 """
                 )
          

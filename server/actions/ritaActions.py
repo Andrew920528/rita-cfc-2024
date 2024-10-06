@@ -22,7 +22,6 @@ from agents.Rita import Rita
 from agents.RitaAgents import BaseAgent, GeneralAgent, WorksheetAgent, LectureAgent
 from agents.IntentClassifier import IntentClassifier
 from agents.WidgetModifier import WidgetModifier
-from agents.WorksheetGenerator import WorksheetGenerator
 from utils.LlmTester import LlmTester
 from utils.RitaStreamHandler import RitaStreamHandler
 from langchain_cohere import CohereEmbeddings
