@@ -172,3 +172,25 @@
     }
   }
 }
+
+.worksheet-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: start;
+  width: 100%;
+  .pdf-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: start;
+    width: 100%;
+  }
+  .worksheet-buttons {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}

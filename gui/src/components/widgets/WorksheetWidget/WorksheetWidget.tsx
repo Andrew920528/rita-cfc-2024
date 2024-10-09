@@ -115,12 +115,31 @@ const WorksheetWidget = ({
     );
   };
 
+  const WorksheetPreview = ({content}: {content: Question[]}) => {
+    return (
+      <div className={cx("worksheet-preview")}>
+        <PdfPreview content={content} />
+        <div className={cx("worksheet-buttons")}>
+          <FileDownload content={content} />
+          <IconButton
+            onClick={() => {
+              setShowWorksheetPreview(!showWorksheetPreview);
+            }}
+            icon={<CheckmarkOutline />}
+            mode="ghost"
+            text="關閉預覽"
+          />
+        </div>
+      </div>
+    );
+  };
+
   return loading ? (
     <WorksheetSkeleton />
   ) : (
     <div className={cx("worksheet-widget")}>
       {showWorksheetPreview ? (
-        <WorkSheetPreview
+        <WorksheetPreview
           content={(widget.content as WorksheetWidgetContent).questions}
         />
       ) : (widget.content as WorksheetWidgetContent).questions.length === 0 ? (
@@ -138,17 +157,6 @@ const WorksheetWidget = ({
         </div>
       ) : (
         <div className={cx("btns", "add-question-btns")}>
-          {showWorksheetPreview && (
-            <IconButton
-              onClick={() => {
-                setShowWorksheetPreview(!showWorksheetPreview);
-              }}
-              icon={<CheckmarkOutline />}
-              mode="ghost"
-              text="關閉預覽"
-            />
-          )}
-
           {!showWorksheetPreview && (
             <div className={cx("btn-row")}>
               <IconButton
@@ -263,15 +271,6 @@ const WorkSheetQuestionStack = ({
           );
         }
       )}
-    </div>
-  );
-};
-
-const WorkSheetPreview = (props: {content: Question[]}) => {
-  return (
-    <div className={cx("worksheet-preview")}>
-      <PdfPreview content={props.content} />
-      <FileDownload content={props.content} />
     </div>
   );
 };

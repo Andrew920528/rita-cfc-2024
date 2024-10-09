@@ -76,6 +76,7 @@ const ScheduleCell = (props: ScheduleCellProps) => {
     <div
       className={cx("schedule-widget-cell", {
         locked: props.value !== "" && props.value !== classroom.name,
+        "has-content": props.value !== "",
       })}
       onClick={() => {
         if (props.value !== "" && props.value !== classroom.name) {
