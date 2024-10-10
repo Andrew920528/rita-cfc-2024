@@ -17,7 +17,7 @@ def generateWorksheet(questions):
 
     try:
         for i, q in enumerate(questions):
-            print(q)
+            print(f"Question {i+1}: {q}")
             if q['type'] == "Multiple Choices":
                 worksheet.multipleChoice(q["question"], q["choices"])
                     

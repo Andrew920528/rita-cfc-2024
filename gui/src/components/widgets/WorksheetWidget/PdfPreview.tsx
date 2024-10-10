@@ -33,9 +33,6 @@ const PdfPreview = (props: {content: Question[]}) => {
     <div className={cx("pdf-preview")}>
       <p>預覽</p>
       {pdfUrl && (
-        // <Document file={pdfUrl}>
-        //   <Page />
-        // </Document>
         <iframe title="pdf" src={pdfUrl} width="100%" height="100%"></iframe>
       )}
     </div>
