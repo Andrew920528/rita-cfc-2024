@@ -15,7 +15,7 @@
   - [How to run the project](#how-to-run-the-project)
   - [Live demo](#live-demo)
 
-## Project summary
+## :purple_heart: Project summary
 
 ### The issue we are hoping to solve
 
@@ -55,7 +55,7 @@ To see the detail implementation of our ai system, please refer to [this documen
 
 While our targeted community is new educators at under-resourced institutions, Rita can be used by tutors, online teachers, and any educators to design a well-planned course. Good education is built upon good planning, and we believe our ai agent Rita provides a revolutionary experience in making course planning more accessible and effective.
 
-## Technology implementation
+## :purple_heart: Technology implementation
 
 ### IBM watsonx product(s) used
 
@@ -83,7 +83,7 @@ Our AI system design is upgraded multiple times throughout the iterations to add
 
 
 
-## Presentation materials
+## :purple_heart: Presentation materials
 
 ### Solution demo video
 TODO
@@ -123,7 +123,7 @@ Our long term goal would be to expand our database to support more subjects and 
 
 
 
-## Additional details
+## :purple_heart: Additional details
 
 ### How to run the project
 
@@ -133,4 +133,4 @@ TODO
 
 TODO
 
-## If you have any questions, please contact us at *andrewhsu.0528@gmail.com*
+##### If you have any questions, please contact us at *andrewhsu.0528@gmail.com*
