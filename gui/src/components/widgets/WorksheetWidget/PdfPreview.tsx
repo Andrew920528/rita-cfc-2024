@@ -1,13 +1,16 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Document, Page, pdfjs} from "react-pdf";
-import { Question } from "../../../schema/widget/worksheetWidgetContent";
-import { getPdfService } from "../../../utils/service";
+import {Question} from "../../../schema/widget/worksheetWidgetContent";
+import {getPdfService} from "../../../utils/service";
+import styles from "./WorksheetWidget.module.scss";
+import classNames from "classnames/bind";
+const cx = classNames.bind(styles);
 // import pdfWorker from "pdfjs-dist/build/pdf.worker.entry";
 
 // Set workerSrc for pdf.js
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
-const PdfPreview = (props : {content : Question[]}) => {
+const PdfPreview = (props: {content: Question[]}) => {
   const [pdfUrl, setPdfUrl] = useState("");
   const runOnce = useRef<boolean>(false);
   useEffect(() => {
@@ -27,12 +30,9 @@ const PdfPreview = (props : {content : Question[]}) => {
     fetchPdf();
   }, []);
   return (
-    <div>
+    <div className={cx("pdf-preview")}>
       <p>預覽</p>
       {pdfUrl && (
-        // <Document file={pdfUrl}>
-        //   <Page />
-        // </Document>
         <iframe title="pdf" src={pdfUrl} width="100%" height="100%"></iframe>
       )}
     </div>

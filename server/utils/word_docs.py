@@ -17,14 +17,14 @@ def generateWorksheet(questions):
 
     try:
         for i, q in enumerate(questions):
-            print(q)
-            if q['type'] == "Multiple Choices":
+            print(f"Question {i+1}: {q}")
+            if q['type'] == 0: # Multiple Choices
                 worksheet.multipleChoice(q["question"], q["choices"])
                     
-            elif q['type'] == "Fill in the Blanks":
+            elif q['type'] == 1: # Fill in the Blanks
                 worksheet.fillInTheBlanks(q["question"])
 
-            elif q['type'] == "Matching":
+            elif q['type'] == 2: # Matching
                 worksheet.matching(q["question"], q["leftList"], q["rightList"])
 
         worksheet.generateDoc()

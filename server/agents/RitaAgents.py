@@ -131,8 +131,6 @@ class LectureAgent(BaseAgent):
             "context": [],
             "chat_history": chat_history,
             "input": user_prompt,
-            # "widget_id": data["widget"]["id"],
-            # "widget_content": json.dumps(data["widget"]["content"]),
         }
 
 class WorksheetAgent(BaseAgent):

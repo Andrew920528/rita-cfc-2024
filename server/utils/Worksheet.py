@@ -26,14 +26,14 @@ class Worksheet:
         self.doc.preamble.append(Package('tabularx'))
         self.doc.preamble.append(Package('titling'))
         self.doc.preamble.append(NoEscape(r'\setlength{\droptitle}{-3cm}'))
+        self.doc.preamble.append(NoEscape(r'\newcommand{\midmatch}{\hspace{0.75in}\underline{\hspace{0.5in}}}'))
 
         self.doc.preamble.append(Command('title', title)) if title else ""
         self.doc.preamble.append(Command('author', author)) if author else ""
         self.doc.preamble.append(Command('date', date)) if date else ""
 
+        self.doc.append(NoEscape(r"\pagestyle{plain}"))
         self.doc.append(NoEscape(r"\maketitle"))
-
-        
 
     def multipleChoice(self, title, options):
         with self.doc.create(Section(title)):
@@ -46,19 +46,19 @@ class Worksheet:
             with self.doc.create(MiniPage(width=r"\textwidth")) as page:
                 with page.create(TextBlock(100, 0, 0)):
                     page.append("-")
+                self.doc.append(NoEscape(r'\par\null\par'))
+                self.doc.append(NoEscape(r'\par\null\par'))
+                self.doc.append(NoEscape(r'\par\null\par'))
+                self.doc.append(NoEscape(r'\par\null\par'))
+                self.doc.append(NoEscape(r'\par\null\par'))
+
 
     def matching(self, title, l1, l2):
+        random.shuffle(l2)
         with self.doc.create(Section(title)):
             with self.doc.create(MiniPage(width=r"\textwidth")) as page:
-                with page.create(TextBlock(100, 0, 0)):
-                    for item in l1:
-                        page.append("\n" + item)
-
-                random.shuffle(l2)
-
-                with page.create(TextBlock(80, 150, 0)):
-                    for item in l2:
-                        page.append("\n" + item)
+                for index in range(len(l1)):
+                    self.doc.append(NoEscape(l1[index] + r' \hfill ' + l2[index] + r'\break'))
 
     def addSection(self, title):
         self.doc.append(Section(title))

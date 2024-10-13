@@ -12,6 +12,7 @@ import {SemesterPlanReadOnly} from "../../widgets/SemesterPlanWidget/SemesterPla
 import {CheckmarkOutline} from "@carbon/icons-react";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
 import {UiServices} from "../../../features/UiSlice";
+import {EMPTY_ID} from "../../../global/constants";
 const cx = classNames.bind(styles);
 type Props = {};
 
@@ -27,7 +28,9 @@ const SetSemesterPlanPU = (props: Props & PopUpProps) => {
     const currWidget = widgets.current;
     if (
       currWidget &&
-      widgets.dict[currWidget].type === WidgetType.SemesterGoal
+      currWidget !== EMPTY_ID &&
+      widgets.dict[currWidget].type === WidgetType.SemesterGoal &&
+      lectures.current
     ) {
       setSelectedLecture(lectures.current);
       setSelectedPlan(
@@ -57,7 +60,6 @@ const SetSemesterPlanPU = (props: Props & PopUpProps) => {
           );
           return;
         }
-        console.log(selectedPlan);
         dispatch(
           WidgetsServices.actions.updateWidget({
             newWidget: {

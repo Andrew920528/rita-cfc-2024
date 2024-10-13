@@ -365,15 +365,6 @@ const Table = ({
                 </div>
               )}
             </div>
-            <div
-              className={cx("row-controller")}
-              onMouseEnter={() => {
-                // console.log("enter");
-              }}
-              onMouseLeave={() => {
-                // console.log("leave");
-              }}
-            ></div>
           </div>
         ))}
         <RowActionMenu index={selectedRowIndex} />

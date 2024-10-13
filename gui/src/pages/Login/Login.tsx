@@ -115,7 +115,6 @@ const Login = () => {
           icon={<LoginIcon />}
           onClick={async () => {
             await login();
-            // console.log("log in called");
           }}
           disabled={loading}
         />

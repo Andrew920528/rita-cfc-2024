@@ -1,3 +1,4 @@
+@use "../../../style/abstract/index" as *;
 .schedule-widget {
   width: 100%;
   display: flex;
@@ -11,8 +12,15 @@
   min-height: 1rem;
   height: 100%;
   width: 100%;
+  &.has-content {
+    background-color: $primary-color;
+    padding: 0.5rem;
+    border-radius: 5px;
+    color: white;
+  }
   &.locked {
-    background-color: rgb(200, 200, 200);
+    opacity: 0.5;
+    color: black;
   }
 }
 

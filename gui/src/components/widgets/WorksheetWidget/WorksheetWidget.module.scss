@@ -6,6 +6,8 @@
   gap: 0.5rem;
   justify-content: space-between;
   position: relative;
+  height: 100%;
+  overflow: hidden;
   .btns {
     display: flex;
     flex-direction: row;
@@ -81,6 +83,7 @@
   flex-direction: column;
   margin: 0;
   gap: 0.5rem;
+  overflow: auto;
   .header {
     font-weight: bold;
     padding-left: 1rem;
@@ -167,5 +170,28 @@
         background-repeat: repeat-x;
       }
     }
+  }
+}
+
+.worksheet-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: start;
+  width: 100%;
+  .pdf-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: start;
+    width: 100%;
+    height: 30rem;
+  }
+  .worksheet-buttons {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
   }
 }

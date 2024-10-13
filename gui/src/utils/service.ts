@@ -3,7 +3,7 @@ import {formatTime, mimicApi, mimicStreamApi} from "./util";
 import {API, INDEPENDENT_MODE} from "../global/constants";
 
 import {dummyLoginData, dummyRitaResponse} from "./dummy";
-import { Question } from "../schema/widget/worksheetWidgetContent";
+import {Question} from "../schema/widget/worksheetWidgetContent";
 type ResponseData = {
   status: API;
   data: any;
@@ -608,7 +608,10 @@ export function setUpRitaService(abortSignal?: AbortSignal) {
 }
 
 /// Worksheet APIs
-export function getWordDocService(content: Question[], abortSignal?: AbortSignal) {
+export function getWordDocService(
+  content: Question[],
+  abortSignal?: AbortSignal
+) {
   if (INDEPENDENT_MODE) {
     const response = {
       status: API.SUCCESS,
@@ -623,7 +626,7 @@ export function getWordDocService(content: Question[], abortSignal?: AbortSignal
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      content
+      content,
     }), // Convert data object to JSON string
     signal: abortSignal,
   });
@@ -632,7 +635,7 @@ export function getPdfService(content: Question[], abortSignal?: AbortSignal) {
   if (INDEPENDENT_MODE) {
     const response = {
       status: API.SUCCESS,
-      data: "Successfully retrieved pdf",
+      data: "You are running in independent mode, so no pdf will be sent.",
     };
     return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
   }
@@ -643,7 +646,7 @@ export function getPdfService(content: Question[], abortSignal?: AbortSignal) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      content
+      content,
     }), // Convert data object to JSON string
     signal: abortSignal,
   });

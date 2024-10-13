@@ -1,74 +1,136 @@
-# Rita - Teaching Assistant for Equitable Education
+# Rita - AI Teaching Assistant
 
-## Setup & Dev Guide
+- [Project summary](#project-summary)
+  - [The issue we are hoping to solve](#the-issue-we-are-hoping-to-solve)
+  - [How our technology solution can help](#how-our-technology-solution-can-help)
+  - [Our idea](#our-idea)
+- [Technology implementation](#technology-implementation)
+  - [IBM watsonx product(s) used](#ibm-watsonx-products-used)
+  - [Other IBM technology used](#other-ibm-technology-used)
+  - [Solution architecture](#solution-architecture)
+- [Presentation materials](#presentation-materials)
+  - [Solution demo video](#solution-demo-video)
+  - [Project development roadmap](#project-development-roadmap)
+- [Additional details](#additional-details)
+  - [How to run the project](#how-to-run-the-project)
+  - [Live demo](#live-demo)
 
-Make sure you've read this, eventually I'll move this guide somewhere else.
+## :purple_heart: Project summary
 
-### 1. Frontend (GUI)
+### The issue we are hoping to solve
 
-If this is the first time you run the gui, or a new package is installed by someone else, run the following at root dir:
-```
-npm run gui:wake-up
-```
+There is a disparity in available resources between different schools, which affects teachers' abilities to prepare effective lessons. Teachers in rural schools have fewer colleagues to consult while having to teach classes in various subjects. Despite the abundance of online resources, it is difficult for teachers to navigate and organize all the information needed for classes.
 
-Otherwise, to open the gui, run the following at root dir:
-```
-npm run gui:dev
-```
-To run the gui independently of the frontend (for demo reasons), run
-```
-npm run gui:indep
-```
+### How our technology solution can help
 
-This will open a new window in your local host with the GUI. Note these are custom scripts I wrote to make life a little easier. You can also do `cd gui`, `npm install`, and `npm start`.
+Watsonx.ai-powered assistant that provides interactive course planning experiences.
 
-### 2. Backend (Server)
+### Our idea
 
-We are using conda to manage our environment. Make sure you have anaconda [installed](https://docs.anaconda.com/free/anaconda/install/index.html).
+Our team is made up of five Taiwanese students currently pursuing our education in the United States. Having traveled across the Pacific to seek the best academic opportunities, we deeply understand the value of education. With this in mind, we are committed to bringing the knowledge and experiences we've gained here back to Taiwan, with the goal of helping to address education inequality in our home country.
 
-If this is the first time you set up the environment, at root directory, run
-```
-conda env create -f server/environment.yml
-```
+**Problem Statement:**
+Through our interviews with twelve elementary school teachers from Taiwan, we discovered significant discrepancies in resources when teachers prepare courses. For example, teachers in well-resourced schools can easily obtain relevant extra materials, worksheets, and notes from colleagues. In contrast, teachers in under-resourced schools, particularly those who are inexperienced, face several challenges:
+The need to prepare for teaching subjects they were not trained to teach due to teacher shortages.
+The low number of teachers reduces opportunities to discuss course content with peers.
+The need to spend considerable amounts of time organizing vast online resources.
 
-This creates the environment with all the dependencies installed.
+**Why Our Solution Can Help:**
+As such, a more sophisticated course planning tool that provides discussion capabilities and materials can bridge the gap of class planning amongst schools with varying resource levels. We not only researched common course planning practices, but also revised our features from the feedback given during demos with teachers. Our end product, which we named Rita, is not just another language model wrapper, but a tool that redefines the course planning process with a new user experience.
 
-Then, to start working with backend:
-```
-npm server:dev
-```
+**Features:**
+Through our user interface, users can manually customize the dashboard with predefined tools called widgets for each class to plan classes. Users can also choose to converse with Rita to automatically accomplish these common course-planning tasks:
 
-If some packages are updated in `environment.yml`, run
-```
-npm server:wake-up
-```
+1. Generate a semester-long plan based on specific textbooks.
+2. Recommend key learning objectives through conversation with the user.
+3. Search verified videos that are relevant to the subject being taught.
+4. Generate worksheets and questions to test student understanding.
 
-This is going to open up port 5000 as the api endpoint. You can go to http://127.0.0.1:5000/hello to see the test result. Note that the `npm` command are just scripts for your convinience. Go to `package.json` at root directory to see what commands are actually ran. Also, if you're not familiar with conda, I suggest you learn about the [basic commands](https://conda.io/projects/conda/en/latest/commands/index.html), such as `conda activate`, `conda deactivate`, `conda list`, and `conda install`.
+For feature details and their current limitation, please refer to [this document](https://docs.google.com/document/d/1FSf4swprNvd4V2dWTQ28K49oih-5wg9wwJxI-5eTkJk/edit?tab=t.0)
 
-#### Important 很重要!
+**Technical Concepts and Benefits:**
+Our team used Watsonx.ai and Langchain to orchestrate our AI system. Being a Taiwan-based project, we used a multilingual-based Large Language Model (LLM) to allow users to interact with our system in both English and Chinese. Using Retrieval Augmented Generation (RAG), we allowed Rita to interact with users based on information from the specified textbooks. Rita has access to chat history and context of lectures, allowing users to directly refer to content through phrases such as “chapter 2”, “this week”, instead of the lengthy “concepts in fraction multiplication for 5th graders”. 
 
-1. Use `conda install` instead of `pip install` whenever possible. Conda automatically resolves dependency conflict, so it is a lot safer to do so.
-2. Because conda doesn't update `environment.yml` automatically, whenever you install some new package, run
-   ```
-   cd server
-   conda env export > environment.yml --from-history
-   ```
-   to overwrite the current environment.yml`. This way, other people can update their environments.
+To see the detail implementation of our ai system, please refer to [this document](https://docs.google.com/document/d/1gaajXZ1rThH_nbuSNh4QiEwqpYV7OD_akKKs73_praM/edit?usp=sharing)
 
-### 3. Best Practices
+While our targeted community is new educators at under-resourced institutions, Rita can be used by tutors, online teachers, and any educators to design a well-planned course. Good education is built upon good planning, and we believe our ai agent Rita provides a revolutionary experience in making course planning more accessible and effective.
 
-Here are practices we will follow, to avoid chaos
+## :purple_heart: Technology implementation
 
-1. **ALWAYS** have informative and professional commit message. (Sorry ptsd from CreateX)
-   ```
-   Good:
-       - Added textbox to gui
-       - Fixed issue with server timing out
-   Bad:
-       - fahefoauewhfavnevnekrjn
-       - bruh
-       - idk what;s going on LOL
-   ```
-2. **NEVER** push code that crashes. (Sorry again ptsd from CreateX)
-3. When branching, name the branch `<name>-<branch-feature>`. For example, `andrew-chat-room-gui`
-4. Send a quick message to group dc if you made some bigger change (refactoring, new package install, new merge, etc.).
+### IBM watsonx product(s) used
+
+**Featured watsonx products**
+
+- [Watsonx.ai](https://www.ibm.com/products/watsonx-ai) (Llama 3 model): We utilized Watsonx.ai to generate suggestions, notes, and worksheets that assist teachers in course planning. Specifically, we employed Retrieval-Augmented Generation (RAG) to fine-tune the model, allowing it to retrieve and provide tailored information about specific textbooks and subjects.
+
+### Other IBM technology used
+
+**Additional IBM AI services**
+
+- [Carbon design system](https://carbondesignsystem.com/) - Uses the carbon design guidelines and icons to build our react GUI
+
+### Solution architecture
+
+**Our system design**
+
+![system architechture](https://drive.google.com/uc?id=1St1z9UefzqMw2v-Thacw2x1vpHBUm7I8)
+
+**The AI workflow**
+
+Our AI system design is upgraded multiple times throughout the iterations to address different issues. To learn more about our ai design and why certain changes are made, please see [this document](https://docs.google.com/document/d/1gaajXZ1rThH_nbuSNh4QiEwqpYV7OD_akKKs73_praM/edit?usp=sharing). Here is our current system:
+
+![ai design](https://drive.google.com/uc?id=1aV1LpqEJ7zEysPh8ETP5eSh1OPPy9B8Y)
+
+
+
+## :purple_heart: Presentation materials
+
+### Solution demo video
+TODO
+[![Watch the video](https://raw.githubusercontent.com/Liquid-Prep/Liquid-Prep/main/images/readme/IBM-interview-video-image.png)](https://youtu.be/vOgCOoy_Bx0)
+
+### Project development roadmap
+
+**AI**
+
+To see a detail list of key ai features and their current limitations, please see [this document](https://docs.google.com/document/d/1FSf4swprNvd4V2dWTQ28K49oih-5wg9wwJxI-5eTkJk/edit?usp=drive_link).
+
+- Generates worksheet of a given topic and formats them properly. 
+- Searches for relevant videos for teachers to teach.
+- Generates a semester schedule with suggested activity based on textbook.
+- Suggest key learning objective based on discussion with the user.
+
+**APP**
+
+- Users are able to customize their dashboard for different classes with interactive drag-and-drop.
+- Users are able to create an account and store all their progress.
+- Worksheets and semester plan can be outputted as `.docx`, `.pdf`, and `.xlsx` for the user to further edit them.
+- Complete functionality (no dummy buttons) and full integration with database.
+
+
+Past milestones:
+
+![Roadmap](https://drive.google.com/uc?id=1_91VqXKG8fYhD_dyW_BYGmodPPT2yQQB)
+
+In the coming future, our main focus will be on further improving our AI system to provide a more detailed and personalized experience. This includes:
+
+1. Able to retrieve and summarize news and articles by searching on the internet.
+2. Reflect the number of class per week accurately when creating semester/ weekly plan.
+3. Improved model's Chinese comprehension ability (possibly by using a more advanced base model)
+
+Our long term goal would be to expand our database to support more subjects and publishers.
+
+
+
+
+## :purple_heart: Additional details
+
+### How to run the project
+
+TODO
+
+### Live demo
+
+TODO
+
+##### If you have any questions, please contact us at *andrewhsu.0528@gmail.com*

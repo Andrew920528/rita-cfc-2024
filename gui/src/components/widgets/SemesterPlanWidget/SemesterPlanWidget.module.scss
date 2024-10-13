@@ -11,6 +11,10 @@
     gap: 1rem;
     width: 100%;
     justify-content: space-between;
+    .button-row {
+      display: flex;
+      flex-direction: row;
+    }
     .input-wrapper {
       flex-grow: 1;
       margin: 2px;
@@ -28,4 +32,8 @@
   gap: 0.5rem;
   margin-top: 1rem;
   justify-content: end;
+}
+
+.cell {
+  width: 100%;
 }

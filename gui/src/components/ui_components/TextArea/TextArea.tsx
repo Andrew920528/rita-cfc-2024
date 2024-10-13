@@ -17,7 +17,7 @@ const TextArea: React.FC<TextAreaProps> = ({
   placeholder = "寫下筆記、想法...",
   label,
   value,
-  mode = "",
+  mode = "default",
   onChange = () => {},
 }) => {
   return (

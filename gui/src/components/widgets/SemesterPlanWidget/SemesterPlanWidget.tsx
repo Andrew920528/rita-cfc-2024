@@ -21,6 +21,7 @@ import styles from "./SemesterPlanWidget.module.scss";
 import {Skeleton} from "@mui/material";
 import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 import * as XLSX from "xlsx";
+import TextArea from "../../ui_components/TextArea/TextArea";
 
 const cx = classNames.bind(styles);
 
@@ -98,7 +99,6 @@ const SemesterPlanWidget = ({
       row[newColNam] = row[originalHeading]; // set new column value
       delete row[originalHeading]; // delete old column
     }
-    console.log(originalTable);
 
     dispatch(
       WidgetsServices.actions.updateWidget({
@@ -184,9 +184,7 @@ const SemesterPlanWidget = ({
       acc[key] = (
         <SemesterPlanCell
           data={row[key as keyof typeof row]}
-          onClick={() => {
-            // console.log(key, row[key]);
-          }}
+          onClick={() => {}}
           onChange={(newValue) => {
             setCell(widgetContent, key, rowIndex, newValue);
           }}
@@ -249,12 +247,22 @@ const SemesterPlanWidget = ({
       ) : (
         <div className={cx("name-row")}>
           <p className={cx("name")}>{widgetContent.name ?? "未命名的計畫"}</p>
-          <IconButton
-            icon={<Edit />}
-            onClick={() => setEditName(true)}
-            mode="ghost"
-            text="編輯"
-          />
+          <div className={cx("button-row")}>
+            <IconButton
+              icon={<Edit />}
+              onClick={() => setEditName(true)}
+              mode="ghost"
+              text="編輯"
+            />
+            <IconButton
+              text={"下載Excel試算表"}
+              icon={<TableBuilt />}
+              mode={"primary"}
+              onClick={() => {
+                downloadExcel();
+              }}
+            />
+          </div>
         </div>
       )}
       <Table
@@ -276,17 +284,6 @@ const SemesterPlanWidget = ({
           editColumn(widgetContent, i, val);
         }}
       />
-      <div className={cx("widget-button-row")}>
-        <IconButton
-          text={"下載Excel試算表"}
-          icon={<TableBuilt />}
-          mode={"primary"}
-          onClick={() => {
-            console.log("Make excel");
-            downloadExcel();
-          }}
-        />
-      </div>
     </div>
   );
 };
@@ -309,11 +306,12 @@ const SemesterPlanCell = ({
         if (readonly) return;
         onClick();
       }}
+      className={cx("cell")}
     >
       {readonly ? (
         data
       ) : (
-        <Textbox
+        <TextArea
           flex={true}
           mode="table"
           value={data}
@@ -321,7 +319,7 @@ const SemesterPlanCell = ({
             if (readonly) return;
             onChange(e.currentTarget.value);
           }}
-          ariaLabel="semester plan cell"
+          // ariaLabel="semester plan cell"
         />
       )}
     </div>

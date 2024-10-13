@@ -27,6 +27,7 @@
 - 8/22 12:01 | Definitely slacking a bit on this dev log, that being said the commits did not slow down a bit. As UI is going through more changes, some bugs and unexpected behavior starts to show up. A lot of these bug will definitely be less apparent if the API speed is faster. I feel like there definitely are somewhere in SQL call that can be greatly improved... That being said, there are so many ui that can be improved to help with user experience.
 - 8/28 11:07 | Navbar and the underlying structure is refactored and upgraded. The new interface definitely opened up new possibilities for multi-agent workflow. It is a fun upgrade that I believe definitely add to the project. Dealing with artifacts is definitely becoming more challenging, but for the most part the current code base is scalable enough. Given no new bug if found (which is optimisitic), the structure of ui and database structure will stable.
 - 9/8 15:30 | Worksheet widget is properly implemented. The next step will be to list out the concrete goals we want to do before the competition comes to an end, and focus solely on them for our last sprint. As the project is coming to a major milestone, I admittedly gets a little more anxious. But we are ALMOST THERE!! I am happy with our progress so far, and I can't wait for v3 to be completed!
+- 10/13 15:17 | Finalizing v3 and preparing material for submission.
 
 # Backlog
 

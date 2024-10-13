@@ -136,7 +136,6 @@ const SemesterGoalAdvancedSettings = ({widgetId}: {widgetId: string}) => {
             <DatePicker
               label="開始日期"
               onChange={(value) => {
-                console.log(value);
                 if (!value) return;
                 let date: string = value.format("MM-DD-YYYY");
                 editSemesterGoalDate("start", date); // stores string or undefined
@@ -149,10 +148,8 @@ const SemesterGoalAdvancedSettings = ({widgetId}: {widgetId: string}) => {
             <DatePicker
               label="結束日期"
               onChange={(value) => {
-                console.log(value);
                 if (!value) return;
                 let date = value.format("MM-DD-YYYY");
-                console.log(date);
                 editSemesterGoalDate("end", date);
               }}
               value={parseDate(

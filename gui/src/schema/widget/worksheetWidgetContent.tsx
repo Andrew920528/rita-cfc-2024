@@ -7,9 +7,9 @@ import {
 import {PromptItem, WidgetCategory, WidgetType} from "./widget";
 import {WidgetMaker} from "./widget";
 export enum QuestionType {
-  MC = "Multiple Choices",
-  FIB = "Fill in the Blanks",
-  MATCH = "Matching",
+  MC, // Multiple Choices
+  FIB, // Fill in the Blanks
+  MATCH, // Matching
 }
 
 type BaseQuestion = {
@@ -70,7 +70,7 @@ export class WorksheetWidgetMaker extends WidgetMaker<WorksheetWidgetContent> {
         if (
           typeof question.questionId !== "string" ||
           typeof question.question !== "string" ||
-          typeof question.type !== "string"
+          typeof question.type !== "number"
         ) {
           return false;
         }
