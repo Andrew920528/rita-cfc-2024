@@ -184,9 +184,7 @@ const SemesterPlanWidget = ({
       acc[key] = (
         <SemesterPlanCell
           data={row[key as keyof typeof row]}
-          onClick={() => {
-            // console.log(key, row[key]);
-          }}
+          onClick={() => {}}
           onChange={(newValue) => {
             setCell(widgetContent, key, rowIndex, newValue);
           }}

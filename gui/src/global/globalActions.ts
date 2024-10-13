@@ -363,8 +363,6 @@ export const useDeleteWidget = () => {
   return useCallback(
     (args: {lectureId: string; widgetId: string}) => {
       // delete corresponding chatroom (to be changed)
-      console.log(args.widgetId);
-      console.log(widgets.dict[args.widgetId]);
       if (widgets.dict[args.widgetId].chatroomId === EMPTY_ID) {
       }
       const chatroomId = widgets.dict[args.widgetId].chatroomId;

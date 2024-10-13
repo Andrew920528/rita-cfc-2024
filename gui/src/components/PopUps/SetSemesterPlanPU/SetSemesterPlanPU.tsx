@@ -60,7 +60,6 @@ const SetSemesterPlanPU = (props: Props & PopUpProps) => {
           );
           return;
         }
-        console.log(selectedPlan);
         dispatch(
           WidgetsServices.actions.updateWidget({
             newWidget: {
