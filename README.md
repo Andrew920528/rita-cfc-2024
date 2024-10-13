@@ -78,7 +78,7 @@ REPLACE THIS EXAMPLE WITH YOUR OWN, OR REMOVE THIS EXAMPLE
 
 Diagram and step-by-step description of the flow of our solution:
 
-![Video transcription/translaftion app](https://drive.google.com/file/d/1St1z9UefzqMw2v-Thacw2x1vpHBUm7I8/view?usp=sharing)
+![Video transcription/translaftion app](https://drive.google.com/uc?id=1St1z9UefzqMw2v-Thacw2x1vpHBUm7I8)
 
 1. The user navigates to the site and uploads a video file.
 2. Watson Speech to Text processes the audio and extracts the text.
