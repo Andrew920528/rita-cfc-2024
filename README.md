@@ -1,4 +1,4 @@
-# Replace this heading with your team/submission name
+# Rita - AI Teaching Assistant
 
 - [Project summary](#project-summary)
   - [The issue we are hoping to solve](#the-issue-we-are-hoping-to-solve)
@@ -78,7 +78,7 @@ REPLACE THIS EXAMPLE WITH YOUR OWN, OR REMOVE THIS EXAMPLE
 
 Diagram and step-by-step description of the flow of our solution:
 
-![Video transcription/translaftion app](https://developer.ibm.com/developer/tutorials/cfc-starter-kit-speech-to-text-app-example/images/cfc-covid19-remote-education-diagram-2.png)
+![Video transcription/translaftion app](https://drive.google.com/file/d/1St1z9UefzqMw2v-Thacw2x1vpHBUm7I8/view?usp=sharing)
 
 1. The user navigates to the site and uploads a video file.
 2. Watson Speech to Text processes the audio and extracts the text.
