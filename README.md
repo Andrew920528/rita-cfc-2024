@@ -86,8 +86,9 @@ Our AI system design is upgraded multiple times throughout the iterations to add
 ## :purple_heart: Presentation materials
 
 ### Solution demo video
-TODO
-[![Watch the video](https://raw.githubusercontent.com/Liquid-Prep/Liquid-Prep/main/images/readme/IBM-interview-video-image.png)](https://youtu.be/vOgCOoy_Bx0)
+[![Watch the video](https://img.youtube.com/vi/spGOiM32nGE/0.jpg)](https://www.youtube.com/watch?v=spGOiM32nGE)
+
+
 
 ### Project development roadmap
 
