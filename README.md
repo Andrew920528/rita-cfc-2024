@@ -128,10 +128,8 @@ Our long term goal would be to expand our database to support more subjects and 
 
 ### How to run the project
 
-TODO
+Currently we only offer local testing, which the instructions are outlined in https://github.com/Andrew920528/rita-cfc-2024/blob/main/DEV_GUIDE.md
 
-### Live demo
-
-TODO
+However, we are actively working on deployment.
 
 ##### If you have any questions, please contact us at *andrewhsu.0528@gmail.com*
