@@ -140,8 +140,14 @@ Our long term goal would be to expand our database to support more subjects and 
 
 ### How to run the project
 
-Currently we only offer local testing, which the instructions are outlined in https://github.com/Andrew920528/rita-cfc-2024/blob/main/DEV_GUIDE.md
+Please come to this link: [https://rita-beta.up.railway.app/](https://rita-beta.up.railway.app/).
 
-However, we are actively working on deployment.
+We have provided an account for you to try it out:
+
+username: `RITACFC2024`
+
+pw: `RITACFC2024`
+
+If you want to test this locally, visit https://github.com/Andrew920528/rita-cfc-2024/blob/main/DEV_GUIDE.md for details
 
 ##### If you have any questions, please contact us at *andrewhsu.0528@gmail.com*
