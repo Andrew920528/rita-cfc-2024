@@ -1,2 +1,2 @@
 [start]
-cmd = "gunicorn app:app"
+cmd = "pip cache purge && gunicorn app:app"
