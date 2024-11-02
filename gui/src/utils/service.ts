@@ -169,6 +169,7 @@ export function loginService(
     return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/login";
+  console.log(BASE_URL + endPoint);
   return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
