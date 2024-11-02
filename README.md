@@ -1,5 +1,17 @@
 # Rita - AI Teaching Assistant
 
+## :star2: UPDATED (11/2)
+We have successfully deployed our app for beta testing! Please come to this link: [https://rita-beta.up.railway.app/](https://rita-beta.up.railway.app/).
+
+We have provided an account for you to try it out:
+
+username: `RITACFC2024`
+
+pw: `RITACFC2024`
+
+Or, feel free to create your own account by clicking "建立帳號" at the bottom of the log in page!
+
+## :purple_heart: Table of Contents
 - [Project summary](#project-summary)
   - [The issue we are hoping to solve](#the-issue-we-are-hoping-to-solve)
   - [How our technology solution can help](#how-our-technology-solution-can-help)
