@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from "react";
 import {useAppDispatch, useTypedSelector} from "../store/store";
 import {Classroom} from "../schema/classroom";
-import {API, EMPTY_ID} from "./constants";
+import {AGENCY, API, EMPTY_ID} from "./constants";
 import {ClassroomsServices} from "../features/ClassroomsSlice";
 import {UserServices} from "../features/UserSlice";
 import {Lecture} from "../schema/lecture";
@@ -165,6 +165,7 @@ export const useCreateClassroomWithApi = () => {
       ChatroomsServices.actions.addChatroom({
         id: newChatroomId,
         messages: [],
+        agency: AGENCY.LECTURE,
       })
     );
     dispatch(

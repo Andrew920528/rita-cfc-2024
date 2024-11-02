@@ -144,7 +144,9 @@ const DropdownOption = ({
   actionFunction = () => {},
   actionDisabled = false,
 }: DropdownOptionProps) => {
-  const handleIconClick = (e: React.MouseEvent<HTMLElement>) => {
+  const handleIconClick = (
+    e: React.MouseEvent<Element> | React.KeyboardEvent<Element>
+  ) => {
     if (e && e.stopPropagation) e.stopPropagation();
     actionFunction(id);
   };
