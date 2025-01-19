@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 import {formatTime, mimicApi, mimicStreamApi} from "./util";
-import {API, INDEPENDENT_MODE} from "../global/constants";
+import {API, INDEPENDENT_MODE, BASE_URL} from "../global/constants";
 
 import {dummyLoginData, dummyRitaResponse} from "./dummy";
 import {Question} from "../schema/widget/worksheetWidgetContent";
@@ -145,10 +145,9 @@ export const useApiHandler = ({
  * Documentation: https://docs.google.com/document/d/1EVmXDQIR49d-g57JczzRZ6wmxlWLhpY_Eczj9dUHrkk/edit
  */
 
-const BASE_URL_DEV = "http://127.0.0.1:5000";
 export function tryTrySee(abortSignal?: AbortSignal) {
   const endPoint = "/hello";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -170,7 +169,8 @@ export function loginService(
     return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/login";
-  return fetch(BASE_URL_DEV + endPoint, {
+  console.log(BASE_URL + endPoint);
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -194,7 +194,7 @@ export function loginWithSidService(
     return mimicApi(500, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/login-with-sid";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -226,7 +226,7 @@ export function createUserService(
   }
   const endPoint = "/create-user";
 
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -254,7 +254,7 @@ export function updateUserService(
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/update-user";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -289,7 +289,7 @@ export function createClassroomService(
   }
 
   const endPoint = "/create-classroom";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -324,7 +324,7 @@ export function updateClassroomService(
   }
 
   const endPoint = "/update-classroom";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -351,7 +351,7 @@ export function deleteClassroomService(
     return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/delete-classroom";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -386,7 +386,7 @@ export function createLectureService(
   }
 
   const endPoint = "/create-lecture";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -415,7 +415,7 @@ export function updateLectureService(
   }
 
   const endPoint = "/update-lecture";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -444,7 +444,7 @@ export function deleteLectureService(
     return mimicApi(100, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/delete-lecture";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -482,7 +482,7 @@ export function createWidgetService(
     return mimicApi(2000, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/create-widget";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -513,7 +513,7 @@ export function deleteWidgetService(
   }
 
   const endPoint = "/delete-widget";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -543,7 +543,7 @@ export function updateWidgetBulkService(
   }
 
   const endPoint = "/update-widget-bulk";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -575,7 +575,7 @@ export function messageRitaService(
     return mimicStreamApi(50, mimicResponse, abortSignal);
   }
   const endPoint = "/message-rita";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -597,7 +597,7 @@ export function setUpRitaService(abortSignal?: AbortSignal) {
     return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/setup-rita";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -620,7 +620,7 @@ export function getWordDocService(
     return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/send-word-doc";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -640,7 +640,7 @@ export function getPdfService(content: Question[], abortSignal?: AbortSignal) {
     return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/send-pdf";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -665,7 +665,7 @@ export function translateService(
     return mimicApi(1000, JSON.parse(JSON.stringify(response)), abortSignal);
   }
   const endPoint = "/translate";
-  return fetch(BASE_URL_DEV + endPoint, {
+  return fetch(BASE_URL + endPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
