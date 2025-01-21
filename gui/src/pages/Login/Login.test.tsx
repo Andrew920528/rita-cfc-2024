@@ -46,7 +46,7 @@ describe("Login Page", () => {
     fireEvent.change(nameField, {target: {value: "test_user"}});
     fireEvent.change(passwordField, {target: {value: "123456"}});
 
-    const button = screen.getByRole("button", {name: /登入/i});
+    const button = screen.getByRole("button", {name: /Log In/i});
     fireEvent.click(button);
 
     // Assert that the header component renders with the username
@@ -54,7 +54,7 @@ describe("Login Page", () => {
     // We no longer change the link directly, so this testing doesn't work
     // await waitFor(() => {
     //   const headerElement = screen.getByRole("button", {
-    //     name: /新增/,
+    //     name: /Add/,
     //   });
     //   expect(headerElement).toBeInTheDocument();
     // });
@@ -69,11 +69,11 @@ describe("Login Page", () => {
         </Routes>
       </MemoryRouter>
     );
-    const linkElement = screen.getByText(/註冊/i);
+    const linkElement = screen.getByText(/Register/i);
     expect(linkElement).toBeInTheDocument();
     fireEvent.click(linkElement);
     await waitFor(() => {
-      const signupPage = screen.getByText(/註冊/i);
+      const signupPage = screen.getByText(/Register/i);
       expect(signupPage).toBeInTheDocument();
     });
   });

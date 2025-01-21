@@ -73,18 +73,18 @@ const WorksheetWidget = ({
       <div className={cx("pick-ques-container")}>
         <div className={cx("pick-ques-header")}>
           <p className={cx("--label")}>
-            <TText>選擇題型 | </TText>
+            <TText>Select Question Type | </TText>
           </p>
           <p
             className={cx("--label", "cancel")}
             onClick={() => setShowPickQuestion(false)}
           >
-            <TText>取消</TText>
+            <TText>Cancel</TText>
           </p>
         </div>
         <div className={cx("pick-ques")}>
           <IconButton
-            text="選擇題"
+            text="Multiple Choice"
             icon={<List />}
             mode="ghost"
             flex
@@ -94,7 +94,7 @@ const WorksheetWidget = ({
             }}
           />
           <IconButton
-            text="填空題"
+            text="Fill In The Blank"
             icon={<Pen />}
             mode="ghost"
             flex
@@ -104,7 +104,7 @@ const WorksheetWidget = ({
             }}
           />
           <IconButton
-            text="連連看"
+            text="Matching Question"
             icon={<WatsonHealth3DCurveAutoColon />}
             mode="ghost"
             flex
@@ -130,7 +130,7 @@ const WorksheetWidget = ({
             }}
             icon={<CheckmarkOutline />}
             mode="ghost"
-            text="關閉預覽"
+            text="Close Preview"
           />
         </div>
       </div>
@@ -157,7 +157,7 @@ const WorksheetWidget = ({
       {preview ? (
         <div className={cx("--label")}>
           <TText>
-            若要新增或修改問題，請先選擇「套用」並在左側視窗直接進行更改
+            To add or edit questions, please first select apply and modify directly in the left.
           </TText>
         </div>
       ) : (
@@ -170,11 +170,11 @@ const WorksheetWidget = ({
                 }}
                 icon={<Add />}
                 mode="ghost"
-                text="新增問題"
+                text="Add Question"
               />
 
               <IconButton
-                text="生成學習單"
+                text="Generate Worksheet"
                 onClick={() => {
                   setShowWorksheetPreview(!showWorksheetPreview);
                 }}
@@ -229,7 +229,7 @@ const WorkSheetQuestionStack = ({
               mode="outlined"
               header={
                 <div className={cx("header")}>
-                  <TText>題目</TText> {` ${index + 1}`}
+                  <TText>Question</TText> {` ${index + 1}`}
                 </div>
               }
               content={
@@ -248,21 +248,21 @@ const WorkSheetQuestionStack = ({
                         <IconButton
                           mode="primary"
                           icon={<CheckmarkOutline />}
-                          text="確認"
+                          text="Confirm"
                           onClick={() => setEditing(false)}
                         />
                       ) : (
                         <IconButton
                           mode="ghost"
                           icon={<Edit />}
-                          text="編輯"
+                          text="Edit"
                           onClick={() => setEditing(true)}
                         />
                       )}
                       <IconButton
                         mode="danger-ghost"
                         icon={<TrashCan />}
-                        text="刪除"
+                        text="Delete"
                         onClick={() => {
                           dispatch(
                             WidgetsServices.actions.deleteQuestion({
@@ -290,27 +290,27 @@ const WorksheetPlaceholder = () => {
       <div className={cx("title")}>
         <div className={cx("decor")} />
         <TText>
-          與Rita交談來開始設計學習單，Rita 會與您討論並生成學習單供您參考。
+          Chat with Rita to start designing worksheets, Rita will discuss with you and generate worksheets.
         </TText>
       </div>
 
       <div className={cx("example-title")}>
         <strong>
-          <TText>範例</TText> :
+          <TText>Example</TText> :
         </strong>
       </div>
       <div className={cx("example")}>
         ”
         <TText>
-          針對今天準備的影片內容，我想要讓學生可以藉由學習單發表意見。
+          For today's class video, I want students to express opinions through worksheets.
         </TText>
         ”
       </div>
       <div className={cx("example")}>
-        ”<TText>我要一份數學練習的學習單。</TText>“
+        ”<TText>I want a math practice worksheet.</TText>“
       </div>
       <div className={cx("example")}>
-        ”<TText>來設計校外教學的學習單吧！</TText>“
+        ”<TText>Let's design a worksheet for field trips!</TText>“
       </div>
     </div>
   );

@@ -142,7 +142,7 @@ const Table = ({
     if (!editColumn) return;
     for (let i = 0; i < headings.length; i++) {
       if (headings[i] === newName && i !== index) {
-        setEditingError("欄位名稱重複");
+        setEditingError("Duplicated field name");
         return;
       }
     }
@@ -208,13 +208,13 @@ const Table = ({
         >
           <div className={cx("menu-action-item")}>
             <Edit />
-            <TText>編輯欄位</TText>
+            <TText>Edit Field</TText>
           </div>
         </MenuItem>
         <MenuItem onClick={() => handleInsertColumn(index + 1)}>
           <div className={cx("menu-action-item")}>
             <ColumnInsert />
-            <TText>向右插入欄位</TText>
+            <TText>Insert Field To Right</TText>
           </div>
         </MenuItem>
         <MenuItem
@@ -223,7 +223,7 @@ const Table = ({
         >
           <div className={cx("menu-action-item", "danger")}>
             <ColumnDelete />
-            <TText>刪除此欄位</TText>
+            <TText>Delete This Field</TText>
           </div>
         </MenuItem>
       </Menu>
@@ -252,7 +252,7 @@ const Table = ({
         <MenuItem onClick={() => handleInsertRow(index + 1)}>
           <div className={cx("menu-action-item")}>
             <RowInsert />
-            <TText>向下插入列</TText>
+            <TText>Insert Row Below</TText>
           </div>
         </MenuItem>
         <MenuItem
@@ -261,7 +261,7 @@ const Table = ({
         >
           <div className={cx("menu-action-item", "danger")}>
             <RowDelete />
-            <TText>刪除此列</TText>
+            <TText>Delete This Row</TText>
           </div>
         </MenuItem>
       </Menu>

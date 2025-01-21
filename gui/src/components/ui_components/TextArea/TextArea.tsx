@@ -14,7 +14,7 @@ type TextAreaProps = {
 
 const TextArea: React.FC<TextAreaProps> = ({
   flex,
-  placeholder = "寫下筆記、想法...",
+  placeholder = "Write down notes and ideas...",
   label,
   value,
   mode = "default",

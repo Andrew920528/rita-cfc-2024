@@ -24,7 +24,7 @@ function AiTabPlaceHolder() {
     <div className={cx("placeholder")}>
       <IbmWatsonxAssistant size={80} />
       <TText>
-        請建立或點選右方空間中的備課工具，讓Rita可以針對那個工具為您備課。
+        Please create or select a preparation tool from the rightRitaTo help you prepare lessons with that tool.
       </TText>
     </div>
   );
@@ -36,7 +36,7 @@ function AiTabPlaceHolderWidgetCreating() {
       <IbmWatsonxAssistant size={80} />
       <div className={cx("placeholder-text")}>
         <CircularProgress color="inherit" size={12} />
-        <TText>正在建立工具，請稍等。</TText>
+        <TText>Creating tool, please wait.</TText>
       </div>
     </div>
   );
@@ -85,7 +85,7 @@ function AiTab({}: Props) {
           >
             <div onClick={onclickCollapse} className={cx("preview-header")}>
               {collapsePreview ? <ChevronRight /> : <ChevronDown />}
-              <TText>內容預覽</TText>
+              <TText>Content Preview</TText>
             </div>
             <PreviewSpace />
           </div>

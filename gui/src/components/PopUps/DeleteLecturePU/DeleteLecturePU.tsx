@@ -36,16 +36,16 @@ function DeleteLecturePU(props: Props & PopUpProps) {
       <div className={cx("content")}>
         <div className={cx("words")}>
           <p className={cx("ask")}>
-            <TText>確定要刪除此課程計畫嗎?</TText>
+            <TText>Are you sure that you want to delete this lesson plan??</TText>
           </p>
           <p className="--label">
-            <TText>您將永久刪除此課程計畫的內容。</TText>
+            <TText>You are permanently deleting the contents of this lesson plan.</TText>
           </p>
         </div>
 
         <IconButton
           icon={<TrashCan />}
-          text="刪除"
+          text="Delete"
           mode="danger-outline"
           onClick={() => {
             deleteLecture(props.lectureId);

@@ -126,7 +126,7 @@ export const useCreateLectureWithApi = () => {
     });
 
     if (r.status === API.ERROR || r.status === API.ABORTED) {
-      toast.error("修改課堂名稱失敗");
+      toast.error("Failed To Update Classroom Name");
     }
     dispatch(
       LecturesServices.actions.setLoading({

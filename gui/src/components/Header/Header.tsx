@@ -85,7 +85,7 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
         Object.keys(classrooms.dict).length === 0 ? (
           <div className={cx("no-subject-hint")}>
             <i>
-              <TText>新增教室以開始備課</TText>
+              <TText>Add Classroom To Start Lesson Preparation</TText>
             </i>
           </div>
         ) : (
@@ -136,7 +136,7 @@ const SaveGroup = () => {
         identifier: "updateUserService",
       });
       if (r.status === API.ERROR || r.status === API.ABORTED) {
-        toast.error("存檔失敗，請重試");
+        toast.error("Save failed, please try again");
         return;
       }
       dispatch(UserServices.actions.saveSchedule());
@@ -159,7 +159,7 @@ const SaveGroup = () => {
         identifier: "updateWidgetBulkService",
       });
       if (r.status === API.ERROR || r.status === API.ABORTED) {
-        toast.error("存檔失敗，請重試");
+        toast.error("Save failed, please try again");
         return;
       }
       dispatch(WidgetsServices.actions.saveAll());
@@ -233,7 +233,7 @@ const AccountButton = () => {
         <ManageAccountPU
           trigger={openManageAccountPU}
           setTrigger={setOpenManageAccountPU}
-          title="管理帳號"
+          title="Manage Account"
         />
 
         <IconButton

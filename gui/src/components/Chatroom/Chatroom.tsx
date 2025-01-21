@@ -234,9 +234,9 @@ const ChatMessage = ({text, sender, completed}: ChatMessageT) => {
                 <TText>
                   {translated
                     ? loading
-                      ? "翻譯中(取消)"
-                      : "顯示原文"
-                    : "翻譯蒟蒻"}
+                      ? "Translating(Cancel)"
+                      : "Show Original Text"
+                    : "Translation Jelly"}
                 </TText>
               )}
             </p>
@@ -283,7 +283,7 @@ const ChatroomBody = ({
     <div className={cx("chatroom-body")} ref={scrollRef}>
       {messages.length === 0 && (
         <div className={cx("empty-chatroom-placeholder")}>
-          <TText>您好，請問我能怎麼協助您？</TText>
+          <TText>Hello, How can I assist you?</TText>
           <div className={cx("chips")}>
             {agency === AGENCY.LECTURE ? (
               lecturePromptRecs.map((promptObj) => (
@@ -321,19 +321,19 @@ const ChatroomBody = ({
         return <ChatMessage {...message} key={index} />;
       })}
       <LoadingMessage
-        text={"回覆中，請稍等"}
+        text={"Replying, please wait"}
         loadingCondition={loading && !constructingWidget}
         showCircularProgress={false}
         showDots={true}
       />
       <LoadingMessage
-        text={"正在編輯工具內容"}
+        text={"Editing Tool Content"}
         loadingCondition={loading && constructingWidget}
         showCircularProgress={true}
       />
       {ritaError && (
         <p className={cx("--label", "--error")}>
-          <TText>出了點問題。請再試一次。</TText>
+          <TText>Something went wrong. Please try again.</TText>
         </p>
       )}
     </div>
@@ -363,21 +363,21 @@ const LoadingMessage = (args: {
 
 const lecturePromptRecs = [
   {
-    chipMessage: "尋找第二單元的相關影片",
-    actualPrompt: "尋找第二單元每個章節的教學影片",
+    chipMessage: "Find related videos for unit two",
+    actualPrompt: "Find teaching videos for each chapter of unit two",
     icon: <VideoPlayer />,
     iconColor: "#B60071",
   },
   {
-    chipMessage: "你可以怎麼幫我備課？",
-    actualPrompt: "你可以怎麼幫我備課？",
+    chipMessage: "How can you help me with lesson planning?",
+    actualPrompt: "How can you help me with lesson planning?",
     icon: <Help />,
     iconColor: "#505050",
   },
   {
-    chipMessage: "給我關於小數的課程活動點子",
+    chipMessage: "Provide ideas for class activities related to decimals",
     actualPrompt:
-      "推薦我引導學生認識小數的課程活動，活動要有創意並能激起學生興趣",
+      "Recommend creative lesson activities to introduce decimals",
     icon: <Idea />,
     iconColor: "#FFB200",
   },

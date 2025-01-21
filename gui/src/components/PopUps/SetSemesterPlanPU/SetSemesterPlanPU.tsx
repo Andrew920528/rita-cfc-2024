@@ -47,7 +47,7 @@ const SetSemesterPlanPU = (props: Props & PopUpProps) => {
       {...props}
       footerBtnProps={{
         icon: <CheckmarkOutline size={20} />,
-        text: "選擇進度表",
+        text: "Select Semester Plan",
         disabled: selectedPlan === "",
       }}
       puAction={() => {
@@ -80,7 +80,7 @@ const SetSemesterPlanPU = (props: Props & PopUpProps) => {
       <div className={cx("content")}>
         <div className={cx("option-stack")}>
           <p className={cx("section-title")}>
-            <TText>課程計畫</TText>
+            <TText>Lesson Plan</TText>
           </p>
           {currClassroom.lectureIds.map((id) => (
             <div
@@ -97,7 +97,7 @@ const SetSemesterPlanPU = (props: Props & PopUpProps) => {
         </div>
         <div className={cx("option-stack")}>
           <p className={cx("section-title")}>
-            <TText>進度表</TText>
+            <TText>Semester Plan</TText>
           </p>
           {lectures.dict[selectedLecture] &&
             lectures.dict[selectedLecture].widgetIds.map((id) => {
@@ -106,7 +106,7 @@ const SetSemesterPlanPU = (props: Props & PopUpProps) => {
               }
               const name =
                 (widgets.dict[id].content as SemesterPlanWidgetContent).name ??
-                "未命名的計畫";
+                "Unnamed Plan";
               return (
                 <div
                   className={cx("option-card", {
@@ -124,7 +124,7 @@ const SetSemesterPlanPU = (props: Props & PopUpProps) => {
         </div>
         <div className={cx("plan-preview")}>
           <p className={cx("section-title")}>
-            <TText>預覽</TText>
+            <TText>Preview</TText>
           </p>
           {widgets.dict[selectedPlan] && (
             <div className={cx("plan-preview-content")}>

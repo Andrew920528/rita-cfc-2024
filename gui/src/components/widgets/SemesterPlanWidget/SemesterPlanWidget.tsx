@@ -200,7 +200,7 @@ const SemesterPlanWidget = ({
   function editPlanName(newName: string) {
     setNameError("");
     if (newName.trim() === "") {
-      setNameError("請輸入計畫名稱");
+      setNameError("Enter Plan Name");
       // return;
     }
     const newWidget = {
@@ -226,7 +226,7 @@ const SemesterPlanWidget = ({
         <div className={cx("name-row")}>
           <div className={cx("input-wrapper")}>
             <Textbox
-              value={widgetContent.name ?? "未命名的計畫"}
+              value={widgetContent.name ?? "Unnamed Plan"}
               onChange={(e) => {
                 editPlanName(e.currentTarget.value);
               }}
@@ -242,23 +242,23 @@ const SemesterPlanWidget = ({
               setEditName(false);
             }}
             mode="ghost"
-            text="確定"
+            text="Confirm Changes"
           />
         </div>
       ) : (
         <div className={cx("name-row")}>
           <p className={cx("name")}>
-            {widgetContent.name ?? <TText>未命名的計畫</TText>}
+            {widgetContent.name ?? <TText>Unnamed Plan</TText>}
           </p>
           <div className={cx("button-row")}>
             <IconButton
               icon={<Edit />}
               onClick={() => setEditName(true)}
               mode="ghost"
-              text="編輯"
+              text="Edit"
             />
             <IconButton
-              text={"下載Excel試算表"}
+              text={"DownloadExcelSpreadsheet"}
               icon={<TableBuilt />}
               mode={"primary"}
               onClick={() => {
@@ -272,7 +272,7 @@ const SemesterPlanWidget = ({
         headings={widgetContent.headings}
         content={widgetTableContent}
         insertColumn={(i) => {
-          insertColumn(widgetContent, "新增欄位", i);
+          insertColumn(widgetContent, "Add Field", i);
         }}
         deleteColumn={(i) => {
           deleteColumn(widgetContent, i);
@@ -349,7 +349,7 @@ export const SemesterPlanReadOnly = ({widget}: {widget: Widget}) => {
     <div className={cx("readonly", "semester-plan-widget")}>
       <div className={cx("name-row")}>
         <p className={cx("name")}>
-          {widgetContent.name ?? <TText>未命名的計畫</TText>}
+          {widgetContent.name ?? <TText>Unnamed Plan</TText>}
         </p>
       </div>
 

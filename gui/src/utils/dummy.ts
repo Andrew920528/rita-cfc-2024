@@ -23,7 +23,7 @@ let classrooms = {
   dict: {
     "AndrewHsu-classroom-m0c0kfxfeu4hrnlqu0m": {
       credits: 3,
-      grade: "五上",
+      grade: "Grade Five 1",
       id: "AndrewHsu-classroom-m0c0kfxfeu4hrnlqu0m",
       lastOpenedSession: "Tue, 27 Aug 2024 05:56:00 GMT",
       lectureIds: [
@@ -31,22 +31,22 @@ let classrooms = {
         "AndrewHsu-lecture-1m0c0kq17kpa68meaj2",
         "AndrewHsu-lecture-1m0c18bbzg2q5iwvbq2a",
       ],
-      name: "502數學",
+      name: "502Mathematics",
       plan: 0,
-      publisher: "數學",
-      subject: "數學",
+      publisher: "Mathematics",
+      subject: "Mathematics",
       lastOpenedLecture: "AndrewHsu-lecture-0m0c0kfxfsk3mhsojb3p",
     },
     "AndrewHsu-classroom-m0c2daalm8fervq92ue": {
       credits: 5,
-      grade: "五上",
+      grade: "Grade Five 1",
       id: "AndrewHsu-classroom-m0c2daalm8fervq92ue",
       lastOpenedSession: "Tue, 27 Aug 2024 06:46:25 GMT",
       lectureIds: ["AndrewHsu-lecture-0m0c2daal853830ajriu"],
-      name: "501 國文",
+      name: "501 Chinese",
       plan: 0,
-      publisher: "康軒",
-      subject: "國文",
+      publisher: "KNSH",
+      subject: "Chinese",
       lastOpenedLecture: "AndrewHsu-lecture-0m0c2daal853830ajriu",
     },
   },
@@ -57,14 +57,14 @@ let lectures = {
     "AndrewHsu-lecture-0m0c0kfxfsk3mhsojb3p": {
       chatroomId: "jO8dpnhhG1O5vfuZ",
       id: "AndrewHsu-lecture-0m0c0kfxfsk3mhsojb3p",
-      name: "學期規劃",
+      name: "Semester Planning",
       type: 0,
       widgetIds: ["AndrewHsu-wid-m0c2evrs5n6ir1e01bk"],
     },
     "AndrewHsu-lecture-0m0c2daal853830ajriu": {
       chatroomId: "5hCxbwZaHrCvB8Tt",
       id: "AndrewHsu-lecture-0m0c2daal853830ajriu",
-      name: "學期規劃",
+      name: "Semester Planning",
       type: 0,
       widgetIds: [
         "AndrewHsu-wid-m0c2dwnzn0dt2pewiql",
@@ -74,14 +74,14 @@ let lectures = {
     "AndrewHsu-lecture-1m0c0kq17kpa68meaj2": {
       chatroomId: "R6zlnDJKZcLSvpTn",
       id: "AndrewHsu-lecture-1m0c0kq17kpa68meaj2",
-      name: "課1",
+      name: "Lesson1",
       type: 1,
       widgetIds: ["AndrewHsu-wid-m0c2eea3aw5e6nc1qjq"],
     },
     "AndrewHsu-lecture-1m0c18bbzg2q5iwvbq2a": {
       chatroomId: "R6X7NYkWWZtk7beJ",
       id: "AndrewHsu-lecture-1m0c18bbzg2q5iwvbq2a",
-      name: "課2",
+      name: "Lesson2",
       type: 1,
       widgetIds: [],
     },
@@ -107,12 +107,12 @@ let widgets = {
     "AndrewHsu-wid-m0c2evrs5n6ir1e01bk": {
       chatroomId: "QOizxxrFfrq7LaPL",
       content: `{
-        "headings": ["週目", "課程單元", "活動"],
+        "headings": ["Week", "Course Unit", "Activity"],
         "rows": [
           {
-            "週目": "1",
-            "課程單元": "a",
-            "活動": ""
+            "Week": "1",
+            "Course Unit": "a",
+            "Activity": ""
           }
         ]
       }`,
@@ -193,7 +193,7 @@ export const dummyRitaResponse = [
   '{"agent": "Rita", "data": "?"}|T|',
   '{"agent": "Rita", "data": ""}|T|',
   '{"agent": "Widget Modifier", "data": "WIDGET_MODIFIER_STARTED"}|T|',
-  `{"agent": "Widget Modifier", "data": "{\\"widgetId\\": \\"AndrewHsu-wid-m0c2dwnzn0dt2pewiql\\",\\"widgetContent\\": {\\"goals\\": [\\"你好\\"]}}"}|T|`,
+  `{"agent": "Widget Modifier", "data": "{\\"widgetId\\": \\"AndrewHsu-wid-m0c2dwnzn0dt2pewiql\\",\\"widgetContent\\": {\\"goals\\": [\\"Hello\\"]}}"}|T|`,
 ];
 
 export const dummyMcQuestion: Omit<McQuestion, "questionId"> = {

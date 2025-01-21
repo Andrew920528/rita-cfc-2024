@@ -46,7 +46,7 @@ const ManageLecturePU = (props: ManageLecturePUProps & PopUpProps) => {
   function validateForm(): boolean {
     let validate = true;
     if (name.trim() === "") {
-      setNameError("請輸入課程名稱");
+      setNameError("Enter Course Name");
       validate = false;
     } else if (
       new Set<string>(Object.values(lectures.dict).map((c) => c.name)).has(
@@ -54,7 +54,7 @@ const ManageLecturePU = (props: ManageLecturePUProps & PopUpProps) => {
       ) &&
       props.action === "create"
     ) {
-      setNameError("課堂名稱已存在");
+      setNameError("Classroom name already exists");
       validate = false;
     }
     return validate;
@@ -87,7 +87,7 @@ const ManageLecturePU = (props: ManageLecturePUProps & PopUpProps) => {
       {...props}
       footerBtnProps={{
         icon: <Save size={20} />,
-        text: "儲存變更",
+        text: "Save Changes",
       }}
       reset={() => {
         resetForm();
@@ -100,10 +100,10 @@ const ManageLecturePU = (props: ManageLecturePUProps & PopUpProps) => {
       <div className={cx("create-lecture-form")}>
         <div>
           <Textbox
-            label="計畫名稱"
+            label="Plan Name"
             errorMsg={nameError}
             mode="form"
-            placeholder="請輸入計畫名稱"
+            placeholder="Enter Plan Name"
             value={name}
             onChange={(e) => {
               setName(e.currentTarget.value);

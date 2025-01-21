@@ -44,12 +44,12 @@ const CourseTab = (props: Props) => {
       >
         <div className={cx("nav-heading")}>
           <p className={cx("--heading")}>
-            <TText>教室</TText>
+            <TText>Classroom</TText>
           </p>
           <IconButton
             mode={"primary"}
             icon={<Add />}
-            text={"新增"}
+            text={"Add"}
             onClick={() => {
               setOpenClassroomCreation(true);
             }}
@@ -57,14 +57,14 @@ const CourseTab = (props: Props) => {
           <ManageClassroomPU
             trigger={openClassroomCreation}
             setTrigger={setOpenClassroomCreation}
-            title={"創建教室"}
+            title={"Create Classroom"}
             action="create"
           />
         </div>
         <div className={cx("nav-stack")}>
           {user.classroomIds.length === 0 && (
             <div className={cx("placeholder")}>
-              <TText>請新增教室開始備課</TText>
+              <TText>Please add classroom to begin lesson preparation</TText>
             </div>
           )}
           {user.classroomIds.toReversed().map((id) => (
@@ -90,12 +90,12 @@ const CourseTab = (props: Props) => {
       >
         <div className={cx("nav-heading")}>
           <p className={cx("--heading")}>
-            <TText>計畫</TText>
+            <TText>Plan</TText>
           </p>
           <IconButton
             mode={"primary"}
             icon={<Add />}
-            text={"新增"}
+            text={"Add"}
             onClick={() => {
               setOpenLectureCreation(true);
             }}
@@ -106,7 +106,7 @@ const CourseTab = (props: Props) => {
           <ManageLecturePU
             trigger={openLectureCreation}
             setTrigger={setOpenLectureCreation}
-            title={"新增計畫"}
+            title={"Add Plan"}
             action="create"
           />
         </div>
@@ -141,7 +141,7 @@ type ClassCardProps = {
 
 const ClassCard = ({
   id = "",
-  name = "新科目",
+  name = "New Subject",
   subject = "未設定",
   grade = "未設定",
   publisher = "未設定",
@@ -179,7 +179,7 @@ const ClassCard = ({
       <div className={cx("settings-fm")}>
         <IconButton
           icon={<Edit />}
-          text="編輯"
+          text="Edit"
           mode={"ghost"}
           onClick={() => {
             setOpenClassroomModify(true);
@@ -187,7 +187,7 @@ const ClassCard = ({
         />
         <IconButton
           icon={<TrashCan />}
-          text="刪除"
+          text="Delete"
           mode={"danger-ghost"}
           onClick={() => {
             setOpenClassroomDelete(true);
@@ -211,12 +211,12 @@ const ClassCard = ({
           <strong>{name}</strong>
         </p>
         <p className={cx("--label")}>
-          <TText>科目：</TText> {subject} <TText>｜年級：</TText>
-          {grade} <TText> ｜教材：</TText>
+          <TText>Subject:</TText> {subject} <TText>| Grade:</TText>
+          {grade} <TText> | Class Material:</TText>
           {publisher}
-          <br /> <TText>週堂數：</TText>
-          {credits} <TText>| 學期規劃：</TText>
-          {plan ? <TText>已完成</TText> : <TText>未完成</TText>}
+          <br /> <TText>Weekly Sessions:</TText>
+          {credits} <TText>| Semester Planning:</TText>
+          {plan ? <TText>Completed</TText> : <TText>Incomplete</TText>}
         </p>
       </div>
       {loading && (
@@ -237,14 +237,14 @@ const ClassCard = ({
           <ManageClassroomPU
             trigger={openClassroomModify}
             setTrigger={setOpenClassroomModify}
-            title={"編輯教室"}
+            title={"Edit Classroom"}
             action="edit"
             editClassroomId={id}
           />
           <DeleteClassroomPU
             trigger={openClassroomDelete}
             setTrigger={setOpenClassroomDelete}
-            title={"刪除教室"}
+            title={"Delete Classroom"}
             classroomId={id}
           />
         </>
@@ -293,7 +293,7 @@ const LectureCard = ({
       <div className={cx("settings-fm")}>
         <IconButton
           icon={<Edit />}
-          text="編輯"
+          text="Edit"
           mode={"ghost"}
           onClick={() => {
             setOpenLectureModify(true);
@@ -301,7 +301,7 @@ const LectureCard = ({
         />
         <IconButton
           icon={<TrashCan />}
-          text="刪除"
+          text="Delete"
           mode={"danger-ghost"}
           onClick={() => {
             setOpenLectureDelete(true);
@@ -341,13 +341,13 @@ const LectureCard = ({
           <DeleteLecturePU
             trigger={openLectureDelete}
             setTrigger={setOpenLectureDelete}
-            title={"刪除計畫"}
+            title={"Delete Plan"}
             lectureId={id}
           />
           <ManageLecturePU
             trigger={openLectureModify}
             setTrigger={setOpenLectureModify}
-            title={"新增計畫"}
+            title={"Add Plan"}
             action="edit"
             editLectureId={id}
           />

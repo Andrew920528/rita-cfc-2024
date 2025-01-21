@@ -21,20 +21,20 @@ type ManageClassroomPUProps = {
 };
 
 export const subjectDict = {
-  國文: "",
-  數學: "",
-  其他: "",
+  Chinese: "",
+  Mathematics: "",
+  Other: "",
 };
 
 export const gradeDict = {
-  五上: "",
-  五下: "",
-  六上: "",
-  六下: "",
+  "Fifth Grade First Semester": "",
+  "Fifth Grade Second Semester": "",
+  "Sixth Grade First Semester": "",
+  "Sixth Grade Second Semester": "",
 };
 
 export const publisherDict = {
-  康軒: "",
+  KNSH: "",
 };
 const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   // global states
@@ -74,7 +74,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       if (classrooms.dict[editClassroomId!].subject in subjectDict) {
         setSubject(classrooms.dict[editClassroomId!].subject);
       } else {
-        setSubject("其他");
+        setSubject("Other");
         setOtherSubject(classrooms.dict[editClassroomId!].subject);
       }
       setGrade(classrooms.dict[editClassroomId!].grade);
@@ -101,7 +101,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
   function validateForm(): boolean {
     let validate = true;
     if (name.trim() === "") {
-      setNameError("請輸入課堂名稱");
+      setNameError("Enter classroom name");
       validate = false;
     } else if (
       new Set<string>(Object.values(classrooms.dict).map((c) => c.name)).has(
@@ -109,27 +109,27 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       ) &&
       props.action === "create"
     ) {
-      setNameError("課堂名稱已存在");
+      setNameError("Classroom name already exists");
       validate = false;
     }
     if (subject.trim() === "") {
-      setSubjectError("請輸入科目");
+      setSubjectError("Enter Subject");
       validate = false;
     }
-    if (subject === "其他" && otherSubject.trim() === "") {
-      setOtherSubjectError("請輸入科目");
+    if (subject === "Other" && otherSubject.trim() === "") {
+      setOtherSubjectError("Enter Subject");
       validate = false;
     }
     if (grade.trim() === "") {
-      setGradeError("請選擇年級");
+      setGradeError("Select Grade");
       validate = false;
     }
-    if (subject !== "其他" && publisher.trim() === "") {
-      setPublisherError("請選擇教材");
+    if (subject !== "Other" && publisher.trim() === "") {
+      setPublisherError("Select Teaching Material");
       validate = false;
     }
     if (isNumeric(credit) === false || parseInt(credit) <= 0) {
-      setCreditError("請輸入正整數");
+      setCreditError("Enter Positive Integer");
       validate = false;
     }
     return validate;
@@ -139,8 +139,8 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
     if (!validateForm()) {
       return;
     }
-    let sub = subject === "其他" ? otherSubject : subject;
-    let pub = subject === "其他" ? "綜合" : publisher;
+    let sub = subject === "Other" ? otherSubject : subject;
+    let pub = subject === "Other" ? "Comprehensive" : publisher;
     if (props.action === "create") {
       createClassroom({
         name: name,
@@ -174,7 +174,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
       {...props}
       footerBtnProps={{
         icon: <Save size={20} />,
-        text: "儲存變更",
+        text: "Save Changes",
       }}
       puAction={() => {
         submitForm();
@@ -188,10 +188,10 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
         <div className={cx("ccf-layout-row")}>
           <div>
             <Textbox
-              label="課堂名稱"
+              label="Classroom Name"
               errorMsg={nameError}
               mode="form"
-              placeholder="請輸入課堂名稱"
+              placeholder="Enter classroom name"
               value={name}
               onChange={(e) => {
                 setName(e.currentTarget.value);
@@ -210,11 +210,11 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
               getName={(id) => {
                 return id;
               }}
-              placeholder="請選擇年級"
+              placeholder="Select Grade"
               flex={true}
               mode="form"
               errorMsg={gradeError}
-              label="年級"
+              label="Grade"
             />
           </div>
         </div>
@@ -226,18 +226,18 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
             getName={(id) => {
               return id;
             }}
-            placeholder="請選擇科目"
+            placeholder="Select Subject"
             flex={true}
             mode="form"
             errorMsg={subjectError}
-            label="科目"
+            label="Subject"
           />
 
           <Textbox
-            label="週堂數"
+            label="Weekly Sessions"
             errorMsg={creditError}
             mode="form"
-            placeholder="請輸入教材名稱"
+            placeholder="Enter Teaching Material Name"
             value={credit}
             onChange={(e) => {
               if (
@@ -252,7 +252,7 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
             onCompositionEnd={handleCompositionEnd}
           />
         </div>
-        {subject !== "其他" ? (
+        {subject !== "Other" ? (
           <Dropdown
             currId={publisher}
             setCurrId={setPublisher}
@@ -260,18 +260,18 @@ const ManageClassroomPU = (props: ManageClassroomPUProps & PopUpProps) => {
             getName={(id) => {
               return id;
             }}
-            placeholder="請選擇教材"
+            placeholder="Select Teaching Material"
             flex={true}
             mode="form"
             errorMsg={publisherError}
-            label="教材"
+            label="Teaching Material"
           />
         ) : (
           <Textbox
-            label="其他科目"
+            label="Other Subjects"
             errorMsg={otherSubjectError}
             mode="form"
-            placeholder="請輸入科目名稱"
+            placeholder="Enter Subject Name"
             value={otherSubject}
             onChange={(e) => {
               setOtherSubject(e.currentTarget.value);

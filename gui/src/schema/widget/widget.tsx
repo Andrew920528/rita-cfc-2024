@@ -22,9 +22,9 @@ export enum WidgetType {
 }
 
 export enum WidgetCategory {
-  contextSetter = "環境設定",
-  aiTool = "智慧探索",
-  other = "小工具",
+  contextSetter = "Environment settings",
+  aiTool = "Smart discovery",
+  other = "Tools",
 }
 
 export type WidgetContent =

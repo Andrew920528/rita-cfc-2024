@@ -54,7 +54,7 @@ const PreviewSpace = (props: Props) => {
           <div>
             <IconButton
               icon={<MagicWand />}
-              text="套用"
+              text="Apply"
               mode="primary"
               onClick={() => {
                 if (!(widgets.current in widgets.previewDict)) return;
@@ -74,10 +74,10 @@ const PreviewSpace = (props: Props) => {
 function PreviewPlaceHolder() {
   return (
     <div className={cx("preview-placeholder")}>
-      <TText>尚無可預覽的內容</TText>
+      <TText>No Preview Available</TText>
       <p className={cx("--label")}>
         {" "}
-        <TText>與Rita 交談，並預覽他幫您生成課程內容。</TText>
+        <TText>Chat with Rita and preview the content she generates</TText>
       </p>
     </div>
   );

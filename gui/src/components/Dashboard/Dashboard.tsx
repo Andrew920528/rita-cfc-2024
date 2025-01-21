@@ -21,13 +21,13 @@ const DashboardPlaceHolder = () => {
         <div className={cx("dp-header-row")}>
           <Cafe size={20} />
           <p className={cx("dp-title")}>
-            <TText>老師好。來杯咖啡嗎？</TText>
+            <TText>Hello there. Would you like a cup of coffee?</TText>
           </p>
         </div>
         <p>
-          <TText>您可以由左側工具欄新增備課工具，</TText>
+          <TText>You can add lesson preparation tools from the toolbar on the left.</TText>
           <br />
-          <TText>並利用小助教Rita幫助您完成工作</TText>
+          <TText>And use assistantRitaTo help you complete tasks</TText>
         </p>
       </div>
     </div>
@@ -113,7 +113,7 @@ const Dashboard = () => {
       <SetSemesterPlanPU
         trigger={openPlanPU}
         setTrigger={setOpenPlanPU}
-        title="設定進度表"
+        title="Set Semester Plan"
       />
     </div>
   );

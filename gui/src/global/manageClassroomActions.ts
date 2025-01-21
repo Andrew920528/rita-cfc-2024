@@ -61,7 +61,7 @@ export const useCreateClassroomWithApi = () => {
 
     let lectureData = {
       lectureId: newLectureId,
-      name: "學期規劃",
+      name: "Semester Planning",
       classroomId: newClassroomId,
       type: 0,
     };
@@ -99,7 +99,7 @@ export const useCreateClassroomWithApi = () => {
 
     let newLecture: Lecture = {
       id: newLectureId,
-      name: "學期規劃",
+      name: "Semester Planning",
       type: 0,
       widgetIds: [],
       chatroomId: EMPTY_ID,
@@ -133,7 +133,7 @@ export const useCreateClassroomWithApi = () => {
       allowAsync: true,
     });
     if (r.status === API.ERROR || r.status === API.ABORTED) {
-      toast.error("課堂建立失敗，請確認連線狀況。");
+      toast.error("Failed to create classroom, please check connection.");
       // delete classroom (and lecture) in frontend
       deleteClassroomFrontend({classroomId: newClassroomId});
       return;
@@ -145,7 +145,7 @@ export const useCreateClassroomWithApi = () => {
       identifier: "createLecture",
     });
     if (r.status === API.ERROR || r.status === API.ABORTED) {
-      toast.error("課堂建立失敗，請確認連線狀況。");
+      toast.error("Failed to create classroom, please check connection.");
       // delete classroom (and lecture) in frontend
       deleteClassroomFrontend({classroomId: newClassroomId});
       // delete classroom in backend
@@ -256,7 +256,7 @@ export const useEditClassroomWithApi = () => {
       identifier: "editClassroom",
     });
     if (r.status === API.ERROR || r.status === API.ABORTED) {
-      toast.error("您的修改儲存失敗，請確認連線狀況。");
+      toast.error("Failed to save changes, please check connection.");
     }
     dispatch(
       ClassroomsServices.actions.setLoading({

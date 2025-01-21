@@ -24,14 +24,14 @@ const NavBar = () => {
     <div className={cx("navbar")}>
       <Tabs
         items={[
-          {title: "課程", content: <NavContent children={<CourseTab />} />},
+          {title: "Course", content: <NavContent children={<CourseTab />} />},
           {
-            title: "工具",
+            title: "Widgets",
             content: <NavContent children={<ToolTab />} />,
             disabled: noLecture,
           },
           {
-            title: "Rita 小助教",
+            title: "Rita AI",
             content: <NavContent children={<AiTab />} />,
             disabled: noLecture,
           },
