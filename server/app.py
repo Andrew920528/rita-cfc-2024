@@ -156,7 +156,8 @@ def create_user():
         alias = request.json.get('alias', None)
         occupation = request.json.get('occupation', None)
         schedule = request.json.get('schedule', None)
-        return createUser(username, password, school, alias, occupation, schedule)
+        lang = request.json.get('lang', None)
+        return createUser(username, password, school, alias, occupation, schedule, lang)
     except Exception as e:
         response = {
             'status': 'error',
@@ -173,7 +174,8 @@ def update_user():
         school = request.json.get('school', None)
         occupation = request.json.get('occupation', None)
         schedule = request.json.get('schedule', None)
-        return updateUser(sessionId, alias, school, occupation, schedule)
+        lang = request.json.get('lang', None)
+        return updateUser(sessionId, alias, school, occupation, schedule, lang)
     except Exception as e:
         response = {
             'status': 'error',
