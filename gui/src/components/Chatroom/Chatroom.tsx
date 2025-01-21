@@ -1,4 +1,10 @@
-import React, {ReactNode, useEffect, useRef, useState} from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Textbox from "../ui_components/Textbox/Textbox";
 import IconButton from "../ui_components/IconButton/IconButton";
 import {
@@ -34,6 +40,8 @@ import {WidgetsServices} from "../../features/WidgetsSlice";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {WidgetType} from "../../schema/widget/widget";
 import {IdeatingDots} from "../ui_components/IdeatingDots/IdeatingDots";
+import {TText} from "../TText/TText";
+import useLang from "../../lang/useLang";
 const cx = classNames.bind(styles);
 
 type ChatroomProps = {
@@ -94,9 +102,13 @@ const Chatroom = ({
           <p className={cx("rita")}>Rita</p>
           {chatroom.agency !== AGENCY.LECTURE && (
             <p>
-              {widgets.dict[widgets.current]
-                ? widgetBook(widgets.dict[widgets.current].type).title
-                : ""}
+              {widgets.dict[widgets.current] ? (
+                <TText>
+                  {widgetBook(widgets.dict[widgets.current].type).title}
+                </TText>
+              ) : (
+                ""
+              )}
             </p>
           )}
         </div>
@@ -194,12 +206,16 @@ const ChatMessage = ({text, sender, completed}: ChatMessageT) => {
     }
     setTranslatedText(r.data);
   }
+  const l = useLang();
+
   return (
     <div className={cx("chatroom-message", sender)}>
       {sender === SENDER.system ? (
         <p className={cx("chatroom-message-text")}>
-          {text.slice(0, 3)}
-          <strong>{text.slice(3)}</strong>
+          <TText>{text.slice(0, 8)}</TText>
+          <strong>
+            <TText>{text.slice(8)}</TText>
+          </strong>
         </p>
       ) : sender === SENDER.ai ? (
         <>
@@ -214,12 +230,15 @@ const ChatMessage = ({text, sender, completed}: ChatMessageT) => {
                 translate();
               }}
             >
-              {completed &&
-                (translated
-                  ? loading
-                    ? "翻譯中(取消)"
-                    : "顯示原文"
-                  : "翻譯蒟蒻")}
+              {completed && (
+                <TText>
+                  {translated
+                    ? loading
+                      ? "Translating(Cancel)"
+                      : "Show Original Text"
+                    : "Translation Jelly"}
+                </TText>
+              )}
             </p>
           </div>
         </>
@@ -264,7 +283,7 @@ const ChatroomBody = ({
     <div className={cx("chatroom-body")} ref={scrollRef}>
       {messages.length === 0 && (
         <div className={cx("empty-chatroom-placeholder")}>
-          您好，請問我能怎麼協助您？
+          <TText>Hello, How can I assist you?</TText>
           <div className={cx("chips")}>
             {agency === AGENCY.LECTURE ? (
               lecturePromptRecs.map((promptObj) => (
@@ -302,18 +321,20 @@ const ChatroomBody = ({
         return <ChatMessage {...message} key={index} />;
       })}
       <LoadingMessage
-        text={"回覆中，請稍等"}
+        text={"Replying, please wait"}
         loadingCondition={loading && !constructingWidget}
         showCircularProgress={false}
         showDots={true}
       />
       <LoadingMessage
-        text={"正在編輯工具內容"}
+        text={"Editing Tool Content"}
         loadingCondition={loading && constructingWidget}
         showCircularProgress={true}
       />
       {ritaError && (
-        <p className={cx("--label", "--error")}>出了點問題。請再試一次。</p>
+        <p className={cx("--label", "--error")}>
+          <TText>Something went wrong. Please try again.</TText>
+        </p>
       )}
     </div>
   );
@@ -332,7 +353,9 @@ const LoadingMessage = (args: {
       {args.showCircularProgress && (
         <CircularProgress color="inherit" size={12} />
       )}
-      <p className={cx("--label")}>{args.text}</p>
+      <p className={cx("--label")}>
+        <TText>{args.text}</TText>
+      </p>
       {args.showDots && <IdeatingDots />}
     </div>
   );
@@ -340,21 +363,21 @@ const LoadingMessage = (args: {
 
 const lecturePromptRecs = [
   {
-    chipMessage: "尋找第二單元的相關影片",
-    actualPrompt: "尋找第二單元每個章節的教學影片",
+    chipMessage: "Find related videos for unit two",
+    actualPrompt: "Find teaching videos for each chapter of unit two",
     icon: <VideoPlayer />,
     iconColor: "#B60071",
   },
   {
-    chipMessage: "你可以怎麼幫我備課？",
-    actualPrompt: "你可以怎麼幫我備課？",
+    chipMessage: "How can you help me with lesson planning?",
+    actualPrompt: "How can you help me with lesson planning?",
     icon: <Help />,
     iconColor: "#505050",
   },
   {
-    chipMessage: "給我關於小數的課程活動點子",
+    chipMessage: "Provide ideas for class activities related to decimals",
     actualPrompt:
-      "推薦我引導學生認識小數的課程活動，活動要有創意並能激起學生興趣",
+      "Recommend creative lesson activities to introduce decimals",
     icon: <Idea />,
     iconColor: "#FFB200",
   },

@@ -19,8 +19,8 @@ export class NoteWidgetMaker extends WidgetMaker<NoteWidgetContent> {
   }
   uiBook() {
     return {
-      title: "筆記",
-      hint: "快速整理想法",
+      title: "Notes",
+      hint: "Quickly organize thoughts",
       icon: <Catalog />,
       type: WidgetType.Note,
       minWidth: 300,
@@ -33,21 +33,21 @@ export class NoteWidgetMaker extends WidgetMaker<NoteWidgetContent> {
   promptRecs(): PromptItem[] {
     return [
       {
-        chipMessage: "尋找第二單元的相關影片",
-        actualPrompt: "尋找第二單元每個章節的教學影片",
+        chipMessage: "Find related videos for unit two",
+        actualPrompt: "Find teaching videos for each chapter of unit two",
         icon: <VideoPlayer />,
         iconColor: "#B60071",
       },
       {
-        chipMessage: "給我關於小數的課程活動點子",
+        chipMessage: "Provide ideas for class activities related to decimals",
         actualPrompt:
-          "推薦我引導學生認識小數的課程活動，活動要有創意並能激起學生興趣",
+          "Recommend creative lesson activities to introduce decimals",
         icon: <Idea />,
         iconColor: "#FFB200",
       },
       {
-        chipMessage: "整理這份筆記的內容",
-        actualPrompt: "整理這份筆記的內容",
+        chipMessage: "Organize notes",
+        actualPrompt: "Organize notes",
         icon: <Clean />,
         iconColor: "#478CCF",
       },

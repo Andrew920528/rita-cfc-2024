@@ -9,6 +9,7 @@ import classNames from "classnames/bind";
 import styles from "./SignUp.module.scss";
 import {initSchedule} from "../../schema/schedule";
 import {toast} from "react-toastify";
+import {TText} from "../../components/TText/TText";
 
 const cx = classNames.bind(styles);
 const SignUp = () => {
@@ -53,43 +54,43 @@ const SignUp = () => {
     // username cannot contain spaces
 
     if (username === "") {
-      setUsernameError("請輸入使用者名稱");
+      setUsernameError("Please Enter Username");
       validate = false;
     } else if (username.includes(" ")) {
-      setUsernameError("使用者名稱不能包含空格");
+      setUsernameError("Username Cannot Contain Spaces");
       validate = false;
     } else if (username.length < 8) {
-      setUsernameError("使用者名稱至少8個字元");
+      setUsernameError("Username At Least8Characters");
       validate = false;
     } else if (username.length > 32) {
-      setUsernameError("使用者名稱最多32個字元");
+      setUsernameError("Username At Most32Characters");
       validate = false;
     } else {
       setUsernameError("");
     }
 
     if (password === "") {
-      setPasswordError("請輸入密碼");
+      setPasswordError("Please Enter Password");
       validate = false;
     } else if (password.includes(" ")) {
-      setPasswordError("密碼不能包含空格");
+      setPasswordError("Password Cannot Contain Spaces");
       validate = false;
     } else if (password.length < 8) {
-      setPasswordError("密碼至少8個字元");
+      setPasswordError("Password At Least8Characters");
       validate = false;
     } else if (password.length > 32) {
-      setPasswordError("密碼最多32個字元");
+      setPasswordError("Password At Most32Characters");
       validate = false;
     } else {
       setPasswordError("");
     }
 
     if (confirmPassword.trim() == "") {
-      setConfirmPasswordError("請輸入密碼");
+      setConfirmPasswordError("Please Enter Password");
       validate = false;
     } else if (confirmPassword.trim() != password.trim()) {
-      setConfirmPasswordError("密碼不匹配");
-      setPasswordError("密碼不匹配");
+      setConfirmPasswordError("Passwords Do Not Match");
+      setPasswordError("Passwords Do Not Match");
       validate = false;
     } else {
       setConfirmPasswordError("");
@@ -118,23 +119,25 @@ const SignUp = () => {
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       // failed to create user
       if (r.data === "username existed") {
-        setUsernameError("使用者名稱已存在");
+        setUsernameError("Username Already Exists");
       }
       return;
     }
-    toast.success("註冊成功，請登入");
+    toast.success("Registration successful, please log in");
     reset();
     navigate("/login");
   }
   return (
     <div className={cx("signup-root")}>
       <div className={cx("signup-forming")}>
-        <p className={cx("--heading")}>建立帳號</p>
+        <p className={cx("--heading")}>
+          <TText>Create Account</TText>
+        </p>
         <Textbox
-          label="使用者名稱:"
+          label="User:"
           mode="form"
           flex={true}
-          placeholder="輸入使用者名稱"
+          placeholder="Enter Username"
           value={username}
           onChange={(e) => {
             setUsername(e.currentTarget.value.trim());
@@ -146,8 +149,8 @@ const SignUp = () => {
           mode="form"
           flex={true}
           type="password"
-          label="密碼"
-          placeholder="輸入密碼"
+          label="Password"
+          placeholder="Enter Password"
           value={password}
           onChange={(e) => {
             setPassword(e.currentTarget.value.trim());
@@ -159,8 +162,8 @@ const SignUp = () => {
           mode="form"
           flex={true}
           type="password"
-          label="確認密碼"
-          placeholder="輸入密碼"
+          label="Confirm Password"
+          placeholder="Enter Password"
           value={confirmPassword}
           onChange={(e) => {
             setConfirmPassword(e.currentTarget.value.trim());
@@ -171,7 +174,7 @@ const SignUp = () => {
         <IconButton
           mode={"primary"}
           flex={true}
-          text="建立帳號"
+          text="Create Account"
           icon={<Checkmark />}
           onClick={async () => {
             await signup();
@@ -180,10 +183,12 @@ const SignUp = () => {
         />
       </div>
       <div className={cx("signup-login")}>
-        <p>已註冊？</p>
+        <p>
+          <TText>Registered?</TText>
+        </p>
 
         <Link to="/login" className={cx("signup-log")}>
-          登入
+          <TText>Log In</TText>
         </Link>
       </div>
     </div>

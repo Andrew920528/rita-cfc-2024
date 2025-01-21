@@ -3,6 +3,8 @@ import IconButton from "../IconButton/IconButton";
 import {View, ViewOff} from "@carbon/icons-react";
 import classNames from "classnames/bind";
 import styles from "./Textbox.module.scss";
+import {TText} from "../../TText/TText";
+import useLang from "../../../lang/useLang";
 
 const cx = classNames.bind(styles);
 type TextboxProps = {
@@ -35,13 +37,18 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
     ref
   ) => {
     const [showPassword, setShowPassword] = React.useState(false);
+    const l = useLang();
     return (
       <div className={cx("textbox", mode, {flex: flex})}>
-        {label && <p className={cx("tb-label", "--label")}>{label}</p>}
+        {label && (
+          <p className={cx("tb-label", "--label")}>
+            <TText>{label}</TText>
+          </p>
+        )}
         <div className={cx("input-content-wrapper")}>
           <input
             className={cx({error: errorMsg}, type)}
-            placeholder={placeholder}
+            placeholder={l(placeholder)}
             onChange={onChange}
             value={value}
             autoFocus={autoFocus}
@@ -60,7 +67,11 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
             </div>
           )}
         </div>
-        {errorMsg && <p className={cx("--error", "--label")}>{errorMsg}</p>}
+        {errorMsg && (
+          <p className={cx("--error", "--label")}>
+            <TText>{errorMsg}</TText>
+          </p>
+        )}
       </div>
     );
   }

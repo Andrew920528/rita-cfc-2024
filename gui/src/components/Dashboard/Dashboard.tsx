@@ -11,6 +11,7 @@ import {pointIsInRect} from "../../utils/util";
 import {UiServices} from "../../features/UiSlice";
 import {EMPTY_ID} from "../../global/constants";
 import SetSemesterPlanPU from "../PopUps/SetSemesterPlanPU/SetSemesterPlanPU";
+import {TText} from "../TText/TText";
 
 const cx = classNames.bind(styles);
 const DashboardPlaceHolder = () => {
@@ -19,12 +20,16 @@ const DashboardPlaceHolder = () => {
       <div className={cx("dashboard-placeholder")}>
         <div className={cx("dp-header-row")}>
           <Cafe size={20} />
-          <p className={cx("dp-title")}>老師好。來杯咖啡嗎？</p>
+          <p className={cx("dp-title")}>
+            <TText>Hello there. Would you like a cup of coffee?</TText>
+          </p>
         </div>
         <p>
-          您可以由左側工具欄新增備課工具，
+          <TText>
+            You can add lesson preparation tools from the toolbar on the left.
+          </TText>
           <br />
-          並利用小助教Rita幫助您完成工作
+          <TText>And use assistant Rita To help you complete tasks</TText>
         </p>
       </div>
     </div>
@@ -110,7 +115,7 @@ const Dashboard = () => {
       <SetSemesterPlanPU
         trigger={openPlanPU}
         setTrigger={setOpenPlanPU}
-        title="設定進度表"
+        title="Set Semester Plan"
       />
     </div>
   );

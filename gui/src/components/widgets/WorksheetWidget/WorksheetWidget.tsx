@@ -30,6 +30,7 @@ import {
   WatsonHealth3DCurveAutoColon,
 } from "@carbon/icons-react";
 import QuestionView from "./QuestionView";
+import {TText} from "../../TText/TText";
 
 const cx = classNames.bind(styles);
 
@@ -71,17 +72,19 @@ const WorksheetWidget = ({
     return (
       <div className={cx("pick-ques-container")}>
         <div className={cx("pick-ques-header")}>
-          <p className={cx("--label")}>選擇題型 | </p>
+          <p className={cx("--label")}>
+            <TText>Select Question Type | </TText>
+          </p>
           <p
             className={cx("--label", "cancel")}
             onClick={() => setShowPickQuestion(false)}
           >
-            取消
+            <TText>Cancel</TText>
           </p>
         </div>
         <div className={cx("pick-ques")}>
           <IconButton
-            text="選擇題"
+            text="Multiple Choice"
             icon={<List />}
             mode="ghost"
             flex
@@ -91,7 +94,7 @@ const WorksheetWidget = ({
             }}
           />
           <IconButton
-            text="填空題"
+            text="Fill In The Blank"
             icon={<Pen />}
             mode="ghost"
             flex
@@ -101,7 +104,7 @@ const WorksheetWidget = ({
             }}
           />
           <IconButton
-            text="連連看"
+            text="Matching Question"
             icon={<WatsonHealth3DCurveAutoColon />}
             mode="ghost"
             flex
@@ -127,7 +130,7 @@ const WorksheetWidget = ({
             }}
             icon={<CheckmarkOutline />}
             mode="ghost"
-            text="關閉預覽"
+            text="Close Preview"
           />
         </div>
       </div>
@@ -153,7 +156,9 @@ const WorksheetWidget = ({
 
       {preview ? (
         <div className={cx("--label")}>
-          若要新增或修改問題，請先選擇「套用」並在左側視窗直接進行更改
+          <TText>
+            To add or edit questions, please first select apply and modify directly in the left.
+          </TText>
         </div>
       ) : (
         <div className={cx("btns", "add-question-btns")}>
@@ -165,11 +170,11 @@ const WorksheetWidget = ({
                 }}
                 icon={<Add />}
                 mode="ghost"
-                text="新增問題"
+                text="Add Question"
               />
 
               <IconButton
-                text="生成學習單"
+                text="Generate Worksheet"
                 onClick={() => {
                   setShowWorksheetPreview(!showWorksheetPreview);
                 }}
@@ -222,7 +227,11 @@ const WorkSheetQuestionStack = ({
               key={questionObj.questionId}
               id={questionObj.questionId}
               mode="outlined"
-              header={<div className={cx("header")}>{`題目 ${index + 1}`}</div>}
+              header={
+                <div className={cx("header")}>
+                  <TText>Question</TText> {` ${index + 1}`}
+                </div>
+              }
               content={
                 <div
                   className={cx("worksheet-question-stack-item")}
@@ -239,21 +248,21 @@ const WorkSheetQuestionStack = ({
                         <IconButton
                           mode="primary"
                           icon={<CheckmarkOutline />}
-                          text="確認"
+                          text="Confirm"
                           onClick={() => setEditing(false)}
                         />
                       ) : (
                         <IconButton
                           mode="ghost"
                           icon={<Edit />}
-                          text="編輯"
+                          text="Edit"
                           onClick={() => setEditing(true)}
                         />
                       )}
                       <IconButton
                         mode="danger-ghost"
                         icon={<TrashCan />}
-                        text="刪除"
+                        text="Delete"
                         onClick={() => {
                           dispatch(
                             WidgetsServices.actions.deleteQuestion({
@@ -280,17 +289,29 @@ const WorksheetPlaceholder = () => {
     <div className={cx("worksheet-placeholder")}>
       <div className={cx("title")}>
         <div className={cx("decor")} />
-        與Rita交談來開始設計學習單，Rita 會與您討論並生成學習單供您參考。
+        <TText>
+          Chat with Rita to start designing worksheets, Rita will discuss with you and generate worksheets.
+        </TText>
       </div>
 
       <div className={cx("example-title")}>
-        <strong>範例:</strong>
+        <strong>
+          <TText>Example</TText> :
+        </strong>
       </div>
       <div className={cx("example")}>
-        ”針對今天準備的影片內容，我想要讓學生可以藉由學習單發表意見。“
+        ”
+        <TText>
+          For today's class video, I want students to express opinions through worksheets.
+        </TText>
+        ”
       </div>
-      <div className={cx("example")}>”我要一份數學練習的學習單。“</div>
-      <div className={cx("example")}>”來設計校外教學的學習單吧！“</div>
+      <div className={cx("example")}>
+        ”<TText>I want a math practice worksheet.</TText>“
+      </div>
+      <div className={cx("example")}>
+        ”<TText>Let's design a worksheet for field trips!</TText>“
+      </div>
     </div>
   );
 };

@@ -11,8 +11,8 @@ export type SemesterPlanWidgetContent = {
 export class SemesterPlanWidgetMaker extends WidgetMaker<SemesterPlanWidgetContent> {
   init() {
     return {
-      headings: ["週目", "課程單元", "活動"],
-      rows: [{週目: "", 課程單元: "", 活動: ""}],
+      headings: ["Week", "Course Unit", "Activity"],
+      rows: [{Week: "", "Course Unit": "", Activity: ""}],
     };
   }
   isType(obj: any): obj is SemesterPlanWidgetContent {
@@ -32,8 +32,8 @@ export class SemesterPlanWidgetMaker extends WidgetMaker<SemesterPlanWidgetConte
   }
   uiBook() {
     return {
-      title: "進度表",
-      hint: "製作學期進度",
+      title: "Semester Plan",
+      hint: "Create semester plan",
       icon: <Plan />,
       type: WidgetType.SemesterPlan,
       minWidth: 700,
@@ -46,14 +46,14 @@ export class SemesterPlanWidgetMaker extends WidgetMaker<SemesterPlanWidgetConte
   promptRecs(): PromptItem[] {
     return [
       {
-        chipMessage: "生成二十週的教學計畫草稿",
-        actualPrompt: "生成二十週的學期進度，包含每週需要涵蓋的教材內容",
+        chipMessage: "Generate a twenty week teaching plan",
+        actualPrompt: "Generate a twenty week semester plan",
         icon: <ResultDraft />,
         iconColor: "#478CCF",
       },
       {
-        chipMessage: "把第二週跟第四週的內容做交換",
-        actualPrompt: "把第二週跟第四週的內容做交換",
+        chipMessage: "Swap content between week two and week four",
+        actualPrompt: "Swap content between week two and week four",
         icon: <WatsonHealthStatusChange />,
         iconColor: "#B60071",
       },

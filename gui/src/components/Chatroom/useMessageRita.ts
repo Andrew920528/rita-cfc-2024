@@ -120,7 +120,7 @@ export const useMessageRita = (chatroomId: string) => {
       if (error instanceof DOMException && error.name === "AbortError") {
         console.warn(error.message);
       } else {
-        setRitaError("出現未知的錯誤，請再試一次");
+        setRitaError("An unknown error occurred, please try again");
         console.error(error);
       }
       return;
@@ -225,7 +225,7 @@ export const useMessageRita = (chatroomId: string) => {
     );
 
     let messageObj = {
-      text: `更新了${widgetBook(widgets.dict[widgets.current].type).title}`,
+      text: `Updated ${widgetBook(widgets.dict[widgets.current].type).title}`,
       sender: SENDER.system,
       completed: true,
     };

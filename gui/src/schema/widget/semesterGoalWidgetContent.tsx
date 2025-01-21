@@ -31,8 +31,8 @@ export class SemesterGoalWidgetMaker extends WidgetMaker<SemesterGoalWidgetConte
   }
   uiBook() {
     return {
-      title: "學習目標",
-      hint: "列出學習重點",
+      title: "Learning Objectives",
+      hint: "List out key learning objectives",
       icon: <CertificateCheck />,
       type: WidgetType.SemesterGoal,
       minWidth: 300,
@@ -45,8 +45,8 @@ export class SemesterGoalWidgetMaker extends WidgetMaker<SemesterGoalWidgetConte
   promptRecs(): PromptItem[] {
     return [
       {
-        chipMessage: "列出第三單元的學習重點",
-        actualPrompt: "列出第三單元的學習重點",
+        chipMessage: "List key points for the third unit",
+        actualPrompt: "List key points for the third unit",
         icon: <TableOfContents />,
         iconColor: "#B60071",
       },

@@ -15,6 +15,7 @@ import Textbox from "../../ui_components/Textbox/Textbox";
 import {generateId} from "../../../utils/util";
 import {useAppDispatch} from "../../../store/store";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
+import {TText} from "../../TText/TText";
 const cx = classNames.bind(styles);
 type QuestionViewProps = {
   question: Question;
@@ -167,7 +168,7 @@ function McQuestionView({question, editing, widgetId}: QuestionViewProps) {
           }}
           flex
           mode="form"
-          label="題目"
+          label="Question"
         />
       ) : (
         <p className={cx("question-header")}>{question.question}</p>
@@ -193,7 +194,7 @@ function McQuestionView({question, editing, widgetId}: QuestionViewProps) {
         <IconButton
           mode="ghost"
           icon={<Add />}
-          text="新增選項"
+          text="Add Option"
           onClick={handleAddChoice}
         />
       )}
@@ -284,13 +285,13 @@ function FibQuestionView({question, editing, widgetId}: QuestionViewProps) {
           }}
           flex
           mode="form"
-          label="題目"
+          label="Question"
         />
       ) : (
         <p className={cx("question-header")}>{displayQuestionObj.question}</p>
       )}
       <div className={cx("answer")}>
-        參考答案：
+        <TText>Answer Key:</TText>
         {editing ? (
           <Textbox
             value={displayQuestionContent.answer.join(", ")}
@@ -400,8 +401,8 @@ function MatchQuestionView({question, editing, widgetId}: QuestionViewProps) {
 
   const handleAddChoice = () => {
     questionIsChanged.current = true;
-    let newLeft = [...questionContent.leftList, "新增選項"];
-    let newRight = [...questionContent.rightList, "新增選項"];
+    let newLeft = [...questionContent.leftList, "Add Option"];
+    let newRight = [...questionContent.rightList, "Add Option"];
     setDisplayQuestionObj({
       ...displayQuestionObj,
       leftList: newLeft,
@@ -426,7 +427,7 @@ function MatchQuestionView({question, editing, widgetId}: QuestionViewProps) {
           }}
           flex
           mode="form"
-          label="題目"
+          label="Question"
         />
       ) : (
         <p className={cx("question-header")}>{question.question}</p>
@@ -479,7 +480,7 @@ function MatchQuestionView({question, editing, widgetId}: QuestionViewProps) {
         <IconButton
           mode="ghost"
           icon={<Add />}
-          text="新增選項"
+          text="Add Option"
           onClick={handleAddChoice}
         />
       )}

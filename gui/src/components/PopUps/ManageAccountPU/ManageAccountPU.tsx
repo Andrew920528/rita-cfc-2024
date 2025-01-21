@@ -42,15 +42,15 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
   function validateAccount(): boolean {
     let validate = true;
     if (alias.trim() === "") {
-      setAliasError("請輸入暱稱");
+      setAliasError("Enter Nickname");
       validate = false;
     }
     if (school.trim() === "") {
-      setSchoolError("請輸入學校");
+      setSchoolError("Enter School Name");
       validate = false;
     }
     if (occupation.trim() === "") {
-      setOccupationError("請輸入職稱");
+      setOccupationError("Enter Job Title");
       validate = false;
     }
     return validate;
@@ -76,7 +76,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
     });
 
     if (r.status === API.ERROR || r.status === API.ABORTED) {
-      toast.error("存檔失敗，請重試");
+      toast.error("Save failed, please try again");
       return;
     }
 
@@ -98,7 +98,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
       {...props}
       footerBtnProps={{
         icon: <Save size={20} />,
-        text: "儲存變更",
+        text: "Save Changes",
         disabled: loading,
       }}
       reset={() => {
@@ -111,10 +111,10 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
     >
       <div className={cx("manage-account-form")}>
         <Textbox
-          label="暱稱"
+          label="Nickname"
           errorMsg={aliasError}
           mode="form"
-          placeholder="請輸入暱稱"
+          placeholder="Enter Nickname"
           value={alias}
           onChange={(e) => {
             setAlias(e.currentTarget.value);
@@ -125,10 +125,10 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
           onCompositionEnd={handleCompositionEnd}
         />
         <Textbox
-          label="學校"
+          label="School"
           errorMsg={schoolError}
           mode="form"
-          placeholder="請輸入學校"
+          placeholder="Enter School Name"
           value={school}
           onChange={(e) => {
             setSchool(e.currentTarget.value);
@@ -138,10 +138,10 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
           onCompositionEnd={handleCompositionEnd}
         />
         <Textbox
-          label="職稱"
+          label="Job Title"
           errorMsg={occupationError}
           mode="form"
-          placeholder="請輸入職稱"
+          placeholder="Enter Job Title"
           value={occupation}
           onChange={(e) => {
             setOccupation(e.currentTarget.value);
@@ -161,7 +161,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
             placeholder=""
             flex={true}
             mode="form"
-            label="語言"
+            label="Language"
           />
         </div>
       </div>

@@ -15,8 +15,8 @@ export class ScheduleWidgetMaker extends WidgetMaker<ScheduleWidgetContent> {
   }
   uiBook() {
     return {
-      title: "課表",
-      hint: "瀏覽每週課表",
+      title: "Schedule",
+      hint: "View weekly schedule",
       icon: <Alarm />,
       type: WidgetType.Schedule,
       minWidth: 400,

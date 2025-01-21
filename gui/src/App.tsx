@@ -50,7 +50,7 @@ function App() {
       }
       if (r.status === API.ERROR) {
         // if an error actually occurs, we need to navigate to the login page
-        toast.error("您已被自動登出，請重新登入");
+        toast.error("You have been automatically logged out, please log in again");
         dispatch(LoginStatusServices.actions.setLoading(false));
         return;
       }

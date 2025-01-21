@@ -14,6 +14,7 @@ import WidgetFrame, {
   WidgetFramePreview,
 } from "../../../widgets/WidgetFrame/WidgetFrame";
 import {WidgetsServices} from "../../../../features/WidgetsSlice";
+import {TText} from "../../../TText/TText";
 
 const cx = classNames.bind(styles);
 type Props = {};
@@ -53,7 +54,7 @@ const PreviewSpace = (props: Props) => {
           <div>
             <IconButton
               icon={<MagicWand />}
-              text="套用"
+              text="Apply"
               mode="primary"
               onClick={() => {
                 if (!(widgets.current in widgets.previewDict)) return;
@@ -73,8 +74,11 @@ const PreviewSpace = (props: Props) => {
 function PreviewPlaceHolder() {
   return (
     <div className={cx("preview-placeholder")}>
-      尚無可預覽的內容
-      <p className={cx("--label")}> 與Rita 交談，並預覽他幫您生成課程內容。</p>
+      <TText>No Preview Available</TText>
+      <p className={cx("--label")}>
+        {" "}
+        <TText>Chat with Rita and preview the content she generates</TText>
+      </p>
     </div>
   );
 }

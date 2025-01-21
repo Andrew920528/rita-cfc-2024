@@ -32,23 +32,23 @@ export type MatchQuestion = BaseQuestion & {
 export type Question = McQuestion | FibQuestion | MatchQuestion;
 
 export const initMcQuestion: Omit<McQuestion, "questionId"> = {
-  question: "新增選擇題",
+  question: "Add Multiple Choice",
   type: QuestionType.MC,
-  choices: ["選項 1", "選項 2", "選項 3"],
+  choices: ["Options 1", "Options 2", "Options 3"],
   answer: 0, // Index of the correct choice
 };
 
 export const initFibQuestion: Omit<FibQuestion, "questionId"> = {
-  question: "新增填空題",
+  question: "Add Fill In The Blank",
   type: QuestionType.FIB,
-  answer: ["答案 1"], // Correct answer(s)
+  answer: ["Answers 1"], // Correct answer(s)
 };
 
 export const initMatchQuestion: Omit<MatchQuestion, "questionId"> = {
-  question: "新增連連看",
+  question: "Add Matching Questions",
   type: QuestionType.MATCH,
-  leftList: ["選項 1", "選項 2", "選項 3"],
-  rightList: ["選項 A", "選項 B", "選項 C"],
+  leftList: ["Options 1", "Options 2", "Options 3"],
+  rightList: ["Options A", "Options B", "Options C"],
 };
 
 export type WorksheetWidgetContent = {
@@ -111,8 +111,8 @@ export class WorksheetWidgetMaker extends WidgetMaker<WorksheetWidgetContent> {
   }
   uiBook() {
     return {
-      title: "學習單",
-      hint: "製作學習單",
+      title: "Worksheet",
+      hint: "Create worksheet",
       icon: <Document />,
       type: WidgetType.Worksheet,
       minWidth: 600,
@@ -125,14 +125,14 @@ export class WorksheetWidgetMaker extends WidgetMaker<WorksheetWidgetContent> {
   promptRecs(): PromptItem[] {
     return [
       {
-        chipMessage: "設計一份讓孩子練習小數運算的學習單",
-        actualPrompt: "設計一份讓孩子練習小數運算的學習單",
+        chipMessage: "Design a worksheet for decimal operations practice",
+        actualPrompt: "Design a worksheet for decimal operations practice",
         icon: <Concept />,
         iconColor: "#FFB200",
       },
       {
-        chipMessage: "出五道測驗四則運算的選擇題",
-        actualPrompt: "出五道測驗四則運算的選擇題",
+        chipMessage: "Create five quiz questions that tests arithmatic operations",
+        actualPrompt: "Create five quiz questions that tests arithmatic operations",
         icon: <DocumentRequirements />,
         iconColor: "#B60071",
       },

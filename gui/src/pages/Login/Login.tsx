@@ -10,6 +10,7 @@ import classNames from "classnames/bind";
 import styles from "./Login.module.scss";
 import {useLoginParseState} from "../../global/globalActions";
 import {LoginStatusServices} from "../../features/LoginStatusSlice";
+import {TText} from "../../components/TText/TText";
 
 const cx = classNames.bind(styles);
 
@@ -49,11 +50,11 @@ const Login = () => {
   function validateLogin(): boolean {
     let validate = true;
     if (username.trim() === "") {
-      setUsernameError("請輸入使用者名稱");
+      setUsernameError("Please Enter Username");
       validate = false;
     }
     if (password.trim() === "") {
-      setPasswordError("請輸入密碼");
+      setPasswordError("Please Enter Password");
       validate = false;
     }
     return validate;
@@ -70,8 +71,8 @@ const Login = () => {
 
     if (r.status === API.ERROR || r.status === API.ABORTED) {
       if (r.data === "Username or password is incorrect. Please try again.") {
-        setUsernameError("使用者名稱或密碼錯誤");
-        setPasswordError("使用者名稱或密碼錯誤");
+        setUsernameError("Incorrect Username Or Password");
+        setPasswordError("Incorrect Username Or Password");
       }
       return;
     }
@@ -82,12 +83,14 @@ const Login = () => {
   return (
     <div className={cx("login-root")}>
       <div className={cx("login-forming")}>
-        <p className={cx("--heading")}>登入</p>
+        <p className={cx("--heading")}>
+          <TText>Log In</TText>
+        </p>
         <Textbox
-          label="使用者名稱"
+          label="User"
           mode="form"
           flex={true}
-          placeholder="輸入使用者名稱"
+          placeholder="Enter Username"
           value={username}
           onChange={(e) => {
             setUsername(e.currentTarget.value.trim());
@@ -99,8 +102,8 @@ const Login = () => {
           mode="form"
           flex={true}
           type="password"
-          label="密碼"
-          placeholder="輸入密碼"
+          label="Password"
+          placeholder="Enter Password"
           value={password}
           onChange={(e) => {
             setPassword(e.currentTarget.value.trim());
@@ -111,7 +114,7 @@ const Login = () => {
         <IconButton
           mode={"primary"}
           flex={true}
-          text="登入"
+          text="Log In"
           icon={<LoginIcon />}
           onClick={async () => {
             await login();
@@ -120,9 +123,11 @@ const Login = () => {
         />
       </div>
       <div className={cx("login-register")}>
-        <p>尚未註冊？</p>
+        <p>
+          <TText>Not Registered Yet?</TText>
+        </p>
         <Link to="/signup" className={cx("login-create")}>
-          建立帳號
+          <TText>Create Account</TText>
         </Link>
       </div>
     </div>

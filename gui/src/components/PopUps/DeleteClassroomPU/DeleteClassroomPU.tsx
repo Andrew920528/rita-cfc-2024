@@ -13,6 +13,7 @@ import {API} from "../../../global/constants";
 import {toast} from "react-toastify";
 import classNames from "classnames/bind";
 import styles from "./DeleteClassroomPU.module.scss";
+import {TText} from "../../TText/TText";
 const cx = classNames.bind(styles);
 type Props = {classroomId: string};
 
@@ -29,19 +30,23 @@ const DeleteClassroomPU = (props: Props & PopUpProps) => {
       identifier: "deleteClassroom",
     });
     if (r.status === API.ERROR) {
-      toast.error("刪除失敗，請重試");
+      toast.error("Delete failed, please try Again");
     }
   };
   return (
     <PopUp {...props}>
       <div className={cx("content")}>
         <div className={cx("words")}>
-          <p className={cx("ask")}>確定要刪除此教室嗎?</p>
-          <p className="--label">您將永久刪除此教室與其中的所有課程計畫。</p>
+          <p className={cx("ask")}>
+            <TText>Are you sure that you want to delete this classroom??</TText>
+          </p>
+          <p className="--label">
+            <TText>You are permanently deleting this classroom and all its lesson plans.</TText>
+          </p>
         </div>
         <IconButton
           icon={<TrashCan />}
-          text="刪除"
+          text="Delete"
           mode="danger-outline"
           onClick={() => {
             handleDelete();
