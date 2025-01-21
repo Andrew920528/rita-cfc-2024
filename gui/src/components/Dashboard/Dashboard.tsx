@@ -25,9 +25,11 @@ const DashboardPlaceHolder = () => {
           </p>
         </div>
         <p>
-          <TText>You can add lesson preparation tools from the toolbar on the left.</TText>
+          <TText>
+            You can add lesson preparation tools from the toolbar on the left.
+          </TText>
           <br />
-          <TText>And use assistantRitaTo help you complete tasks</TText>
+          <TText>And use assistant Rita To help you complete tasks</TText>
         </p>
       </div>
     </div>

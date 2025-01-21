@@ -2,6 +2,7 @@ import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import {User} from "../schema/user";
 import {Schedule, ScheduleHeadings, initSchedule} from "../schema/schedule";
 import {LANG} from "../global/constants";
+import {getEnumKeyByValue} from "../utils/util";
 
 const initialState: User = {
   username: "",
@@ -28,10 +29,19 @@ const UserSlice = createSlice({
         : initSchedule;
       state.classroomIds = action.payload.classroomIds;
       state.scheduleChanged = false;
+      console.log("user's lang choice", action.payload.lang);
+      console.log("LANG", LANG);
+      console.log(
+        getEnumKeyByValue(LANG, action.payload.lang, LANG.EN_US) as LANG
+      );
+
       state.lang =
-        action.payload.lang && action.payload.lang in LANG
+        action.payload.lang &&
+        Object.values(LANG).includes(action.payload.lang as LANG)
           ? action.payload.lang
           : LANG.EN_US;
+
+      console.log(state.lang);
     },
     setProfile: (
       state,

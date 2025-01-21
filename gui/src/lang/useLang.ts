@@ -4,7 +4,7 @@ import ZH_TW_DICT from "./zh_tw.json";
 import EN_US_DICT from "./en_us.json";
 /**
  * Custom hook to manage language and retrieve translated content.
- * @param {string} initialLang - Initial language ("en" or "zh").
+ * @param {string} initialLang - Initial language
  * @returns {object} - Object containing current language, setLang function, and translate function.
  */
 // Define the type for the dictionary
@@ -15,6 +15,8 @@ const useLang = () => {
   const l = useTypedSelector((state) =>
     state.User ? state.User.lang : LANG.EN_US
   );
+  // console.log(l, LANG.ZH_TW);
+  // console.log(l === LANG.ZH_TW);
   const json: TranslationDictionary =
     l === LANG.ZH_TW
       ? (ZH_TW_DICT as TranslationDictionary)
