@@ -1,0 +1,33 @@
+import {LANG} from "../global/constants";
+import {useTypedSelector} from "../store/store";
+import CH_TW_DICT from "./ch_tw.json";
+import EN_US_DICT from "./en_us.json";
+/**
+ * Custom hook to manage language and retrieve translated content.
+ * @param {string} initialLang - Initial language ("en" or "zh").
+ * @returns {object} - Object containing current language, setLang function, and translate function.
+ */
+// Define the type for the dictionary
+type TranslationDictionary = {
+  [key: string]: string; // Keys are strings, and values are also strings
+};
+const useLang = () => {
+  const l = useTypedSelector((state) => state.User.lang);
+  const json: TranslationDictionary =
+    l === LANG.EN_US
+      ? (EN_US_DICT as TranslationDictionary)
+      : (CH_TW_DICT as TranslationDictionary);
+  // Translate function to fetch the corresponding language content
+
+  function displayLang(text: string) {
+    // ideally, we use a library to translate, and only write into dictionary for specific words
+    if (!json[text]) {
+      return text;
+    }
+    return json[text];
+  }
+
+  return displayLang;
+};
+
+export default useLang;

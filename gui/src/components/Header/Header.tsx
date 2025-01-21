@@ -9,13 +9,14 @@ import {
   Menu,
   UserAvatar,
   Save,
+  Translate,
 } from "@carbon/icons-react";
 import {useAppDispatch, useTypedSelector} from "../../store/store";
 
 import ManageAccountPU from "../PopUps/ManageAccountPU/ManageAccountPU";
 import {WidgetsServices} from "../../features/WidgetsSlice";
 import {UserServices} from "../../features/UserSlice";
-import {API, EMPTY_ID} from "../../global/constants";
+import {API, EMPTY_ID, LANG} from "../../global/constants";
 import {
   updateUserService,
   updateWidgetBulkService,
@@ -27,6 +28,7 @@ import {LoginStatusServices} from "../../features/LoginStatusSlice";
 import {CircularProgress} from "@mui/material";
 import useAutosave from "../../utils/useAutosave";
 import {toast} from "react-toastify";
+import useLang from "../../lang/useLang";
 
 const cx = classNames.bind(styles);
 type HeaderProps = {
@@ -217,7 +219,7 @@ const AccountButton = () => {
         </div>
         <IconButton
           flex={true}
-          text={"管理帳號"}
+          text={"Manage Account"}
           icon={<Settings />}
           mode={"on-dark-2"}
           onClick={() => {
@@ -233,7 +235,7 @@ const AccountButton = () => {
 
         <IconButton
           flex={true}
-          text={"登出"}
+          text={"Log Out"}
           icon={<Logout />}
           mode={"on-dark-2"}
           onClick={() => {

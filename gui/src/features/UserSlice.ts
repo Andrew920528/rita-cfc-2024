@@ -1,6 +1,7 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import {User} from "../schema/user";
 import {Schedule, ScheduleHeadings, initSchedule} from "../schema/schedule";
+import {LANG} from "../global/constants";
 
 const initialState: User = {
   username: "",
@@ -10,6 +11,7 @@ const initialState: User = {
   schedule: initSchedule,
   classroomIds: [],
   scheduleChanged: false,
+  lang: LANG.EN_US,
 };
 
 const UserSlice = createSlice({
@@ -26,6 +28,7 @@ const UserSlice = createSlice({
         : initSchedule;
       state.classroomIds = action.payload.classroomIds;
       state.scheduleChanged = false;
+      state.lang = action.payload.lang ? action.payload.lang : LANG.EN_US;
     },
     setProfile: (
       state,
@@ -34,6 +37,9 @@ const UserSlice = createSlice({
       state.alias = action.payload.alias;
       state.school = action.payload.school;
       state.occupation = action.payload.occupation;
+    },
+    setLang: (state, action: PayloadAction<LANG>) => {
+      state.lang = action.payload;
     },
     addClassroom: (state, action: PayloadAction<string>) => {
       state.classroomIds.push(action.payload);

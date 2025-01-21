@@ -1,6 +1,7 @@
 import React, {ReactElement, ReactNode} from "react";
 import classNames from "classnames/bind";
 import styles from "./IconButton.module.scss";
+import {TText} from "../../TText/TText";
 
 const cx = classNames.bind(styles);
 export type IconButtonProps = {
@@ -42,7 +43,7 @@ const IconButton = ({
         onClick(e);
       }}
     >
-      {text}
+      <TText>{text ? text : ""}</TText>
       <div className={cx("icon-wrapper")}>{icon}</div>
     </div>
   );

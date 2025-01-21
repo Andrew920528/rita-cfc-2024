@@ -4,7 +4,7 @@ import {Checkmark, Login as LoginIcon} from "@carbon/icons-react";
 import Textbox from "../../components/ui_components/Textbox/Textbox";
 import {Link, useNavigate} from "react-router-dom";
 import {createUserService, useApiHandler} from "../../utils/service";
-import {API} from "../../global/constants";
+import {API, LANG} from "../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./SignUp.module.scss";
 import {initSchedule} from "../../schema/schedule";
@@ -107,6 +107,7 @@ const SignUp = () => {
       alias: username,
       occupation: "",
       schedule: JSON.stringify(initSchedule),
+      lang: LANG.EN_US,
     };
     let r = await apiHandler({
       apiFunction: (s) => createUserService(userPayload, s),

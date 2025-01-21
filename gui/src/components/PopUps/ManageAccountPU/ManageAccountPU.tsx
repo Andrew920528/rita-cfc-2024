@@ -5,11 +5,12 @@ import PopUp, {PopUpProps} from "../PopUp/PopUp";
 import {useAppDispatch, useTypedSelector} from "../../../store/store";
 import {UserServices} from "../../../features/UserSlice";
 import {updateUserService, useApiHandler} from "../../../utils/service";
-import {API} from "../../../global/constants";
+import {API, LANG} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./ManageAccountPU.module.scss";
-import {useCompose} from "../../../utils/util";
+import {getEnumKeyByValue, useCompose} from "../../../utils/util";
 import {toast} from "react-toastify";
+import Dropdown from "../../ui_components/Dropdown/Dropdown";
 
 const cx = classNames.bind(styles);
 type ManageAccountPUProps = {};
@@ -24,6 +25,8 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
   const [aliasError, setAliasError] = useState("");
   const [schoolError, setSchoolError] = useState("");
   const [occupationError, setOccupationError] = useState("");
+
+  const [lang, setLang] = useState<string>(getEnumKeyByValue(LANG, user.lang));
 
   const [alias, setAlias] = useState("");
   const [school, setSchool] = useState("");
@@ -64,6 +67,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
             alias: alias.trim(),
             school: school.trim(),
             occupation: occupation.trim(),
+            lang: LANG[lang as keyof typeof LANG],
           },
           s
         ),
@@ -84,6 +88,7 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
         occupation: occupation.trim(),
       })
     );
+    dispatch(UserServices.actions.setLang(LANG[lang as keyof typeof LANG]));
 
     props.setTrigger(false);
   }
@@ -145,6 +150,20 @@ const ManageAccountPU = (props: ManageAccountPUProps & PopUpProps) => {
           onCompositionStart={handleCompositionStart}
           onCompositionEnd={handleCompositionEnd}
         />
+        <div>
+          <Dropdown
+            currId={lang}
+            setCurrId={setLang}
+            idDict={LANG}
+            getName={(id) => {
+              return LANG[id as keyof typeof LANG];
+            }}
+            placeholder=""
+            flex={true}
+            mode="form"
+            label="語言"
+          />
+        </div>
       </div>
     </PopUp>
   );

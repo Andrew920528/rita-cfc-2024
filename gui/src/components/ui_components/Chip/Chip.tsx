@@ -1,6 +1,7 @@
 import React, {ReactNode} from "react";
 import classNames from "classnames/bind";
 import styles from "./Chip.module.scss";
+import {TText} from "../../TText/TText";
 
 const cx = classNames.bind(styles);
 const Chip = ({
@@ -21,7 +22,9 @@ const Chip = ({
       <div className={cx("chip-icon")} style={{color: iconColor}}>
         {icon}
       </div>
-      <p>{text}</p>
+      <p>
+        <TText>{text}</TText>
+      </p>
     </div>
   );
 };

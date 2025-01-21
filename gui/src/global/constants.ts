@@ -19,3 +19,8 @@ export enum AGENCY {
   WORKSHEET,
   LECTURE,
 }
+
+export enum LANG {
+  ZH_TW = "繁體中文",
+  EN_US = "English",
+}

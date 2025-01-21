@@ -243,6 +243,7 @@ export function updateUserService(
     school?: string;
     occupation?: string;
     schedule?: string;
+    lang?: string;
   },
   abortSignal?: AbortSignal
 ) {

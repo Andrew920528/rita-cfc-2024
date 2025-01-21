@@ -165,3 +165,11 @@ export function parseDate(dateString: string | undefined): Dayjs | null {
 
   return date;
 }
+
+export function getEnumKeyByValue<T extends Record<string, string | number>>(
+  enumObj: T,
+  value: string
+): string {
+  const entry = Object.entries(enumObj).find(([_, val]) => val === value);
+  return entry ? entry[0] : ""; // Provide a default string value if undefined
+}

@@ -1,6 +1,25 @@
 # Rita - AI Teaching Assistant
 
-## :star2: UPDATED (11/2)
+## :star2: UPDATES
+
+### 2025/1/26
+
+Thank you for visiting this repository!
+
+Our team is excited to announce that we are currently working on this project privately, with the vision of transforming it into a startup aimed at enhancing education accessibility. This will involve developing a more polished and impactful version of the concepts showcased here.
+
+We believe in the potential of this project to make a meaningful difference in education, and we invite you to join us on this journey.
+
+To stay updated on our progress and future announcements, follow me on [LinkedIn](https://www.linkedin.com/in/andrew-hsu-71b020/).
+
+Thank you for your interest and support!
+
+### 2025/1/20
+
+English support is added.
+
+### 2024/11/2
+
 We have successfully deployed our app for beta testing! Please come to this link: [https://rita-beta.up.railway.app/](https://rita-beta.up.railway.app/).
 
 We have provided an account for you to try it out:
@@ -12,6 +31,7 @@ pw: `RITACFC2024`
 Or, feel free to create your own account by clicking "建立帳號" at the bottom of the log in page!
 
 ## :purple_heart: Table of Contents
+
 - [Project summary](#project-summary)
   - [The issue we are hoping to solve](#the-issue-we-are-hoping-to-solve)
   - [How our technology solution can help](#how-our-technology-solution-can-help)
@@ -61,7 +81,7 @@ Through our user interface, users can manually customize the dashboard with pred
 For feature details and their current limitation, please refer to [this document](https://docs.google.com/document/d/1FSf4swprNvd4V2dWTQ28K49oih-5wg9wwJxI-5eTkJk/edit?tab=t.0)
 
 **Technical Concepts and Benefits:**
-Our team used Watsonx.ai and Langchain to orchestrate our AI system. Being a Taiwan-based project, we used a multilingual-based Large Language Model (LLM) to allow users to interact with our system in both English and Chinese. Using Retrieval Augmented Generation (RAG), we allowed Rita to interact with users based on information from the specified textbooks. Rita has access to chat history and context of lectures, allowing users to directly refer to content through phrases such as “chapter 2”, “this week”, instead of the lengthy “concepts in fraction multiplication for 5th graders”. 
+Our team used Watsonx.ai and Langchain to orchestrate our AI system. Being a Taiwan-based project, we used a multilingual-based Large Language Model (LLM) to allow users to interact with our system in both English and Chinese. Using Retrieval Augmented Generation (RAG), we allowed Rita to interact with users based on information from the specified textbooks. Rita has access to chat history and context of lectures, allowing users to directly refer to content through phrases such as “chapter 2”, “this week”, instead of the lengthy “concepts in fraction multiplication for 5th graders”.
 
 To see the detail implementation of our ai system, please refer to [this document](https://docs.google.com/document/d/1gaajXZ1rThH_nbuSNh4QiEwqpYV7OD_akKKs73_praM/edit?usp=sharing)
 
@@ -93,14 +113,11 @@ Our AI system design is upgraded multiple times throughout the iterations to add
 
 ![ai design](https://drive.google.com/uc?id=1aV1LpqEJ7zEysPh8ETP5eSh1OPPy9B8Y)
 
-
-
 ## :purple_heart: Presentation materials
 
 ### Solution demo video
+
 [![Watch the video](https://img.youtube.com/vi/spGOiM32nGE/0.jpg)](https://www.youtube.com/watch?v=spGOiM32nGE)
-
-
 
 ### Project development roadmap
 
@@ -108,7 +125,7 @@ Our AI system design is upgraded multiple times throughout the iterations to add
 
 To see a detail list of key ai features and their current limitations, please see [this document](https://docs.google.com/document/d/1FSf4swprNvd4V2dWTQ28K49oih-5wg9wwJxI-5eTkJk/edit?usp=drive_link).
 
-- Generates worksheet of a given topic and formats them properly. 
+- Generates worksheet of a given topic and formats them properly.
 - Searches for relevant videos for teachers to teach.
 - Generates a semester schedule with suggested activity based on textbook.
 - Suggest key learning objective based on discussion with the user.
@@ -119,7 +136,6 @@ To see a detail list of key ai features and their current limitations, please se
 - Users are able to create an account and store all their progress.
 - Worksheets and semester plan can be outputted as `.docx`, `.pdf`, and `.xlsx` for the user to further edit them.
 - Complete functionality (no dummy buttons) and full integration with database.
-
 
 Past milestones:
 
@@ -132,9 +148,6 @@ In the coming future, our main focus will be on further improving our AI system 
 3. Improved model's Chinese comprehension ability (possibly by using a more advanced base model)
 
 Our long term goal would be to expand our database to support more subjects and publishers.
-
-
-
 
 ## :purple_heart: Additional details
 
