@@ -28,7 +28,10 @@ const UserSlice = createSlice({
         : initSchedule;
       state.classroomIds = action.payload.classroomIds;
       state.scheduleChanged = false;
-      state.lang = action.payload.lang ? action.payload.lang : LANG.EN_US;
+      state.lang =
+        action.payload.lang && action.payload.lang in LANG
+          ? action.payload.lang
+          : LANG.EN_US;
     },
     setProfile: (
       state,

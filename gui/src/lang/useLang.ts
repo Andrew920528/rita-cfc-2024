@@ -1,6 +1,6 @@
 import {LANG} from "../global/constants";
 import {useTypedSelector} from "../store/store";
-import CH_TW_DICT from "./ch_tw.json";
+import ZH_TW_DICT from "./zh_tw.json";
 import EN_US_DICT from "./en_us.json";
 /**
  * Custom hook to manage language and retrieve translated content.
@@ -14,9 +14,9 @@ type TranslationDictionary = {
 const useLang = () => {
   const l = useTypedSelector((state) => state.User.lang);
   const json: TranslationDictionary =
-    l === LANG.EN_US
-      ? (EN_US_DICT as TranslationDictionary)
-      : (CH_TW_DICT as TranslationDictionary);
+    l === LANG.ZH_TW
+      ? (ZH_TW_DICT as TranslationDictionary)
+      : (EN_US_DICT as TranslationDictionary);
   // Translate function to fetch the corresponding language content
 
   function displayLang(text: string) {
