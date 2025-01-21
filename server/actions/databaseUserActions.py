@@ -14,7 +14,7 @@ databasepassword = ''
 database = ''
 port = 0
 
-defaultLanguage = "english"
+defaultLanguage = "English"
 
 
 def generate_random_string(length=16):
