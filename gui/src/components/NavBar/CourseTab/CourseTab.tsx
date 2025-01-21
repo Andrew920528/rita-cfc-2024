@@ -212,7 +212,7 @@ const ClassCard = ({
         </p>
         <p className={cx("--label")}>
           <TText>Subject:</TText> {subject} <TText>| Grade:</TText>
-          {grade} <TText> | Class Material:</TText>
+          {grade} <TText>| Class Material:</TText>
           {publisher}
           <br /> <TText>Weekly Sessions:</TText>
           {credits} <TText>| Semester Planning:</TText>

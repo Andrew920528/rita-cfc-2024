@@ -27,10 +27,10 @@ export const subjectDict = {
 };
 
 export const gradeDict = {
-  "Fifth Grade First Semester": "",
-  "Fifth Grade Second Semester": "",
-  "Sixth Grade First Semester": "",
-  "Sixth Grade Second Semester": "",
+  "5th grade Term 1": "",
+  "5th Grade Term 2": "",
+  "6th Grade Term 1": "",
+  "6th Grade Term 2": "",
 };
 
 export const publisherDict = {
