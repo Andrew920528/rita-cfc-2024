@@ -9,6 +9,7 @@ import {useTypedSelector} from "../../../store/store";
 
 import Accordion from "../../ui_components/Accordion/Accordion";
 import {Lecture} from "../../../schema/lecture";
+import {TText} from "../../TText/TText";
 
 const cx = classNames.bind(styles);
 type Props = {};
@@ -38,7 +39,9 @@ function ToolTab({}: Props) {
             key={key}
             header={
               <div className={cx("nav-heading")}>
-                <p className={cx("--heading")}>{WidgetCategory[key]}</p>
+                <p className={cx("--heading")}>
+                  <TText>{WidgetCategory[key]}</TText>
+                </p>
               </div>
             }
             content={

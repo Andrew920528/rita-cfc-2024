@@ -17,6 +17,7 @@ import styles from "./WidgetFrame.module.scss";
 import {delay} from "../../../utils/util";
 import WorksheetWidget from "../WorksheetWidget/WorksheetWidget";
 import {CircularProgress} from "@mui/material";
+import {TText} from "../../TText/TText";
 
 const cx = classNames.bind(styles);
 
@@ -133,7 +134,9 @@ const WidgetFrame = ({selected, widget}: WidgetFrameProps) => {
       <div className={cx("wf-heading")}>
         <div className={cx("wf-heading-left")}>
           {icon}
-          <p className={cx("--heading")}>{title}</p>
+          <p className={cx("--heading")}>
+            <TText>{title}</TText>
+          </p>
         </div>
         <IconButton
           icon={
@@ -176,7 +179,9 @@ export const WidgetFrameGhost = ({widgetType}: {widgetType: WidgetType}) => {
       <div className={cx("wf-heading")}>
         <div className={cx("wf-heading-left")}>
           {icon}
-          <p className={cx("--heading")}>{title}</p>
+          <p className={cx("--heading")}>
+            <TText>{title}</TText>
+          </p>
         </div>
         <IconButton icon={<Close />} mode="ghost" />
       </div>
@@ -202,7 +207,9 @@ export const WidgetFramePreview = ({
       <div className={cx("wf-heading")}>
         <div className={cx("wf-heading-left")}>
           {icon}
-          <p className={cx("--heading")}>{title}</p>
+          <p className={cx("--heading")}>
+            <TText>{title}</TText>
+          </p>
         </div>
       </div>
       <div className={cx("wf-content")}>

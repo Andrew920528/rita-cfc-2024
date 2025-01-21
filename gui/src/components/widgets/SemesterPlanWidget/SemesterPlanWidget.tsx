@@ -22,6 +22,7 @@ import {Skeleton} from "@mui/material";
 import {WidgetContentProps} from "../WidgetFrame/WidgetFrame";
 import * as XLSX from "xlsx";
 import TextArea from "../../ui_components/TextArea/TextArea";
+import {TText} from "../../TText/TText";
 
 const cx = classNames.bind(styles);
 
@@ -246,7 +247,9 @@ const SemesterPlanWidget = ({
         </div>
       ) : (
         <div className={cx("name-row")}>
-          <p className={cx("name")}>{widgetContent.name ?? "未命名的計畫"}</p>
+          <p className={cx("name")}>
+            {widgetContent.name ?? <TText>未命名的計畫</TText>}
+          </p>
           <div className={cx("button-row")}>
             <IconButton
               icon={<Edit />}
@@ -345,7 +348,9 @@ export const SemesterPlanReadOnly = ({widget}: {widget: Widget}) => {
   return (
     <div className={cx("readonly", "semester-plan-widget")}>
       <div className={cx("name-row")}>
-        <p className={cx("name")}>{widgetContent.name ?? "未命名的計畫"}</p>
+        <p className={cx("name")}>
+          {widgetContent.name ?? <TText>未命名的計畫</TText>}
+        </p>
       </div>
 
       <Table headings={widgetContent.headings} content={widgetTableContent} />

@@ -10,6 +10,7 @@ import {ChevronDown, ChevronUp, Close} from "@carbon/icons-react";
 import IconButton from "../IconButton/IconButton";
 import classNames from "classnames/bind";
 import styles from "./Dropdown.module.scss";
+import {TText} from "../../TText/TText";
 
 const cx = classNames.bind(styles);
 const UNDEFINED = "UNDEFINED";
@@ -70,7 +71,11 @@ const Dropdown = ({
       className={cx("dropdown-wrapper", {flex: flex, fixed: !flex}, mode)}
       ref={componentRef}
     >
-      {label && <p className={cx("dd-label", "--label")}>{label}</p>}
+      {label && (
+        <p className={cx("dd-label", "--label")}>
+          <TText>{label}</TText>
+        </p>
+      )}
       <div
         className={cx("dropdown", mode, {error: errorMsg})}
         onClick={() => {
@@ -118,7 +123,9 @@ const Dropdown = ({
         </div>
       )}
       {errorMsg && (
-        <p className={cx("dd-error", "--error", "--label")}>{errorMsg}</p>
+        <p className={cx("dd-error", "--error", "--label")}>
+          <TText>{errorMsg}</TText>
+        </p>
       )}
     </div>
   );
@@ -153,7 +160,9 @@ const DropdownOption = ({
   return (
     <div className={cx("dropdown-option", {selected: id === currId})}>
       <div className={cx("dropdown-option-left")} onClick={onClick}>
-        <p>{name}</p>
+        <p>
+          <TText>{name}</TText>
+        </p>
       </div>
       {action && (
         <IconButton

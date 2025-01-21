@@ -83,7 +83,9 @@ const Login = () => {
   return (
     <div className={cx("login-root")}>
       <div className={cx("login-forming")}>
-        <p className={cx("--heading")}>登入</p>
+        <p className={cx("--heading")}>
+          <TText>登入</TText>
+        </p>
         <Textbox
           label="使用者名稱"
           mode="form"

@@ -11,6 +11,7 @@ import styles from "./WidgetCard.module.scss";
 import {WidgetFrameGhost} from "../../widgets/WidgetFrame/WidgetFrame";
 import {UiServices} from "../../../features/UiSlice";
 import React from "react";
+import {TText} from "../../TText/TText";
 
 const cx = classNames.bind(styles);
 
@@ -71,7 +72,9 @@ const WidgetCard = ({
         <p>
           <strong>{title}</strong>
         </p>
-        <p className={cx("--label")}>{hint}</p>
+        <p className={cx("--label")}>
+          <TText>{hint}</TText>
+        </p>
       </div>
       <div className={cx("widget-card-right")}>
         <IconButton mode={"ghost"} icon={<Information />} />
