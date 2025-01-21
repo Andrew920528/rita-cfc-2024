@@ -29,6 +29,7 @@ import {CircularProgress} from "@mui/material";
 import useAutosave from "../../utils/useAutosave";
 import {toast} from "react-toastify";
 import useLang from "../../lang/useLang";
+import {TText} from "../TText/TText";
 
 const cx = classNames.bind(styles);
 type HeaderProps = {
@@ -83,7 +84,9 @@ const Header = ({openNav, setOpenNav = () => {}}: HeaderProps) => {
         {classrooms.current === EMPTY_ID ||
         Object.keys(classrooms.dict).length === 0 ? (
           <div className={cx("no-subject-hint")}>
-            <i>新增教室以開始備課</i>
+            <i>
+              <TText>新增教室以開始備課</TText>
+            </i>
           </div>
         ) : (
           <div className={cx("subject-banner")}>
@@ -197,9 +200,9 @@ const SaveGroup = () => {
 const AccountButton = () => {
   const user = useTypedSelector((state) => state.User);
   const AccountContent = ({
-    name = "廖偉良",
-    occupation = "級任老師",
-    school = "松山高中",
+    name = "User",
+    occupation = "Teacher",
+    school = "School",
   }) => {
     const [openManageAccountPU, setOpenManageAccountPU] = useState(false);
     const dispatch = useAppDispatch();

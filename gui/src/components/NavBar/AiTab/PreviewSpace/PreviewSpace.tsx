@@ -14,6 +14,7 @@ import WidgetFrame, {
   WidgetFramePreview,
 } from "../../../widgets/WidgetFrame/WidgetFrame";
 import {WidgetsServices} from "../../../../features/WidgetsSlice";
+import {TText} from "../../../TText/TText";
 
 const cx = classNames.bind(styles);
 type Props = {};
@@ -73,8 +74,11 @@ const PreviewSpace = (props: Props) => {
 function PreviewPlaceHolder() {
   return (
     <div className={cx("preview-placeholder")}>
-      尚無可預覽的內容
-      <p className={cx("--label")}> 與Rita 交談，並預覽他幫您生成課程內容。</p>
+      <TText>尚無可預覽的內容</TText>
+      <p className={cx("--label")}>
+        {" "}
+        <TText>與Rita 交談，並預覽他幫您生成課程內容。</TText>
+      </p>
     </div>
   );
 }

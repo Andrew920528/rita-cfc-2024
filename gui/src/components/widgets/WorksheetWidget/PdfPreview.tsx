@@ -4,6 +4,7 @@ import {Question} from "../../../schema/widget/worksheetWidgetContent";
 import {getPdfService} from "../../../utils/service";
 import styles from "./WorksheetWidget.module.scss";
 import classNames from "classnames/bind";
+import {TText} from "../../TText/TText";
 const cx = classNames.bind(styles);
 // import pdfWorker from "pdfjs-dist/build/pdf.worker.entry";
 
@@ -31,7 +32,9 @@ const PdfPreview = (props: {content: Question[]}) => {
   }, []);
   return (
     <div className={cx("pdf-preview")}>
-      <p>預覽</p>
+      <p>
+        <TText>預覽</TText>
+      </p>
       {pdfUrl && (
         <iframe title="pdf" src={pdfUrl} width="100%" height="100%"></iframe>
       )}

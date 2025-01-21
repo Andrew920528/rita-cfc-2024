@@ -26,6 +26,7 @@ import DeleteClassroomPU from "../../PopUps/DeleteClassroomPU/DeleteClassroomPU"
 import DeleteLecturePU from "../../PopUps/DeleteLecturePU/DeleteLecturePU";
 import {CircularProgress} from "@mui/material";
 import useVerticalHandle from "../VerticalHandle/VerticalHandle";
+import {TText} from "../../TText/TText";
 type Props = {};
 const cx = classNames.bind(styles);
 const CourseTab = (props: Props) => {
@@ -42,7 +43,9 @@ const CourseTab = (props: Props) => {
         style={{height: `${mainHeight}%`}}
       >
         <div className={cx("nav-heading")}>
-          <p className={cx("--heading")}>教室</p>
+          <p className={cx("--heading")}>
+            <TText>教室</TText>
+          </p>
           <IconButton
             mode={"primary"}
             icon={<Add />}
@@ -60,7 +63,9 @@ const CourseTab = (props: Props) => {
         </div>
         <div className={cx("nav-stack")}>
           {user.classroomIds.length === 0 && (
-            <div className={cx("placeholder")}>請新增教室開始備課</div>
+            <div className={cx("placeholder")}>
+              <TText>請新增教室開始備課</TText>
+            </div>
           )}
           {user.classroomIds.toReversed().map((id) => (
             <ClassCard
@@ -84,7 +89,9 @@ const CourseTab = (props: Props) => {
         style={{height: `${100 - mainHeight}%`}}
       >
         <div className={cx("nav-heading")}>
-          <p className={cx("--heading")}>計畫</p>
+          <p className={cx("--heading")}>
+            <TText>計畫</TText>
+          </p>
           <IconButton
             mode={"primary"}
             icon={<Add />}
@@ -204,8 +211,12 @@ const ClassCard = ({
           <strong>{name}</strong>
         </p>
         <p className={cx("--label")}>
-          科目：{subject} ｜年級：{grade}｜教材：{publisher}
-          <br /> 週堂數：{credits} | 學期規劃：{plan ? "已完成" : "未完成"}
+          <TText>科目：</TText> {subject} <TText>｜年級：</TText>
+          {grade} <TText> ｜教材：</TText>
+          {publisher}
+          <br /> <TText>週堂數：</TText>
+          {credits} <TText>| 學期規劃：</TText>
+          {plan ? <TText>已完成</TText> : <TText>未完成</TText>}
         </p>
       </div>
       {loading && (
@@ -251,7 +262,7 @@ type LectureCardProps = {
 
 const LectureCard = ({
   id = "",
-  name = "新科目",
+  name = "New Lecture",
   selected = EMPTY_ID,
   loading = false,
 }: LectureCardProps) => {

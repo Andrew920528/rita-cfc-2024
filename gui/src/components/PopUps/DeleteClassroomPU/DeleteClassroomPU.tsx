@@ -13,6 +13,7 @@ import {API} from "../../../global/constants";
 import {toast} from "react-toastify";
 import classNames from "classnames/bind";
 import styles from "./DeleteClassroomPU.module.scss";
+import {TText} from "../../TText/TText";
 const cx = classNames.bind(styles);
 type Props = {classroomId: string};
 
@@ -36,8 +37,12 @@ const DeleteClassroomPU = (props: Props & PopUpProps) => {
     <PopUp {...props}>
       <div className={cx("content")}>
         <div className={cx("words")}>
-          <p className={cx("ask")}>確定要刪除此教室嗎?</p>
-          <p className="--label">您將永久刪除此教室與其中的所有課程計畫。</p>
+          <p className={cx("ask")}>
+            <TText>確定要刪除此教室嗎?</TText>
+          </p>
+          <p className="--label">
+            <TText>您將永久刪除此教室與其中的所有課程計畫。</TText>
+          </p>
         </div>
         <IconButton
           icon={<TrashCan />}

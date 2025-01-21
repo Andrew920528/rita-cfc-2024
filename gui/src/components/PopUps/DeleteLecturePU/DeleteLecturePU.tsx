@@ -8,6 +8,7 @@ import {useTypedSelector} from "../../../store/store";
 import {API} from "../../../global/constants";
 import classNames from "classnames/bind";
 import styles from "./DeleteLecturePU.module.scss";
+import {TText} from "../../TText/TText";
 type Props = {lectureId: string};
 const cx = classNames.bind(styles);
 function DeleteLecturePU(props: Props & PopUpProps) {
@@ -34,8 +35,12 @@ function DeleteLecturePU(props: Props & PopUpProps) {
     <PopUp {...props}>
       <div className={cx("content")}>
         <div className={cx("words")}>
-          <p className={cx("ask")}>確定要刪除此課程計畫嗎?</p>
-          <p className="--label">您將永久刪除此課程計畫的內容。</p>
+          <p className={cx("ask")}>
+            <TText>確定要刪除此課程計畫嗎?</TText>
+          </p>
+          <p className="--label">
+            <TText>您將永久刪除此課程計畫的內容。</TText>
+          </p>
         </div>
 
         <IconButton

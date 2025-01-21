@@ -15,6 +15,7 @@ import Textbox from "../../ui_components/Textbox/Textbox";
 import {generateId} from "../../../utils/util";
 import {useAppDispatch} from "../../../store/store";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
+import {TText} from "../../TText/TText";
 const cx = classNames.bind(styles);
 type QuestionViewProps = {
   question: Question;
@@ -290,7 +291,7 @@ function FibQuestionView({question, editing, widgetId}: QuestionViewProps) {
         <p className={cx("question-header")}>{displayQuestionObj.question}</p>
       )}
       <div className={cx("answer")}>
-        參考答案：
+        <TText>參考答案：</TText>
         {editing ? (
           <Textbox
             value={displayQuestionContent.answer.join(", ")}

@@ -12,7 +12,9 @@ type TranslationDictionary = {
   [key: string]: string; // Keys are strings, and values are also strings
 };
 const useLang = () => {
-  const l = useTypedSelector((state) => state.User.lang);
+  const l = useTypedSelector((state) =>
+    state.User ? state.User.lang : LANG.EN_US
+  );
   const json: TranslationDictionary =
     l === LANG.ZH_TW
       ? (ZH_TW_DICT as TranslationDictionary)

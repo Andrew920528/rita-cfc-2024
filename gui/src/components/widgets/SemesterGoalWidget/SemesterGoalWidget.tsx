@@ -22,6 +22,8 @@ import {parseDate} from "../../../utils/util";
 import IconButton from "../../ui_components/IconButton/IconButton";
 import SetSemesterPlanPU from "../../PopUps/SetSemesterPlanPU/SetSemesterPlanPU";
 import {UiServices} from "../../../features/UiSlice";
+import {TText} from "../../TText/TText";
+import useLang from "../../../lang/useLang";
 
 const cx = classNames.bind(styles);
 
@@ -80,7 +82,11 @@ const SemesterGoalWidget = ({
       />
 
       <Accordion
-        header={<div className={cx("as-header")}>進階設定</div>}
+        header={
+          <div className={cx("as-header")}>
+            <TText>進階設定</TText>
+          </div>
+        }
         content={<SemesterGoalAdvancedSettings widgetId={widget.id} />}
         mode="no-border"
         initialOpen={false}
@@ -121,12 +127,18 @@ const SemesterGoalAdvancedSettings = ({widgetId}: {widgetId: string}) => {
   }
 
   const widget = useTypedSelector((state: any) => state.Widgets.dict[widgetId]);
+  const l = useLang();
   return (
     <div className={cx("semester-goal-advanced-settings")}>
       <div className={cx("setting-block")}>
         <span className={cx("setting-block-title")}>
-          <p>日期</p>
-          <Tooltip title="本課程計畫的開始日期和結束日期" placement="right">
+          <p>
+            <TText>日期</TText>
+          </p>
+          <Tooltip
+            title={l("本課程計畫的開始日期和結束日期")}
+            placement="right"
+          >
             <Information />
           </Tooltip>
         </span>
@@ -134,7 +146,7 @@ const SemesterGoalAdvancedSettings = ({widgetId}: {widgetId: string}) => {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <div className={cx("dates")}>
             <DatePicker
-              label="開始日期"
+              label={l("開始日期")}
               onChange={(value) => {
                 if (!value) return;
                 let date: string = value.format("MM-DD-YYYY");
@@ -146,7 +158,7 @@ const SemesterGoalAdvancedSettings = ({widgetId}: {widgetId: string}) => {
             />
             --
             <DatePicker
-              label="結束日期"
+              label={l("結束日期")}
               onChange={(value) => {
                 if (!value) return;
                 let date = value.format("MM-DD-YYYY");
@@ -161,7 +173,9 @@ const SemesterGoalAdvancedSettings = ({widgetId}: {widgetId: string}) => {
       </div>
       <div className={cx("setting-block")}>
         <span className={cx("setting-block-title")}>
-          <p>對應的進度表</p>
+          <p>
+            <TText>對應的進度表</TText>
+          </p>
           <Tooltip
             title="Rita 將會用此進度表與您討論學習內容"
             placement="right"
@@ -173,12 +187,12 @@ const SemesterGoalAdvancedSettings = ({widgetId}: {widgetId: string}) => {
           {(widget.content as SemesterGoalWidgetContent).semesterPlanRef ? (
             <div className={cx("set-plan-hint")}>
               <CheckmarkOutline />
-              已設定
+              <TText>已設定</TText>
             </div>
           ) : (
             <div className={cx("set-plan-hint")}>
               <SubtractAlt />
-              尚未設定
+              <TText>尚未設定</TText>
             </div>
           )}
           <IconButton

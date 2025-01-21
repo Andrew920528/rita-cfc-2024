@@ -30,6 +30,7 @@ import {
   WatsonHealth3DCurveAutoColon,
 } from "@carbon/icons-react";
 import QuestionView from "./QuestionView";
+import {TText} from "../../TText/TText";
 
 const cx = classNames.bind(styles);
 
@@ -71,12 +72,14 @@ const WorksheetWidget = ({
     return (
       <div className={cx("pick-ques-container")}>
         <div className={cx("pick-ques-header")}>
-          <p className={cx("--label")}>選擇題型 | </p>
+          <p className={cx("--label")}>
+            <TText>選擇題型 | </TText>
+          </p>
           <p
             className={cx("--label", "cancel")}
             onClick={() => setShowPickQuestion(false)}
           >
-            取消
+            <TText>取消</TText>
           </p>
         </div>
         <div className={cx("pick-ques")}>
@@ -153,7 +156,9 @@ const WorksheetWidget = ({
 
       {preview ? (
         <div className={cx("--label")}>
-          若要新增或修改問題，請先選擇「套用」並在左側視窗直接進行更改
+          <TText>
+            若要新增或修改問題，請先選擇「套用」並在左側視窗直接進行更改
+          </TText>
         </div>
       ) : (
         <div className={cx("btns", "add-question-btns")}>
@@ -222,7 +227,11 @@ const WorkSheetQuestionStack = ({
               key={questionObj.questionId}
               id={questionObj.questionId}
               mode="outlined"
-              header={<div className={cx("header")}>{`題目 ${index + 1}`}</div>}
+              header={
+                <div className={cx("header")}>
+                  <TText>題目</TText> {` ${index + 1}`}
+                </div>
+              }
               content={
                 <div
                   className={cx("worksheet-question-stack-item")}
@@ -280,17 +289,29 @@ const WorksheetPlaceholder = () => {
     <div className={cx("worksheet-placeholder")}>
       <div className={cx("title")}>
         <div className={cx("decor")} />
-        與Rita交談來開始設計學習單，Rita 會與您討論並生成學習單供您參考。
+        <TText>
+          與Rita交談來開始設計學習單，Rita 會與您討論並生成學習單供您參考。
+        </TText>
       </div>
 
       <div className={cx("example-title")}>
-        <strong>範例:</strong>
+        <strong>
+          <TText>範例:</TText>
+        </strong>
       </div>
       <div className={cx("example")}>
-        ”針對今天準備的影片內容，我想要讓學生可以藉由學習單發表意見。“
+        ”
+        <TText>
+          針對今天準備的影片內容，我想要讓學生可以藉由學習單發表意見。
+        </TText>
+        ”
       </div>
-      <div className={cx("example")}>”我要一份數學練習的學習單。“</div>
-      <div className={cx("example")}>”來設計校外教學的學習單吧！“</div>
+      <div className={cx("example")}>
+        ”<TText>我要一份數學練習的學習單。</TText>“
+      </div>
+      <div className={cx("example")}>
+        ”<TText>來設計校外教學的學習單吧！</TText>“
+      </div>
     </div>
   );
 };

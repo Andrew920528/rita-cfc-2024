@@ -9,6 +9,7 @@ import classNames from "classnames/bind";
 import styles from "./SignUp.module.scss";
 import {initSchedule} from "../../schema/schedule";
 import {toast} from "react-toastify";
+import {TText} from "../../components/TText/TText";
 
 const cx = classNames.bind(styles);
 const SignUp = () => {
@@ -129,7 +130,9 @@ const SignUp = () => {
   return (
     <div className={cx("signup-root")}>
       <div className={cx("signup-forming")}>
-        <p className={cx("--heading")}>建立帳號</p>
+        <p className={cx("--heading")}>
+          <TText>建立帳號</TText>
+        </p>
         <Textbox
           label="使用者名稱:"
           mode="form"
@@ -180,10 +183,12 @@ const SignUp = () => {
         />
       </div>
       <div className={cx("signup-login")}>
-        <p>已註冊？</p>
+        <p>
+          <TText>已註冊？</TText>
+        </p>
 
         <Link to="/login" className={cx("signup-log")}>
-          登入
+          <TText>登入</TText>
         </Link>
       </div>
     </div>

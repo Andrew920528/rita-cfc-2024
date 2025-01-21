@@ -10,6 +10,7 @@ import classNames from "classnames/bind";
 import styles from "./Login.module.scss";
 import {useLoginParseState} from "../../global/globalActions";
 import {LoginStatusServices} from "../../features/LoginStatusSlice";
+import {TText} from "../../components/TText/TText";
 
 const cx = classNames.bind(styles);
 
@@ -120,9 +121,11 @@ const Login = () => {
         />
       </div>
       <div className={cx("login-register")}>
-        <p>尚未註冊？</p>
+        <p>
+          <TText>尚未註冊？</TText>
+        </p>
         <Link to="/signup" className={cx("login-create")}>
-          建立帳號
+          <TText>建立帳號</TText>
         </Link>
       </div>
     </div>

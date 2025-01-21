@@ -34,6 +34,7 @@ import {WidgetsServices} from "../../features/WidgetsSlice";
 import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {WidgetType} from "../../schema/widget/widget";
 import {IdeatingDots} from "../ui_components/IdeatingDots/IdeatingDots";
+import {TText} from "../TText/TText";
 const cx = classNames.bind(styles);
 
 type ChatroomProps = {
@@ -214,12 +215,12 @@ const ChatMessage = ({text, sender, completed}: ChatMessageT) => {
                 translate();
               }}
             >
-              {completed &&
-                (translated
-                  ? loading
-                    ? "翻譯中(取消)"
-                    : "顯示原文"
-                  : "翻譯蒟蒻")}
+              {completed && (
+                <TText>
+                  (translated ? loading ? "翻譯中(取消)" : "顯示原文" :
+                  "翻譯蒟蒻")
+                </TText>
+              )}
             </p>
           </div>
         </>
@@ -264,7 +265,7 @@ const ChatroomBody = ({
     <div className={cx("chatroom-body")} ref={scrollRef}>
       {messages.length === 0 && (
         <div className={cx("empty-chatroom-placeholder")}>
-          您好，請問我能怎麼協助您？
+          <TText>您好，請問我能怎麼協助您？</TText>
           <div className={cx("chips")}>
             {agency === AGENCY.LECTURE ? (
               lecturePromptRecs.map((promptObj) => (
@@ -313,7 +314,9 @@ const ChatroomBody = ({
         showCircularProgress={true}
       />
       {ritaError && (
-        <p className={cx("--label", "--error")}>出了點問題。請再試一次。</p>
+        <p className={cx("--label", "--error")}>
+          <TText>出了點問題。請再試一次。</TText>
+        </p>
       )}
     </div>
   );
@@ -332,7 +335,9 @@ const LoadingMessage = (args: {
       {args.showCircularProgress && (
         <CircularProgress color="inherit" size={12} />
       )}
-      <p className={cx("--label")}>{args.text}</p>
+      <p className={cx("--label")}>
+        <TText>{args.text}</TText>
+      </p>
       {args.showDots && <IdeatingDots />}
     </div>
   );

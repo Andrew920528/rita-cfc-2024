@@ -5,6 +5,7 @@ import IconButton, {
 } from "../../ui_components/IconButton/IconButton";
 import classNames from "classnames/bind";
 import styles from "./PopUp.module.scss";
+import {TText} from "../../TText/TText";
 
 const cx = classNames.bind(styles);
 export type PopUpProps = {
@@ -51,7 +52,9 @@ const PopUp = ({
     <div className={cx("pop-up-wrapper")}>
       <div className={cx("pop-up")}>
         <div className={cx("pop-up-header")}>
-          <p className={cx("--heading")}>{title}</p>
+          <p className={cx("--heading")}>
+            <TText>{title}</TText>
+          </p>
 
           <IconButton
             icon={<Close size={20} />}
@@ -74,7 +77,7 @@ const PopUp = ({
                     setTrigger(false);
                   }}
                 >
-                  Cancel
+                  <TText>Cancel</TText>
                 </p>
               )}
             </div>

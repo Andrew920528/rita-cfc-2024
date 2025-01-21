@@ -14,6 +14,7 @@ import EmbeddedChatroom from "./EmbeddedChatroom/EmbeddedChatroom";
 import PreviewSpace from "./PreviewSpace/PreviewSpace";
 import {CircularProgress} from "@mui/material";
 import useVerticalHandle from "../VerticalHandle/VerticalHandle";
+import {TText} from "../../TText/TText";
 const cx = classNames.bind(styles);
 
 type Props = {};
@@ -22,7 +23,9 @@ function AiTabPlaceHolder() {
   return (
     <div className={cx("placeholder")}>
       <IbmWatsonxAssistant size={80} />
-      請建立或點選右方空間中的備課工具，讓Rita可以針對那個工具為您備課。
+      <TText>
+        請建立或點選右方空間中的備課工具，讓Rita可以針對那個工具為您備課。
+      </TText>
     </div>
   );
 }
@@ -33,7 +36,7 @@ function AiTabPlaceHolderWidgetCreating() {
       <IbmWatsonxAssistant size={80} />
       <div className={cx("placeholder-text")}>
         <CircularProgress color="inherit" size={12} />
-        正在建立工具，請稍等。
+        <TText>正在建立工具，請稍等。</TText>
       </div>
     </div>
   );
@@ -82,7 +85,7 @@ function AiTab({}: Props) {
           >
             <div onClick={onclickCollapse} className={cx("preview-header")}>
               {collapsePreview ? <ChevronRight /> : <ChevronDown />}
-              內容預覽
+              <TText>內容預覽</TText>
             </div>
             <PreviewSpace />
           </div>

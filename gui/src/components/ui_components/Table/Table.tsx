@@ -15,6 +15,7 @@ import {
 import {Menu, MenuItem} from "@mui/material";
 import {generateId} from "../../../utils/util";
 import Textbox from "../Textbox/Textbox";
+import {TText} from "../../TText/TText";
 
 const cx = classNames.bind(styles);
 type Props = {
@@ -207,13 +208,13 @@ const Table = ({
         >
           <div className={cx("menu-action-item")}>
             <Edit />
-            編輯欄位
+            <TText>編輯欄位</TText>
           </div>
         </MenuItem>
         <MenuItem onClick={() => handleInsertColumn(index + 1)}>
           <div className={cx("menu-action-item")}>
             <ColumnInsert />
-            向右插入欄位
+            <TText>向右插入欄位</TText>
           </div>
         </MenuItem>
         <MenuItem
@@ -222,7 +223,7 @@ const Table = ({
         >
           <div className={cx("menu-action-item", "danger")}>
             <ColumnDelete />
-            刪除此欄位
+            <TText>刪除此欄位</TText>
           </div>
         </MenuItem>
       </Menu>
@@ -251,7 +252,7 @@ const Table = ({
         <MenuItem onClick={() => handleInsertRow(index + 1)}>
           <div className={cx("menu-action-item")}>
             <RowInsert />
-            向下插入列
+            <TText>向下插入列</TText>
           </div>
         </MenuItem>
         <MenuItem
@@ -260,7 +261,7 @@ const Table = ({
         >
           <div className={cx("menu-action-item", "danger")}>
             <RowDelete />
-            刪除此列
+            <TText>刪除此列</TText>
           </div>
         </MenuItem>
       </Menu>

@@ -11,6 +11,7 @@ import {pointIsInRect} from "../../utils/util";
 import {UiServices} from "../../features/UiSlice";
 import {EMPTY_ID} from "../../global/constants";
 import SetSemesterPlanPU from "../PopUps/SetSemesterPlanPU/SetSemesterPlanPU";
+import {TText} from "../TText/TText";
 
 const cx = classNames.bind(styles);
 const DashboardPlaceHolder = () => {
@@ -19,12 +20,14 @@ const DashboardPlaceHolder = () => {
       <div className={cx("dashboard-placeholder")}>
         <div className={cx("dp-header-row")}>
           <Cafe size={20} />
-          <p className={cx("dp-title")}>老師好。來杯咖啡嗎？</p>
+          <p className={cx("dp-title")}>
+            <TText>老師好。來杯咖啡嗎？</TText>
+          </p>
         </div>
         <p>
-          您可以由左側工具欄新增備課工具，
+          <TText>您可以由左側工具欄新增備課工具，</TText>
           <br />
-          並利用小助教Rita幫助您完成工作
+          <TText>並利用小助教Rita幫助您完成工作</TText>
         </p>
       </div>
     </div>

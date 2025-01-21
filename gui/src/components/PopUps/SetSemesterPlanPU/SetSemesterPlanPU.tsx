@@ -13,6 +13,7 @@ import {CheckmarkOutline} from "@carbon/icons-react";
 import {WidgetsServices} from "../../../features/WidgetsSlice";
 import {UiServices} from "../../../features/UiSlice";
 import {EMPTY_ID} from "../../../global/constants";
+import {TText} from "../../TText/TText";
 const cx = classNames.bind(styles);
 type Props = {};
 
@@ -78,7 +79,9 @@ const SetSemesterPlanPU = (props: Props & PopUpProps) => {
     >
       <div className={cx("content")}>
         <div className={cx("option-stack")}>
-          <p className={cx("section-title")}>課程計畫</p>
+          <p className={cx("section-title")}>
+            <TText>課程計畫</TText>
+          </p>
           {currClassroom.lectureIds.map((id) => (
             <div
               className={cx("option-card", {selected: id === selectedLecture})}
@@ -93,7 +96,9 @@ const SetSemesterPlanPU = (props: Props & PopUpProps) => {
           ))}
         </div>
         <div className={cx("option-stack")}>
-          <p className={cx("section-title")}>進度表</p>
+          <p className={cx("section-title")}>
+            <TText>進度表</TText>
+          </p>
           {lectures.dict[selectedLecture] &&
             lectures.dict[selectedLecture].widgetIds.map((id) => {
               if (widgets.dict[id].type !== WidgetType.SemesterPlan) {
@@ -118,7 +123,9 @@ const SetSemesterPlanPU = (props: Props & PopUpProps) => {
             })}
         </div>
         <div className={cx("plan-preview")}>
-          <p className={cx("section-title")}>預覽</p>
+          <p className={cx("section-title")}>
+            <TText>預覽</TText>
+          </p>
           {widgets.dict[selectedPlan] && (
             <div className={cx("plan-preview-content")}>
               <SemesterPlanReadOnly widget={widgets.dict[selectedPlan]} />
