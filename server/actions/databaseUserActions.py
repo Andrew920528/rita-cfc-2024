@@ -14,6 +14,8 @@ databasepassword = ''
 database = ''
 port = 0
 
+defaultLanguage = "english"
+
 
 def generate_random_string(length=16):
     characters = string.ascii_letters + string.digits
@@ -75,7 +77,7 @@ def sessionCheck(sessionId):
         return response
 
 
-def createUser(username, password, school, alias, occupation, schedule):
+def createUser(username, password, school, alias, occupation, schedule, lang):
     def verifyString(str):
         if len(str) < 6:
             return False
@@ -138,6 +140,10 @@ def createUser(username, password, school, alias, occupation, schedule):
             if schedule != None:
                 query += ', Schedule_Content'
                 values.append(schedule)
+
+            if lang != None:
+                query += ', Language'
+                values.append(lang)
 
             query += ') VALUES (' + ('%s,' * len(values))[:-1] + ')'
             values = tuple(values)
@@ -328,6 +334,7 @@ def loginUser(username, password):
                         'alias': userResponse['data'][0][4],
                         'occupation': userResponse['data'][0][5],
                         'schedule': userResponse['data'][0][6],
+                        'lang': userResponse['data'][0][7] if userResponse['data'][0][7] else defaultLanguage,
                         'classroomIds': classroomIds
                     },
                     'classroomsDict': classroomDetails,
@@ -477,6 +484,7 @@ def loginSessionId(sessionId):
             # end of classroom
 
             connection.close()
+
             returnResponse = {
                 'status': 'success',
                 'data': {
@@ -487,6 +495,7 @@ def loginSessionId(sessionId):
                         'alias': userResponse[4],
                         'occupation': userResponse[5],
                         'schedule': userResponse[6],
+                        'lang': userResponse[7] if userResponse[7] else defaultLanguage,
                         'classroomIds': classroomIds
                     },
                     'classroomsDict': classroomDetails,
@@ -507,7 +516,7 @@ def loginSessionId(sessionId):
         return response
 
 
-def updateUser(sessionId, alias, school, occupation, schedule):
+def updateUser(sessionId, alias, school, occupation, schedule, lang):
     getDatabaseDetails()
 
     verifySession = sessionCheck(sessionId)
@@ -553,6 +562,10 @@ def updateUser(sessionId, alias, school, occupation, schedule):
             if schedule != None:
                 query += 'Schedule_Content=%s, '
                 values.append(schedule)
+
+            if lang != None:
+                query += 'Language=%s, '
+                values.append(lang)
 
             if len(values) == 0:
                 response = {
