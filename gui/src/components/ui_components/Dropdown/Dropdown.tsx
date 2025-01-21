@@ -89,7 +89,7 @@ const Dropdown = ({
         }}
       >
         <p className={cx({placeholder: !(currId in idDict)})}>
-          {!(currId in idDict) ? placeholder : getName(currId)}
+          {!(currId in idDict) ? <TText>{placeholder}</TText> : getName(currId)}
         </p>
         <div className={cx("chevron")}>
           {openMenu ? (

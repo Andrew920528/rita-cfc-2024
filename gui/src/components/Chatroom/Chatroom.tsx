@@ -1,4 +1,10 @@
-import React, {ReactNode, useEffect, useRef, useState} from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Textbox from "../ui_components/Textbox/Textbox";
 import IconButton from "../ui_components/IconButton/IconButton";
 import {
@@ -35,6 +41,7 @@ import {ChatroomsServices} from "../../features/ChatroomsSlice";
 import {WidgetType} from "../../schema/widget/widget";
 import {IdeatingDots} from "../ui_components/IdeatingDots/IdeatingDots";
 import {TText} from "../TText/TText";
+import useLang from "../../lang/useLang";
 const cx = classNames.bind(styles);
 
 type ChatroomProps = {
@@ -95,9 +102,13 @@ const Chatroom = ({
           <p className={cx("rita")}>Rita</p>
           {chatroom.agency !== AGENCY.LECTURE && (
             <p>
-              {widgets.dict[widgets.current]
-                ? widgetBook(widgets.dict[widgets.current].type).title
-                : ""}
+              {widgets.dict[widgets.current] ? (
+                <TText>
+                  {widgetBook(widgets.dict[widgets.current].type).title}
+                </TText>
+              ) : (
+                ""
+              )}
             </p>
           )}
         </div>
@@ -195,12 +206,16 @@ const ChatMessage = ({text, sender, completed}: ChatMessageT) => {
     }
     setTranslatedText(r.data);
   }
+  const l = useLang();
+
   return (
     <div className={cx("chatroom-message", sender)}>
       {sender === SENDER.system ? (
         <p className={cx("chatroom-message-text")}>
-          {text.slice(0, 3)}
-          <strong>{text.slice(3)}</strong>
+          <TText>{text.slice(0, 8)}</TText>
+          <strong>
+            <TText>{text.slice(8)}</TText>
+          </strong>
         </p>
       ) : sender === SENDER.ai ? (
         <>
@@ -217,8 +232,11 @@ const ChatMessage = ({text, sender, completed}: ChatMessageT) => {
             >
               {completed && (
                 <TText>
-                  (translated ? loading ? "翻譯中(取消)" : "顯示原文" :
-                  "翻譯蒟蒻")
+                  {translated
+                    ? loading
+                      ? "翻譯中(取消)"
+                      : "顯示原文"
+                    : "翻譯蒟蒻"}
                 </TText>
               )}
             </p>

@@ -177,7 +177,7 @@ const SemesterGoalAdvancedSettings = ({widgetId}: {widgetId: string}) => {
             <TText>對應的進度表</TText>
           </p>
           <Tooltip
-            title="Rita 將會用此進度表與您討論學習內容"
+            title={l("Rita 將會用此進度表與您討論學習內容")}
             placement="right"
           >
             <Information />

@@ -70,7 +70,9 @@ const WidgetCard = ({
       <div className={cx("widget-card-left")}>
         {icon}
         <p>
-          <strong>{title}</strong>
+          <strong>
+            <TText>{title}</TText>
+          </strong>
         </p>
         <p className={cx("--label")}>
           <TText>{hint}</TText>

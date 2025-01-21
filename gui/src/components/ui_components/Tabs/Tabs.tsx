@@ -1,6 +1,7 @@
 import React, {useState, ReactNode} from "react";
 import classNames from "classnames/bind";
 import styles from "./Tabs.module.scss";
+import {TText} from "../../TText/TText";
 
 const cx = classNames.bind(styles);
 interface TabItem {
@@ -37,7 +38,7 @@ const Tabs: React.FC<TabsProps> = ({items}) => {
             role="tab"
             aria-disabled={item.disabled}
           >
-            {item.title}
+            <TText>{item.title}</TText>
           </div>
         ))}
       </div>

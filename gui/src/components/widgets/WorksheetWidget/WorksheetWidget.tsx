@@ -296,7 +296,7 @@ const WorksheetPlaceholder = () => {
 
       <div className={cx("example-title")}>
         <strong>
-          <TText>範例:</TText>
+          <TText>範例</TText> :
         </strong>
       </div>
       <div className={cx("example")}>

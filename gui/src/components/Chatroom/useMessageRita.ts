@@ -225,7 +225,7 @@ export const useMessageRita = (chatroomId: string) => {
     );
 
     let messageObj = {
-      text: `更新了${widgetBook(widgets.dict[widgets.current].type).title}`,
+      text: `更新了 ${widgetBook(widgets.dict[widgets.current].type).title}`,
       sender: SENDER.system,
       completed: true,
     };
