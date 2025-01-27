@@ -258,7 +258,7 @@ const SemesterPlanWidget = ({
               text="Edit"
             />
             <IconButton
-              text={"DownloadExcelSpreadsheet"}
+              text={"Download as Excel"}
               icon={<TableBuilt />}
               mode={"primary"}
               onClick={() => {
